@@ -1,0 +1,91 @@
+---
+title: "From Pandas to Polars"
+author: "Krishnatheja Vanka"
+date: "2025-04-27"
+categories: [code]
+format:
+  html:
+    code-fold: false
+execute:
+  echo: true
+  timing: true
+jupyter: python3
+---
+
+# 👁️ From Pandas to Polars
+
+![](pvp.jpg)
+
+As datasets grow in size and complexity, performance and efficiency become critical in data processing. While Pandas has long been the go-to library for data manipulation in Python, it can struggle with speed and memory usage, especially on large datasets. Polars, a newer DataFrame library written in Rust, offers a faster, more memory-efficient alternative with support for lazy evaluation and multi-threading.
+
+This guide explores how to convert Pandas DataFrames to Polars, and highlights key differences in syntax, performance, and functionality. Whether you're looking to speed up your data workflows or just exploring modern tools, understanding the transition from Pandas to Polars is a valuable step.
+
+## Import libraries
+
+```{python}
+import numpy as np
+
+import pandas as pd
+import polars as pl
+
+```
+
+## Create dummy data
+
+```{python}
+
+data = {'birds': ['Cranes', 'Cranes', 'plovers', 'spoonbills', 'spoonbills', 'Cranes', 'plovers', 'Cranes', 'spoonbills', 'spoonbills'],
+        'age': [3.5, 4, 1.5, np.nan, 6, 3, 5.5, np.nan, 8, 4],
+        'visits': [2, 4, 3, 4, 3, 4, 2, 2, 3, 2],
+        'priority': ['yes', 'yes', 'no', 'yes', 'no', 'no', 'no', 'yes', 'no', 'no']}
+
+labels = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+```
+
+## Create Pandas DataFrame
+```{python}
+pandas_df = pd.DataFrame(data, index=labels)
+pandas_df
+```
+## Create Polars DataFrame
+```{python}
+polars_df = pl.DataFrame(data, schema={"birds": pl.Categorical, "age": pl.Float64, "visits": pl.Int32, "priority": pl.Categorical})
+polars_df = polars_df.with_columns(pl.Series(name='index', values=labels))
+polars_df
+```
+
+## Display a summary of the basic information about birds DataFrame and its data. 
+The method `describe()` shows different statistical data for numeric columns (like age) and columns with strings or timestamps (like priority, which is treated as a string column in pandas).
+It is the same for both pandas and polars.
+```{python}
+pandas_df.describe()
+```
+```{python}
+polars_df.describe()
+```
+
+## Print the first 2 rows of the birds dataframe
+The method `head()` displays the first 5 rows of the DataFrame. It is the same for both pandas and polars. Including a number in the method `head()` will display the first n rows of the DataFrame.
+```{python}
+pandas_df.head(2)
+```
+```{python}
+polars_df.head(2)
+```
+## Display the last 3 rows of the birds dataframe
+The method `tail()` displays the last 5 rows of the DataFrame. It is the same for both pandas and polars. Including a number in the method `tail()` will display the last n rows of the DataFrame.
+```{python}
+pandas_df.tail(3)
+```
+```{python}
+polars_df.tail(3)
+```
+
+## Select only the 'birds' and 'age' columns from the DataFrame.
+
+```{python}
+pandas_df[['birds', 'age']] 
+```
+```{python}
+polars_df.select(['birds', 'age'])
+```
