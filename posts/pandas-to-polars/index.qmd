@@ -2,7 +2,7 @@
 title: "From Pandas to Polars"
 author: "Krishnatheja Vanka"
 date: "2025-05-19"
-categories: [code]
+categories: [code, tutorial]
 format:
   html:
     code-fold: false
@@ -12,7 +12,7 @@ execute:
 jupyter: python3
 ---
 
-# 👁️ From Pandas to Polars
+# 🐼 From Pandas to Polars 🐻‍❄️
 
 ![](pvp.jpg)
 
@@ -34,10 +34,12 @@ import polars as pl
 
 ```{python}
 
-data = {'birds': ['Cranes', 'Cranes', 'plovers', 'spoonbills', 'spoonbills', 'Cranes', 'plovers', 'Cranes', 'spoonbills', 'spoonbills'],
-        'age': [3.5, 4, 1.5, np.nan, 6, 3, 5.5, np.nan, 8, 4],
-        'visits': [2, 4, 3, 4, 3, 4, 2, 2, 3, 2],
-        'priority': ['yes', 'yes', 'no', 'yes', 'no', 'no', 'no', 'yes', 'no', 'no']}
+data = {
+  'birds': ['Cranes', 'Cranes', 'plovers', 'spoonbills', 'spoonbills', 'Cranes', 'plovers', 'Cranes', 'spoonbills', 'spoonbills'],
+  'age': [3.5, 4, 1.5, np.nan, 6, 3, 5.5, np.nan, 8, 4],
+  'visits': [2, 4, 3, 4, 3, 4, 2, 2, 3, 2],
+  'priority': ['yes', 'yes', 'no', 'yes', 'no', 'no', 'no', 'yes', 'no', 'no']
+}
 
 labels = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
 ```
@@ -49,7 +51,7 @@ pandas_df
 ```
 ## Create Polars DataFrame
 ```{python}
-polars_df = pl.DataFrame(data, schema={"birds": pl.Categorical, "age": pl.Float64, "visits": pl.Int32, "priority": pl.Categorical})
+polars_df = pl.DataFrame(data)
 polars_df = polars_df.with_columns(pl.Series(name='index', values=labels))
 polars_df
 ```
@@ -82,10 +84,104 @@ polars_df.tail(3)
 ```
 
 ## Select only the 'birds' and 'age' columns from the DataFrame.
+In pandas, you can use the `[]` operator to select columns by name. In polars, you can use the `select()` method to select columns by name.
 
 ```{python}
 pandas_df[['birds', 'age']] 
 ```
 ```{python}
-polars_df.select(['birds', 'age'])
+polars_df.select(['index', 'birds', 'age'])
 ```
+
+## Select [2, 3, 7] rows and in columns ['birds', 'age', 'visits']
+In pandas, you can use the `iloc` method to select rows and columns by index. In polars, you can use the `[]` operator to select rows and columns by index.
+The following code selects rows 2, 3, and 7 and columns 'birds', 'age', and 'visits' from the polars DataFrame. The output shows the values in those cells.
+```{python}
+pandas_df[['birds','age','visits']].iloc[[2,3,7]]
+```
+```{python}
+polars_df[[2,3,7]].select(["index", "birds", "age", "visits"])
+```
+
+## Select the rows where the number of visits is less than 4
+In pandas, you can use the `loc` method to select rows based on a boolean condition. In polars, you can use the `filter()` method to select rows based on a boolean condition.
+```{python}
+pandas_df.loc[pandas_df['visits'] < 4]
+```
+```{python}
+polars_df.filter(pl.col('visits') < 4)
+```
+## Select the rows with columns ['birds', 'visits'] where the age is missing i.e NaN
+In pandas, you can use the `isnull()` method to check for missing values and then use the `loc` method to select rows based on a boolean condition. In polars, you can use the `filter()` method to select rows based on a boolean condition.
+```{python}
+pandas_df.loc[pandas_df['age'].isnull(), ['birds', 'visits']]
+```
+```{python}
+polars_df.filter(pl.col('age').is_nan()).select(['index', 'birds', 'visits'])
+```
+
+## Select the rows where the birds is a Cranes and the age is less than 4
+```{python}
+pandas_df.loc[(pandas_df['birds'] == 'Cranes') & (pandas_df['age'] < 4)]
+```
+```{python}
+polars_df.filter((pl.col('birds') == 'Cranes') & (pl.col('age') < 4))
+```
+## Select the rows the age is between 2 and 4(inclusive)  
+```{python}
+pandas_df.loc[pandas_df['age'].between(2, 4)]
+```
+```{python}
+polars_df.filter(pl.col('age').is_between(2, 4))
+```
+
+## Find the total number of visits of the bird Cranes
+```{python}
+pandas_df.loc[pandas_df['birds'] == 'Cranes', 'visits'].sum()
+```
+```{python}
+polars_df.filter(pl.col('birds') == 'Cranes').select(pl.col('visits').sum())
+``` 
+
+## Calculate the mean age for each different birds in dataframe.
+```{python}
+pandas_df.groupby('birds')['age'].mean()
+```
+```{python}
+polars_df.groupby('birds').agg(pl.col('age').mean())
+```
+## Append a new row 'k' to dataframe with your choice of values for each column. Then delete that row to return the original DataFrame.
+### Creating new data row
+```{python}
+new_data = {
+  'birds': 'Cranes',
+  'age': 7,
+  'visits': 2,
+  'priority': 'yes'
+}
+```
+
+### Append new row to pandas dataframe
+```{python}
+pandas_df = pandas_df.append(pd.DataFrame(new_data, index=['k']))
+pandas_df
+```
+### Delete new row from pandas dataframe
+```{python}
+pandas_df = pandas_df.drop('k')
+pandas_df
+```
+### Append new row to polars dataframe
+```{python}
+new_data['index'] = 'k'
+polars_df = polars_df.append(pl.DataFrame(new_data))
+polars_df
+```
+### Delete new row from polars dataframe
+```{python}
+polars_df = polars_df.filter(pl.col('index') != 'k')
+polars_df
+```
+
+
+

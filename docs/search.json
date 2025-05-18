@@ -14,17 +14,73 @@
     "text": "👁️ Welcome to My Computer Vision Blog!\n\nThis is the first post in this blog.\nHello and welcome!\nI’m thrilled to kick off this blog dedicated to exploring the fascinating world of computer vision — a field where machines learn to see, interpret, and understand the visual world around us. Whether you’re a seasoned AI researcher, an aspiring developer, or simply curious about how technology can “see,” you’ll find something valuable here.\nFrom image processing techniques to deep learning breakthroughs, from real-world applications to hands-on tutorials — this blog will cover it all. My goal is to make computer vision approachable, insightful, and exciting for everyone.\nSo, whether you’re here to learn, build, or stay on top of the latest innovations, I’m glad to have you along for the journey. Let’s dive into the visual future together!\nStay tuned, and let’s make machines see the world like never before. 🚀\nCheers,  Krishna"
   },
   {
-    "objectID": "posts/post-with-code/index.html",
-    "href": "posts/post-with-code/index.html",
-    "title": "Post With Code",
+    "objectID": "posts/pandas-to-polars/index.html",
+    "href": "posts/pandas-to-polars/index.html",
+    "title": "From Pandas to Polars",
     "section": "",
-    "text": "This is a post with executable code."
+    "text": "As datasets grow in size and complexity, performance and efficiency become critical in data processing. While Pandas has long been the go-to library for data manipulation in Python, it can struggle with speed and memory usage, especially on large datasets. Polars, a newer DataFrame library written in Rust, offers a faster, more memory-efficient alternative with support for lazy evaluation and multi-threading.\nThis guide explores how to convert Pandas DataFrames to Polars, and highlights key differences in syntax, performance, and functionality. Whether you’re looking to speed up your data workflows or just exploring modern tools, understanding the transition from Pandas to Polars is a valuable step.\n\n\n\nimport numpy as np\n\nimport pandas as pd\nimport polars as pl\n\n\n\n\n\ndata = {'birds': ['Cranes', 'Cranes', 'plovers', 'spoonbills', 'spoonbills', 'Cranes', 'plovers', 'Cranes', 'spoonbills', 'spoonbills'],\n        'age': [3.5, 4, 1.5, np.nan, 6, 3, 5.5, np.nan, 8, 4],\n        'visits': [2, 4, 3, 4, 3, 4, 2, 2, 3, 2],\n        'priority': ['yes', 'yes', 'no', 'yes', 'no', 'no', 'no', 'yes', 'no', 'no']}\n\nlabels = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']\n\n\n\n\n\npandas_df = pd.DataFrame(data, index=labels)\npandas_df\n\n\n\n\n\n\n\n\nbirds\nage\nvisits\npriority\n\n\n\n\na\nCranes\n3.5\n2\nyes\n\n\nb\nCranes\n4.0\n4\nyes\n\n\nc\nplovers\n1.5\n3\nno\n\n\nd\nspoonbills\nNaN\n4\nyes\n\n\ne\nspoonbills\n6.0\n3\nno\n\n\nf\nCranes\n3.0\n4\nno\n\n\ng\nplovers\n5.5\n2\nno\n\n\nh\nCranes\nNaN\n2\nyes\n\n\ni\nspoonbills\n8.0\n3\nno\n\n\nj\nspoonbills\n4.0\n2\nno\n\n\n\n\n\n\n\n\n\n\n\npolars_df = pl.DataFrame(data, schema={\"birds\": pl.Categorical, \"age\": pl.Float64, \"visits\": pl.Int32, \"priority\": pl.Categorical})\npolars_df = polars_df.with_columns(pl.Series(name='index', values=labels))\npolars_df\n\n\nshape: (10, 5)\n\n\n\nbirds\nage\nvisits\npriority\nindex\n\n\ncat\nf64\ni32\ncat\nstr\n\n\n\n\n\"Cranes\"\n3.5\n2\n\"yes\"\n\"a\"\n\n\n\"Cranes\"\n4.0\n4\n\"yes\"\n\"b\"\n\n\n\"plovers\"\n1.5\n3\n\"no\"\n\"c\"\n\n\n\"spoonbills\"\nNaN\n4\n\"yes\"\n\"d\"\n\n\n\"spoonbills\"\n6.0\n3\n\"no\"\n\"e\"\n\n\n\"Cranes\"\n3.0\n4\n\"no\"\n\"f\"\n\n\n\"plovers\"\n5.5\n2\n\"no\"\n\"g\"\n\n\n\"Cranes\"\nNaN\n2\n\"yes\"\n\"h\"\n\n\n\"spoonbills\"\n8.0\n3\n\"no\"\n\"i\"\n\n\n\"spoonbills\"\n4.0\n2\n\"no\"\n\"j\"\n\n\n\n\n\n\n\n\n\nThe method describe() shows different statistical data for numeric columns (like age) and columns with strings or timestamps (like priority, which is treated as a string column in pandas). It is the same for both pandas and polars.\n\npandas_df.describe()\n\n\n\n\n\n\n\n\nage\nvisits\n\n\n\n\ncount\n8.000000\n10.000000\n\n\nmean\n4.437500\n2.900000\n\n\nstd\n2.007797\n0.875595\n\n\nmin\n1.500000\n2.000000\n\n\n25%\n3.375000\n2.000000\n\n\n50%\n4.000000\n3.000000\n\n\n75%\n5.625000\n3.750000\n\n\nmax\n8.000000\n4.000000\n\n\n\n\n\n\n\n\npolars_df.describe()\n\n\nshape: (9, 6)\n\n\n\nstatistic\nbirds\nage\nvisits\npriority\nindex\n\n\nstr\nstr\nf64\nf64\nstr\nstr\n\n\n\n\n\"count\"\n\"10\"\n10.0\n10.0\n\"10\"\n\"10\"\n\n\n\"null_count\"\n\"0\"\n0.0\n0.0\n\"0\"\n\"0\"\n\n\n\"mean\"\nnull\nNaN\n2.9\nnull\nnull\n\n\n\"std\"\nnull\nNaN\n0.875595\nnull\nnull\n\n\n\"min\"\nnull\n1.5\n2.0\nnull\n\"a\"\n\n\n\"25%\"\nnull\n3.5\n2.0\nnull\nnull\n\n\n\"50%\"\nnull\n5.5\n3.0\nnull\nnull\n\n\n\"75%\"\nnull\n8.0\n4.0\nnull\nnull\n\n\n\"max\"\nnull\n8.0\n4.0\nnull\n\"j\"\n\n\n\n\n\n\n\n\n\nThe method head() displays the first 5 rows of the DataFrame. It is the same for both pandas and polars. Including a number in the method head() will display the first n rows of the DataFrame.\n\npandas_df.head(2)\n\n\n\n\n\n\n\n\nbirds\nage\nvisits\npriority\n\n\n\n\na\nCranes\n3.5\n2\nyes\n\n\nb\nCranes\n4.0\n4\nyes\n\n\n\n\n\n\n\n\npolars_df.head(2)\n\n\nshape: (2, 5)\n\n\n\nbirds\nage\nvisits\npriority\nindex\n\n\ncat\nf64\ni32\ncat\nstr\n\n\n\n\n\"Cranes\"\n3.5\n2\n\"yes\"\n\"a\"\n\n\n\"Cranes\"\n4.0\n4\n\"yes\"\n\"b\"\n\n\n\n\n\n\n\n\n\nThe method tail() displays the last 5 rows of the DataFrame. It is the same for both pandas and polars. Including a number in the method tail() will display the last n rows of the DataFrame.\n\npandas_df.tail(3)\n\n\n\n\n\n\n\n\nbirds\nage\nvisits\npriority\n\n\n\n\nh\nCranes\nNaN\n2\nyes\n\n\ni\nspoonbills\n8.0\n3\nno\n\n\nj\nspoonbills\n4.0\n2\nno\n\n\n\n\n\n\n\n\npolars_df.tail(3)\n\n\nshape: (3, 5)\n\n\n\nbirds\nage\nvisits\npriority\nindex\n\n\ncat\nf64\ni32\ncat\nstr\n\n\n\n\n\"Cranes\"\nNaN\n2\n\"yes\"\n\"h\"\n\n\n\"spoonbills\"\n8.0\n3\n\"no\"\n\"i\"\n\n\n\"spoonbills\"\n4.0\n2\n\"no\"\n\"j\"\n\n\n\n\n\n\n\n\n\n\npandas_df[['birds', 'age']] \n\n\n\n\n\n\n\n\nbirds\nage\n\n\n\n\na\nCranes\n3.5\n\n\nb\nCranes\n4.0\n\n\nc\nplovers\n1.5\n\n\nd\nspoonbills\nNaN\n\n\ne\nspoonbills\n6.0\n\n\nf\nCranes\n3.0\n\n\ng\nplovers\n5.5\n\n\nh\nCranes\nNaN\n\n\ni\nspoonbills\n8.0\n\n\nj\nspoonbills\n4.0\n\n\n\n\n\n\n\n\npolars_df.select(['birds', 'age'])\n\n\nshape: (10, 2)\n\n\n\nbirds\nage\n\n\ncat\nf64\n\n\n\n\n\"Cranes\"\n3.5\n\n\n\"Cranes\"\n4.0\n\n\n\"plovers\"\n1.5\n\n\n\"spoonbills\"\nNaN\n\n\n\"spoonbills\"\n6.0\n\n\n\"Cranes\"\n3.0\n\n\n\"plovers\"\n5.5\n\n\n\"Cranes\"\nNaN\n\n\n\"spoonbills\"\n8.0\n\n\n\"spoonbills\"\n4.0"
+  },
+  {
+    "objectID": "posts/pandas-to-polars/index.html#import-libraries",
+    "href": "posts/pandas-to-polars/index.html#import-libraries",
+    "title": "From Pandas to Polars",
+    "section": "",
+    "text": "import numpy as np\n\nimport pandas as pd\nimport polars as pl"
+  },
+  {
+    "objectID": "posts/pandas-to-polars/index.html#create-dummy-data",
+    "href": "posts/pandas-to-polars/index.html#create-dummy-data",
+    "title": "From Pandas to Polars",
+    "section": "",
+    "text": "data = {'birds': ['Cranes', 'Cranes', 'plovers', 'spoonbills', 'spoonbills', 'Cranes', 'plovers', 'Cranes', 'spoonbills', 'spoonbills'],\n        'age': [3.5, 4, 1.5, np.nan, 6, 3, 5.5, np.nan, 8, 4],\n        'visits': [2, 4, 3, 4, 3, 4, 2, 2, 3, 2],\n        'priority': ['yes', 'yes', 'no', 'yes', 'no', 'no', 'no', 'yes', 'no', 'no']}\n\nlabels = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']"
+  },
+  {
+    "objectID": "posts/pandas-to-polars/index.html#create-pandas-dataframe",
+    "href": "posts/pandas-to-polars/index.html#create-pandas-dataframe",
+    "title": "From Pandas to Polars",
+    "section": "",
+    "text": "pandas_df = pd.DataFrame(data, index=labels)\npandas_df\n\n\n\n\n\n\n\n\nbirds\nage\nvisits\npriority\n\n\n\n\na\nCranes\n3.5\n2\nyes\n\n\nb\nCranes\n4.0\n4\nyes\n\n\nc\nplovers\n1.5\n3\nno\n\n\nd\nspoonbills\nNaN\n4\nyes\n\n\ne\nspoonbills\n6.0\n3\nno\n\n\nf\nCranes\n3.0\n4\nno\n\n\ng\nplovers\n5.5\n2\nno\n\n\nh\nCranes\nNaN\n2\nyes\n\n\ni\nspoonbills\n8.0\n3\nno\n\n\nj\nspoonbills\n4.0\n2\nno"
+  },
+  {
+    "objectID": "posts/pandas-to-polars/index.html#create-polars-dataframe",
+    "href": "posts/pandas-to-polars/index.html#create-polars-dataframe",
+    "title": "From Pandas to Polars",
+    "section": "",
+    "text": "polars_df = pl.DataFrame(data, schema={\"birds\": pl.Categorical, \"age\": pl.Float64, \"visits\": pl.Int32, \"priority\": pl.Categorical})\npolars_df = polars_df.with_columns(pl.Series(name='index', values=labels))\npolars_df\n\n\nshape: (10, 5)\n\n\n\nbirds\nage\nvisits\npriority\nindex\n\n\ncat\nf64\ni32\ncat\nstr\n\n\n\n\n\"Cranes\"\n3.5\n2\n\"yes\"\n\"a\"\n\n\n\"Cranes\"\n4.0\n4\n\"yes\"\n\"b\"\n\n\n\"plovers\"\n1.5\n3\n\"no\"\n\"c\"\n\n\n\"spoonbills\"\nNaN\n4\n\"yes\"\n\"d\"\n\n\n\"spoonbills\"\n6.0\n3\n\"no\"\n\"e\"\n\n\n\"Cranes\"\n3.0\n4\n\"no\"\n\"f\"\n\n\n\"plovers\"\n5.5\n2\n\"no\"\n\"g\"\n\n\n\"Cranes\"\nNaN\n2\n\"yes\"\n\"h\"\n\n\n\"spoonbills\"\n8.0\n3\n\"no\"\n\"i\"\n\n\n\"spoonbills\"\n4.0\n2\n\"no\"\n\"j\""
+  },
+  {
+    "objectID": "posts/pandas-to-polars/index.html#display-a-summary-of-the-basic-information-about-birds-dataframe-and-its-data.",
+    "href": "posts/pandas-to-polars/index.html#display-a-summary-of-the-basic-information-about-birds-dataframe-and-its-data.",
+    "title": "From Pandas to Polars",
+    "section": "",
+    "text": "The method describe() shows different statistical data for numeric columns (like age) and columns with strings or timestamps (like priority, which is treated as a string column in pandas). It is the same for both pandas and polars.\n\npandas_df.describe()\n\n\n\n\n\n\n\n\nage\nvisits\n\n\n\n\ncount\n8.000000\n10.000000\n\n\nmean\n4.437500\n2.900000\n\n\nstd\n2.007797\n0.875595\n\n\nmin\n1.500000\n2.000000\n\n\n25%\n3.375000\n2.000000\n\n\n50%\n4.000000\n3.000000\n\n\n75%\n5.625000\n3.750000\n\n\nmax\n8.000000\n4.000000\n\n\n\n\n\n\n\n\npolars_df.describe()\n\n\nshape: (9, 6)\n\n\n\nstatistic\nbirds\nage\nvisits\npriority\nindex\n\n\nstr\nstr\nf64\nf64\nstr\nstr\n\n\n\n\n\"count\"\n\"10\"\n10.0\n10.0\n\"10\"\n\"10\"\n\n\n\"null_count\"\n\"0\"\n0.0\n0.0\n\"0\"\n\"0\"\n\n\n\"mean\"\nnull\nNaN\n2.9\nnull\nnull\n\n\n\"std\"\nnull\nNaN\n0.875595\nnull\nnull\n\n\n\"min\"\nnull\n1.5\n2.0\nnull\n\"a\"\n\n\n\"25%\"\nnull\n3.5\n2.0\nnull\nnull\n\n\n\"50%\"\nnull\n5.5\n3.0\nnull\nnull\n\n\n\"75%\"\nnull\n8.0\n4.0\nnull\nnull\n\n\n\"max\"\nnull\n8.0\n4.0\nnull\n\"j\""
+  },
+  {
+    "objectID": "posts/pandas-to-polars/index.html#print-the-first-2-rows-of-the-birds-dataframe",
+    "href": "posts/pandas-to-polars/index.html#print-the-first-2-rows-of-the-birds-dataframe",
+    "title": "From Pandas to Polars",
+    "section": "",
+    "text": "The method head() displays the first 5 rows of the DataFrame. It is the same for both pandas and polars. Including a number in the method head() will display the first n rows of the DataFrame.\n\npandas_df.head(2)\n\n\n\n\n\n\n\n\nbirds\nage\nvisits\npriority\n\n\n\n\na\nCranes\n3.5\n2\nyes\n\n\nb\nCranes\n4.0\n4\nyes\n\n\n\n\n\n\n\n\npolars_df.head(2)\n\n\nshape: (2, 5)\n\n\n\nbirds\nage\nvisits\npriority\nindex\n\n\ncat\nf64\ni32\ncat\nstr\n\n\n\n\n\"Cranes\"\n3.5\n2\n\"yes\"\n\"a\"\n\n\n\"Cranes\"\n4.0\n4\n\"yes\"\n\"b\""
+  },
+  {
+    "objectID": "posts/pandas-to-polars/index.html#display-the-last-3-rows-of-the-birds-dataframe",
+    "href": "posts/pandas-to-polars/index.html#display-the-last-3-rows-of-the-birds-dataframe",
+    "title": "From Pandas to Polars",
+    "section": "",
+    "text": "The method tail() displays the last 5 rows of the DataFrame. It is the same for both pandas and polars. Including a number in the method tail() will display the last n rows of the DataFrame.\n\npandas_df.tail(3)\n\n\n\n\n\n\n\n\nbirds\nage\nvisits\npriority\n\n\n\n\nh\nCranes\nNaN\n2\nyes\n\n\ni\nspoonbills\n8.0\n3\nno\n\n\nj\nspoonbills\n4.0\n2\nno\n\n\n\n\n\n\n\n\npolars_df.tail(3)\n\n\nshape: (3, 5)\n\n\n\nbirds\nage\nvisits\npriority\nindex\n\n\ncat\nf64\ni32\ncat\nstr\n\n\n\n\n\"Cranes\"\nNaN\n2\n\"yes\"\n\"h\"\n\n\n\"spoonbills\"\n8.0\n3\n\"no\"\n\"i\"\n\n\n\"spoonbills\"\n4.0\n2\n\"no\"\n\"j\""
+  },
+  {
+    "objectID": "posts/pandas-to-polars/index.html#select-only-the-birds-and-age-columns-from-the-dataframe.",
+    "href": "posts/pandas-to-polars/index.html#select-only-the-birds-and-age-columns-from-the-dataframe.",
+    "title": "From Pandas to Polars",
+    "section": "",
+    "text": "pandas_df[['birds', 'age']] \n\n\n\n\n\n\n\n\nbirds\nage\n\n\n\n\na\nCranes\n3.5\n\n\nb\nCranes\n4.0\n\n\nc\nplovers\n1.5\n\n\nd\nspoonbills\nNaN\n\n\ne\nspoonbills\n6.0\n\n\nf\nCranes\n3.0\n\n\ng\nplovers\n5.5\n\n\nh\nCranes\nNaN\n\n\ni\nspoonbills\n8.0\n\n\nj\nspoonbills\n4.0\n\n\n\n\n\n\n\n\npolars_df.select(['birds', 'age'])\n\n\nshape: (10, 2)\n\n\n\nbirds\nage\n\n\ncat\nf64\n\n\n\n\n\"Cranes\"\n3.5\n\n\n\"Cranes\"\n4.0\n\n\n\"plovers\"\n1.5\n\n\n\"spoonbills\"\nNaN\n\n\n\"spoonbills\"\n6.0\n\n\n\"Cranes\"\n3.0\n\n\n\"plovers\"\n5.5\n\n\n\"Cranes\"\nNaN\n\n\n\"spoonbills\"\n8.0\n\n\n\"spoonbills\"\n4.0"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "My posts",
     "section": "",
-    "text": "Welcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\nKrishnatheja Vanka\n\n\nMar 22, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\nKrishnatheja Vanka\n\n\nFeb 8, 2025\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "From Pandas to Polars\n\n\n\ncode\n\ntutorial\n\n\n\n\n\n\n\nKrishnatheja Vanka\n\n\nMay 19, 2025\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\nKrishnatheja Vanka\n\n\nMar 22, 2025\n\n\n\n\n\n\nNo matching items"
   }
 ]
