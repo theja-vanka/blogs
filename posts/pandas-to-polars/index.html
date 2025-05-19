@@ -60,7 +60,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -105,9 +105,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 <link rel="stylesheet" href="../../styles.css">
@@ -195,2078 +192,796 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="pvp.jpg" class="img-fluid"></p>
 <p>As datasets grow in size and complexity, performance and efficiency become critical in data processing. While Pandas has long been the go-to library for data manipulation in Python, it can struggle with speed and memory usage, especially on large datasets. Polars, a newer DataFrame library written in Rust, offers a faster, more memory-efficient alternative with support for lazy evaluation and multi-threading.</p>
 <p>This guide explores how to convert Pandas DataFrames to Polars, and highlights key differences in syntax, performance, and functionality. Whether you’re looking to speed up your data workflows or just exploring modern tools, understanding the transition from Pandas to Polars is a valuable step.</p>
-<section id="import-libraries" class="level2">
-<h2 class="anchored" data-anchor-id="import-libraries">1. Import libraries</h2>
-<div id="e40a0452" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="table-of-contents" class="level2">
+<h2 class="anchored" data-anchor-id="table-of-contents">Table of Contents</h2>
+<ol type="1">
+<li><a href="#installation-and-setup">Installation and Setup</a></li>
+<li><a href="#creating-dataframes">Creating DataFrames</a></li>
+<li><a href="#basic-operations">Basic Operations</a></li>
+<li><a href="#filtering-data">Filtering Data</a></li>
+<li><a href="#grouping-and-aggregation">Grouping and Aggregation</a></li>
+<li><a href="#joiningmerging-dataframes">Joining/Merging DataFrames</a></li>
+<li><a href="#handling-missing-values">Handling Missing Values</a></li>
+<li><a href="#string-operations">String Operations</a></li>
+<li><a href="#time-series-operations">Time Series Operations</a></li>
+<li><a href="#performance-comparison">Performance Comparison</a></li>
+<li><a href="#api-philosophy-differences">API Philosophy Differences</a></li>
+<li><a href="#migration-guide">Migration Guide</a></li>
+</ol>
+</section>
+<section id="installation-and-setup" class="level2">
+<h2 class="anchored" data-anchor-id="installation-and-setup">Installation and Setup</h2>
+<section id="pandas" class="level3">
+<h3 class="anchored" data-anchor-id="pandas">Pandas</h3>
+<div id="a2590dd1" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import pandas</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="create-dummy-data" class="level2">
-<h2 class="anchored" data-anchor-id="create-dummy-data">2. Create dummy data</h2>
-<div id="35ed15de" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'birds'</span>: [<span class="st">'Cranes'</span>, <span class="st">'Cranes'</span>, <span class="st">'plovers'</span>, <span class="st">'spoonbills'</span>, <span class="st">'spoonbills'</span>, <span class="st">'Cranes'</span>, <span class="st">'plovers'</span>, <span class="st">'Cranes'</span>, <span class="st">'spoonbills'</span>, <span class="st">'spoonbills'</span>],</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'age'</span>: [<span class="fl">3.5</span>, <span class="dv">4</span>, <span class="fl">1.5</span>, np.nan, <span class="dv">6</span>, <span class="dv">3</span>, <span class="fl">5.5</span>, np.nan, <span class="dv">8</span>, <span class="dv">4</span>],</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">'visits'</span>: [<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">2</span>],</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">'priority'</span>: [<span class="st">'yes'</span>, <span class="st">'yes'</span>, <span class="st">'no'</span>, <span class="st">'yes'</span>, <span class="st">'no'</span>, <span class="st">'no'</span>, <span class="st">'no'</span>, <span class="st">'yes'</span>, <span class="st">'no'</span>, <span class="st">'no'</span>]</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> [<span class="st">'a'</span>, <span class="st">'b'</span>, <span class="st">'c'</span>, <span class="st">'d'</span>, <span class="st">'e'</span>, <span class="st">'f'</span>, <span class="st">'g'</span>, <span class="st">'h'</span>, <span class="st">'i'</span>, <span class="st">'j'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="polars" class="level3">
+<h3 class="anchored" data-anchor-id="polars">Polars</h3>
+<div id="29d42fc8" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import polars</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="create-pandas-dataframe" class="level2">
-<h2 class="anchored" data-anchor-id="create-pandas-dataframe">3. Create Pandas DataFrame</h2>
-<div id="1a6051b7" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pandas_df <span class="op">=</span> pd.DataFrame(data, index<span class="op">=</span>labels)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pandas_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">a</td>
-<td>Cranes</td>
-<td>3.5</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">b</td>
-<td>Cranes</td>
-<td>4.0</td>
-<td>4</td>
-<td>yes</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">c</td>
-<td>plovers</td>
-<td>1.5</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">d</td>
-<td>spoonbills</td>
-<td>NaN</td>
-<td>4</td>
-<td>yes</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">e</td>
-<td>spoonbills</td>
-<td>6.0</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">f</td>
-<td>Cranes</td>
-<td>3.0</td>
-<td>4</td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">g</td>
-<td>plovers</td>
-<td>5.5</td>
-<td>2</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">h</td>
-<td>Cranes</td>
-<td>NaN</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">i</td>
-<td>spoonbills</td>
-<td>8.0</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">j</td>
-<td>spoonbills</td>
-<td>4.0</td>
-<td>2</td>
-<td>no</td>
-</tr>
-</tbody>
-</table>
-
-</div>
+</section>
+<section id="creating-dataframes" class="level2">
+<h2 class="anchored" data-anchor-id="creating-dataframes">Creating DataFrames</h2>
+<section id="from-dictionaries" class="level3">
+<h3 class="anchored" data-anchor-id="from-dictionaries">From dictionaries</h3>
+<section id="pandas-1" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-1">Pandas</h4>
+<div id="3747999a" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create DataFrame from dictionary</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> {</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'name'</span>: [<span class="st">'Alice'</span>, <span class="st">'Bob'</span>, <span class="st">'Charlie'</span>, <span class="st">'David'</span>],</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'age'</span>: [<span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>],</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'city'</span>: [<span class="st">'New York'</span>, <span class="st">'Los Angeles'</span>, <span class="st">'Chicago'</span>, <span class="st">'Houston'</span>]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>df_pd <span class="op">=</span> pd.DataFrame(data)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_pd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      name  age         city
+0    Alice   25     New York
+1      Bob   30  Los Angeles
+2  Charlie   35      Chicago
+3    David   40      Houston</code></pre>
 </div>
 </div>
 </section>
-<section id="create-polars-dataframe" class="level2">
-<h2 class="anchored" data-anchor-id="create-polars-dataframe">4. Create Polars DataFrame</h2>
-<div id="6480fdf7" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>polars_df <span class="op">=</span> pl.DataFrame(data)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>polars_df <span class="op">=</span> polars_df.with_columns(pl.Series(name<span class="op">=</span><span class="st">'index'</span>, values<span class="op">=</span>labels))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>polars_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (10, 5)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-<th data-quarto-table-cell-role="th">index</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>f64</th>
-<th>i64</th>
-<th>str</th>
-<th>str</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>3.5</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"a"</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>4.0</td>
-<td>4</td>
-<td>"yes"</td>
-<td>"b"</td>
-</tr>
-<tr class="odd">
-<td>"plovers"</td>
-<td>1.5</td>
-<td>3</td>
-<td>"no"</td>
-<td>"c"</td>
-</tr>
-<tr class="even">
-<td>"spoonbills"</td>
-<td>NaN</td>
-<td>4</td>
-<td>"yes"</td>
-<td>"d"</td>
-</tr>
-<tr class="odd">
-<td>"spoonbills"</td>
-<td>6.0</td>
-<td>3</td>
-<td>"no"</td>
-<td>"e"</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>3.0</td>
-<td>4</td>
-<td>"no"</td>
-<td>"f"</td>
-</tr>
-<tr class="odd">
-<td>"plovers"</td>
-<td>5.5</td>
-<td>2</td>
-<td>"no"</td>
-<td>"g"</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>NaN</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"h"</td>
-</tr>
-<tr class="odd">
-<td>"spoonbills"</td>
-<td>8.0</td>
-<td>3</td>
-<td>"no"</td>
-<td>"i"</td>
-</tr>
-<tr class="even">
-<td>"spoonbills"</td>
-<td>4.0</td>
-<td>2</td>
-<td>"no"</td>
-<td>"j"</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="display-a-summary-of-the-basic-information-about-birds-dataframe-and-its-data." class="level2">
-<h2 class="anchored" data-anchor-id="display-a-summary-of-the-basic-information-about-birds-dataframe-and-its-data.">5. Display a summary of the basic information about birds DataFrame and its data.</h2>
-<p>The method <code>describe()</code> shows different statistical data for numeric columns (like age) and columns with strings or timestamps (like priority, which is treated as a string column in pandas). It is the same for both pandas and polars.</p>
-<div id="c14ca04f" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pandas_df.describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">count</td>
-<td>8.000000</td>
-<td>10.000000</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">mean</td>
-<td>4.437500</td>
-<td>2.900000</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">std</td>
-<td>2.007797</td>
-<td>0.875595</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">min</td>
-<td>1.500000</td>
-<td>2.000000</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">25%</td>
-<td>3.375000</td>
-<td>2.000000</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">50%</td>
-<td>4.000000</td>
-<td>3.000000</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">75%</td>
-<td>5.625000</td>
-<td>3.750000</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">max</td>
-<td>8.000000</td>
-<td>4.000000</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="30e51618" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>polars_df.describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (9, 6)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">statistic</th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-<th data-quarto-table-cell-role="th">index</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>str</th>
-<th>f64</th>
-<th>f64</th>
-<th>str</th>
-<th>str</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"count"</td>
-<td>"10"</td>
-<td>10.0</td>
-<td>10.0</td>
-<td>"10"</td>
-<td>"10"</td>
-</tr>
-<tr class="even">
-<td>"null_count"</td>
-<td>"0"</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>"0"</td>
-<td>"0"</td>
-</tr>
-<tr class="odd">
-<td>"mean"</td>
-<td>null</td>
-<td>NaN</td>
-<td>2.9</td>
-<td>null</td>
-<td>null</td>
-</tr>
-<tr class="even">
-<td>"std"</td>
-<td>null</td>
-<td>NaN</td>
-<td>0.875595</td>
-<td>null</td>
-<td>null</td>
-</tr>
-<tr class="odd">
-<td>"min"</td>
-<td>"Cranes"</td>
-<td>1.5</td>
-<td>2.0</td>
-<td>"no"</td>
-<td>"a"</td>
-</tr>
-<tr class="even">
-<td>"25%"</td>
-<td>null</td>
-<td>3.5</td>
-<td>2.0</td>
-<td>null</td>
-<td>null</td>
-</tr>
-<tr class="odd">
-<td>"50%"</td>
-<td>null</td>
-<td>5.5</td>
-<td>3.0</td>
-<td>null</td>
-<td>null</td>
-</tr>
-<tr class="even">
-<td>"75%"</td>
-<td>null</td>
-<td>8.0</td>
-<td>4.0</td>
-<td>null</td>
-<td>null</td>
-</tr>
-<tr class="odd">
-<td>"max"</td>
-<td>"spoonbills"</td>
-<td>8.0</td>
-<td>4.0</td>
-<td>"yes"</td>
-<td>"j"</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="print-the-first-2-rows-of-the-birds-dataframe" class="level2">
-<h2 class="anchored" data-anchor-id="print-the-first-2-rows-of-the-birds-dataframe">6. Print the first 2 rows of the birds dataframe</h2>
-<p>The method <code>head()</code> displays the first 5 rows of the DataFrame. It is the same for both pandas and polars. Including a number in the method <code>head()</code> will display the first n rows of the DataFrame.</p>
-<div id="48295054" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pandas_df.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">a</td>
-<td>Cranes</td>
-<td>3.5</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">b</td>
-<td>Cranes</td>
-<td>4.0</td>
-<td>4</td>
-<td>yes</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="8bf13965" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>polars_df.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="8">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (2, 5)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-<th data-quarto-table-cell-role="th">index</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>f64</th>
-<th>i64</th>
-<th>str</th>
-<th>str</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>3.5</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"a"</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>4.0</td>
-<td>4</td>
-<td>"yes"</td>
-<td>"b"</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="display-the-last-3-rows-of-the-birds-dataframe" class="level2">
-<h2 class="anchored" data-anchor-id="display-the-last-3-rows-of-the-birds-dataframe">7. Display the last 3 rows of the birds dataframe</h2>
-<p>The method <code>tail()</code> displays the last 5 rows of the DataFrame. It is the same for both pandas and polars. Including a number in the method <code>tail()</code> will display the last n rows of the DataFrame.</p>
-<div id="34e6c566" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pandas_df.tail(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">h</td>
-<td>Cranes</td>
-<td>NaN</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">i</td>
-<td>spoonbills</td>
-<td>8.0</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">j</td>
-<td>spoonbills</td>
-<td>4.0</td>
-<td>2</td>
-<td>no</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="403a4678" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>polars_df.tail(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (3, 5)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-<th data-quarto-table-cell-role="th">index</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>f64</th>
-<th>i64</th>
-<th>str</th>
-<th>str</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>NaN</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"h"</td>
-</tr>
-<tr class="even">
-<td>"spoonbills"</td>
-<td>8.0</td>
-<td>3</td>
-<td>"no"</td>
-<td>"i"</td>
-</tr>
-<tr class="odd">
-<td>"spoonbills"</td>
-<td>4.0</td>
-<td>2</td>
-<td>"no"</td>
-<td>"j"</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="select-only-the-birds-and-age-columns-from-the-dataframe." class="level2">
-<h2 class="anchored" data-anchor-id="select-only-the-birds-and-age-columns-from-the-dataframe.">8. Select only the ‘birds’ and ‘age’ columns from the DataFrame.</h2>
-<p>In pandas, you can use the <code>[]</code> operator to select columns by name. In polars, you can use the <code>select()</code> method to select columns by name.</p>
-<div id="33ae5afa" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pandas_df[[<span class="st">'birds'</span>, <span class="st">'age'</span>]] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">a</td>
-<td>Cranes</td>
-<td>3.5</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">b</td>
-<td>Cranes</td>
-<td>4.0</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">c</td>
-<td>plovers</td>
-<td>1.5</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">d</td>
-<td>spoonbills</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">e</td>
-<td>spoonbills</td>
-<td>6.0</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">f</td>
-<td>Cranes</td>
-<td>3.0</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">g</td>
-<td>plovers</td>
-<td>5.5</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">h</td>
-<td>Cranes</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">i</td>
-<td>spoonbills</td>
-<td>8.0</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">j</td>
-<td>spoonbills</td>
-<td>4.0</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="3fd53a58" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>polars_df.select([<span class="st">'index'</span>, <span class="st">'birds'</span>, <span class="st">'age'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="12">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (10, 3)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">index</th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>str</th>
-<th>f64</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"a"</td>
-<td>"Cranes"</td>
-<td>3.5</td>
-</tr>
-<tr class="even">
-<td>"b"</td>
-<td>"Cranes"</td>
-<td>4.0</td>
-</tr>
-<tr class="odd">
-<td>"c"</td>
-<td>"plovers"</td>
-<td>1.5</td>
-</tr>
-<tr class="even">
-<td>"d"</td>
-<td>"spoonbills"</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<td>"e"</td>
-<td>"spoonbills"</td>
-<td>6.0</td>
-</tr>
-<tr class="even">
-<td>"f"</td>
-<td>"Cranes"</td>
-<td>3.0</td>
-</tr>
-<tr class="odd">
-<td>"g"</td>
-<td>"plovers"</td>
-<td>5.5</td>
-</tr>
-<tr class="even">
-<td>"h"</td>
-<td>"Cranes"</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<td>"i"</td>
-<td>"spoonbills"</td>
-<td>8.0</td>
-</tr>
-<tr class="even">
-<td>"j"</td>
-<td>"spoonbills"</td>
-<td>4.0</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="select-2-3-7-rows-and-in-columns-birds-age-visits" class="level2">
-<h2 class="anchored" data-anchor-id="select-2-3-7-rows-and-in-columns-birds-age-visits">9. Select [2, 3, 7] rows and in columns [‘birds’, ‘age’, ‘visits’]</h2>
-<p>In pandas, you can use the <code>iloc</code> method to select rows and columns by index. In polars, you can use the <code>[]</code> operator to select rows and columns by index. The following code selects rows 2, 3, and 7 and columns ‘birds’, ‘age’, and ‘visits’ from the polars DataFrame. The output shows the values in those cells.</p>
-<div id="8749cf9e" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pandas_df[[<span class="st">'birds'</span>,<span class="st">'age'</span>,<span class="st">'visits'</span>]].iloc[[<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">7</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="13">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">c</td>
-<td>plovers</td>
-<td>1.5</td>
-<td>3</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">d</td>
-<td>spoonbills</td>
-<td>NaN</td>
-<td>4</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">h</td>
-<td>Cranes</td>
-<td>NaN</td>
-<td>2</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="19693d70" class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>polars_df[[<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">7</span>]].select([<span class="st">"index"</span>, <span class="st">"birds"</span>, <span class="st">"age"</span>, <span class="st">"visits"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (3, 4)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">index</th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>str</th>
-<th>f64</th>
-<th>i64</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"c"</td>
-<td>"plovers"</td>
-<td>1.5</td>
-<td>3</td>
-</tr>
-<tr class="even">
-<td>"d"</td>
-<td>"spoonbills"</td>
-<td>NaN</td>
-<td>4</td>
-</tr>
-<tr class="odd">
-<td>"h"</td>
-<td>"Cranes"</td>
-<td>NaN</td>
-<td>2</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="select-the-rows-where-the-number-of-visits-is-less-than-4" class="level2">
-<h2 class="anchored" data-anchor-id="select-the-rows-where-the-number-of-visits-is-less-than-4">10. Select the rows where the number of visits is less than 4</h2>
-<p>In pandas, you can use the <code>loc</code> method to select rows based on a boolean condition. In polars, you can use the <code>filter()</code> method to select rows based on a boolean condition.</p>
-<div id="3b303087" class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>pandas_df.loc[pandas_df[<span class="st">'visits'</span>] <span class="op">&lt;</span> <span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">a</td>
-<td>Cranes</td>
-<td>3.5</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">c</td>
-<td>plovers</td>
-<td>1.5</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">e</td>
-<td>spoonbills</td>
-<td>6.0</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">g</td>
-<td>plovers</td>
-<td>5.5</td>
-<td>2</td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">h</td>
-<td>Cranes</td>
-<td>NaN</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">i</td>
-<td>spoonbills</td>
-<td>8.0</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">j</td>
-<td>spoonbills</td>
-<td>4.0</td>
-<td>2</td>
-<td>no</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="1ee65464" class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>polars_df.<span class="bu">filter</span>(pl.col(<span class="st">'visits'</span>) <span class="op">&lt;</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (7, 5)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-<th data-quarto-table-cell-role="th">index</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>f64</th>
-<th>i64</th>
-<th>str</th>
-<th>str</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>3.5</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"a"</td>
-</tr>
-<tr class="even">
-<td>"plovers"</td>
-<td>1.5</td>
-<td>3</td>
-<td>"no"</td>
-<td>"c"</td>
-</tr>
-<tr class="odd">
-<td>"spoonbills"</td>
-<td>6.0</td>
-<td>3</td>
-<td>"no"</td>
-<td>"e"</td>
-</tr>
-<tr class="even">
-<td>"plovers"</td>
-<td>5.5</td>
-<td>2</td>
-<td>"no"</td>
-<td>"g"</td>
-</tr>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>NaN</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"h"</td>
-</tr>
-<tr class="even">
-<td>"spoonbills"</td>
-<td>8.0</td>
-<td>3</td>
-<td>"no"</td>
-<td>"i"</td>
-</tr>
-<tr class="odd">
-<td>"spoonbills"</td>
-<td>4.0</td>
-<td>2</td>
-<td>"no"</td>
-<td>"j"</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="select-the-rows-with-columns-birds-visits-where-the-age-is-missing-i.e-nan" class="level2">
-<h2 class="anchored" data-anchor-id="select-the-rows-with-columns-birds-visits-where-the-age-is-missing-i.e-nan">11. Select the rows with columns [‘birds’, ‘visits’] where the age is missing i.e NaN</h2>
-<p>In pandas, you can use the <code>isnull()</code> method to check for missing values and then use the <code>loc</code> method to select rows based on a boolean condition. In polars, you can use the <code>filter()</code> method to select rows based on a boolean condition.</p>
-<div id="f0c8e303" class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>pandas_df.loc[pandas_df[<span class="st">'age'</span>].isnull(), [<span class="st">'birds'</span>, <span class="st">'visits'</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">visits</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">d</td>
-<td>spoonbills</td>
-<td>4</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">h</td>
-<td>Cranes</td>
-<td>2</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="2fe7ed12" class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>polars_df.<span class="bu">filter</span>(pl.col(<span class="st">'age'</span>).is_nan()).select([<span class="st">'index'</span>, <span class="st">'birds'</span>, <span class="st">'visits'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="18">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (2, 3)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">index</th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">visits</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>str</th>
-<th>i64</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"d"</td>
-<td>"spoonbills"</td>
-<td>4</td>
-</tr>
-<tr class="even">
-<td>"h"</td>
-<td>"Cranes"</td>
-<td>2</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="select-the-rows-where-the-birds-is-a-cranes-and-the-age-is-less-than-4" class="level2">
-<h2 class="anchored" data-anchor-id="select-the-rows-where-the-birds-is-a-cranes-and-the-age-is-less-than-4">12. Select the rows where the birds is a Cranes and the age is less than 4</h2>
-<div id="cb3801d2" class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>pandas_df.loc[(pandas_df[<span class="st">'birds'</span>] <span class="op">==</span> <span class="st">'Cranes'</span>) <span class="op">&amp;</span> (pandas_df[<span class="st">'age'</span>] <span class="op">&lt;</span> <span class="dv">4</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="19">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">a</td>
-<td>Cranes</td>
-<td>3.5</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">f</td>
-<td>Cranes</td>
-<td>3.0</td>
-<td>4</td>
-<td>no</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="a8a6fb31" class="cell" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>polars_df.<span class="bu">filter</span>((pl.col(<span class="st">'birds'</span>) <span class="op">==</span> <span class="st">'Cranes'</span>) <span class="op">&amp;</span> (pl.col(<span class="st">'age'</span>) <span class="op">&lt;</span> <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (2, 5)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-<th data-quarto-table-cell-role="th">index</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>f64</th>
-<th>i64</th>
-<th>str</th>
-<th>str</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>3.5</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"a"</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>3.0</td>
-<td>4</td>
-<td>"no"</td>
-<td>"f"</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="select-the-rows-the-age-is-between-2-and-4inclusive" class="level2">
-<h2 class="anchored" data-anchor-id="select-the-rows-the-age-is-between-2-and-4inclusive">13 .Select the rows the age is between 2 and 4(inclusive)</h2>
-<div id="68039b28" class="cell" data-execution_count="21">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>pandas_df.loc[pandas_df[<span class="st">'age'</span>].between(<span class="dv">2</span>, <span class="dv">4</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">a</td>
-<td>Cranes</td>
-<td>3.5</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">b</td>
-<td>Cranes</td>
-<td>4.0</td>
-<td>4</td>
-<td>yes</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">f</td>
-<td>Cranes</td>
-<td>3.0</td>
-<td>4</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">j</td>
-<td>spoonbills</td>
-<td>4.0</td>
-<td>2</td>
-<td>no</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="5056aa39" class="cell" data-execution_count="22">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>polars_df.<span class="bu">filter</span>(pl.col(<span class="st">'age'</span>).is_between(<span class="dv">2</span>, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (4, 5)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-<th data-quarto-table-cell-role="th">index</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>f64</th>
-<th>i64</th>
-<th>str</th>
-<th>str</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>3.5</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"a"</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>4.0</td>
-<td>4</td>
-<td>"yes"</td>
-<td>"b"</td>
-</tr>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>3.0</td>
-<td>4</td>
-<td>"no"</td>
-<td>"f"</td>
-</tr>
-<tr class="even">
-<td>"spoonbills"</td>
-<td>4.0</td>
-<td>2</td>
-<td>"no"</td>
-<td>"j"</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="find-the-total-number-of-visits-of-the-bird-cranes" class="level2">
-<h2 class="anchored" data-anchor-id="find-the-total-number-of-visits-of-the-bird-cranes">14. Find the total number of visits of the bird Cranes</h2>
-<div id="dec136a9" class="cell" data-execution_count="23">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>pandas_df.loc[pandas_df[<span class="st">'birds'</span>] <span class="op">==</span> <span class="st">'Cranes'</span>, <span class="st">'visits'</span>].<span class="bu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="23">
-<pre><code>np.int64(12)</code></pre>
-</div>
-</div>
-<div id="7890c447" class="cell" data-execution_count="24">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>polars_df.<span class="bu">filter</span>(pl.col(<span class="st">'birds'</span>) <span class="op">==</span> <span class="st">'Cranes'</span>).select(pl.col(<span class="st">'visits'</span>).<span class="bu">sum</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="24">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (1, 1)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">visits</th>
-</tr>
-<tr class="even">
-<th>i64</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>12</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="calculate-the-mean-age-for-each-different-birds-in-dataframe." class="level2">
-<h2 class="anchored" data-anchor-id="calculate-the-mean-age-for-each-different-birds-in-dataframe.">15. Calculate the mean age for each different birds in dataframe.</h2>
-<div id="41ac68c9" class="cell" data-execution_count="25">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>pandas_df.groupby(<span class="st">'birds'</span>)[<span class="st">'age'</span>].mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="25">
-<pre><code>birds
-Cranes        3.5
-plovers       3.5
-spoonbills    6.0
-Name: age, dtype: float64</code></pre>
-</div>
-</div>
-<div id="52984126" class="cell" data-execution_count="26">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>polars_df.group_by(<span class="st">'birds'</span>).agg(pl.col(<span class="st">'age'</span>).mean())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="26">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (3, 2)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>f64</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"spoonbills"</td>
-<td>NaN</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<td>"plovers"</td>
-<td>3.5</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="append-a-new-row-k-to-dataframe-with-your-choice-of-values-for-each-column.-then-delete-that-row-to-return-the-original-dataframe." class="level2">
-<h2 class="anchored" data-anchor-id="append-a-new-row-k-to-dataframe-with-your-choice-of-values-for-each-column.-then-delete-that-row-to-return-the-original-dataframe.">16. Append a new row ‘k’ to dataframe with your choice of values for each column. Then delete that row to return the original DataFrame.</h2>
-<section id="a.-creating-new-data-row" class="level3">
-<h3 class="anchored" data-anchor-id="a.-creating-new-data-row">a. Creating new data row</h3>
-<div id="df2a621a" class="cell" data-execution_count="27">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>new_data <span class="op">=</span> {</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'birds'</span>: <span class="st">'Cranes'</span>,</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'age'</span>: <span class="fl">7.0</span>,</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">'visits'</span>: <span class="dv">2</span>,</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">'priority'</span>: <span class="st">'yes'</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="b.-append-new-row-to-pandas-dataframe" class="level3">
-<h3 class="anchored" data-anchor-id="b.-append-new-row-to-pandas-dataframe">b. Append new row to pandas dataframe</h3>
-<div id="0976dc23" class="cell" data-execution_count="28">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>_df <span class="op">=</span> pd.DataFrame(new_data, index<span class="op">=</span>[<span class="st">'k'</span>])</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>pandas_df <span class="op">=</span> pd.concat([pandas_df, _df])</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>pandas_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="28">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">a</td>
-<td>Cranes</td>
-<td>3.5</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">b</td>
-<td>Cranes</td>
-<td>4.0</td>
-<td>4</td>
-<td>yes</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">c</td>
-<td>plovers</td>
-<td>1.5</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">d</td>
-<td>spoonbills</td>
-<td>NaN</td>
-<td>4</td>
-<td>yes</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">e</td>
-<td>spoonbills</td>
-<td>6.0</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">f</td>
-<td>Cranes</td>
-<td>3.0</td>
-<td>4</td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">g</td>
-<td>plovers</td>
-<td>5.5</td>
-<td>2</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">h</td>
-<td>Cranes</td>
-<td>NaN</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">i</td>
-<td>spoonbills</td>
-<td>8.0</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">j</td>
-<td>spoonbills</td>
-<td>4.0</td>
-<td>2</td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">k</td>
-<td>Cranes</td>
-<td>7.0</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-</section>
-<section id="c.-delete-new-row-from-pandas-dataframe" class="level3">
-<h3 class="anchored" data-anchor-id="c.-delete-new-row-from-pandas-dataframe">c.&nbsp;Delete new row from pandas dataframe</h3>
-<div id="0416be53" class="cell" data-execution_count="29">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>pandas_df <span class="op">=</span> pandas_df.drop(<span class="st">'k'</span>)</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>pandas_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="29">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">a</td>
-<td>Cranes</td>
-<td>3.5</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">b</td>
-<td>Cranes</td>
-<td>4.0</td>
-<td>4</td>
-<td>yes</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">c</td>
-<td>plovers</td>
-<td>1.5</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">d</td>
-<td>spoonbills</td>
-<td>NaN</td>
-<td>4</td>
-<td>yes</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">e</td>
-<td>spoonbills</td>
-<td>6.0</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">f</td>
-<td>Cranes</td>
-<td>3.0</td>
-<td>4</td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">g</td>
-<td>plovers</td>
-<td>5.5</td>
-<td>2</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">h</td>
-<td>Cranes</td>
-<td>NaN</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">i</td>
-<td>spoonbills</td>
-<td>8.0</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">j</td>
-<td>spoonbills</td>
-<td>4.0</td>
-<td>2</td>
-<td>no</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-</section>
-<section id="d.-append-new-row-to-polars-dataframe" class="level3">
-<h3 class="anchored" data-anchor-id="d.-append-new-row-to-polars-dataframe">d.&nbsp;Append new row to polars dataframe</h3>
-<div id="c4533ac9" class="cell" data-execution_count="30">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>new_data[<span class="st">'index'</span>] <span class="op">=</span> <span class="st">'k'</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>_df <span class="op">=</span> pl.DataFrame(new_data)</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>polars_df <span class="op">=</span> pl.concat([polars_df, _df])</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>polars_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="30">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (11, 5)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-<th data-quarto-table-cell-role="th">index</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>f64</th>
-<th>i64</th>
-<th>str</th>
-<th>str</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>3.5</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"a"</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>4.0</td>
-<td>4</td>
-<td>"yes"</td>
-<td>"b"</td>
-</tr>
-<tr class="odd">
-<td>"plovers"</td>
-<td>1.5</td>
-<td>3</td>
-<td>"no"</td>
-<td>"c"</td>
-</tr>
-<tr class="even">
-<td>"spoonbills"</td>
-<td>NaN</td>
-<td>4</td>
-<td>"yes"</td>
-<td>"d"</td>
-</tr>
-<tr class="odd">
-<td>"spoonbills"</td>
-<td>6.0</td>
-<td>3</td>
-<td>"no"</td>
-<td>"e"</td>
-</tr>
-<tr class="even">
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-</tr>
-<tr class="odd">
-<td>"plovers"</td>
-<td>5.5</td>
-<td>2</td>
-<td>"no"</td>
-<td>"g"</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>NaN</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"h"</td>
-</tr>
-<tr class="odd">
-<td>"spoonbills"</td>
-<td>8.0</td>
-<td>3</td>
-<td>"no"</td>
-<td>"i"</td>
-</tr>
-<tr class="even">
-<td>"spoonbills"</td>
-<td>4.0</td>
-<td>2</td>
-<td>"no"</td>
-<td>"j"</td>
-</tr>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>7.0</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"k"</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="e.-delete-new-row-from-polars-dataframe" class="level3">
-<h3 class="anchored" data-anchor-id="e.-delete-new-row-from-polars-dataframe">e. Delete new row from polars dataframe</h3>
-<div id="37452a4a" class="cell" data-execution_count="31">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>polars_df <span class="op">=</span> polars_df.<span class="bu">filter</span>(pl.col(<span class="st">'index'</span>) <span class="op">!=</span> <span class="st">'k'</span>)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>polars_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="31">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (10, 5)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-<th data-quarto-table-cell-role="th">index</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>f64</th>
-<th>i64</th>
-<th>str</th>
-<th>str</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>3.5</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"a"</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>4.0</td>
-<td>4</td>
-<td>"yes"</td>
-<td>"b"</td>
-</tr>
-<tr class="odd">
-<td>"plovers"</td>
-<td>1.5</td>
-<td>3</td>
-<td>"no"</td>
-<td>"c"</td>
-</tr>
-<tr class="even">
-<td>"spoonbills"</td>
-<td>NaN</td>
-<td>4</td>
-<td>"yes"</td>
-<td>"d"</td>
-</tr>
-<tr class="odd">
-<td>"spoonbills"</td>
-<td>6.0</td>
-<td>3</td>
-<td>"no"</td>
-<td>"e"</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>3.0</td>
-<td>4</td>
-<td>"no"</td>
-<td>"f"</td>
-</tr>
-<tr class="odd">
-<td>"plovers"</td>
-<td>5.5</td>
-<td>2</td>
-<td>"no"</td>
-<td>"g"</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>NaN</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"h"</td>
-</tr>
-<tr class="odd">
-<td>"spoonbills"</td>
-<td>8.0</td>
-<td>3</td>
-<td>"no"</td>
-<td>"i"</td>
-</tr>
-<tr class="even">
-<td>"spoonbills"</td>
-<td>4.0</td>
-<td>2</td>
-<td>"no"</td>
-<td>"j"</td>
-</tr>
-</tbody>
-</table>
-</div>
+<section id="polars-1" class="level4">
+<h4 class="anchored" data-anchor-id="polars-1">Polars</h4>
+<div id="1f94261d" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create DataFrame from dictionary</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> {</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'name'</span>: [<span class="st">'Alice'</span>, <span class="st">'Bob'</span>, <span class="st">'Charlie'</span>, <span class="st">'David'</span>],</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'age'</span>: [<span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>],</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'city'</span>: [<span class="st">'New York'</span>, <span class="st">'Los Angeles'</span>, <span class="st">'Chicago'</span>, <span class="st">'Houston'</span>]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>df_pl <span class="op">=</span> pl.DataFrame(data)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_pl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>shape: (4, 3)
+┌─────────┬─────┬─────────────┐
+│ name    ┆ age ┆ city        │
+│ ---     ┆ --- ┆ ---         │
+│ str     ┆ i64 ┆ str         │
+╞═════════╪═════╪═════════════╡
+│ Alice   ┆ 25  ┆ New York    │
+│ Bob     ┆ 30  ┆ Los Angeles │
+│ Charlie ┆ 35  ┆ Chicago     │
+│ David   ┆ 40  ┆ Houston     │
+└─────────┴─────┴─────────────┘</code></pre>
 </div>
 </div>
 </section>
 </section>
-<section id="find-the-number-of-each-type-of-birds-in-dataframe-counts" class="level2">
-<h2 class="anchored" data-anchor-id="find-the-number-of-each-type-of-birds-in-dataframe-counts">17. Find the number of each type of birds in dataframe (Counts)</h2>
-<div id="918644f9" class="cell" data-execution_count="32">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>pandas_df[<span class="st">'birds'</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="32">
-<pre><code>birds
-Cranes        4
-spoonbills    4
-plovers       2
-Name: count, dtype: int64</code></pre>
+</section>
+<section id="basic-operations" class="level2">
+<h2 class="anchored" data-anchor-id="basic-operations">Basic Operations</h2>
+<section id="selecting-columns" class="level3">
+<h3 class="anchored" data-anchor-id="selecting-columns">Selecting columns</h3>
+<section id="pandas-2" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-2">Pandas</h4>
+<div id="d240892b" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select a single column (returns Series)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> df_pd[<span class="st">'name'</span>]</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Select multiple columns</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>df_subset <span class="op">=</span> df_pd[[<span class="st">'name'</span>, <span class="st">'age'</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-2" class="level4">
+<h4 class="anchored" data-anchor-id="polars-2">Polars</h4>
+<div id="e93f9245" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select a single column (returns Series)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> df_pl[<span class="st">'name'</span>]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative method</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> df_pl.select(pl.col(<span class="st">'name'</span>)).to_series()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Select multiple columns</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>df_subset <span class="op">=</span> df_pl.select([<span class="st">'name'</span>, <span class="st">'age'</span>])</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative method</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>df_subset <span class="op">=</span> df_pl.select(pl.col([<span class="st">'name'</span>, <span class="st">'age'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="adding-a-new-column" class="level3">
+<h3 class="anchored" data-anchor-id="adding-a-new-column">Adding a new column</h3>
+<section id="pandas-3" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-3">Pandas</h4>
+<div id="297ba699" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a new column</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df_pd[<span class="st">'is_adult'</span>] <span class="op">=</span> df_pd[<span class="st">'age'</span>] <span class="op">&gt;=</span> <span class="dv">18</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Using assign (creates a new DataFrame)</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>df_pd <span class="op">=</span> df_pd.assign(age_squared<span class="op">=</span>df_pd[<span class="st">'age'</span>] <span class="op">**</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-3" class="level4">
+<h4 class="anchored" data-anchor-id="polars-3">Polars</h4>
+<div id="6c142415" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a new column</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df_pl <span class="op">=</span> df_pl.with_columns(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    pl.when(pl.col(<span class="st">'age'</span>) <span class="op">&gt;=</span> <span class="dv">18</span>).then(<span class="va">True</span>).otherwise(<span class="va">False</span>).alias(<span class="st">'is_adult'</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating derived columns </span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>df_pl <span class="op">=</span> df_pl.with_columns(</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    (pl.col(<span class="st">'age'</span>) <span class="op">**</span> <span class="dv">2</span>).alias(<span class="st">'age_squared'</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiple columns at once</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>df_pl <span class="op">=</span> df_pl.with_columns([</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'age'</span>).is_null().alias(<span class="st">'age_is_null'</span>),</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    (pl.col(<span class="st">'age'</span>) <span class="op">*</span> <span class="dv">2</span>).alias(<span class="st">'age_doubled'</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="basic-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="basic-statistics">Basic statistics</h3>
+<section id="pandas-4" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-4">Pandas</h4>
+<div id="201c359b" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get summary statistics</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>summary <span class="op">=</span> df_pd.describe()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Individual statistics</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>mean_age <span class="op">=</span> df_pd[<span class="st">'age'</span>].mean()</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>median_age <span class="op">=</span> df_pd[<span class="st">'age'</span>].median()</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>min_age <span class="op">=</span> df_pd[<span class="st">'age'</span>].<span class="bu">min</span>()</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>max_age <span class="op">=</span> df_pd[<span class="st">'age'</span>].<span class="bu">max</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-4" class="level4">
+<h4 class="anchored" data-anchor-id="polars-4">Polars</h4>
+<div id="dea5805e" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get summary statistics</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>summary <span class="op">=</span> df_pl.describe()</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Individual statistics</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>mean_age <span class="op">=</span> df_pl.select(pl.col(<span class="st">'age'</span>).mean()).item()</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>median_age <span class="op">=</span> df_pl.select(pl.col(<span class="st">'age'</span>).median()).item()</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>min_age <span class="op">=</span> df_pl.select(pl.col(<span class="st">'age'</span>).<span class="bu">min</span>()).item()</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>max_age <span class="op">=</span> df_pl.select(pl.col(<span class="st">'age'</span>).<span class="bu">max</span>()).item()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="filtering-data" class="level2">
+<h2 class="anchored" data-anchor-id="filtering-data">Filtering Data</h2>
+<section id="simple-filtering" class="level3">
+<h3 class="anchored" data-anchor-id="simple-filtering">Simple filtering</h3>
+<section id="pandas-5" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-5">Pandas</h4>
+<div id="1e1dccbf" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter rows</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>adults <span class="op">=</span> df_pd[df_pd[<span class="st">'age'</span>] <span class="op">&gt;=</span> <span class="dv">18</span>]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiple conditions</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>filtered <span class="op">=</span> df_pd[(df_pd[<span class="st">'age'</span>] <span class="op">&gt;</span> <span class="dv">30</span>) <span class="op">&amp;</span> (df_pd[<span class="st">'city'</span>] <span class="op">==</span> <span class="st">'Chicago'</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-5" class="level4">
+<h4 class="anchored" data-anchor-id="polars-5">Polars</h4>
+<div id="bba5c021" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter rows</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>adults <span class="op">=</span> df_pl.<span class="bu">filter</span>(pl.col(<span class="st">'age'</span>) <span class="op">&gt;=</span> <span class="dv">18</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiple conditions</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>filtered <span class="op">=</span> df_pl.<span class="bu">filter</span>((pl.col(<span class="st">'age'</span>) <span class="op">&gt;</span> <span class="dv">30</span>) <span class="op">&amp;</span> (pl.col(<span class="st">'city'</span>) <span class="op">==</span> <span class="st">'Chicago'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="complex-filtering" class="level3">
+<h3 class="anchored" data-anchor-id="complex-filtering">Complex filtering</h3>
+<section id="pandas-6" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-6">Pandas</h4>
+<div id="2905dbd9" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter with OR conditions</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>df_filtered <span class="op">=</span> df_pd[(df_pd[<span class="st">'city'</span>] <span class="op">==</span> <span class="st">'New York'</span>) <span class="op">|</span> (df_pd[<span class="st">'city'</span>] <span class="op">==</span> <span class="st">'Chicago'</span>)]</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Using isin</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>cities <span class="op">=</span> [<span class="st">'New York'</span>, <span class="st">'Chicago'</span>]</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>df_filtered <span class="op">=</span> df_pd[df_pd[<span class="st">'city'</span>].isin(cities)]</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># String contains</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>df_filtered <span class="op">=</span> df_pd[df_pd[<span class="st">'name'</span>].<span class="bu">str</span>.contains(<span class="st">'li'</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-6" class="level4">
+<h4 class="anchored" data-anchor-id="polars-6">Polars</h4>
+<div id="dcbfc736" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter with OR conditions</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>df_filtered <span class="op">=</span> df_pl.<span class="bu">filter</span>((pl.col(<span class="st">'city'</span>) <span class="op">==</span> <span class="st">'New York'</span>) <span class="op">|</span> (pl.col(<span class="st">'city'</span>) <span class="op">==</span> <span class="st">'Chicago'</span>))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Using is_in</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>cities <span class="op">=</span> [<span class="st">'New York'</span>, <span class="st">'Chicago'</span>]</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>df_filtered <span class="op">=</span> df_pl.<span class="bu">filter</span>(pl.col(<span class="st">'city'</span>).is_in(cities))</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># String contains</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>df_filtered <span class="op">=</span> df_pl.<span class="bu">filter</span>(pl.col(<span class="st">'name'</span>).<span class="bu">str</span>.contains(<span class="st">'li'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="grouping-and-aggregation" class="level2">
+<h2 class="anchored" data-anchor-id="grouping-and-aggregation">Grouping and Aggregation</h2>
+<section id="basic-groupby" class="level3">
+<h3 class="anchored" data-anchor-id="basic-groupby">Basic groupby</h3>
+<section id="pandas-7" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-7">Pandas</h4>
+<div id="ed9d7831" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by one column and aggregate</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>city_stats <span class="op">=</span> df_pd.groupby(<span class="st">'city'</span>).agg({</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'age'</span>: [<span class="st">'mean'</span>, <span class="st">'min'</span>, <span class="st">'max'</span>, <span class="st">'count'</span>]</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Reset index for flat DataFrame</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>city_stats <span class="op">=</span> city_stats.reset_index()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-7" class="level4">
+<h4 class="anchored" data-anchor-id="polars-7">Polars</h4>
+<div id="a05b3a4c" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by one column and aggregate</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>city_stats <span class="op">=</span> df_pl.group_by(<span class="st">'city'</span>).agg([</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'age'</span>).mean().alias(<span class="st">'age_mean'</span>),</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'age'</span>).<span class="bu">min</span>().alias(<span class="st">'age_min'</span>),</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'age'</span>).<span class="bu">max</span>().alias(<span class="st">'age_max'</span>),</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'age'</span>).count().alias(<span class="st">'age_count'</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="joiningmerging-dataframes" class="level2">
+<h2 class="anchored" data-anchor-id="joiningmerging-dataframes">Joining/Merging DataFrames</h2>
+<section id="inner-join" class="level3">
+<h3 class="anchored" data-anchor-id="inner-join">Inner Join</h3>
+<section id="pandas-8" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-8">Pandas</h4>
+<div id="caaa8277" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create another DataFrame</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>employee_data <span class="op">=</span> {</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'emp_id'</span>: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>],</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'name'</span>: [<span class="st">'Alice'</span>, <span class="st">'Bob'</span>, <span class="st">'Charlie'</span>, <span class="st">'David'</span>],</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'dept'</span>: [<span class="st">'HR'</span>, <span class="st">'IT'</span>, <span class="st">'Finance'</span>, <span class="st">'IT'</span>]</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>employee_df_pd <span class="op">=</span> pd.DataFrame(employee_data)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>salary_data <span class="op">=</span> {</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'emp_id'</span>: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>],</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'salary'</span>: [<span class="dv">50000</span>, <span class="dv">60000</span>, <span class="dv">70000</span>, <span class="dv">80000</span>]</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>salary_df_pd <span class="op">=</span> pd.DataFrame(salary_data)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Inner join</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>merged_df <span class="op">=</span> employee_df_pd.merge(</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    salary_df_pd,</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">'emp_id'</span>,</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">'inner'</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-8" class="level4">
+<h4 class="anchored" data-anchor-id="polars-8">Polars</h4>
+<div id="659f381c" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create another DataFrame</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>employee_data <span class="op">=</span> {</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'emp_id'</span>: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>],</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'name'</span>: [<span class="st">'Alice'</span>, <span class="st">'Bob'</span>, <span class="st">'Charlie'</span>, <span class="st">'David'</span>],</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'dept'</span>: [<span class="st">'HR'</span>, <span class="st">'IT'</span>, <span class="st">'Finance'</span>, <span class="st">'IT'</span>]</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>employee_df_pl <span class="op">=</span> pl.DataFrame(employee_data)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>salary_data <span class="op">=</span> {</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'emp_id'</span>: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>],</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'salary'</span>: [<span class="dv">50000</span>, <span class="dv">60000</span>, <span class="dv">70000</span>, <span class="dv">80000</span>]</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>salary_df_pl <span class="op">=</span> pl.DataFrame(salary_data)</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Inner join</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>merged_df <span class="op">=</span> employee_df_pl.join(</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    salary_df_pl,</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">'emp_id'</span>,</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">'inner'</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="different-join-types" class="level3">
+<h3 class="anchored" data-anchor-id="different-join-types">Different join types</h3>
+<section id="pandas-9" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-9">Pandas</h4>
+<div id="a3a007ab" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Left join</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>left_join <span class="op">=</span> employee_df_pd.merge(salary_df_pd, on<span class="op">=</span><span class="st">'emp_id'</span>, how<span class="op">=</span><span class="st">'left'</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Right join</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>right_join <span class="op">=</span> employee_df_pd.merge(salary_df_pd, on<span class="op">=</span><span class="st">'emp_id'</span>, how<span class="op">=</span><span class="st">'right'</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Outer join</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>outer_join <span class="op">=</span> employee_df_pd.merge(salary_df_pd, on<span class="op">=</span><span class="st">'emp_id'</span>, how<span class="op">=</span><span class="st">'outer'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-9" class="level4">
+<h4 class="anchored" data-anchor-id="polars-9">Polars</h4>
+<div id="76c19027" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Left join</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>left_join <span class="op">=</span> employee_df_pl.join(salary_df_pl, on<span class="op">=</span><span class="st">'emp_id'</span>, how<span class="op">=</span><span class="st">'left'</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Right join</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>right_join <span class="op">=</span> employee_df_pl.join(salary_df_pl, on<span class="op">=</span><span class="st">'emp_id'</span>, how<span class="op">=</span><span class="st">'right'</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Outer join</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>outer_join <span class="op">=</span> employee_df_pl.join(salary_df_pl, on<span class="op">=</span><span class="st">'emp_id'</span>, how<span class="op">=</span><span class="st">'outer'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/ty/tg5k8q8d4lx2g04cfv681l1r0000gn/T/ipykernel_74797/3571097696.py:8: DeprecationWarning:
+
+Use of `how='outer'` should be replaced with `how='full'`.
+</code></pre>
 </div>
 </div>
-<div id="10cbc0a7" class="cell" data-execution_count="33">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>polars_df.group_by(<span class="st">'birds'</span>).<span class="bu">len</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="33">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (3, 2)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+</section>
+</section>
+</section>
+<section id="handling-missing-values" class="level2">
+<h2 class="anchored" data-anchor-id="handling-missing-values">Handling Missing Values</h2>
+<section id="checking-for-missing-values" class="level3">
+<h3 class="anchored" data-anchor-id="checking-for-missing-values">Checking for missing values</h3>
+<section id="pandas-10" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-10">Pandas</h4>
+<div id="495c54e6" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for missing values</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>missing_count <span class="op">=</span> df_pd.isnull().<span class="bu">sum</span>()</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if any column has missing values</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>has_missing <span class="op">=</span> df_pd.isnull().<span class="bu">any</span>().<span class="bu">any</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-10" class="level4">
+<h4 class="anchored" data-anchor-id="polars-10">Polars</h4>
+<div id="de524a47" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for missing values</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>missing_count <span class="op">=</span> df_pl.null_count()</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if specific column has missing values</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>has_missing <span class="op">=</span> df_pl.select(pl.col(<span class="st">'age'</span>).is_null().<span class="bu">any</span>()).item()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="handling-missing-values-1" class="level3">
+<h3 class="anchored" data-anchor-id="handling-missing-values-1">Handling missing values</h3>
+<section id="pandas-11" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-11">Pandas</h4>
+<div id="3b938187" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows with any missing values</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>df_pd_clean <span class="op">=</span> df_pd.dropna()</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill missing values</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>df_pd_filled <span class="op">=</span> df_pd.fillna({</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'age'</span>: <span class="dv">0</span>,</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'city'</span>: <span class="st">'Unknown'</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Forward fill</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>df_pd_ffill <span class="op">=</span> df_pd.fillna(method<span class="op">=</span><span class="st">'ffill'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/ty/tg5k8q8d4lx2g04cfv681l1r0000gn/T/ipykernel_74797/3744407346.py:11: FutureWarning:
+
+DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+</code></pre>
+</div>
+</div>
+</section>
+<section id="polars-11" class="level4">
+<h4 class="anchored" data-anchor-id="polars-11">Polars</h4>
+<div id="dc807583" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows with any missing values</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>df_pl_clean <span class="op">=</span> df_pl.drop_nulls()</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill missing values</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>df_pl_filled <span class="op">=</span> df_pl.with_columns([</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'age'</span>).fill_null(<span class="dv">0</span>),</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'city'</span>).fill_null(<span class="st">'Unknown'</span>)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Forward fill</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>df_pl_ffill <span class="op">=</span> df_pl.with_columns([</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'age'</span>).fill_null(strategy<span class="op">=</span><span class="st">'forward'</span>),</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'city'</span>).fill_null(strategy<span class="op">=</span><span class="st">'forward'</span>)</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="string-operations" class="level2">
+<h2 class="anchored" data-anchor-id="string-operations">String Operations</h2>
+<section id="basic-string-operations" class="level3">
+<h3 class="anchored" data-anchor-id="basic-string-operations">Basic string operations</h3>
+<section id="pandas-12" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-12">Pandas</h4>
+<div id="ae59b69c" class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to uppercase</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>df_pd[<span class="st">'name_upper'</span>] <span class="op">=</span> df_pd[<span class="st">'name'</span>].<span class="bu">str</span>.upper()</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get string length</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>df_pd[<span class="st">'name_length'</span>] <span class="op">=</span> df_pd[<span class="st">'name'</span>].<span class="bu">str</span>.<span class="bu">len</span>()</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract substring</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>df_pd[<span class="st">'name_first_char'</span>] <span class="op">=</span> df_pd[<span class="st">'name'</span>].<span class="bu">str</span>[<span class="dv">0</span>]</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace substrings</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>df_pd[<span class="st">'city_replaced'</span>] <span class="op">=</span> df_pd[<span class="st">'city'</span>].<span class="bu">str</span>.replace(<span class="st">'New'</span>, <span class="st">'Old'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-12" class="level4">
+<h4 class="anchored" data-anchor-id="polars-12">Polars</h4>
+<div id="d691f5da" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to uppercase</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>df_pl <span class="op">=</span> df_pl.with_columns(pl.col(<span class="st">'name'</span>).<span class="bu">str</span>.to_uppercase().alias(<span class="st">'name_upper'</span>))</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get string length</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>df_pl <span class="op">=</span> df_pl.with_columns(pl.col(<span class="st">'name'</span>).<span class="bu">str</span>.len_chars().alias(<span class="st">'name_length'</span>))</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract substring </span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>df_pl <span class="op">=</span> df_pl.with_columns(pl.col(<span class="st">'name'</span>).<span class="bu">str</span>.<span class="bu">slice</span>(<span class="dv">0</span>, <span class="dv">1</span>).alias(<span class="st">'name_first_char'</span>))</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace substrings</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>df_pl <span class="op">=</span> df_pl.with_columns(pl.col(<span class="st">'city'</span>).<span class="bu">str</span>.replace(<span class="st">'New'</span>, <span class="st">'Old'</span>).alias(<span class="st">'city_replaced'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="advanced-string-operations" class="level3">
+<h3 class="anchored" data-anchor-id="advanced-string-operations">Advanced string operations</h3>
+<section id="pandas-13" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-13">Pandas</h4>
+<div id="23cbe908" class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split string</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>df_pd[<span class="st">'first_word'</span>] <span class="op">=</span> df_pd[<span class="st">'city'</span>].<span class="bu">str</span>.split(<span class="st">' '</span>).<span class="bu">str</span>[<span class="dv">0</span>]</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pattern matching</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>has_new <span class="op">=</span> df_pd[<span class="st">'city'</span>].<span class="bu">str</span>.contains(<span class="st">'New'</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract with regex</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>df_pd[<span class="st">'extracted'</span>] <span class="op">=</span> df_pd[<span class="st">'city'</span>].<span class="bu">str</span>.extract(<span class="vs">r'</span><span class="kw">(</span><span class="dv">\w</span><span class="op">+</span><span class="kw">)</span><span class="dv">\s</span><span class="vs">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-13" class="level4">
+<h4 class="anchored" data-anchor-id="polars-13">Polars</h4>
+<div id="e0dcae83" class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split string</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>df_pl <span class="op">=</span> df_pl.with_columns(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'city'</span>).<span class="bu">str</span>.split(<span class="st">' '</span>).<span class="bu">list</span>.get(<span class="dv">0</span>).alias(<span class="st">'first_word'</span>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Pattern matching</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>df_pl <span class="op">=</span> df_pl.with_columns(</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'city'</span>).<span class="bu">str</span>.contains(<span class="st">'New'</span>).alias(<span class="st">'has_new'</span>)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract with regex</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>df_pl <span class="op">=</span> df_pl.with_columns(</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'city'</span>).<span class="bu">str</span>.extract(<span class="vs">r'</span><span class="kw">(</span><span class="dv">\w</span><span class="op">+</span><span class="kw">)</span><span class="dv">\s</span><span class="vs">'</span>).alias(<span class="st">'extracted'</span>)</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="time-series-operations" class="level2">
+<h2 class="anchored" data-anchor-id="time-series-operations">Time Series Operations</h2>
+<section id="date-parsing-and-creation" class="level3">
+<h3 class="anchored" data-anchor-id="date-parsing-and-creation">Date parsing and creation</h3>
+<section id="pandas-14" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-14">Pandas</h4>
+<div id="77f19477" class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create DataFrame with dates</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>dates_pd <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'date_str'</span>: [<span class="st">'2023-01-01'</span>, <span class="st">'2023-02-15'</span>, <span class="st">'2023-03-30'</span>]</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Parse dates</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>dates_pd[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(dates_pd[<span class="st">'date_str'</span>])</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract components</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>dates_pd[<span class="st">'year'</span>] <span class="op">=</span> dates_pd[<span class="st">'date'</span>].dt.year</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>dates_pd[<span class="st">'month'</span>] <span class="op">=</span> dates_pd[<span class="st">'date'</span>].dt.month</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>dates_pd[<span class="st">'day'</span>] <span class="op">=</span> dates_pd[<span class="st">'date'</span>].dt.day</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>dates_pd[<span class="st">'weekday'</span>] <span class="op">=</span> dates_pd[<span class="st">'date'</span>].dt.day_name()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-14" class="level4">
+<h4 class="anchored" data-anchor-id="polars-14">Polars</h4>
+<div id="9763be0e" class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create DataFrame with dates</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>dates_pl <span class="op">=</span> pl.DataFrame({</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'date_str'</span>: [<span class="st">'2023-01-01'</span>, <span class="st">'2023-02-15'</span>, <span class="st">'2023-03-30'</span>]</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Parse dates</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>dates_pl <span class="op">=</span> dates_pl.with_columns(</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'date_str'</span>).<span class="bu">str</span>.strptime(pl.Datetime, <span class="st">'%Y-%m-</span><span class="sc">%d</span><span class="st">'</span>).alias(<span class="st">'date'</span>)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract components</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>dates_pl <span class="op">=</span> dates_pl.with_columns([</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'date'</span>).dt.year().alias(<span class="st">'year'</span>),</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'date'</span>).dt.month().alias(<span class="st">'month'</span>),</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'date'</span>).dt.day().alias(<span class="st">'day'</span>),</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'date'</span>).dt.weekday().replace_strict({</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span>: <span class="st">'Monday'</span>, <span class="dv">1</span>: <span class="st">'Tuesday'</span>, <span class="dv">2</span>: <span class="st">'Wednesday'</span>, </span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>        <span class="dv">3</span>: <span class="st">'Thursday'</span>, <span class="dv">4</span>: <span class="st">'Friday'</span>, <span class="dv">5</span>: <span class="st">'Saturday'</span>, <span class="dv">6</span>: <span class="st">'Sunday'</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>    }, default<span class="op">=</span><span class="st">"unknown"</span>).alias(<span class="st">'weekday'</span>)</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="date-arithmetic" class="level3">
+<h3 class="anchored" data-anchor-id="date-arithmetic">Date arithmetic</h3>
+<section id="pandas-15" class="level4">
+<h4 class="anchored" data-anchor-id="pandas-15">Pandas</h4>
+<div id="93b08868" class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add days</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>dates_pd[<span class="st">'next_week'</span>] <span class="op">=</span> dates_pd[<span class="st">'date'</span>] <span class="op">+</span> pd.Timedelta(days<span class="op">=</span><span class="dv">7</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Date difference</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>date_range <span class="op">=</span> pd.date_range(start<span class="op">=</span><span class="st">'2023-01-01'</span>, end<span class="op">=</span><span class="st">'2023-01-10'</span>)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>df_dates <span class="op">=</span> pd.DataFrame({<span class="st">'date'</span>: date_range})</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>df_dates[<span class="st">'days_since_start'</span>] <span class="op">=</span> (df_dates[<span class="st">'date'</span>] <span class="op">-</span> df_dates[<span class="st">'date'</span>].<span class="bu">min</span>()).dt.days</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="polars-15" class="level4">
+<h4 class="anchored" data-anchor-id="polars-15">Polars</h4>
+<div id="6cacd338" class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add days</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>dates_pl <span class="op">=</span> dates_pl.with_columns(</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    (pl.col(<span class="st">'date'</span>) <span class="op">+</span> pl.duration(days<span class="op">=</span><span class="dv">7</span>)).alias(<span class="st">'next_week'</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Date difference</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>date_range <span class="op">=</span> pd.date_range(start<span class="op">=</span><span class="st">'2023-01-01'</span>, end<span class="op">=</span><span class="st">'2023-01-10'</span>)  <span class="co"># Using pandas to generate range</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>df_dates <span class="op">=</span> pl.DataFrame({<span class="st">'date'</span>: date_range})</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>df_dates <span class="op">=</span> df_dates.with_columns(</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>    (pl.col(<span class="st">'date'</span>) <span class="op">-</span> pl.col(<span class="st">'date'</span>).<span class="bu">min</span>()).dt.total_days().alias(<span class="st">'days_since_start'</span>)</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="performance-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="performance-comparison">Performance Comparison</h2>
+<p>This section demonstrates performance differences between pandas and polars for a large dataset operation.</p>
+<div id="ccc2b624" class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a large dataset (10 million rows)</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">10_000_000</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> {</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'id'</span>: np.arange(n),</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'value'</span>: np.random.randn(n),</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group'</span>: np.random.choice([<span class="st">'A'</span>, <span class="st">'B'</span>, <span class="st">'C'</span>, <span class="st">'D'</span>], n)</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to pandas DataFrame</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>df_pd <span class="op">=</span> pd.DataFrame(data)</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to polars DataFrame</span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>df_pl <span class="op">=</span> pl.DataFrame(data)</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Benchmark: Group by and calculate mean, min, max</span></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Running pandas groupby..."</span>)</span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.time()</span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>result_pd <span class="op">=</span> df_pd.groupby(<span class="st">'group'</span>).agg({</span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">'value'</span>: [<span class="st">'mean'</span>, <span class="st">'min'</span>, <span class="st">'max'</span>, <span class="st">'count'</span>]</span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a>pd_time <span class="op">=</span> time.time() <span class="op">-</span> start</span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Pandas time: </span><span class="sc">{</span>pd_time<span class="sc">:.4f}</span><span class="ss"> seconds"</span>)</span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Running polars groupby..."</span>)</span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.time()</span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a>result_pl <span class="op">=</span> df_pl.group_by(<span class="st">'group'</span>).agg([</span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'value'</span>).mean().alias(<span class="st">'value_mean'</span>),</span>
+<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'value'</span>).<span class="bu">min</span>().alias(<span class="st">'value_min'</span>),</span>
+<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'value'</span>).<span class="bu">max</span>().alias(<span class="st">'value_max'</span>),</span>
+<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">'value'</span>).count().alias(<span class="st">'value_count'</span>)</span>
+<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a>pl_time <span class="op">=</span> time.time() <span class="op">-</span> start</span>
+<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Polars time: </span><span class="sc">{</span>pl_time<span class="sc">:.4f}</span><span class="ss"> seconds"</span>)</span>
+<span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Polars is </span><span class="sc">{</span>pd_time <span class="op">/</span> pl_time<span class="sc">:.2f}</span><span class="ss">x faster"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running pandas groupby...
+Pandas time: 0.2386 seconds
+Running polars groupby...
+Polars time: 0.0860 seconds
+Polars is 2.77x faster</code></pre>
+</div>
+</div>
+<p>Typically, for operations like this, Polars will be 3-10x faster than pandas, especially as data sizes increase. The performance gap widens further with more complex operations that can benefit from query optimization.</p>
+</section>
+<section id="api-philosophy-differences" class="level2">
+<h2 class="anchored" data-anchor-id="api-philosophy-differences">API Philosophy Differences</h2>
+<p>Pandas and Polars differ in several fundamental aspects:</p>
+<section id="eager-vs.-lazy-execution" class="level3">
+<h3 class="anchored" data-anchor-id="eager-vs.-lazy-execution">1. Eager vs.&nbsp;Lazy Execution</h3>
+<p><strong>Pandas</strong> uses eager execution by default:</p>
+<p><strong>Polars</strong> supports both eager and lazy execution:</p>
+</section>
+<section id="method-chaining-vs.-assignment" class="level3">
+<h3 class="anchored" data-anchor-id="method-chaining-vs.-assignment">2. Method Chaining vs.&nbsp;Assignment</h3>
+<p><strong>Pandas</strong> often uses assignment operations:</p>
+<div id="b213f2da" class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Many pandas operations use in-place assignment</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>pd_df[<span class="st">'new_col'</span>] <span class="op">=</span> pd_df[<span class="st">'new_col'</span>] <span class="op">*</span> <span class="dv">2</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>pd_df[<span class="st">'new_col'</span>] <span class="op">=</span> pd_df[<span class="st">'new_col'</span>].fillna(<span class="dv">0</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Some operations return new DataFrames</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>pd_df <span class="op">=</span> pd_df.sort_values(<span class="st">'new_col'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Polars</strong> consistently uses method chaining:</p>
+<div id="9ccc3b7a" class="cell" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># All operations return new DataFrames and can be chained</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>pl_df <span class="op">=</span> (pl_df</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    .with_columns((pl.col(<span class="st">'new_col'</span>) <span class="op">*</span> <span class="dv">2</span>).alias(<span class="st">'new_col'</span>))</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    .with_columns(pl.col(<span class="st">'new_col'</span>).fill_null(<span class="dv">0</span>))</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    .sort(<span class="st">'new_col'</span>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="expression-api-vs.-direct-references" class="level3">
+<h3 class="anchored" data-anchor-id="expression-api-vs.-direct-references">3. Expression API vs.&nbsp;Direct References</h3>
+<p><strong>Pandas</strong> directly references columns:</p>
+<div id="de2c3d5f" class="cell" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>pd_df[<span class="st">'result'</span>] <span class="op">=</span> pd_df[<span class="st">'age'</span>] <span class="op">+</span> pd_df[<span class="st">'new_col'</span>]</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>filtered <span class="op">=</span> pd_df[pd_df[<span class="st">'age'</span>] <span class="op">&gt;</span> pd_df[<span class="st">'age'</span>].mean()]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Polars</strong> uses an expression API:</p>
+<div id="64bea0ff" class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>pl_df <span class="op">=</span> pl_df.with_columns(</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    (pl.col(<span class="st">'age'</span>) <span class="op">+</span> pl.col(<span class="st">'new_col'</span>)).alias(<span class="st">'result'</span>)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>filtered <span class="op">=</span> pl_df.<span class="bu">filter</span>(pl.col(<span class="st">'age'</span>) <span class="op">&gt;</span> pl.col(<span class="st">'age'</span>).mean())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="migration-guide" class="level2">
+<h2 class="anchored" data-anchor-id="migration-guide">Migration Guide</h2>
+<p>If you’re transitioning from pandas to polars, here are key mappings between common operations:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 29%">
+<col style="width: 29%">
+</colgroup>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">len</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>u32</th>
+<th>Operation</th>
+<th>Pandas</th>
+<th>Polars</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>"plovers"</td>
-<td>2</td>
+<td>Read CSV</td>
+<td><code>pd.read_csv('file.csv')</code></td>
+<td><code>pl.read_csv('file.csv')</code></td>
 </tr>
 <tr class="even">
-<td>"spoonbills"</td>
-<td>4</td>
+<td>Select columns</td>
+<td><code>df[['col1', 'col2']]</code></td>
+<td><code>df.select(['col1', 'col2'])</code></td>
 </tr>
 <tr class="odd">
-<td>"Cranes"</td>
-<td>4</td>
+<td>Add column</td>
+<td><code>df['new'] = df['col1'] * 2</code></td>
+<td><code>df.with_columns((pl.col('col1') * 2).alias('new'))</code></td>
+</tr>
+<tr class="even">
+<td>Filter rows</td>
+<td><code>df[df['col'] &gt; 5]</code></td>
+<td><code>df.filter(pl.col('col') &gt; 5)</code></td>
+</tr>
+<tr class="odd">
+<td>Sort</td>
+<td><code>df.sort_values('col')</code></td>
+<td><code>df.sort('col')</code></td>
+</tr>
+<tr class="even">
+<td>Group by</td>
+<td><code>df.groupby('col').agg({'val': 'sum'})</code></td>
+<td><code>df.group_by('col').agg(pl.col('val').sum())</code></td>
+</tr>
+<tr class="odd">
+<td>Join</td>
+<td><code>df1.merge(df2, on='key')</code></td>
+<td><code>df1.join(df2, on='key')</code></td>
+</tr>
+<tr class="even">
+<td>Fill NA</td>
+<td><code>df.fillna(0)</code></td>
+<td><code>df.fill_null(0)</code></td>
+</tr>
+<tr class="odd">
+<td>Drop NA</td>
+<td><code>df.dropna()</code></td>
+<td><code>df.drop_nulls()</code></td>
+</tr>
+<tr class="even">
+<td>Rename</td>
+<td><code>df.rename(columns={'a': 'b'})</code></td>
+<td><code>df.rename({'a': 'b'})</code></td>
+</tr>
+<tr class="odd">
+<td>Unique values</td>
+<td><code>df['col'].unique()</code></td>
+<td><code>df.select(pl.col('col').unique())</code></td>
+</tr>
+<tr class="even">
+<td>Value counts</td>
+<td><code>df['col'].value_counts()</code></td>
+<td><code>df.group_by('col').count()</code></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-</div>
+<section id="key-tips-for-migration" class="level3">
+<h3 class="anchored" data-anchor-id="key-tips-for-migration">Key Tips for Migration</h3>
+<ol type="1">
+<li><strong>Think in expressions</strong>: Use <code>pl.col()</code> to reference columns in operations</li>
+<li><strong>Embrace method chaining</strong>: String operations together instead of intermediate variables</li>
+<li><strong>Try lazy execution</strong>: For complex operations, use <code>pl.scan_csv()</code> and lazy operations</li>
+<li><strong>Use with_columns()</strong>: Instead of direct assignment, use with_columns for adding/modifying columns</li>
+<li><strong>Learn the expression functions</strong>: Many operations like string manipulation use different syntax</li>
+</ol>
 </section>
-<section id="sort-dataframe-birds-first-by-the-values-in-the-age-in-decending-order-then-by-the-value-in-the-visits-column-in-ascending-order." class="level2">
-<h2 class="anchored" data-anchor-id="sort-dataframe-birds-first-by-the-values-in-the-age-in-decending-order-then-by-the-value-in-the-visits-column-in-ascending-order.">18. Sort dataframe (birds) first by the values in the ‘age’ in decending order, then by the value in the ‘visits’ column in ascending order.</h2>
-<div id="aa12e456" class="cell" data-execution_count="34">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>pandas_df.sort_values(by<span class="op">=</span>[<span class="st">'age'</span>, <span class="st">'visits'</span>], ascending<span class="op">=</span>[<span class="va">False</span>, <span class="va">True</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="34">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">i</td>
-<td>spoonbills</td>
-<td>8.0</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">e</td>
-<td>spoonbills</td>
-<td>6.0</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">g</td>
-<td>plovers</td>
-<td>5.5</td>
-<td>2</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">j</td>
-<td>spoonbills</td>
-<td>4.0</td>
-<td>2</td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">b</td>
-<td>Cranes</td>
-<td>4.0</td>
-<td>4</td>
-<td>yes</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">a</td>
-<td>Cranes</td>
-<td>3.5</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">f</td>
-<td>Cranes</td>
-<td>3.0</td>
-<td>4</td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">c</td>
-<td>plovers</td>
-<td>1.5</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">h</td>
-<td>Cranes</td>
-<td>NaN</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">d</td>
-<td>spoonbills</td>
-<td>NaN</td>
-<td>4</td>
-<td>yes</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="c29b5107" class="cell" data-execution_count="35">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>polars_df.sort([<span class="st">'age'</span>, <span class="st">'visits'</span>], descending<span class="op">=</span>[<span class="va">True</span>, <span class="va">False</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="35">
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (10, 5)</small>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">birds</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">visits</th>
-<th data-quarto-table-cell-role="th">priority</th>
-<th data-quarto-table-cell-role="th">index</th>
-</tr>
-<tr class="even">
-<th>str</th>
-<th>f64</th>
-<th>i64</th>
-<th>str</th>
-<th>str</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>NaN</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"h"</td>
-</tr>
-<tr class="even">
-<td>"spoonbills"</td>
-<td>NaN</td>
-<td>4</td>
-<td>"yes"</td>
-<td>"d"</td>
-</tr>
-<tr class="odd">
-<td>"spoonbills"</td>
-<td>8.0</td>
-<td>3</td>
-<td>"no"</td>
-<td>"i"</td>
-</tr>
-<tr class="even">
-<td>"spoonbills"</td>
-<td>6.0</td>
-<td>3</td>
-<td>"no"</td>
-<td>"e"</td>
-</tr>
-<tr class="odd">
-<td>"plovers"</td>
-<td>5.5</td>
-<td>2</td>
-<td>"no"</td>
-<td>"g"</td>
-</tr>
-<tr class="even">
-<td>"spoonbills"</td>
-<td>4.0</td>
-<td>2</td>
-<td>"no"</td>
-<td>"j"</td>
-</tr>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>4.0</td>
-<td>4</td>
-<td>"yes"</td>
-<td>"b"</td>
-</tr>
-<tr class="even">
-<td>"Cranes"</td>
-<td>3.5</td>
-<td>2</td>
-<td>"yes"</td>
-<td>"a"</td>
-</tr>
-<tr class="odd">
-<td>"Cranes"</td>
-<td>3.0</td>
-<td>4</td>
-<td>"no"</td>
-<td>"f"</td>
-</tr>
-<tr class="even">
-<td>"plovers"</td>
-<td>1.5</td>
-<td>3</td>
-<td>"no"</td>
-<td>"c"</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
+<section id="when-to-keep-using-pandas" class="level3">
+<h3 class="anchored" data-anchor-id="when-to-keep-using-pandas">When to Keep Using Pandas</h3>
+<p>Despite Polars’ advantages, pandas might still be preferred when:</p>
+<ul>
+<li>Working with existing codebases heavily dependent on pandas</li>
+<li>Using specialized libraries that only support pandas (some visualization tools)</li>
+<li>Dealing with very small datasets where performance isn’t critical</li>
+<li>Using pandas-specific features without polars equivalents</li>
+<li>Working with time series data that benefits from pandas’ specialized functionality</li>
+</ul>
 </section>
 </section>
-<section id="references" class="level1">
-<h1>References</h1>
-<pre class="{bibliography}"><code>https://docs.pola.rs/user-guide/getting-started/
-https://pandas.pydata.org/docs/getting_started/tutorials.html</code></pre>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Polars offers significant performance improvements and a more consistent API compared to pandas, particularly for large datasets and complex operations. While the syntax differences require some adjustment, the benefits in speed and memory efficiency make it a compelling choice for modern data analysis workflows.</p>
+<p>Both libraries have their place in the Python data ecosystem. Pandas remains the more mature option with broader ecosystem compatibility, while Polars represents the future of high-performance data processing. For new projects dealing with large datasets, Polars is increasingly becoming the recommended choice.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
