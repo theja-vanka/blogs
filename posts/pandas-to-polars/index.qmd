@@ -1,8 +1,8 @@
 ---
 title: "From Pandas to Polars"
 author: "Krishnatheja Vanka"
-date: "2025-05-19"
-categories: [code, tutorial]
+date: "2025-03-29"
+categories: [code, tutorial, advanced]
 format:
   html:
     code-fold: false
@@ -313,7 +313,7 @@ left_join = employee_df_pl.join(salary_df_pl, on='emp_id', how='left')
 right_join = employee_df_pl.join(salary_df_pl, on='emp_id', how='right')
 
 # Outer join
-outer_join = employee_df_pl.join(salary_df_pl, on='emp_id', how='outer')
+outer_join = employee_df_pl.join(salary_df_pl, on='emp_id', how='full')
 ```
 
 ## Handling Missing Values
@@ -352,7 +352,7 @@ df_pd_filled = df_pd.fillna({
 })
 
 # Forward fill
-df_pd_ffill = df_pd.fillna(method='ffill')
+df_pd_ffill = df_pd.ffill()
 ```
 
 #### Polars
