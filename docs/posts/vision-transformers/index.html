@@ -213,7 +213,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-vision-transformers" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-vision-transformers">1. Introduction to Vision Transformers</h2>
 <p>Vision Transformers (ViT) were introduced in the paper “An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale” by Dosovitskiy et al.&nbsp;in 2020. The core idea is to treat an image as a sequence of patches, similar to how words are treated in NLP, and process them using a transformer encoder.</p>
-<p>Key advantages of ViTs include: - Global receptive field from the start - Ability to capture long-range dependencies - Scalability to large datasets - No inductive bias towards local processing (unlike CNNs)</p>
+<p>Key advantages of ViTs include:</p>
+<ul>
+<li>Global receptive field from the start</li>
+<li>Ability to capture long-range dependencies</li>
+<li>Scalability to large datasets</li>
+<li>No inductive bias towards local processing (unlike CNNs)</li>
+</ul>
 </section>
 <section id="understanding-the-architecture" class="level2">
 <h2 class="anchored" data-anchor-id="understanding-the-architecture">2. Understanding the Architecture</h2>
@@ -867,7 +873,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

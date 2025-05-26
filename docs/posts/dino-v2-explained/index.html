@@ -206,7 +206,12 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="self-supervised-objective">Self-Supervised Objective</h3>
 <p>The training objective is a cross-entropy loss that encourages the student’s output distribution for local views to match the teacher’s output distribution for global views of the same image. Mathematically:</p>
 <pre><code>L = H(Pt(g), Ps(l))</code></pre>
-<p>Where: - H is the cross-entropy - Pt(g) is the teacher’s prediction on global views - Ps(l) is the student’s prediction on local views</p>
+<p>Where:</p>
+<ul>
+<li>H is the cross-entropy</li>
+<li>Pt(g) is the teacher’s prediction on global views</li>
+<li>Ps(l) is the student’s prediction on local views</li>
+</ul>
 <p>The teacher’s outputs are sharpened using a temperature parameter that gradually decreases throughout training, making the targets increasingly focused on specific features.</p>
 </section>
 </section>
@@ -362,7 +367,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

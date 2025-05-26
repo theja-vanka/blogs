@@ -1,5 +1,5 @@
 ---
-title: "Vision Transformers (ViT): A Comprehensive Guide"
+title: "Vision Transformers (ViT): A Simple Guide"
 author: "Krishnatheja Vanka"
 date: "2025-05-24"
 categories: [research]
@@ -12,7 +12,7 @@ execute:
 jupyter: python3
 ---
 
-# Vision Transformers (ViT): A Comprehensive Guide
+# Vision Transformers (ViT): A Simple Guide
 ![](vit.png)
 
 ## Introduction
@@ -39,6 +39,7 @@ The fundamental innovation of ViTs lies in treating images as sequences of patch
 ### Mathematical Formulation
 
 For an image of size H×W×C divided into patches of size P×P:
+
 - Number of patches: N = (H×W)/P²
 - Each patch becomes a vector of size P²×C
 - After linear projection: embedding dimension D
@@ -47,12 +48,14 @@ For an image of size H×W×C divided into patches of size P×P:
 
 ### 1. Patch Embedding Layer
 The patch embedding layer converts image patches into token embeddings that the transformer can process. This involves:
+
 - Reshaping patches into vectors
 - Linear transformation to desired embedding dimension
 - Adding positional encodings
 
 ### 2. Transformer Encoder
 The core of ViT consists of standard transformer encoder blocks, each containing:
+
 - **Multi-Head Self-Attention (MSA)**: Allows patches to attend to all other patches
 - **Layer Normalization**: Applied before both attention and MLP layers
 - **Multi-Layer Perceptron (MLP)**: Two-layer feedforward network with GELU activation
@@ -60,6 +63,7 @@ The core of ViT consists of standard transformer encoder blocks, each containing
 
 ### 3. Classification Head
 The final component extracts the [CLS] token's representation and passes it through:
+
 - Layer normalization
 - Linear classifier to produce class predictions
 
@@ -68,6 +72,7 @@ The final component extracts the [CLS] token's representation and passes it thro
 The self-attention mechanism in ViTs operates differently from CNNs:
 
 ### Attention Maps
+
 - Each patch can attend to every other patch in the image
 - Attention weights reveal which parts of the image are most relevant for classification
 - This enables modeling of long-range spatial dependencies
@@ -79,11 +84,13 @@ Unlike CNNs that build up receptive fields gradually, ViTs have global receptive
 
 ### Data Requirements
 Vision Transformers typically require large amounts of training data to perform well:
+
 - **Pre-training**: Often trained on large datasets like ImageNet-21k or JFT-300M
 - **Fine-tuning**: Then adapted to specific tasks with smaller datasets
 - **Data Efficiency**: ViTs can be less data-efficient than CNNs when training from scratch
 
 ### Optimization Challenges
+
 - **Initialization**: Careful weight initialization is crucial
 - **Learning Rate**: Often requires different learning rates for different components
 - **Regularization**: Techniques like dropout and weight decay are important
@@ -147,6 +154,7 @@ Vision Transformers typically require large amounts of training data to perform 
 
 ### Model Selection
 Choose ViT variants based on:
+
 - Available computational resources
 - Dataset size and characteristics
 - Required inference speed

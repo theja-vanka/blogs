@@ -36,6 +36,7 @@ PyTorch Lightning is a lightweight wrapper for PyTorch that helps organize code 
 ## Introduction to PyTorch Lightning
 
 PyTorch Lightning separates research code from engineering code, making models more:
+
 - **Reproducible**: The same code works across different hardware
 - **Readable**: Standard project structure makes collaboration easier
 - **Scalable**: Train on CPUs, GPUs, TPUs or clusters with no code changes
@@ -111,6 +112,7 @@ class MNISTModel(pl.LightningModule):
 ```
 
 This basic structure includes:
+
 - Model architecture (`__init__` and `forward`)
 - Training logic (`training_step`)
 - Validation logic (`validation_step`)
@@ -162,6 +164,7 @@ class MNISTDataModule(LightningDataModule):
 ```
 
 Benefits of `LightningDataModule`:
+
 - Encapsulates all data preparation logic
 - Makes data pipeline portable and reproducible
 - Simplifies sharing data pipelines between projects
@@ -193,6 +196,7 @@ trainer.test(model, datamodule=data_module)
 ```
 
 The `Trainer` automatically handles:
+
 - Epoch and batch iteration
 - Optimizer steps
 - Logging metrics
@@ -338,6 +342,7 @@ trainer = Trainer(
 ```
 
 Other distribution strategies:
+
 - `ddp_spawn`: Similar to DDP but uses spawn for multiprocessing
 - `deepspeed`: For very large models using DeepSpeed
 - `fsdp`: Fully Sharded Data Parallel for huge models
@@ -627,6 +632,7 @@ class TransferLearningModel(pl.LightningModule):
 PyTorch Lightning provides an organized framework that separates research code from engineering boilerplate, making deep learning projects easier to develop, share, and scale. It's especially valuable for research projects that need to be reproducible and scalable across different hardware configurations.
 
 For further information:
+
 - [PyTorch Lightning Documentation](https://lightning.ai/docs/pytorch/stable/)
 - [Lightning GitHub Repository](https://github.com/Lightning-AI/lightning)
 - [Lightning Tutorials](https://lightning.ai/docs/pytorch/stable/tutorials.html)

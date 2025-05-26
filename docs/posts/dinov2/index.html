@@ -234,7 +234,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="dependencies" class="level3">
 <h3 class="anchored" data-anchor-id="dependencies">Dependencies</h3>
-<p>DINOv2 requires: - Python 3.8+ - PyTorch 1.12+ - torchvision - CUDA (for GPU acceleration)</p>
+<p>DINOv2 requires:</p>
+<ul>
+<li>Python 3.8+</li>
+<li>PyTorch 1.12+</li>
+<li>torchvision</li>
+<li>CUDA (for GPU acceleration)</li>
+</ul>
 </section>
 </section>
 <section id="loading-pre-trained-models" class="level2">
@@ -842,7 +848,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
