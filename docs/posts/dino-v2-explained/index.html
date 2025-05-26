@@ -115,6 +115,7 @@ ul.task-list li input[type="checkbox"] {
       <h1 class="title">DINOv2: A Deep Dive into Architecture and Training</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
+                <div class="quarto-category">intermediate</div>
               </div>
                   </div>
   </div>
@@ -367,7 +368,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
