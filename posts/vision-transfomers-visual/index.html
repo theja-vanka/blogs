@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Krishnatheja Vanka">
+<meta name="dcterms.date" content="2025-05-25">
+
+<title>Vision Transformers: A Complete Visual Guide – Krishnatheja Vanka’s Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../favicon.ico" rel="icon">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-7cf12f9d5c5caf5e13008aedb6606350.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Krishnatheja Vanka’s Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/theja-vanka"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Vision Transformers: A Complete Visual Guide</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">researcg</div>
+                <div class="quarto-category">advanced</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Krishnatheja Vanka </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 25, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="vision-transformers-a-complete-visual-guide" class="level1">
+<h1>Vision Transformers: A Complete Visual Guide</h1>
+<p><img src="transformer.png" class="img-fluid"></p>
+<section id="table-of-contents" class="level2">
+<h2 class="anchored" data-anchor-id="table-of-contents">Table of Contents</h2>
+<ol type="1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#key-concepts">Key Concepts</a></li>
+<li><a href="#image-patch-embedding">Image Patch Embedding</a></li>
+<li><a href="#positional-encoding">Positional Encoding</a></li>
+<li><a href="#self-attention-mechanism">Self-Attention Mechanism</a></li>
+<li><a href="#transformer-block-architecture">Transformer Block Architecture</a></li>
+<li><a href="#complete-vit-pipeline">Complete ViT Pipeline</a></li>
+<li><a href="#mathematical-formulation">Mathematical Formulation</a></li>
+<li><a href="#implementation-details">Implementation Details</a></li>
+<li><a href="#advantages-and-limitations">Advantages and Limitations</a></li>
+<li><a href="#applications">Applications</a></li>
+<li><a href="#comparison-with-cnns">Comparison with CNNs</a></li>
+</ol>
+<hr>
+</section>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Vision Transformers (ViTs) represent a paradigm shift in computer vision, adapting the successful transformer architecture from natural language processing to image analysis. Instead of treating images as spatial grids processed through convolutional layers, ViTs treat images as sequences of patches, similar to how text is processed as sequences of tokens.</p>
+<section id="core-innovation" class="level3">
+<h3 class="anchored" data-anchor-id="core-innovation">Core Innovation</h3>
+<ul>
+<li><strong>Traditional CNNs</strong>: Build hierarchical features through local convolutions</li>
+<li><strong>Vision Transformers</strong>: Model global relationships through self-attention on image patches</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="key-concepts" class="level2">
+<h2 class="anchored" data-anchor-id="key-concepts">Key Concepts</h2>
+<section id="sequence-based-image-processing" class="level3">
+<h3 class="anchored" data-anchor-id="sequence-based-image-processing">1. Sequence-Based Image Processing</h3>
+<pre><code>Original Image (224×224) → Patches (16×16) → Linear Embeddings → Transformer</code></pre>
+</section>
+<section id="global-context-from-layer-one" class="level3">
+<h3 class="anchored" data-anchor-id="global-context-from-layer-one">2. Global Context from Layer One</h3>
+<p>Unlike CNNs that build global understanding through deep stacks of local operations, ViTs can model relationships between any two patches from the first layer.</p>
+</section>
+<section id="minimal-inductive-bias" class="level3">
+<h3 class="anchored" data-anchor-id="minimal-inductive-bias">3. Minimal Inductive Bias</h3>
+<p>ViTs make fewer assumptions about image structure, learning spatial relationships purely from data.</p>
+<hr>
+</section>
+</section>
+<section id="image-patch-embedding" class="level2">
+<h2 class="anchored" data-anchor-id="image-patch-embedding">Image Patch Embedding</h2>
+<p>The foundation of Vision Transformers is converting images into sequences of patches.</p>
+<section id="step-by-step-process" class="level3">
+<h3 class="anchored" data-anchor-id="step-by-step-process">Step-by-Step Process</h3>
+<section id="image-patching" class="level4">
+<h4 class="anchored" data-anchor-id="image-patching">1. Image Patching</h4>
+<pre><code>Original Image (H×W×C)
+         ↓
+    Divide into patches
+         ↓
+N patches of size (P×P×C)
+
+Where: N = (H×W)/(P×P)</code></pre>
+</section>
+<section id="visual-representation" class="level4">
+<h4 class="anchored" data-anchor-id="visual-representation">2. Visual Representation</h4>
+<pre><code>Original 224×224 Image:
+┌─────────────────────────┐
+│ ■ ■ ■ ■ │ ■ ■ ■ ■ │... │
+│ ■ ■ ■ ■ │ ■ ■ ■ ■ │    │
+│ ■ ■ ■ ■ │ ■ ■ ■ ■ │    │
+│ ■ ■ ■ ■ │ ■ ■ ■ ■ │    │
+├─────────┼─────────┼────┤
+│ ■ ■ ■ ■ │ ■ ■ ■ ■ │... │
+│   ...   │   ...   │    │
+└─────────────────────────┘
+
+Becomes 196 patches (14×14 grid of 16×16 patches)</code></pre>
+</section>
+<section id="linear-projection" class="level4">
+<h4 class="anchored" data-anchor-id="linear-projection">3. Linear Projection</h4>
+<p>Each patch is flattened and linearly projected to create embeddings:</p>
+<pre><code>Patch (16×16×3) → Flatten → Vector (768,) → Linear Layer → Embedding (D,)</code></pre>
+</section>
+</section>
+<section id="patch-embedding-visualization" class="level3">
+<h3 class="anchored" data-anchor-id="patch-embedding-visualization">Patch Embedding Visualization</h3>
+<pre><code>Patch 1:  [0.2, -0.1, 0.8, 0.3, ..., 0.6]  (768 dimensions)
+Patch 2:  [0.5, 0.2, -0.3, 0.7, ..., -0.1]
+Patch 3:  [0.1, 0.9, 0.4, -0.2, ..., 0.8]
+   ...
+Patch 196: [-0.3, 0.6, 0.1, 0.9, ..., 0.4]</code></pre>
+<hr>
+</section>
+</section>
+<section id="positional-encoding" class="level2">
+<h2 class="anchored" data-anchor-id="positional-encoding">Positional Encoding</h2>
+<p>Since transformers don’t inherently understand spatial relationships, positional information must be explicitly added.</p>
+<section id="types-of-positional-encoding" class="level3">
+<h3 class="anchored" data-anchor-id="types-of-positional-encoding">Types of Positional Encoding</h3>
+<section id="learnable-position-embeddings" class="level4">
+<h4 class="anchored" data-anchor-id="learnable-position-embeddings">1. Learnable Position Embeddings</h4>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pseudocode</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>position_embeddings <span class="op">=</span> LearnableParameter(size<span class="op">=</span>(num_patches <span class="op">+</span> <span class="dv">1</span>, embedding_dim))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>patch_embeddings <span class="op">=</span> patch_embeddings <span class="op">+</span> position_embeddings</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="d-positional-encoding" class="level4">
+<h4 class="anchored" data-anchor-id="d-positional-encoding">2. 2D Positional Encoding</h4>
+<pre><code>Position (0,0): [sin(0/10000^0), cos(0/10000^0), sin(0/10000^1), ...]
+Position (0,1): [sin(1/10000^0), cos(1/10000^0), sin(1/10000^1), ...]
+Position (1,0): [sin(14/10000^0), cos(14/10000^0), sin(14/10000^1), ...]</code></pre>
+</section>
+</section>
+<section id="visualization-of-position-information" class="level3">
+<h3 class="anchored" data-anchor-id="visualization-of-position-information">Visualization of Position Information</h3>
+<pre><code>Grid positions for 4×4 patches:
+┌────┬────┬────┬────┐
+│(0,0)│(0,1)│(0,2)│(0,3)│
+├────┼────┼────┼────┤
+│(1,0)│(1,1)│(1,2)│(1,3)│  →  Unique embedding for each position
+├────┼────┼────┼────┤
+│(2,0)│(2,1)│(2,2)│(2,3)│
+├────┼────┼────┼────┤
+│(3,0)│(3,1)│(3,2)│(3,3)│
+└────┴────┴────┴────┘</code></pre>
+<hr>
+</section>
+</section>
+<section id="self-attention-mechanism" class="level2">
+<h2 class="anchored" data-anchor-id="self-attention-mechanism">Self-Attention Mechanism</h2>
+<p>The heart of the transformer is the self-attention mechanism, allowing each patch to attend to all other patches.</p>
+<section id="mathematical-foundation" class="level3">
+<h3 class="anchored" data-anchor-id="mathematical-foundation">Mathematical Foundation</h3>
+<pre><code>Attention(Q,K,V) = softmax(QK^T/√d_k)V
+
+Where:
+Q = Query matrix  (what information we're looking for)
+K = Key matrix    (what information is available)
+V = Value matrix  (the actual information content)</code></pre>
+</section>
+<section id="multi-head-attention" class="level3">
+<h3 class="anchored" data-anchor-id="multi-head-attention">Multi-Head Attention</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pseudocode for multi-head attention</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> head <span class="kw">in</span> <span class="bu">range</span>(num_heads):</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    Q_h <span class="op">=</span> X <span class="op">@</span> W_q_h  <span class="co"># Linear projection for queries</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    K_h <span class="op">=</span> X <span class="op">@</span> W_k_h  <span class="co"># Linear projection for keys  </span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    V_h <span class="op">=</span> X <span class="op">@</span> W_v_h  <span class="co"># Linear projection for values</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    attention_h <span class="op">=</span> softmax(Q_h <span class="op">@</span> K_h.T <span class="op">/</span> sqrt(d_k)) <span class="op">@</span> V_h</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate all heads and project</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> concat(attention_1, ..., attention_h) <span class="op">@</span> W_o</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="attention-pattern-visualization" class="level3">
+<h3 class="anchored" data-anchor-id="attention-pattern-visualization">Attention Pattern Visualization</h3>
+<pre><code>Attention weights for patch at position (1,1):
+
+     0   1   2   3   4   5   6   7   8
+   ┌─────────────────────────────────┐
+0  │ .1  .05 .02 .01 .03 .02 .01 .01 │
+1  │ .05 .8  .05 .02 .01 .02 .01 .01 │  ← High attention to itself
+2  │ .02 .05 .1  .03 .01 .01 .02 .01 │
+3  │ .01 .02 .03 .05 .02 .01 .01 .01 │
+   └─────────────────────────────────┘
+       ↑
+   High attention to adjacent patches</code></pre>
+</section>
+<section id="attention-flow-diagram" class="level3">
+<h3 class="anchored" data-anchor-id="attention-flow-diagram">Attention Flow Diagram</h3>
+<pre><code>Input Patches → Q, K, V Projections → Attention Scores → Weighted Values → Output
+
+[P1, P2, P3, ...]
+       ↓
+   [Q1] [K1] [V1]
+   [Q2] [K2] [V2]  
+   [Q3] [K3] [V3]
+   [...] [...] [...]
+       ↓
+   Attention Matrix
+   ┌─────────────┐
+   │ .8  .1  .05 │ ← P1 attends to P1, P2, P3
+   │ .2  .7  .1  │ ← P2 attends to P1, P2, P3  
+   │ .1  .2  .7  │ ← P3 attends to P1, P2, P3
+   └─────────────┘
+       ↓
+   Weighted Output</code></pre>
+<hr>
+</section>
+</section>
+<section id="transformer-block-architecture" class="level2">
+<h2 class="anchored" data-anchor-id="transformer-block-architecture">Transformer Block Architecture</h2>
+<p>Each transformer block consists of two main components with residual connections.</p>
+<section id="block-structure-diagram" class="level3">
+<h3 class="anchored" data-anchor-id="block-structure-diagram">Block Structure Diagram</h3>
+<pre><code>Input
+  ↓
+┌─────────────────────────┐
+│   Multi-Head Attention  │
+└─────────────────────────┘
+  ↓
+┌─────────────────────────┐
+│      Add &amp; Norm         │ ← Residual connection + Layer Normalization
+└─────────────────────────┘
+  ↓
+┌─────────────────────────┐
+│   Feed Forward Network  │
+└─────────────────────────┘
+  ↓
+┌─────────────────────────┐
+│      Add &amp; Norm         │ ← Residual connection + Layer Normalization
+└─────────────────────────┘
+  ↓
+Output</code></pre>
+</section>
+<section id="detailed-component-breakdown" class="level3">
+<h3 class="anchored" data-anchor-id="detailed-component-breakdown">Detailed Component Breakdown</h3>
+<section id="multi-head-self-attention" class="level4">
+<h4 class="anchored" data-anchor-id="multi-head-self-attention">1. Multi-Head Self-Attention</h4>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simplified implementation</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> multi_head_attention(x, num_heads<span class="op">=</span><span class="dv">12</span>):</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># x shape: (batch_size, num_patches, embed_dim)</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    head_dim <span class="op">=</span> embed_dim <span class="op">//</span> num_heads</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Split into heads</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    q <span class="op">=</span> x.reshape(batch_size, num_patches, num_heads, head_dim)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    k <span class="op">=</span> x.reshape(batch_size, num_patches, num_heads, head_dim)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    v <span class="op">=</span> x.reshape(batch_size, num_patches, num_heads, head_dim)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Compute attention</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    scores <span class="op">=</span> (q <span class="op">@</span> k.transpose(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="op">/</span> sqrt(head_dim)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    attention <span class="op">=</span> softmax(scores)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Apply attention to values</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> attention <span class="op">@</span> v</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> output.reshape(batch_size, num_patches, embed_dim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="feed-forward-network" class="level4">
+<h4 class="anchored" data-anchor-id="feed-forward-network">2. Feed Forward Network</h4>
+<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> feed_forward(x, hidden_dim<span class="op">=</span><span class="dv">3072</span>):</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Two linear layers with GELU activation</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> linear_1(x)        <span class="co"># (embed_dim,) → (hidden_dim,)</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> gelu(x)            <span class="co"># Non-linear activation</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> dropout(x)         <span class="co"># Regularization</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> linear_2(x)        <span class="co"># (hidden_dim,) → (embed_dim,)</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="layer-normalization" class="level4">
+<h4 class="anchored" data-anchor-id="layer-normalization">3. Layer Normalization</h4>
+<div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> layer_norm(x, eps<span class="op">=</span><span class="fl">1e-6</span>):</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    mean <span class="op">=</span> x.mean(dim<span class="op">=-</span><span class="dv">1</span>, keepdim<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    std <span class="op">=</span> x.std(dim<span class="op">=-</span><span class="dv">1</span>, keepdim<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (x <span class="op">-</span> mean) <span class="op">/</span> (std <span class="op">+</span> eps) <span class="op">*</span> gamma <span class="op">+</span> beta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+</section>
+</section>
+<section id="complete-vit-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="complete-vit-pipeline">Complete ViT Pipeline</h2>
+<section id="end-to-end-architecture" class="level3">
+<h3 class="anchored" data-anchor-id="end-to-end-architecture">End-to-End Architecture</h3>
+<pre><code>Image (224×224×3)
+         ↓
+┌─────────────────────────┐
+│   Patch Embedding       │ → 196 patches of 16×16
+│   + Position Embedding  │ → Add spatial information
+└─────────────────────────┘
+         ↓
+┌─────────────────────────┐
+│   [CLS] Token Addition  │ → Prepend classification token
+└─────────────────────────┘
+         ↓
+┌─────────────────────────┐
+│   Transformer Block 1   │
+│   Transformer Block 2   │
+│         ...             │ → Stack of L transformer blocks
+│   Transformer Block L   │
+└─────────────────────────┘
+         ↓
+┌─────────────────────────┐
+│   Extract [CLS] Token   │ → Take first token representation
+└─────────────────────────┘
+         ↓
+┌─────────────────────────┐
+│   Classification Head   │ → Linear layer + softmax
+└─────────────────────────┘
+         ↓
+    Class Probabilities</code></pre>
+</section>
+<section id="data-flow-visualization" class="level3">
+<h3 class="anchored" data-anchor-id="data-flow-visualization">Data Flow Visualization</h3>
+<pre><code>Step 1: Image → Patches
+[Image] → [P1][P2][P3]...[P196]
+
+Step 2: Add CLS token and positions
+[CLS][P1+pos1][P2+pos2]...[P196+pos196]
+
+Step 3: Process through transformer blocks
+         Attention        FFN
+[CLS] ←→ [P1] ←→ ... ←→ [P196] → [CLS'][P1']...[P196']
+  ↕      ↕              ↕
+All patches attend to all other patches
+
+Step 4: Classification
+[CLS'] → Linear Layer → [Class1: 0.1, Class2: 0.8, Class3: 0.1]</code></pre>
+<hr>
+</section>
+</section>
+<section id="mathematical-formulation" class="level2">
+<h2 class="anchored" data-anchor-id="mathematical-formulation">Mathematical Formulation</h2>
+<section id="core-equations" class="level3">
+<h3 class="anchored" data-anchor-id="core-equations">Core Equations</h3>
+<section id="patch-embedding" class="level4">
+<h4 class="anchored" data-anchor-id="patch-embedding">1. Patch Embedding</h4>
+<pre><code>X_p = [x_p^1 E; x_p^2 E; ...; x_p^N E] + E_pos</code></pre>
+<p>Where: - <code>x_p^i</code> is the i-th flattened patch - <code>E</code> is the learnable embedding matrix - <code>E_pos</code> is the positional embedding</p>
+</section>
+<section id="multi-head-self-attention-1" class="level4">
+<h4 class="anchored" data-anchor-id="multi-head-self-attention-1">2. Multi-Head Self-Attention</h4>
+<pre><code>MSA(X) = Concat(head_1, ..., head_h)W^O
+
+head_i = Attention(XW_i^Q, XW_i^K, XW_i^V)
+
+Attention(Q,K,V) = softmax(QK^T/√d_k)V</code></pre>
+</section>
+<section id="transformer-block" class="level4">
+<h4 class="anchored" data-anchor-id="transformer-block">3. Transformer Block</h4>
+<pre><code>X' = MSA(LN(X)) + X                    # Multi-head attention with residual
+X'' = MLP(LN(X')) + X'                 # Feed-forward with residual
+
+Where:
+LN = Layer Normalization
+MLP = Multi-Layer Perceptron</code></pre>
+</section>
+<section id="classification" class="level4">
+<h4 class="anchored" data-anchor-id="classification">4. Classification</h4>
+<pre><code>y = LN(X_L^0)W_head
+
+Where:
+X_L^0 is the [CLS] token after L transformer layers
+W_head is the classification head matrix</code></pre>
+<hr>
+</section>
+</section>
+</section>
+<section id="implementation-details" class="level2">
+<h2 class="anchored" data-anchor-id="implementation-details">Implementation Details</h2>
+<section id="standard-vit-configurations" class="level3">
+<h3 class="anchored" data-anchor-id="standard-vit-configurations">Standard ViT Configurations</h3>
+<section id="vit-base16" class="level4">
+<h4 class="anchored" data-anchor-id="vit-base16">ViT-Base/16</h4>
+<ul>
+<li><strong>Image Size</strong>: 224×224</li>
+<li><strong>Patch Size</strong>: 16×16</li>
+<li><strong>Sequence Length</strong>: 196 patches + 1 CLS token = 197</li>
+<li><strong>Embedding Dimension</strong>: 768</li>
+<li><strong>Number of Heads</strong>: 12</li>
+<li><strong>Number of Layers</strong>: 12</li>
+<li><strong>MLP Hidden Dimension</strong>: 3072</li>
+<li><strong>Parameters</strong>: ~86M</li>
+</ul>
+</section>
+<section id="vit-large16" class="level4">
+<h4 class="anchored" data-anchor-id="vit-large16">ViT-Large/16</h4>
+<ul>
+<li><strong>Embedding Dimension</strong>: 1024</li>
+<li><strong>Number of Heads</strong>: 16</li>
+<li><strong>Number of Layers</strong>: 24</li>
+<li><strong>MLP Hidden Dimension</strong>: 4096</li>
+<li><strong>Parameters</strong>: ~307M</li>
+</ul>
+</section>
+<section id="vit-huge14" class="level4">
+<h4 class="anchored" data-anchor-id="vit-huge14">ViT-Huge/14</h4>
+<ul>
+<li><strong>Patch Size</strong>: 14×14</li>
+<li><strong>Sequence Length</strong>: 256 patches + 1 CLS token = 257</li>
+<li><strong>Embedding Dimension</strong>: 1280</li>
+<li><strong>Number of Heads</strong>: 16</li>
+<li><strong>Number of Layers</strong>: 32</li>
+<li><strong>MLP Hidden Dimension</strong>: 5120</li>
+<li><strong>Parameters</strong>: ~632M</li>
+</ul>
+</section>
+</section>
+<section id="key-implementation-considerations" class="level3">
+<h3 class="anchored" data-anchor-id="key-implementation-considerations">Key Implementation Considerations</h3>
+<section id="input-resolution-and-patch-size" class="level4">
+<h4 class="anchored" data-anchor-id="input-resolution-and-patch-size">1. Input Resolution and Patch Size</h4>
+<div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Different configurations</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>configs <span class="op">=</span> {</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'ViT-B/16'</span>: {<span class="st">'patch_size'</span>: <span class="dv">16</span>, <span class="st">'image_size'</span>: <span class="dv">224</span>},</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'ViT-B/32'</span>: {<span class="st">'patch_size'</span>: <span class="dv">32</span>, <span class="st">'image_size'</span>: <span class="dv">224</span>},</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'ViT-L/16'</span>: {<span class="st">'patch_size'</span>: <span class="dv">16</span>, <span class="st">'image_size'</span>: <span class="dv">384</span>},  <span class="co"># Higher resolution</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="training-strategies" class="level4">
+<h4 class="anchored" data-anchor-id="training-strategies">2. Training Strategies</h4>
+<pre><code>Pre-training:
+- Large datasets (JFT-300M, ImageNet-21k)
+- High resolution images
+- Strong data augmentation
+
+Fine-tuning:
+- Smaller datasets (ImageNet-1k)
+- Higher resolution than pre-training
+- Position embedding interpolation</code></pre>
+</section>
+<section id="position-embedding-interpolation" class="level4">
+<h4 class="anchored" data-anchor-id="position-embedding-interpolation">3. Position Embedding Interpolation</h4>
+<div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># When fine-tuning at higher resolution</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> interpolate_pos_embed(pos_embed, grid_size):</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Interpolate position embeddings for different grid sizes</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    old_grid_size <span class="op">=</span> <span class="bu">int</span>(sqrt(pos_embed.shape[<span class="dv">1</span>] <span class="op">-</span> <span class="dv">1</span>))  <span class="co"># Exclude CLS token</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    pos_embed <span class="op">=</span> pos_embed[:, <span class="dv">1</span>:, :]  <span class="co"># Remove CLS token</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    pos_embed <span class="op">=</span> pos_embed.reshape(<span class="dv">1</span>, old_grid_size, old_grid_size, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    pos_embed <span class="op">=</span> F.interpolate(pos_embed, size<span class="op">=</span>grid_size, mode<span class="op">=</span><span class="st">'bicubic'</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    pos_embed <span class="op">=</span> pos_embed.reshape(<span class="dv">1</span>, grid_size <span class="op">*</span> grid_size, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pos_embed</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+</section>
+</section>
+<section id="advantages-and-limitations" class="level2">
+<h2 class="anchored" data-anchor-id="advantages-and-limitations">Advantages and Limitations</h2>
+<section id="advantages" class="level3">
+<h3 class="anchored" data-anchor-id="advantages">✅ Advantages</h3>
+<section id="global-context" class="level4">
+<h4 class="anchored" data-anchor-id="global-context">1. Global Context</h4>
+<ul>
+<li><strong>Immediate global receptive field</strong>: Unlike CNNs that build global understanding through deep stacks, ViTs can model long-range dependencies from the first layer</li>
+<li><strong>Flexible attention patterns</strong>: Can attend to relevant patches regardless of spatial distance</li>
+</ul>
+</section>
+<section id="scalability" class="level4">
+<h4 class="anchored" data-anchor-id="scalability">2. Scalability</h4>
+<ul>
+<li><strong>Scales well with data</strong>: Performance continues to improve with larger datasets</li>
+<li><strong>Efficient parallelization</strong>: Self-attention can be computed in parallel across sequence length</li>
+</ul>
+</section>
+<section id="transfer-learning" class="level4">
+<h4 class="anchored" data-anchor-id="transfer-learning">3. Transfer Learning</h4>
+<ul>
+<li><strong>Strong pre-trained representations</strong>: Models trained on large datasets transfer well</li>
+<li><strong>Flexible input sizes</strong>: Can handle different resolutions through position embedding interpolation</li>
+</ul>
+</section>
+<section id="interpretability" class="level4">
+<h4 class="anchored" data-anchor-id="interpretability">4. Interpretability</h4>
+<ul>
+<li><strong>Attention visualization</strong>: Can visualize which patches the model attends to</li>
+<li><strong>Less architectural bias</strong>: Learns spatial relationships from data</li>
+</ul>
+</section>
+</section>
+<section id="limitations" class="level3">
+<h3 class="anchored" data-anchor-id="limitations">❌ Limitations</h3>
+<section id="data-requirements" class="level4">
+<h4 class="anchored" data-anchor-id="data-requirements">1. Data Requirements</h4>
+<ul>
+<li><strong>Needs large datasets</strong>: Requires more data than CNNs for equivalent performance</li>
+<li><strong>Poor few-shot performance</strong>: Struggles with limited training data</li>
+</ul>
+</section>
+<section id="computational-cost" class="level4">
+<h4 class="anchored" data-anchor-id="computational-cost">2. Computational Cost</h4>
+<ul>
+<li><strong>Quadratic complexity</strong>: Self-attention scales O(n²) with sequence length</li>
+<li><strong>Memory intensive</strong>: Large memory requirements for long sequences</li>
+</ul>
+</section>
+<section id="local-feature-extraction" class="level4">
+<h4 class="anchored" data-anchor-id="local-feature-extraction">3. Local Feature Extraction</h4>
+<ul>
+<li><strong>Misses fine-grained details</strong>: May struggle with tasks requiring precise localization</li>
+<li><strong>No built-in translation equivariance</strong>: Unlike CNNs, doesn’t inherently handle spatial translations</li>
+</ul>
+</section>
+</section>
+<section id="comparison-table" class="level3">
+<h3 class="anchored" data-anchor-id="comparison-table">Comparison Table</h3>
+<pre><code>Aspect              | CNNs                | ViTs
+--------------------|--------------------|-----------------------
+Inductive Bias      | Strong (locality)  | Weak (learns from data)
+Data Requirements   | Moderate          | Large
+Global Context      | Deep layers only  | From first layer
+Computational Cost  | O(n)              | O(n²)
+Fine-grained Detail | Excellent         | Good
+Transfer Learning   | Good              | Excellent
+Interpretability    | Limited           | Good (attention maps)</code></pre>
+<hr>
+</section>
+</section>
+<section id="applications" class="level2">
+<h2 class="anchored" data-anchor-id="applications">Applications</h2>
+<section id="image-classification" class="level3">
+<h3 class="anchored" data-anchor-id="image-classification">1. Image Classification</h3>
+<ul>
+<li><strong>ImageNet</strong>: State-of-the-art results on standard benchmarks</li>
+<li><strong>Fine-grained classification</strong>: Birds, flowers, medical images</li>
+<li><strong>Large-scale classification</strong>: Handling thousands of classes</li>
+</ul>
+<section id="performance-comparison" class="level4">
+<h4 class="anchored" data-anchor-id="performance-comparison">Performance Comparison</h4>
+<pre><code>Model           | ImageNet Top-1 | Parameters
+----------------|---------------|------------
+ResNet-50       | 76.0%         | 25M
+EfficientNet-B7 | 84.3%         | 66M
+ViT-B/16        | 84.5%         | 86M
+ViT-L/16        | 87.8%         | 307M</code></pre>
+</section>
+</section>
+<section id="object-detection" class="level3">
+<h3 class="anchored" data-anchor-id="object-detection">2. Object Detection</h3>
+<ul>
+<li><strong>DETR (Detection Transformer)</strong>: End-to-end object detection</li>
+<li><strong>ViT-FRCNN</strong>: ViT backbone with Faster R-CNN</li>
+<li><strong>Patch-based detection</strong>: Treating detection as sequence modeling</li>
+</ul>
+</section>
+<section id="semantic-segmentation" class="level3">
+<h3 class="anchored" data-anchor-id="semantic-segmentation">3. Semantic Segmentation</h3>
+<ul>
+<li><strong>SETR</strong>: Segmentation with transformers</li>
+<li><strong>SegFormer</strong>: Efficient transformer for segmentation</li>
+<li><strong>Per-pixel classification</strong>: Using patch-based representations</li>
+</ul>
+</section>
+<section id="medical-imaging" class="level3">
+<h3 class="anchored" data-anchor-id="medical-imaging">4. Medical Imaging</h3>
+<ul>
+<li><strong>Pathology</strong>: Analyzing histopathology slides</li>
+<li><strong>Radiology</strong>: X-ray, CT, MRI analysis</li>
+<li><strong>Multi-modal</strong>: Combining different imaging modalities</li>
+</ul>
+</section>
+<section id="video-understanding" class="level3">
+<h3 class="anchored" data-anchor-id="video-understanding">5. Video Understanding</h3>
+<ul>
+<li><strong>Video ViT</strong>: Extending to spatio-temporal patches</li>
+<li><strong>Action recognition</strong>: Understanding temporal dynamics</li>
+<li><strong>Video classification</strong>: Long-range temporal modeling</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="comparison-with-cnns" class="level2">
+<h2 class="anchored" data-anchor-id="comparison-with-cnns">Comparison with CNNs</h2>
+<section id="architectural-differences" class="level3">
+<h3 class="anchored" data-anchor-id="architectural-differences">Architectural Differences</h3>
+<section id="convolutional-neural-networks" class="level4">
+<h4 class="anchored" data-anchor-id="convolutional-neural-networks">Convolutional Neural Networks</h4>
+<pre><code>Input Image
+     ↓
+┌─────────────┐
+│  Conv 3×3   │ ← Local receptive field
+│  ReLU       │
+│  Conv 3×3   │
+│  MaxPool    │
+└─────────────┘
+     ↓
+┌─────────────┐
+│  Conv 3×3   │ ← Hierarchical features
+│  ReLU       │
+│  Conv 3×3   │
+│  MaxPool    │
+└─────────────┘
+     ⋮
+Global Average Pool
+     ↓
+Classification</code></pre>
+</section>
+<section id="vision-transformers" class="level4">
+<h4 class="anchored" data-anchor-id="vision-transformers">Vision Transformers</h4>
+<pre><code>Input Image
+     ↓
+┌─────────────────┐
+│ Patch Embedding │ ← Global receptive field
+└─────────────────┘
+     ↓
+┌─────────────────┐
+│ Self-Attention  │ ← All patches interact
+│ Feed Forward    │
+└─────────────────┘
+     ↓
+┌─────────────────┐
+│ Self-Attention  │ ← Repeated L times
+│ Feed Forward    │
+└─────────────────┘
+     ⋮
+[CLS] Token
+     ↓
+Classification</code></pre>
+</section>
+</section>
+<section id="feature-learning-comparison" class="level3">
+<h3 class="anchored" data-anchor-id="feature-learning-comparison">Feature Learning Comparison</h3>
+<section id="cnn-feature-hierarchy" class="level4">
+<h4 class="anchored" data-anchor-id="cnn-feature-hierarchy">CNN Feature Hierarchy</h4>
+<pre><code>Layer 1: Edges, corners          (local features)
+Layer 2: Textures, patterns      (mid-level features)  
+Layer 3: Parts, objects          (high-level features)
+Layer 4: Semantic concepts       (global features)</code></pre>
+</section>
+<section id="vit-feature-learning" class="level4">
+<h4 class="anchored" data-anchor-id="vit-feature-learning">ViT Feature Learning</h4>
+<pre><code>Layer 1: Global relationships    (attention to all patches)
+Layer 2: Refined attention       (more selective patterns)
+Layer 3: Complex interactions    (sophisticated attention)
+Layer 4: Task-specific features  (classification-oriented)</code></pre>
+</section>
+</section>
+<section id="when-to-use-each" class="level3">
+<h3 class="anchored" data-anchor-id="when-to-use-each">When to Use Each</h3>
+<section id="choose-cnns-when" class="level4">
+<h4 class="anchored" data-anchor-id="choose-cnns-when">Choose CNNs When:</h4>
+<ul>
+<li>Limited training data</li>
+<li>Need translation equivariance</li>
+<li>Computational resources are constrained</li>
+<li>Fine-grained spatial details are crucial</li>
+<li>Working with small images</li>
+</ul>
+</section>
+<section id="choose-vits-when" class="level4">
+<h4 class="anchored" data-anchor-id="choose-vits-when">Choose ViTs When:</h4>
+<ul>
+<li>Large datasets available</li>
+<li>Global context is important</li>
+<li>Computational resources are abundant</li>
+<li>Transfer learning is primary concern</li>
+<li>Working with high-resolution images</li>
+</ul>
+<hr>
+</section>
+</section>
+</section>
+<section id="recent-developments-and-variants" class="level2">
+<h2 class="anchored" data-anchor-id="recent-developments-and-variants">Recent Developments and Variants</h2>
+<section id="hybrid-architectures" class="level3">
+<h3 class="anchored" data-anchor-id="hybrid-architectures">1. Hybrid Architectures</h3>
+<ul>
+<li><strong>ResNet + ViT</strong>: CNN stem with transformer blocks</li>
+<li><strong>ConViT</strong>: Combining convolutions with self-attention</li>
+<li><strong>CoAtNet</strong>: Efficiently combining convolution and attention</li>
+</ul>
+</section>
+<section id="efficient-vits" class="level3">
+<h3 class="anchored" data-anchor-id="efficient-vits">2. Efficient ViTs</h3>
+<ul>
+<li><strong>DeiT</strong>: Data-efficient image transformers with distillation</li>
+<li><strong>PiT</strong>: Pooling-based ViT for reduced computation</li>
+<li><strong>Swin Transformer</strong>: Hierarchical ViT with shifted windows</li>
+</ul>
+</section>
+<section id="specialized-applications" class="level3">
+<h3 class="anchored" data-anchor-id="specialized-applications">3. Specialized Applications</h3>
+<ul>
+<li><strong>MAE</strong>: Masked autoencoders for self-supervised learning</li>
+<li><strong>BEiT</strong>: BERT-style pre-training for images</li>
+<li><strong>CLIP</strong>: Contrastive language-image pre-training</li>
+</ul>
+</section>
+<section id="architecture-improvements" class="level3">
+<h3 class="anchored" data-anchor-id="architecture-improvements">4. Architecture Improvements</h3>
+<ul>
+<li><strong>LayerScale</strong>: Improved training stability</li>
+<li><strong>Post-LN</strong>: Layer normalization placement</li>
+<li><strong>Talking-head attention</strong>: Enhanced attention mechanisms</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Vision Transformers represent a fundamental shift in computer vision, demonstrating that the self-attention mechanism can be successfully adapted from NLP to image understanding. While they require more data and computation than traditional CNNs, they offer superior scalability, transfer learning capabilities, and the ability to model global relationships from the first layer.</p>
+<p>The key insights from ViTs include:</p>
+<ol type="1">
+<li><strong>Images as sequences</strong>: Treating image patches as tokens enables powerful sequence modeling</li>
+<li><strong>Global attention</strong>: Self-attention provides immediate global context</li>
+<li><strong>Minimal inductive bias</strong>: Learning spatial relationships from data rather than architectural constraints</li>
+<li><strong>Scalability</strong>: Performance continues to improve with larger models and datasets</li>
+</ol>
+<p>As the field continues to evolve, we’re seeing hybrid approaches that combine the best of both worlds, making Vision Transformers an essential tool in the modern computer vision toolkit.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
