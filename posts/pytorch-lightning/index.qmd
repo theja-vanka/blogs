@@ -44,13 +44,13 @@ Lightning helps you focus on the science by handling the engineering details.
 
 ## Installation
 
-```{text}
+```bash
 pip install pytorch-lightning
 ```
 
 For the latest features, you can install from the source:
 
-```{text}
+```bash
 pip install git+https://github.com/Lightning-AI/lightning.git
 ```
 
@@ -58,7 +58,7 @@ pip install git+https://github.com/Lightning-AI/lightning.git
 
 The core component in Lightning is the `LightningModule`, which organizes your PyTorch code into a standardized structure:
 
-```{python}
+```python
 import pytorch_lightning as pl
 import torch
 import torch.nn as nn
@@ -121,7 +121,7 @@ This basic structure includes:
 
 Lightning's `LightningDataModule` encapsulates all data-related logic:
 
-```{python}
+```python
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, random_split
 from torchvision import transforms
@@ -170,7 +170,7 @@ Benefits of `LightningDataModule`:
 
 The Lightning `Trainer` handles the training loop and validation:
 
-```{python}
+```python
 from pytorch_lightning import Trainer
 
 # Create model and data module
@@ -203,7 +203,7 @@ The `Trainer` automatically handles:
 
 ### Common Trainer Parameters
 
-```{python}
+```python
 trainer = Trainer(
     max_epochs=10,                    # Maximum number of epochs
     min_epochs=1,                     # Minimum number of epochs
@@ -223,7 +223,7 @@ trainer = Trainer(
 
 Callbacks add functionality to the training loop without modifying the core code:
 
-```{python}
+```python
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping, LearningRateMonitor
 
 # Save the best model based on validation accuracy
@@ -257,7 +257,7 @@ trainer = Trainer(
 
 You can create custom callbacks by extending the base `Callback` class:
 
-```{python}
+```python
 from pytorch_lightning.callbacks import Callback
 
 class PrintingCallback(Callback):
@@ -276,7 +276,7 @@ class PrintingCallback(Callback):
 
 Lightning supports various loggers:
 
-```{python}
+```python
 from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
 
 # TensorBoard logger
@@ -291,7 +291,7 @@ trainer = Trainer(
 
 Adding metrics in your model:
 
-```{python}
+```python
 def training_step(self, batch, batch_idx):
     x, y = batch
     logits = self(x)
@@ -315,7 +315,7 @@ def training_step(self, batch, batch_idx):
 
 Lightning makes distributed training simple:
 
-```{text}
+```python
 # Single GPU
 trainer = Trainer(accelerator="gpu", devices=1)
 
@@ -346,7 +346,7 @@ Other distribution strategies:
 
 Lightning integrates well with optimization libraries:
 
-```{python}
+```python
 from pytorch_lightning import Trainer
 from pytorch_lightning.tuner import Tuner
 
@@ -373,7 +373,7 @@ trainer.fit(model, datamodule=data_module)
 
 Saving and loading model checkpoints:
 
-```{python}
+```python
 # Save checkpoints during training
 checkpoint_callback = ModelCheckpoint(
     dirpath='./checkpoints',
@@ -402,7 +402,7 @@ trainer.fit(model, datamodule=data_module)
 
 Checkpointing for production:
 
-```{python}
+```python
 # Save model in production-ready format
 trainer.save_checkpoint("model.ckpt")
 
@@ -420,7 +420,7 @@ torch.save(model.state_dict(), "production_model.pt")
 
 Converting Lightning models to production:
 
-```{python}
+```python
 # Option 1: Use the Lightning model directly
 model = MNISTModel.load_from_checkpoint("model.ckpt")
 model.eval()
@@ -497,7 +497,7 @@ project/
 
 Lightning provides a CLI for running experiments from config files:
 
-```{python}
+```python
 # main.py
 from pytorch_lightning.cli import LightningCLI
 
@@ -509,13 +509,13 @@ def cli_main():
         save_config_callback=None,
     )
 
-# if __name__ == "__main__":
-#     cli_main()
+if __name__ == "__main__":
+    cli_main()
 ```
 
 Run with:
 
-```{text}
+```bash
 python main.py fit --config configs/mnist.yaml
 ```
 
@@ -538,7 +538,7 @@ trainer:
 
 Lightning includes tools to profile your code:
 
-```{python}
+```python
 from pytorch_lightning.profilers import PyTorchProfiler, SimpleProfiler
 
 # PyTorch Profiler
@@ -563,7 +563,7 @@ trainer.fit(model, datamodule=data_module)
 
 #### Gradient Accumulation
 
-```{python}
+```python
 trainer = Trainer(
     accumulate_grad_batches=4  # Accumulate over 4 batches
 )
@@ -571,7 +571,7 @@ trainer = Trainer(
 
 #### Learning Rate Scheduling
 
-```{python}
+```python
 def configure_optimizers(self):
     optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
@@ -593,7 +593,7 @@ def configure_optimizers(self):
 
 #### Mixed Precision Training
 
-```{python}
+```python
 trainer = Trainer(
     precision="16-mixed"  # Use 16-bit mixed precision
 )
@@ -601,7 +601,7 @@ trainer = Trainer(
 
 #### Transfer Learning
 
-```{python}
+```python
 class TransferLearningModel(pl.LightningModule):
     def __init__(self):
         super().__init__()

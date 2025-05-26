@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Krishnatheja Vanka">
-<meta name="dcterms.date" content="2025-03-22">
+<meta name="dcterms.date" content="2025-05-24">
 
-<title>Welcome To My Blog – Krishnatheja Vanka’s Blog</title>
+<title>Vision Transformers (ViT): A Comprehensive Guide – Krishnatheja Vanka’s Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -112,9 +112,9 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Welcome To My Blog</h1>
+      <h1 class="title">Vision Transformers (ViT): A Comprehensive Guide</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">news</div>
+                <div class="quarto-category">research</div>
               </div>
                   </div>
   </div>
@@ -132,7 +132,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">March 22, 2025</p>
+        <p class="date">May 24, 2025</p>
       </div>
     </div>
     
@@ -151,18 +151,218 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="welcome-to-my-computer-vision-blog" class="level1">
-<h1>👁️ Welcome to My Computer Vision Blog!</h1>
-<p><img src="thumbnail.jpg" class="img-fluid"></p>
-<p>This is the first post in this blog.</p>
-<p>Hello and welcome!</p>
-<p>I’m thrilled to kick off this blog dedicated to exploring the fascinating world of <strong>computer vision</strong> — a field where machines learn to see, interpret, and understand the visual world around us. Whether you’re a seasoned AI researcher, an aspiring developer, or simply curious about how technology can “see,” you’ll find something valuable here.</p>
-<p>From image processing techniques to deep learning breakthroughs, from real-world applications to hands-on tutorials — this blog will cover it all. My goal is to make computer vision approachable, insightful, and exciting for everyone.</p>
-<p>So, whether you’re here to learn, build, or stay on top of the latest innovations, I’m glad to have you along for the journey. Let’s dive into the visual future together!</p>
-<p>Stay tuned, and let’s make machines see the world like never before. 🚀</p>
-<p>Cheers, <br> Krishna</p>
+<section id="vision-transformers-vit-a-comprehensive-guide" class="level1">
+<h1>Vision Transformers (ViT): A Comprehensive Guide</h1>
+<p><img src="vit.png" class="img-fluid"></p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Vision Transformers (ViTs) represent a paradigm shift in computer vision, adapting the transformer architecture that revolutionized natural language processing for image classification and other visual tasks. Instead of relying on convolutional neural networks (CNNs), ViTs treat images as sequences of patches, applying the self-attention mechanism to understand spatial relationships and visual features.</p>
+</section>
+<section id="background-from-cnns-to-transformers" class="level2">
+<h2 class="anchored" data-anchor-id="background-from-cnns-to-transformers">Background: From CNNs to Transformers</h2>
+<p>Traditional computer vision relied heavily on Convolutional Neural Networks (CNNs), which process images through layers of convolutions that detect local features like edges, textures, and patterns. While effective, CNNs have limitations in capturing long-range dependencies across an image due to their local receptive fields.</p>
+<p>Transformers, originally designed for language tasks, excel at modeling long-range dependencies through self-attention mechanisms. The key insight behind Vision Transformers was asking: “What if we could apply this powerful attention mechanism to images?”</p>
+</section>
+<section id="core-concept-images-as-sequences" class="level2">
+<h2 class="anchored" data-anchor-id="core-concept-images-as-sequences">Core Concept: Images as Sequences</h2>
+<p>The fundamental innovation of ViTs lies in treating images as sequences of patches rather than pixel grids. Here’s how this transformation works:</p>
+<section id="image-patch-embedding" class="level3">
+<h3 class="anchored" data-anchor-id="image-patch-embedding">Image Patch Embedding</h3>
+<ol type="1">
+<li><strong>Patch Division</strong>: An input image (typically 224×224 pixels) is divided into fixed-size patches (commonly 16×16 pixels), resulting in a sequence of patches</li>
+<li><strong>Linear Projection</strong>: Each patch is flattened into a vector and linearly projected to create patch embeddings</li>
+<li><strong>Position Encoding</strong>: Since transformers don’t inherently understand spatial relationships, positional encodings are added to maintain spatial information</li>
+<li><strong>Classification Token</strong>: A special learnable [CLS] token is prepended to the sequence, similar to BERT’s approach</li>
+</ol>
+</section>
+<section id="mathematical-formulation" class="level3">
+<h3 class="anchored" data-anchor-id="mathematical-formulation">Mathematical Formulation</h3>
+<p>For an image of size H×W×C divided into patches of size P×P: - Number of patches: N = (H×W)/P² - Each patch becomes a vector of size P²×C - After linear projection: embedding dimension D</p>
+</section>
+</section>
+<section id="architecture-components" class="level2">
+<h2 class="anchored" data-anchor-id="architecture-components">Architecture Components</h2>
+<section id="patch-embedding-layer" class="level3">
+<h3 class="anchored" data-anchor-id="patch-embedding-layer">1. Patch Embedding Layer</h3>
+<p>The patch embedding layer converts image patches into token embeddings that the transformer can process. This involves: - Reshaping patches into vectors - Linear transformation to desired embedding dimension - Adding positional encodings</p>
+</section>
+<section id="transformer-encoder" class="level3">
+<h3 class="anchored" data-anchor-id="transformer-encoder">2. Transformer Encoder</h3>
+<p>The core of ViT consists of standard transformer encoder blocks, each containing: - <strong>Multi-Head Self-Attention (MSA)</strong>: Allows patches to attend to all other patches - <strong>Layer Normalization</strong>: Applied before both attention and MLP layers - <strong>Multi-Layer Perceptron (MLP)</strong>: Two-layer feedforward network with GELU activation - <strong>Residual Connections</strong>: Skip connections around both attention and MLP blocks</p>
+</section>
+<section id="classification-head" class="level3">
+<h3 class="anchored" data-anchor-id="classification-head">3. Classification Head</h3>
+<p>The final component extracts the [CLS] token’s representation and passes it through: - Layer normalization - Linear classifier to produce class predictions</p>
+</section>
+</section>
+<section id="self-attention-in-vision" class="level2">
+<h2 class="anchored" data-anchor-id="self-attention-in-vision">Self-Attention in Vision</h2>
+<p>The self-attention mechanism in ViTs operates differently from CNNs:</p>
+<section id="attention-maps" class="level3">
+<h3 class="anchored" data-anchor-id="attention-maps">Attention Maps</h3>
+<ul>
+<li>Each patch can attend to every other patch in the image</li>
+<li>Attention weights reveal which parts of the image are most relevant for classification</li>
+<li>This enables modeling of long-range spatial dependencies</li>
+</ul>
+</section>
+<section id="global-context" class="level3">
+<h3 class="anchored" data-anchor-id="global-context">Global Context</h3>
+<p>Unlike CNNs that build up receptive fields gradually, ViTs have global receptive fields from the first layer, allowing immediate access to information across the entire image.</p>
+</section>
+</section>
+<section id="training-considerations" class="level2">
+<h2 class="anchored" data-anchor-id="training-considerations">Training Considerations</h2>
+<section id="data-requirements" class="level3">
+<h3 class="anchored" data-anchor-id="data-requirements">Data Requirements</h3>
+<p>Vision Transformers typically require large amounts of training data to perform well: - <strong>Pre-training</strong>: Often trained on large datasets like ImageNet-21k or JFT-300M - <strong>Fine-tuning</strong>: Then adapted to specific tasks with smaller datasets - <strong>Data Efficiency</strong>: ViTs can be less data-efficient than CNNs when training from scratch</p>
+</section>
+<section id="optimization-challenges" class="level3">
+<h3 class="anchored" data-anchor-id="optimization-challenges">Optimization Challenges</h3>
+<ul>
+<li><strong>Initialization</strong>: Careful weight initialization is crucial</li>
+<li><strong>Learning Rate</strong>: Often requires different learning rates for different components</li>
+<li><strong>Regularization</strong>: Techniques like dropout and weight decay are important</li>
+<li><strong>Warmup</strong>: Learning rate warmup is commonly used</li>
+</ul>
+</section>
+</section>
+<section id="variants-and-improvements" class="level2">
+<h2 class="anchored" data-anchor-id="variants-and-improvements">Variants and Improvements</h2>
+<section id="vit-variants" class="level3">
+<h3 class="anchored" data-anchor-id="vit-variants">ViT Variants</h3>
+<ul>
+<li><strong>ViT-B/16, ViT-L/16, ViT-H/14</strong>: Different model sizes with varying patch sizes</li>
+<li><strong>DeiT (Data-efficient ViT)</strong>: Improved training strategies for smaller datasets</li>
+<li><strong>Swin Transformer</strong>: Hierarchical vision transformer with shifted windows</li>
+<li><strong>CaiT</strong>: Class-Attention in Image Transformers with separate class attention</li>
+</ul>
+</section>
+<section id="architectural-improvements" class="level3">
+<h3 class="anchored" data-anchor-id="architectural-improvements">Architectural Improvements</h3>
+<ul>
+<li><strong>Hierarchical Processing</strong>: Multi-scale feature extraction</li>
+<li><strong>Local Attention</strong>: Restricting attention to local neighborhoods</li>
+<li><strong>Hybrid Models</strong>: Combining CNN features with transformer processing</li>
+</ul>
+</section>
+</section>
+<section id="advantages-of-vision-transformers" class="level2">
+<h2 class="anchored" data-anchor-id="advantages-of-vision-transformers">Advantages of Vision Transformers</h2>
+<section id="strengths" class="level3">
+<h3 class="anchored" data-anchor-id="strengths">Strengths</h3>
+<ul>
+<li><strong>Long-range Dependencies</strong>: Natural ability to model global relationships</li>
+<li><strong>Interpretability</strong>: Attention maps provide insights into model decisions</li>
+<li><strong>Scalability</strong>: Performance improves with larger models and datasets</li>
+<li><strong>Transfer Learning</strong>: Excellent pre-trained representations</li>
+<li><strong>Architectural Simplicity</strong>: Unified architecture for various vision tasks</li>
+</ul>
+</section>
+<section id="performance-benefits" class="level3">
+<h3 class="anchored" data-anchor-id="performance-benefits">Performance Benefits</h3>
+<ul>
+<li>State-of-the-art results on image classification</li>
+<li>Strong performance on object detection and segmentation when adapted</li>
+<li>Excellent transfer learning capabilities across domains</li>
+</ul>
+</section>
+</section>
+<section id="limitations-and-challenges" class="level2">
+<h2 class="anchored" data-anchor-id="limitations-and-challenges">Limitations and Challenges</h2>
+<section id="current-limitations" class="level3">
+<h3 class="anchored" data-anchor-id="current-limitations">Current Limitations</h3>
+<ul>
+<li><strong>Data Hunger</strong>: Requires large datasets for optimal performance</li>
+<li><strong>Computational Cost</strong>: High memory and compute requirements</li>
+<li><strong>Inductive Bias</strong>: Lacks CNN’s built-in spatial inductive biases</li>
+<li><strong>Small Dataset Performance</strong>: Can underperform CNNs on limited data</li>
+</ul>
+</section>
+<section id="ongoing-research-areas" class="level3">
+<h3 class="anchored" data-anchor-id="ongoing-research-areas">Ongoing Research Areas</h3>
+<ul>
+<li>Improving data efficiency</li>
+<li>Reducing computational requirements</li>
+<li>Better integration of spatial inductive biases</li>
+<li>Hybrid CNN-Transformer architectures</li>
+</ul>
+</section>
+</section>
+<section id="applications-beyond-classification" class="level2">
+<h2 class="anchored" data-anchor-id="applications-beyond-classification">Applications Beyond Classification</h2>
+<section id="computer-vision-tasks" class="level3">
+<h3 class="anchored" data-anchor-id="computer-vision-tasks">Computer Vision Tasks</h3>
+<ul>
+<li><strong>Object Detection</strong>: DETR (Detection Transformer) applies transformers to detection</li>
+<li><strong>Semantic Segmentation</strong>: Segmentation transformers for pixel-level predictions</li>
+<li><strong>Image Generation</strong>: Vision transformers in generative models</li>
+<li><strong>Video Analysis</strong>: Extending to temporal sequences</li>
+</ul>
+</section>
+<section id="multimodal-applications" class="level3">
+<h3 class="anchored" data-anchor-id="multimodal-applications">Multimodal Applications</h3>
+<ul>
+<li><strong>Vision-Language Models</strong>: CLIP and similar models combining vision and text</li>
+<li><strong>Visual Question Answering</strong>: Integrating visual and textual understanding</li>
+<li><strong>Image Captioning</strong>: Generating descriptions from visual content</li>
+</ul>
+</section>
+</section>
+<section id="implementation-considerations" class="level2">
+<h2 class="anchored" data-anchor-id="implementation-considerations">Implementation Considerations</h2>
+<section id="model-selection" class="level3">
+<h3 class="anchored" data-anchor-id="model-selection">Model Selection</h3>
+<p>Choose ViT variants based on: - Available computational resources - Dataset size and characteristics - Required inference speed - Target accuracy requirements</p>
+</section>
+<section id="training-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="training-strategy">Training Strategy</h3>
+<ul>
+<li>Use pre-trained models when possible</li>
+<li>Apply appropriate data augmentation</li>
+<li>Consider knowledge distillation for smaller models</li>
+<li>Monitor for overfitting, especially on smaller datasets</li>
+</ul>
+</section>
+<section id="optimization-tips" class="level3">
+<h3 class="anchored" data-anchor-id="optimization-tips">Optimization Tips</h3>
+<ul>
+<li>Use mixed precision training to reduce memory usage</li>
+<li>Implement gradient checkpointing for large models</li>
+<li>Consider model parallelism for very large architectures</li>
+<li>Apply appropriate regularization techniques</li>
+</ul>
+</section>
+</section>
+<section id="future-directions" class="level2">
+<h2 class="anchored" data-anchor-id="future-directions">Future Directions</h2>
+<section id="research-trends" class="level3">
+<h3 class="anchored" data-anchor-id="research-trends">Research Trends</h3>
+<ul>
+<li><strong>Efficiency Improvements</strong>: Making ViTs more computationally efficient</li>
+<li><strong>Architecture Search</strong>: Automated design of vision transformer architectures</li>
+<li><strong>Self-Supervised Learning</strong>: Reducing dependence on labeled data</li>
+<li><strong>Unified Architectures</strong>: Single models handling multiple vision tasks</li>
+</ul>
+</section>
+<section id="emerging-applications" class="level3">
+<h3 class="anchored" data-anchor-id="emerging-applications">Emerging Applications</h3>
+<ul>
+<li>Real-time vision applications</li>
+<li>Mobile and edge deployment</li>
+<li>Scientific imaging and medical applications</li>
+<li>Autonomous systems and robotics</li>
+</ul>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Vision Transformers represent a fundamental shift in computer vision, demonstrating that the transformer architecture’s success in NLP can extend to visual tasks. While they present challenges in terms of data requirements and computational cost, their ability to model long-range dependencies and achieve state-of-the-art performance makes them a crucial tool in modern computer vision.</p>
+<p>The field continues to evolve rapidly, with ongoing research addressing current limitations while exploring new applications. As the technology matures, we can expect ViTs to become increasingly practical for a wider range of real-world applications, potentially reshaping how we approach visual understanding tasks.</p>
+<p>Understanding Vision Transformers is essential for anyone working in modern computer vision, as they represent not just a new model architecture, but a new way of thinking about how machines can understand and process visual information.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
