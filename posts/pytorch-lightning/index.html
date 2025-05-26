@@ -211,7 +211,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="introduction-to-pytorch-lightning" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-pytorch-lightning">Introduction to PyTorch Lightning</h2>
-<p>PyTorch Lightning separates research code from engineering code, making models more: - <strong>Reproducible</strong>: The same code works across different hardware - <strong>Readable</strong>: Standard project structure makes collaboration easier - <strong>Scalable</strong>: Train on CPUs, GPUs, TPUs or clusters with no code changes</p>
+<p>PyTorch Lightning separates research code from engineering code, making models more:</p>
+<ul>
+<li><strong>Reproducible</strong>: The same code works across different hardware</li>
+<li><strong>Readable</strong>: Standard project structure makes collaboration easier</li>
+<li><strong>Scalable</strong>: Train on CPUs, GPUs, TPUs or clusters with no code changes</li>
+</ul>
 <p>Lightning helps you focus on the science by handling the engineering details.</p>
 </section>
 <section id="installation" class="level2">
@@ -272,7 +277,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> configure_optimizers(<span class="va">self</span>):</span>
 <span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>        optimizer <span class="op">=</span> torch.optim.Adam(<span class="va">self</span>.parameters(), lr<span class="op">=</span><span class="va">self</span>.lr)</span>
 <span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> optimizer</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This basic structure includes: - Model architecture (<code>__init__</code> and <code>forward</code>) - Training logic (<code>training_step</code>) - Validation logic (<code>validation_step</code>) - Test logic (<code>test_step</code>) - Optimization setup (<code>configure_optimizers</code>)</p>
+<p>This basic structure includes:</p>
+<ul>
+<li>Model architecture (<code>__init__</code> and <code>forward</code>)</li>
+<li>Training logic (<code>training_step</code>)</li>
+<li>Validation logic (<code>validation_step</code>)</li>
+<li>Test logic (<code>test_step</code>)</li>
+<li>Optimization setup (<code>configure_optimizers</code>)</li>
+</ul>
 </section>
 <section id="datamodules" class="level2">
 <h2 class="anchored" data-anchor-id="datamodules">DataModules</h2>
@@ -314,7 +326,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>        </span>
 <span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> test_dataloader(<span class="va">self</span>):</span>
 <span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> DataLoader(<span class="va">self</span>.mnist_test, batch_size<span class="op">=</span><span class="va">self</span>.batch_size)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Benefits of <code>LightningDataModule</code>: - Encapsulates all data preparation logic - Makes data pipeline portable and reproducible - Simplifies sharing data pipelines between projects</p>
+<p>Benefits of <code>LightningDataModule</code>:</p>
+<ul>
+<li>Encapsulates all data preparation logic</li>
+<li>Makes data pipeline portable and reproducible</li>
+<li>Simplifies sharing data pipelines between projects</li>
+</ul>
 </section>
 <section id="training-with-trainer" class="level2">
 <h2 class="anchored" data-anchor-id="training-with-trainer">Training with Trainer</h2>
@@ -338,7 +355,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Test model</span></span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>trainer.test(model, datamodule<span class="op">=</span>data_module)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The <code>Trainer</code> automatically handles: - Epoch and batch iteration - Optimizer steps - Logging metrics - Hardware acceleration (CPU, GPU, TPU) - Early stopping - Checkpointing - Multi-GPU training</p>
+<p>The <code>Trainer</code> automatically handles:</p>
+<ul>
+<li>Epoch and batch iteration</li>
+<li>Optimizer steps</li>
+<li>Logging metrics</li>
+<li>Hardware acceleration (CPU, GPU, TPU)</li>
+<li>Early stopping</li>
+<li>Checkpointing</li>
+<li>Multi-GPU training</li>
+</ul>
 <section id="common-trainer-parameters" class="level3">
 <h3 class="anchored" data-anchor-id="common-trainer-parameters">Common Trainer Parameters</h3>
 <div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>trainer <span class="op">=</span> Trainer(</span>
@@ -457,7 +483,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    strategy<span class="op">=</span><span class="st">"ddp"</span>,  <span class="co"># Distributed Data Parallel</span></span>
 <span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    num_nodes<span class="op">=</span><span class="dv">2</span>      <span class="co"># Use 2 machines</span></span>
 <span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Other distribution strategies: - <code>ddp_spawn</code>: Similar to DDP but uses spawn for multiprocessing - <code>deepspeed</code>: For very large models using DeepSpeed - <code>fsdp</code>: Fully Sharded Data Parallel for huge models</p>
+<p>Other distribution strategies:</p>
+<ul>
+<li><code>ddp_spawn</code>: Similar to DDP but uses spawn for multiprocessing</li>
+<li><code>deepspeed</code>: For very large models using DeepSpeed</li>
+<li><code>fsdp</code>: Fully Sharded Data Parallel for huge models</li>
+</ul>
 </section>
 <section id="hyperparameter-tuning" class="level2">
 <h2 class="anchored" data-anchor-id="hyperparameter-tuning">Hyperparameter Tuning</h2>
@@ -706,7 +737,12 @@ trainer:
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>PyTorch Lightning provides an organized framework that separates research code from engineering boilerplate, making deep learning projects easier to develop, share, and scale. It’s especially valuable for research projects that need to be reproducible and scalable across different hardware configurations.</p>
-<p>For further information: - <a href="https://lightning.ai/docs/pytorch/stable/">PyTorch Lightning Documentation</a> - <a href="https://github.com/Lightning-AI/lightning">Lightning GitHub Repository</a> - <a href="https://lightning.ai/docs/pytorch/stable/tutorials.html">Lightning Tutorials</a></p>
+<p>For further information:</p>
+<ul>
+<li><a href="https://lightning.ai/docs/pytorch/stable/">PyTorch Lightning Documentation</a></li>
+<li><a href="https://github.com/Lightning-AI/lightning">Lightning GitHub Repository</a></li>
+<li><a href="https://lightning.ai/docs/pytorch/stable/tutorials.html">Lightning Tutorials</a></li>
+</ul>
 
 
 </section>
