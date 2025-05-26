@@ -177,22 +177,42 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="mathematical-formulation" class="level3">
 <h3 class="anchored" data-anchor-id="mathematical-formulation">Mathematical Formulation</h3>
-<p>For an image of size H×W×C divided into patches of size P×P: - Number of patches: N = (H×W)/P² - Each patch becomes a vector of size P²×C - After linear projection: embedding dimension D</p>
+<p>For an image of size H×W×C divided into patches of size P×P:</p>
+<ul>
+<li>Number of patches: N = (H×W)/P²</li>
+<li>Each patch becomes a vector of size P²×C</li>
+<li>After linear projection: embedding dimension D</li>
+</ul>
 </section>
 </section>
 <section id="architecture-components" class="level2">
 <h2 class="anchored" data-anchor-id="architecture-components">Architecture Components</h2>
 <section id="patch-embedding-layer" class="level3">
 <h3 class="anchored" data-anchor-id="patch-embedding-layer">1. Patch Embedding Layer</h3>
-<p>The patch embedding layer converts image patches into token embeddings that the transformer can process. This involves: - Reshaping patches into vectors - Linear transformation to desired embedding dimension - Adding positional encodings</p>
+<p>The patch embedding layer converts image patches into token embeddings that the transformer can process. This involves:</p>
+<ul>
+<li>Reshaping patches into vectors</li>
+<li>Linear transformation to desired embedding dimension</li>
+<li>Adding positional encodings</li>
+</ul>
 </section>
 <section id="transformer-encoder" class="level3">
 <h3 class="anchored" data-anchor-id="transformer-encoder">2. Transformer Encoder</h3>
-<p>The core of ViT consists of standard transformer encoder blocks, each containing: - <strong>Multi-Head Self-Attention (MSA)</strong>: Allows patches to attend to all other patches - <strong>Layer Normalization</strong>: Applied before both attention and MLP layers - <strong>Multi-Layer Perceptron (MLP)</strong>: Two-layer feedforward network with GELU activation - <strong>Residual Connections</strong>: Skip connections around both attention and MLP blocks</p>
+<p>The core of ViT consists of standard transformer encoder blocks, each containing:</p>
+<ul>
+<li><strong>Multi-Head Self-Attention (MSA)</strong>: Allows patches to attend to all other patches</li>
+<li><strong>Layer Normalization</strong>: Applied before both attention and MLP layers</li>
+<li><strong>Multi-Layer Perceptron (MLP)</strong>: Two-layer feedforward network with GELU activation</li>
+<li><strong>Residual Connections</strong>: Skip connections around both attention and MLP blocks</li>
+</ul>
 </section>
 <section id="classification-head" class="level3">
 <h3 class="anchored" data-anchor-id="classification-head">3. Classification Head</h3>
-<p>The final component extracts the [CLS] token’s representation and passes it through: - Layer normalization - Linear classifier to produce class predictions</p>
+<p>The final component extracts the [CLS] token’s representation and passes it through:</p>
+<ul>
+<li>Layer normalization</li>
+<li>Linear classifier to produce class predictions</li>
+</ul>
 </section>
 </section>
 <section id="self-attention-in-vision" class="level2">
@@ -215,7 +235,12 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="training-considerations">Training Considerations</h2>
 <section id="data-requirements" class="level3">
 <h3 class="anchored" data-anchor-id="data-requirements">Data Requirements</h3>
-<p>Vision Transformers typically require large amounts of training data to perform well: - <strong>Pre-training</strong>: Often trained on large datasets like ImageNet-21k or JFT-300M - <strong>Fine-tuning</strong>: Then adapted to specific tasks with smaller datasets - <strong>Data Efficiency</strong>: ViTs can be less data-efficient than CNNs when training from scratch</p>
+<p>Vision Transformers typically require large amounts of training data to perform well:</p>
+<ul>
+<li><strong>Pre-training</strong>: Often trained on large datasets like ImageNet-21k or JFT-300M</li>
+<li><strong>Fine-tuning</strong>: Then adapted to specific tasks with smaller datasets</li>
+<li><strong>Data Efficiency</strong>: ViTs can be less data-efficient than CNNs when training from scratch</li>
+</ul>
 </section>
 <section id="optimization-challenges" class="level3">
 <h3 class="anchored" data-anchor-id="optimization-challenges">Optimization Challenges</h3>
@@ -313,7 +338,13 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="implementation-considerations">Implementation Considerations</h2>
 <section id="model-selection" class="level3">
 <h3 class="anchored" data-anchor-id="model-selection">Model Selection</h3>
-<p>Choose ViT variants based on: - Available computational resources - Dataset size and characteristics - Required inference speed - Target accuracy requirements</p>
+<p>Choose ViT variants based on:</p>
+<ul>
+<li>Available computational resources</li>
+<li>Dataset size and characteristics</li>
+<li>Required inference speed</li>
+<li>Target accuracy requirements</li>
+</ul>
 </section>
 <section id="training-strategy" class="level3">
 <h3 class="anchored" data-anchor-id="training-strategy">Training Strategy</h3>
