@@ -81,7 +81,8 @@ ul.task-list li input[type="checkbox"] {
 
     const options = {
       valueNames: ['listing-title','listing-author','listing-date','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
+      page: 18,
+    pagination: { item: "<li class='page-item'><a class='page page-link' href='#'></a></li>" },
       searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
     };
 
@@ -172,7 +173,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(15)</span></div><div class="category" data-category="YWR2YW5jZWQ=">advanced <span class="quarto-category-count">(5)</span></div><div class="category" data-category="YmVnaW5uZXI=">beginner <span class="quarto-category-count">(5)</span></div><div class="category" data-category="Y29kZQ==">code <span class="quarto-category-count">(11)</span></div><div class="category" data-category="aW50ZXJtZWRpYXRl">intermediate <span class="quarto-category-count">(4)</span></div><div class="category" data-category="bWxvcHM=">mlops <span class="quarto-category-count">(3)</span></div><div class="category" data-category="bmV3cw==">news <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmVzZWFyY2g=">research <span class="quarto-category-count">(4)</span></div><div class="category" data-category="dHV0b3JpYWw=">tutorial <span class="quarto-category-count">(7)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(19)</span></div><div class="category" data-category="YWR2YW5jZWQ=">advanced <span class="quarto-category-count">(7)</span></div><div class="category" data-category="YmVnaW5uZXI=">beginner <span class="quarto-category-count">(6)</span></div><div class="category" data-category="Y29kZQ==">code <span class="quarto-category-count">(14)</span></div><div class="category" data-category="aW50ZXJtZWRpYXRl">intermediate <span class="quarto-category-count">(4)</span></div><div class="category" data-category="bWxvcHM=">mlops <span class="quarto-category-count">(3)</span></div><div class="category" data-category="bmV3cw==">news <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cmVzZWFyY2g=">research <span class="quarto-category-count">(4)</span></div><div class="category" data-category="dHV0b3JpYWw=">tutorial <span class="quarto-category-count">(7)</span></div></div></div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content">
 
@@ -200,8 +201,91 @@ window.Quarto = {
 
 
 <div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
+<div class="listing-actions-group">
+   <div class="input-group input-group-sm quarto-listing-sort">
+    <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
+    <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
+      <option value="" disabled="" selected="" hidden="">Order By</option>
+      <option value="index" data-direction="asc">Default</option>
+      <option value="listing-title" data-direction="asc">
+        Title
+      </option>
+      <option value="listing-date-sort" data-direction="asc">
+        Date - Oldest
+      </option>
+      <option value="listing-date-sort" data-direction="desc">
+        Date - Newest
+      </option>
+      <option value="listing-author" data-direction="asc">
+        Author
+      </option>
+    </select>
+  </div>
+    <div class="input-group input-group-sm quarto-listing-filter">
+      <span class="input-group-text"><i class="bi bi-search"></i></span>
+      <input type="text" class="search form-control" placeholder="Filter">
+    </div>
+</div>
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYmVnaW5uZXI=" data-listing-date-sort="1748284200000" data-listing-file-modified-sort="1748302374134" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1993">
+<div class="g-col-1" data-index="0" data-categories="Y29kZSUyQ2FkdmFuY2Vk" data-listing-date-sort="1748370600000" data-listing-file-modified-sort="1748351022802" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="22" data-listing-word-count-sort="4232">
+<a href="./posts/student-teacher-vanilla/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top"><img src="posts/student-teacher-vanilla/stutea.jpg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Student-Teacher Network Training Guide in PyTorch
+</h5>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y29kZQ=='); return false;">code</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('YWR2YW5jZWQ='); return false;">advanced</div>
+
+</div>
+<div class="card-text listing-description delink">
+Student-teacher networks, also known as knowledge distillation, involve training a smaller “student” model to mimic the behavior of a larger, pre-trained “teacher” model.…
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Krishnatheja Vanka
+</div>
+<div class="listing-date">
+May 28, 2025
+</div>
+</div>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="1" data-categories="Y29kZSUyQ2FkdmFuY2Vk" data-listing-date-sort="1748370600000" data-listing-file-modified-sort="1748351147723" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="26" data-listing-word-count-sort="5170">
+<a href="./posts/dino-v2-scratch/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top"><img src="posts/dino-v2-scratch/dinorep.jpg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+DINOv2 Student-Teacher Network Training Guide
+</h5>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y29kZQ=='); return false;">code</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('YWR2YW5jZWQ='); return false;">advanced</div>
+
+</div>
+<div class="card-text listing-description delink">
+This guide provides a complete implementation for training a DINOv2 (DINO version 2) student-teacher network from scratch using PyTorch. DINOv2 is a self-supervised learning…
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Krishnatheja Vanka
+</div>
+<div class="listing-date">
+May 28, 2025
+</div>
+</div>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="2" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYmVnaW5uZXI=" data-listing-date-sort="1748284200000" data-listing-file-modified-sort="1748302374134" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1993">
 <a href="./posts/albumentations-vs-torchvision/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/albumentations-vs-torchvision/albumentations.jpg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -232,7 +316,7 @@ May 27, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="1" data-categories="Y29kZSUyQ21sb3BzJTJDYmVnaW5uZXI=" data-listing-date-sort="1748284200000" data-listing-file-modified-sort="1748301140820" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="21" data-listing-word-count-sort="4115">
+<div class="g-col-1" data-index="3" data-categories="Y29kZSUyQ21sb3BzJTJDYmVnaW5uZXI=" data-listing-date-sort="1748284200000" data-listing-file-modified-sort="1748301140820" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="21" data-listing-word-count-sort="4115">
 <a href="./posts/litserve-basics/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/litserve-basics/litserve.jpg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -263,7 +347,7 @@ May 27, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="2" data-categories="Y29kZSUyQ21sb3BzJTJDaW50ZXJtZWRpYXRl" data-listing-date-sort="1748284200000" data-listing-file-modified-sort="1748301106143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="27" data-listing-word-count-sort="5328">
+<div class="g-col-1" data-index="4" data-categories="Y29kZSUyQ21sb3BzJTJDaW50ZXJtZWRpYXRl" data-listing-date-sort="1748284200000" data-listing-file-modified-sort="1748301106143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="27" data-listing-word-count-sort="5328">
 <a href="./posts/litserve-mobilenet/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/litserve-mobilenet/litlog.jpg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -294,7 +378,7 @@ May 27, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="3" data-categories="Y29kZSUyQ21sb3BzJTJDaW50ZXJtZWRpYXRl" data-listing-date-sort="1748197800000" data-listing-file-modified-sort="1748300543439" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="29" data-listing-word-count-sort="5722">
+<div class="g-col-1" data-index="5" data-categories="Y29kZSUyQ21sb3BzJTJDaW50ZXJtZWRpYXRl" data-listing-date-sort="1748197800000" data-listing-file-modified-sort="1748300543439" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="29" data-listing-word-count-sort="5722">
 <a href="./posts/mobilenet-deployment/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/mobilenet-deployment/docker.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -325,7 +409,7 @@ May 26, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="4" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYWR2YW5jZWQ=" data-listing-date-sort="1748111400000" data-listing-file-modified-sort="1748298848867" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="19" data-listing-word-count-sort="3653">
+<div class="g-col-1" data-index="6" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYWR2YW5jZWQ=" data-listing-date-sort="1748111400000" data-listing-file-modified-sort="1748298848867" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="19" data-listing-word-count-sort="3653">
 <a href="./posts/pytorch-to-pytorchlightning/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/pytorch-to-pytorchlightning/pyt.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -356,7 +440,7 @@ May 25, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="5" data-categories="cmVzZWFyY2glMkNiZWdpbm5lcg==" data-listing-date-sort="1748025000000" data-listing-file-modified-sort="1748302978931" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1026">
+<div class="g-col-1" data-index="7" data-categories="cmVzZWFyY2glMkNiZWdpbm5lcg==" data-listing-date-sort="1748025000000" data-listing-file-modified-sort="1748302978931" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1026">
 <a href="./posts/vision-transformers-explained/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/vision-transformers-explained/vit.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -385,7 +469,63 @@ May 24, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="6" data-categories="cmVzZWFyY2glMkNpbnRlcm1lZGlhdGU=" data-listing-date-sort="1747420200000" data-listing-file-modified-sort="1748303101592" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="840">
+<div class="g-col-1" data-index="8" data-categories="Y29kZSUyQ2JlZ2lubmVy" data-listing-date-sort="1748025000000" data-listing-file-modified-sort="1748305331256" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1580">
+<a href="./posts/python-pi-code/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top"><img src="posts/python-pi-code/pypi.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Python 3.14: Key Improvements and New Features
+</h5>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y29kZQ=='); return false;">code</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('YmVnaW5uZXI='); return false;">beginner</div>
+
+</div>
+<div class="card-text listing-description delink">
+Python 3.14 introduces several significant improvements focused on performance, developer experience, and language capabilities. This guide covers the most important changes…
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Krishnatheja Vanka
+</div>
+<div class="listing-date">
+May 24, 2025
+</div>
+</div>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="9" data-categories="bmV3cw==" data-listing-date-sort="1747938600000" data-listing-file-modified-sort="1748305464284" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="604">
+<a href="./posts/python-pi/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top"><img src="posts/python-pi/pythonpi.jpg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Python 3.14: The Next Evolution in Python Development
+</h5>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('bmV3cw=='); return false;">news</div>
+
+</div>
+<div class="card-text listing-description delink">
+Python continues its steady march forward with the anticipated release of Python 3.14, marking another significant milestone in the language’s evolution. As the Python…
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Krishnatheja Vanka
+</div>
+<div class="listing-date">
+May 23, 2025
+</div>
+</div>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="10" data-categories="cmVzZWFyY2glMkNpbnRlcm1lZGlhdGU=" data-listing-date-sort="1747420200000" data-listing-file-modified-sort="1748303101592" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="840">
 <a href="./posts/dino-v2-explained/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/dino-v2-explained/dinov2.jpeg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -414,7 +554,7 @@ May 17, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="7" data-categories="cmVzZWFyY2glMkNpbnRlcm1lZGlhdGU=" data-listing-date-sort="1747074600000" data-listing-file-modified-sort="1748303092463" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="955">
+<div class="g-col-1" data-index="11" data-categories="cmVzZWFyY2glMkNpbnRlcm1lZGlhdGU=" data-listing-date-sort="1747074600000" data-listing-file-modified-sort="1748303092463" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="955">
 <a href="./posts/dino-explained/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/dino-explained/dino.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -443,7 +583,7 @@ May 13, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="8" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYmVnaW5uZXI=" data-listing-date-sort="1746210600000" data-listing-file-modified-sort="1748302607323" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="16" data-listing-word-count-sort="3155">
+<div class="g-col-1" data-index="12" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYmVnaW5uZXI=" data-listing-date-sort="1746210600000" data-listing-file-modified-sort="1748302607323" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="16" data-listing-word-count-sort="3155">
 <a href="./posts/dinov2/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/dinov2/dino.jpg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -474,7 +614,7 @@ May 3, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="9" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYWR2YW5jZWQ=" data-listing-date-sort="1745605800000" data-listing-file-modified-sort="1748293928574" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="28" data-listing-word-count-sort="5522">
+<div class="g-col-1" data-index="13" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYWR2YW5jZWQ=" data-listing-date-sort="1745605800000" data-listing-file-modified-sort="1748293928574" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="28" data-listing-word-count-sort="5522">
 <a href="./posts/vision-transformers/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/vision-transformers/vit.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -505,7 +645,7 @@ Apr 26, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="10" data-categories="Y29kZSUyQ3Jlc2VhcmNoJTJDYWR2YW5jZWQ=" data-listing-date-sort="1745001000000" data-listing-file-modified-sort="1748303072835" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="26" data-listing-word-count-sort="5177">
+<div class="g-col-1" data-index="14" data-categories="Y29kZSUyQ3Jlc2VhcmNoJTJDYWR2YW5jZWQ=" data-listing-date-sort="1745001000000" data-listing-file-modified-sort="1748303072835" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="26" data-listing-word-count-sort="5177">
 <a href="./posts/influence-selection/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/influence-selection/learn.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -536,7 +676,7 @@ Apr 19, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="11" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYmVnaW5uZXI=" data-listing-date-sort="1744396200000" data-listing-file-modified-sort="1748303041999" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1644">
+<div class="g-col-1" data-index="15" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYmVnaW5uZXI=" data-listing-date-sort="1744396200000" data-listing-file-modified-sort="1748303041999" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1644">
 <a href="./posts/data-visualization-tutorial/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/data-visualization-tutorial/dataviz.jpg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -567,7 +707,7 @@ Apr 12, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="12" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYWR2YW5jZWQ=" data-listing-date-sort="1743791400000" data-listing-file-modified-sort="1747770951236" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1759">
+<div class="g-col-1" data-index="16" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYWR2YW5jZWQ=" data-listing-date-sort="1743791400000" data-listing-file-modified-sort="1747770951236" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1759">
 <a href="./posts/pandas-to-polars/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/pandas-to-polars/pvp.jpg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -598,7 +738,7 @@ Apr 5, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="13" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYWR2YW5jZWQ=" data-listing-date-sort="1743186600000" data-listing-file-modified-sort="1748292482649" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2751">
+<div class="g-col-1" data-index="17" data-categories="Y29kZSUyQ3R1dG9yaWFsJTJDYWR2YW5jZWQ=" data-listing-date-sort="1743186600000" data-listing-file-modified-sort="1748292482649" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2751">
 <a href="./posts/pytorch-lightning/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="posts/pytorch-lightning/pytl.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -629,10 +769,10 @@ Mar 29, 2025
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="14" data-categories="bmV3cw==" data-listing-date-sort="1742581800000" data-listing-file-modified-sort="1742585098112" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="141">
+<div class="g-col-1" data-index="18" data-categories="bmV3cw==" data-listing-date-sort="1742581800000" data-listing-file-modified-sort="1742585098112" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="141">
 <a href="./posts/welcome/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img src="posts/welcome/thumbnail.jpg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img data-src="posts/welcome/thumbnail.jpg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
 Welcome To My Blog
@@ -658,6 +798,9 @@ Mar 22, 2025
 </div>
 </div>
 <div class="listing-no-matching d-none">No matching items</div>
+<nav id="listing-pagination" class="listing-pagination" aria-label="Page Navigation">
+  <ul class="pagination"></ul>
+</nav>
 </div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
