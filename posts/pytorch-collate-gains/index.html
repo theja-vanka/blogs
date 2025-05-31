@@ -193,7 +193,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="pytorch-collate-function-speed-up-guide" class="level1">
 <h1>PyTorch Collate Function Speed-Up Guide</h1>
-<p><img src="pytorch.png" class="img-fluid"></p>
+<p><img src="pytorch.jpg" class="img-fluid"></p>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>The collate function in PyTorch is a crucial component for optimizing data loading performance. It determines how individual samples are combined into batches, and custom implementations can significantly speed up training by reducing data preprocessing overhead and memory operations.</p>
@@ -202,7 +202,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="default-vs-custom-collate-functions">Default vs Custom Collate Functions</h2>
 <section id="default-behavior" class="level3">
 <h3 class="anchored" data-anchor-id="default-behavior">Default Behavior</h3>
-<div id="327bebfb" class="cell" data-execution_count="1">
+<div id="429f9ce9" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader, Dataset</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
@@ -231,13 +231,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>default_time <span class="op">=</span> time.time() <span class="op">-</span> start_time</span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Default collate time: </span><span class="sc">{</span>default_time<span class="sc">:.4f}</span><span class="ss"> seconds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Default collate time: 0.0136 seconds</code></pre>
+<pre><code>Default collate time: 0.0123 seconds</code></pre>
 </div>
 </div>
 </section>
 <section id="custom-collate-function---basic-optimization" class="level3">
 <h3 class="anchored" data-anchor-id="custom-collate-function---basic-optimization">Custom Collate Function - Basic Optimization</h3>
-<div id="181b9f84" class="cell" data-execution_count="2">
+<div id="153071c5" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fast_collate(batch):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Optimized collate function for image data"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Separate data and labels</span></span>
@@ -261,8 +261,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Custom collate time: </span><span class="sc">{</span>custom_time<span class="sc">:.4f}</span><span class="ss"> seconds"</span>)</span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Speed improvement: </span><span class="sc">{</span>(default_time<span class="op">/</span>custom_time <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Custom collate time: 0.0101 seconds
-Speed improvement: 33.7%</code></pre>
+<pre><code>Custom collate time: 0.0097 seconds
+Speed improvement: 26.4%</code></pre>
 </div>
 </div>
 </section>
@@ -271,7 +271,7 @@ Speed improvement: 33.7%</code></pre>
 <h2 class="anchored" data-anchor-id="advanced-optimizations">Advanced Optimizations</h2>
 <section id="memory-efficient-collate-for-variable-length-sequences" class="level3">
 <h3 class="anchored" data-anchor-id="memory-efficient-collate-for-variable-length-sequences">Memory-Efficient Collate for Variable-Length Sequences</h3>
-<div id="c1560ac4" class="cell" data-execution_count="3">
+<div id="3ea5c8cf" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.utils.rnn <span class="im">as</span> rnn_utils</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> VariableLengthDataset(Dataset):</span>
@@ -340,9 +340,9 @@ Speed improvement: 33.7%</code></pre>
 <span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Efficient variable collate time: </span><span class="sc">{</span>efficient_time<span class="sc">:.4f}</span><span class="ss"> seconds"</span>)</span>
 <span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Speed improvement: </span><span class="sc">{</span>(naive_time<span class="op">/</span>efficient_time <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Naive variable collate time: 0.0016 seconds
-Efficient variable collate time: 0.0014 seconds
-Speed improvement: 19.7%</code></pre>
+<pre><code>Naive variable collate time: 0.0014 seconds
+Efficient variable collate time: 0.0016 seconds
+Speed improvement: -11.4%</code></pre>
 </div>
 </div>
 </section>
