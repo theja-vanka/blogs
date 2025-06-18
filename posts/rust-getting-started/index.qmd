@@ -1,0 +1,448 @@
+---
+title: "Getting Started with Rust: A Complete Guide"
+author: "Krishnatheja Vanka"
+date: "2025-06-14"
+categories: [code, tutorial, intermediate]
+format:
+  html:
+    code-fold: false
+execute:
+  echo: true
+  timing: true
+jupyter: python3
+---
+
+# Getting Started with Rust: A Complete Guide
+
+![](rust.png)
+
+## What is Rust?
+
+Rust is a systems programming language that focuses on safety, speed, and concurrency. It prevents common programming errors like null pointer dereferences and buffer overflows at compile time, while delivering performance comparable to C and C++. Rust is ideal for system programming, web backends, command-line tools, network services, and anywhere you need both performance and reliability.
+
+## Installation
+
+### Installing Rust via Rustup
+
+The easiest way to install Rust is through `rustup`, the official Rust installer and version manager:
+
+**On Linux/macOS:**
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+**On Windows:**
+Download and run the installer from [rustup.rs](https://rustup.rs/)
+
+After installation, restart your terminal and verify the installation:
+```bash
+rustc --version
+cargo --version
+```
+
+### What Gets Installed
+
+- `rustc`: The Rust compiler
+- `cargo`: Rust's package manager and build tool
+- `rustup`: Tool for managing Rust versions
+- Standard library documentation
+
+## Your First Rust Program
+
+### Hello World
+
+Create a new file called `main.rs`:
+
+```rust
+fn main() {
+    println!("Hello, world!");
+}
+```
+
+Compile and run:
+```bash
+rustc main.rs
+./main  # On Windows: main.exe
+```
+
+### Using Cargo (Recommended)
+
+Cargo is Rust's build system and package manager. Create a new project:
+
+```bash
+cargo new hello_rust
+cd hello_rust
+```
+
+This creates a project structure:
+```
+hello_rust/
+├── Cargo.toml
+└── src/
+    └── main.rs
+```
+
+Run your project:
+```bash
+cargo run
+```
+
+Build without running:
+```bash
+cargo build
+```
+
+## Core Concepts
+
+### Variables and Mutability
+
+Variables are immutable by default in Rust:
+
+```rust
+fn main() {
+    let x = 5;
+    // x = 6; // This would cause a compile error
+    
+    let mut y = 5;
+    y = 6; // This is fine because y is mutable
+    
+    println!("x = {}, y = {}", x, y);
+}
+```
+
+### Data Types
+
+Rust has several built-in data types:
+
+```rust
+fn main() {
+    // Integers
+    let integer: i32 = 42;
+    let unsigned: u32 = 42;
+    
+    // Floating point
+    let float: f64 = 3.14;
+    
+    // Boolean
+    let is_rust_fun: bool = true;
+    
+    // Character
+    let letter: char = 'R';
+    
+    // String
+    let greeting: String = String::from("Hello");
+    let string_slice: &str = "World";
+    
+    println!("{} {} from Rust!", greeting, string_slice);
+}
+```
+
+### Functions
+
+Functions are declared with the `fn` keyword:
+
+```rust
+fn main() {
+    let result = add_numbers(5, 3);
+    println!("5 + 3 = {}", result);
+}
+
+fn add_numbers(a: i32, b: i32) -> i32 {
+    a + b // No semicolon means this is the return value
+}
+```
+
+### Control Flow
+
+```rust
+fn main() {
+    let number = 6;
+    
+    // If expressions
+    if number % 2 == 0 {
+        println!("{} is even", number);
+    } else {
+        println!("{} is odd", number);
+    }
+    
+    // Loops
+    for i in 1..=5 {
+        println!("Count: {}", i);
+    }
+    
+    let mut counter = 0;
+    while counter < 3 {
+        println!("Counter: {}", counter);
+        counter += 1;
+    }
+    
+    // Infinite loop with break
+    loop {
+        println!("This runs once");
+        break;
+    }
+}
+```
+
+## Ownership System
+
+Rust's ownership system is what makes it memory-safe without a garbage collector:
+
+### Basic Ownership Rules
+
+1. Each value has a single owner
+2. When the owner goes out of scope, the value is dropped
+3. There can only be one owner at a time
+
+```rust
+fn main() {
+    let s1 = String::from("hello");
+    let s2 = s1; // s1 is moved to s2, s1 is no longer valid
+    
+    // println!("{}", s1); // This would cause a compile error
+    println!("{}", s2); // This works
+    
+    let s3 = s2.clone(); // Explicitly clone the data
+    println!("{} and {}", s2, s3); // Both work now
+}
+```
+
+### Borrowing and References
+
+Instead of moving ownership, you can borrow references:
+
+```rust
+fn main() {
+    let s = String::from("hello");
+    
+    let len = calculate_length(&s); // Borrow s
+    println!("Length of '{}' is {}", s, len); // s is still valid
+}
+
+fn calculate_length(s: &String) -> usize {
+    s.len()
+} // s goes out of scope but doesn't drop the data (it doesn't own it)
+```
+
+## Error Handling
+
+Rust uses `Result<T, E>` and `Option<T>` for error handling:
+
+```rust
+use std::fs::File;
+use std::io::ErrorKind;
+
+fn main() {
+    // Option example
+    let numbers = vec![1, 2, 3, 4, 5];
+    match numbers.get(10) {
+        Some(value) => println!("Found: {}", value),
+        None => println!("No value at index 10"),
+    }
+    
+    // Result example
+    let file_result = File::open("hello.txt");
+    match file_result {
+        Ok(file) => println!("File opened successfully"),
+        Err(error) => match error.kind() {
+            ErrorKind::NotFound => println!("File not found"),
+            _ => println!("Error opening file: {:?}", error),
+        },
+    }
+}
+```
+
+## Working with Collections
+
+### Vectors
+
+```rust
+fn main() {
+    let mut numbers = vec![1, 2, 3];
+    numbers.push(4);
+    
+    for number in &numbers {
+        println!("{}", number);
+    }
+    
+    println!("Third element: {}", numbers[2]);
+}
+```
+
+### HashMaps
+
+```rust
+use std::collections::HashMap;
+
+fn main() {
+    let mut scores = HashMap::new();
+    scores.insert("Blue", 10);
+    scores.insert("Red", 50);
+    
+    for (team, score) in &scores {
+        println!("{}: {}", team, score);
+    }
+}
+```
+
+## Structs and Enums
+
+### Structs
+
+```rust
+struct Person {
+    name: String,
+    age: u32,
+    email: String,
+}
+
+impl Person {
+    fn new(name: String, age: u32, email: String) -> Person {
+        Person { name, age, email }
+    }
+    
+    fn greet(&self) {
+        println!("Hello, my name is {}", self.name);
+    }
+}
+
+fn main() {
+    let person = Person::new(
+        String::from("Alice"),
+        30,
+        String::from("alice@example.com")
+    );
+    
+    person.greet();
+}
+```
+
+### Enums
+
+```rust
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+
+impl Message {
+    fn call(&self) {
+        match self {
+            Message::Quit => println!("Quitting"),
+            Message::Move { x, y } => println!("Moving to ({}, {})", x, y),
+            Message::Write(text) => println!("Writing: {}", text),
+            Message::ChangeColor(r, g, b) => println!("Changing color to ({}, {}, {})", r, g, b),
+        }
+    }
+}
+
+fn main() {
+    let msg = Message::Write(String::from("Hello"));
+    msg.call();
+}
+```
+
+## Package Management with Cargo
+
+### Adding Dependencies
+
+Edit your `Cargo.toml` file to add dependencies:
+
+```toml
+[dependencies]
+serde = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+```
+
+Then run:
+```bash
+cargo build
+```
+
+### Common Cargo Commands
+
+- `cargo new project_name` - Create a new project
+- `cargo build` - Compile the project
+- `cargo run` - Compile and run the project
+- `cargo test` - Run tests
+- `cargo doc --open` - Generate and open documentation
+- `cargo update` - Update dependencies
+- `cargo clean` - Remove build artifacts
+
+## Development Tools
+
+### Formatting
+
+Format your code automatically:
+```bash
+cargo fmt
+```
+
+### Linting
+
+Check for common mistakes and style issues:
+```bash
+cargo clippy
+```
+
+### Testing
+
+Write tests in the same file or separate test modules:
+
+```rust
+fn add(a: i32, b: i32) -> i32 {
+    a + b
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_add() {
+        assert_eq!(add(2, 3), 5);
+    }
+}
+```
+
+Run tests with:
+```bash
+cargo test
+```
+
+## Next Steps
+
+### Learning Resources
+
+1. **The Rust Programming Language Book** - The official book, available online for free
+2. **Rust by Example** - Learn Rust through practical examples
+3. **Rustlings** - Small exercises to get you used to Rust syntax
+4. **The Rust Reference** - Detailed language reference
+5. **Rust Standard Library Documentation** - Comprehensive API documentation
+
+### Practice Projects
+
+1. **Command-line calculator** - Practice basic syntax and user input
+2. **File organizer** - Learn file I/O and error handling
+3. **Web scraper** - Work with HTTP requests and HTML parsing
+4. **Simple web server** - Understand concurrency and networking
+5. **Game of Life** - Practice with 2D arrays and algorithms
+
+### Join the Community
+
+- **Rust Users Forum** - Ask questions and share knowledge
+- **Reddit r/rust** - Community discussions and news
+- **Discord/IRC** - Real-time chat with other Rust developers
+- **Local Rust meetups** - Find Rust developers in your area
+
+## Tips for Success
+
+1. **Embrace the compiler** - Rust's compiler provides excellent error messages. Read them carefully
+2. **Start small** - Begin with simple programs and gradually increase complexity
+3. **Practice ownership** - The ownership system is unique to Rust, so it takes time to internalize
+4. **Use the standard library** - Rust has a rich standard library with excellent documentation
+5. **Don't fight the borrow checker** - Learn to work with Rust's safety guarantees rather than against them
+
+The Rust compiler is your friend and will help you write safe, fast code. Take time to understand the error messages, and don't hesitate to refer to the official documentation when you're stuck. Happy coding!
