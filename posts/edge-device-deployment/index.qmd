@@ -1,0 +1,799 @@
+---
+title: "PyTorch Model Deployment on Edge Devices - Complete Code Guide"
+author: "Krishnatheja Vanka"
+date: "2025-06-21"
+categories: [code, tutorial, intermediate]
+format:
+  html:
+    code-fold: false
+execute:
+  echo: true
+  timing: true
+jupyter: python3
+---
+
+# PyTorch Model Deployment on Edge Devices - Complete Code Guide
+![](edge.png)
+
+## Table of Contents
+1. [Model Optimization](#model-optimization)
+2. [Model Conversion](#model-conversion)
+3. [Mobile Deployment (Android/iOS)](#mobile-deployment)
+4. [Raspberry Pi Deployment](#raspberry-pi-deployment)
+5. [NVIDIA Jetson Deployment](#nvidia-jetson-deployment)
+6. [Performance Optimization](#performance-optimization)
+7. [Best Practices](#best-practices)
+
+## Prerequisites
+
+```bash
+# Install required packages
+pip install torch torchvision
+pip install torch-model-archiver
+pip install onnx onnxruntime
+pip install tensorflow  # for TensorFlow Lite conversion
+```
+
+## 1. Model Optimization
+
+### Quantization
+
+```python
+import torch
+import torch.quantization as quantization
+from torch.quantization import get_default_qconfig
+import torchvision.models as models
+
+# Load your trained model
+model = models.resnet18(pretrained=True)
+model.eval()
+
+# Post-training quantization (easiest method)
+def post_training_quantization(model, sample_data):
+    """
+    Apply post-training quantization to reduce model size
+    """
+    # Set model to evaluation mode
+    model.eval()
+    
+    # Fuse conv, bn and relu
+    model_fused = torch.quantization.fuse_modules(model, [['conv1', 'bn1', 'relu']])
+    
+    # Specify quantization configuration
+    model_fused.qconfig = torch.quantization.get_default_qconfig('fbgemm')
+    
+    # Prepare the model for quantization
+    model_prepared = torch.quantization.prepare(model_fused)
+    
+    # Calibrate with sample data
+    with torch.no_grad():
+        for data in sample_data:
+            model_prepared(data)
+    
+    # Convert to quantized model
+    quantized_model = torch.quantization.convert(model_prepared)
+    
+    return quantized_model
+
+# Example usage
+sample_data = [torch.randn(1, 3, 224, 224) for _ in range(100)]
+quantized_model = post_training_quantization(model, sample_data)
+```
+
+### Pruning
+
+```python
+import torch.nn.utils.prune as prune
+
+def prune_model(model, pruning_amount=0.3):
+    """
+    Apply magnitude-based pruning to reduce model complexity
+    """
+    parameters_to_prune = []
+    
+    # Collect all conv and linear layers
+    for name, module in model.named_modules():
+        if isinstance(module, (torch.nn.Conv2d, torch.nn.Linear)):
+            parameters_to_prune.append((module, 'weight'))
+    
+    # Apply global magnitude pruning
+    prune.global_unstructured(
+        parameters_to_prune,
+        pruning_method=prune.L1Unstructured,
+        amount=pruning_amount,
+    )
+    
+    # Remove pruning reparameterization to make pruning permanent
+    for module, param in parameters_to_prune:
+        prune.remove(module, param)
+    
+    return model
+
+# Apply pruning
+pruned_model = prune_model(model.copy(), pruning_amount=0.3)
+```
+
+## 2. Model Conversion
+
+### Convert to TorchScript
+
+```python
+def convert_to_torchscript(model, sample_input, save_path):
+    """
+    Convert PyTorch model to TorchScript for deployment
+    """
+    model.eval()
+    
+    # Method 1: Tracing (recommended for models without control flow)
+    try:
+        traced_model = torch.jit.trace(model, sample_input)
+        traced_model.save(save_path)
+        print(f"Model traced and saved to {save_path}")
+        return traced_model
+    except Exception as e:
+        print(f"Tracing failed: {e}")
+        
+        # Method 2: Scripting (for models with control flow)
+        try:
+            scripted_model = torch.jit.script(model)
+            scripted_model.save(save_path)
+            print(f"Model scripted and saved to {save_path}")
+            return scripted_model
+        except Exception as e:
+            print(f"Scripting also failed: {e}")
+            return None
+
+# Example usage
+sample_input = torch.randn(1, 3, 224, 224)
+torchscript_model = convert_to_torchscript(model, sample_input, "model.pt")
+```
+
+### Convert to ONNX
+
+```python
+import onnx
+import onnxruntime as ort
+
+def convert_to_onnx(model, sample_input, onnx_path):
+    """
+    Convert PyTorch model to ONNX format
+    """
+    model.eval()
+    
+    torch.onnx.export(
+        model,                      # model being run
+        sample_input,               # model input
+        onnx_path,                 # where to save the model
+        export_params=True,         # store the trained parameter weights
+        opset_version=11,          # ONNX version to export to
+        do_constant_folding=True,   # optimize constant folding
+        input_names=['input'],      # model's input names
+        output_names=['output'],    # model's output names
+        dynamic_axes={
+            'input': {0: 'batch_size'},
+            'output': {0: 'batch_size'}
+        }
+    )
+    
+    # Verify the ONNX model
+    onnx_model = onnx.load(onnx_path)
+    onnx.checker.check_model(onnx_model)
+    print(f"ONNX model saved and verified at {onnx_path}")
+
+# Convert to ONNX
+convert_to_onnx(model, sample_input, "model.onnx")
+
+# Test ONNX Runtime inference
+def test_onnx_inference(onnx_path, sample_input):
+    """Test ONNX model inference"""
+    ort_session = ort.InferenceSession(onnx_path)
+    
+    # Convert input to numpy
+    input_np = sample_input.numpy()
+    
+    # Run inference
+    outputs = ort_session.run(None, {'input': input_np})
+    return outputs[0]
+
+# Test the converted model
+onnx_output = test_onnx_inference("model.onnx", sample_input)
+```
+
+### Convert to TensorFlow Lite
+
+```python
+import tensorflow as tf
+
+def pytorch_to_tflite(onnx_path, tflite_path):
+    """
+    Convert ONNX model to TensorFlow Lite
+    """
+    # Convert ONNX to TensorFlow
+    from onnx_tf.backend import prepare
+    import onnx
+    
+    onnx_model = onnx.load(onnx_path)
+    tf_rep = prepare(onnx_model)
+    tf_rep.export_graph("temp_tf_model")
+    
+    # Convert to TensorFlow Lite
+    converter = tf.lite.TFLiteConverter.from_saved_model("temp_tf_model")
+    
+    # Apply optimizations
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    
+    # Convert model
+    tflite_model = converter.convert()
+    
+    # Save the model
+    with open(tflite_path, 'wb') as f:
+        f.write(tflite_model)
+    
+    print(f"TensorFlow Lite model saved to {tflite_path}")
+
+# Convert to TensorFlow Lite
+pytorch_to_tflite("model.onnx", "model.tflite")
+```
+
+## 3. Mobile Deployment
+
+### Android Deployment
+
+```java
+// Android Java code for PyTorch Mobile
+public class ModelInference {
+    private Module model;
+    
+    public ModelInference(String modelPath) {
+        model = LiteModuleLoader.load(modelPath);
+    }
+    
+    public float[] predict(Bitmap bitmap) {
+        // Preprocess image
+        Tensor inputTensor = TensorImageUtils.bitmapToFloat32Tensor(
+            bitmap,
+            TensorImageUtils.TORCHVISION_NORM_MEAN_RGB,
+            TensorImageUtils.TORCHVISION_NORM_STD_RGB
+        );
+        
+        // Run inference
+        Tensor outputTensor = model.forward(IValue.from(inputTensor)).toTensor();
+        
+        // Get results
+        return outputTensor.getDataAsFloatArray();
+    }
+}
+```
+
+### iOS Deployment (Swift)
+
+```swift
+// iOS Swift code for PyTorch Mobile
+import LibTorch
+
+class ModelInference {
+    private var model: TorchModule
+    
+    init(modelPath: String) {
+        model = TorchModule(fileAtPath: modelPath)!
+    }
+    
+    func predict(image: UIImage) -> [Float] {
+        // Preprocess image
+        guard let pixelBuffer = image.pixelBuffer() else { return [] }
+        guard let inputTensor = TorchTensor.fromPixelBuffer(pixelBuffer) else { return [] }
+        
+        // Run inference
+        guard let outputTensor = model.predict(inputs: [inputTensor]) else { return [] }
+        
+        // Get results
+        return outputTensor[0].floatArray
+    }
+}
+```
+
+### Python Mobile Preprocessing
+
+```python
+def create_mobile_model(model, sample_input):
+    """
+    Create optimized model for mobile deployment
+    """
+    model.eval()
+    
+    # Convert to TorchScript
+    traced_model = torch.jit.trace(model, sample_input)
+    
+    # Optimize for mobile
+    optimized_model = optimize_for_mobile(traced_model)
+    
+    # Save mobile-optimized model
+    optimized_model._save_for_lite_interpreter("mobile_model.ptl")
+    
+    return optimized_model
+
+from torch.utils.mobile_optimizer import optimize_for_mobile
+
+# Create mobile model
+mobile_model = create_mobile_model(model, sample_input)
+```
+
+## 4. Raspberry Pi Deployment
+
+```python
+# Raspberry Pi deployment script
+import torch
+import torchvision.transforms as transforms
+from PIL import Image
+import time
+import psutil
+import threading
+
+class RaspberryPiInference:
+    def __init__(self, model_path, device='cpu'):
+        self.device = torch.device(device)
+        self.model = torch.jit.load(model_path, map_location=self.device)
+        self.model.eval()
+        
+        # Define preprocessing transforms
+        self.transform = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], 
+                               std=[0.229, 0.224, 0.225])
+        ])
+        
+        # Performance monitoring
+        self.inference_times = []
+        
+    def preprocess_image(self, image_path):
+        """Preprocess image for inference"""
+        image = Image.open(image_path).convert('RGB')
+        input_tensor = self.transform(image).unsqueeze(0)
+        return input_tensor.to(self.device)
+    
+    def inference(self, image_path):
+        """Run inference on image"""
+        start_time = time.time()
+        
+        # Preprocess
+        input_tensor = self.preprocess_image(image_path)
+        
+        # Inference
+        with torch.no_grad():
+            outputs = self.model(input_tensor)
+            predictions = torch.nn.functional.softmax(outputs[0], dim=0)
+        
+        inference_time = time.time() - start_time
+        self.inference_times.append(inference_time)
+        
+        return predictions.cpu().numpy(), inference_time
+    
+    def get_system_stats(self):
+        """Get system performance statistics"""
+        return {
+            'cpu_percent': psutil.cpu_percent(),
+            'memory_percent': psutil.virtual_memory().percent,
+            'temperature': self.get_cpu_temperature()
+        }
+    
+    def get_cpu_temperature(self):
+        """Get CPU temperature (Raspberry Pi specific)"""
+        try:
+            with open('/sys/class/thermal/thermal_zone0/temp', 'r') as f:
+                temp = float(f.read()) / 1000.0
+            return temp
+        except:
+            return None
+
+# Usage example
+if __name__ == "__main__":
+    # Initialize inference engine
+    inference_engine = RaspberryPiInference("model.pt")
+    
+    # Run inference
+    predictions, inference_time = inference_engine.inference("test_image.jpg")
+    
+    print(f"Inference time: {inference_time:.3f} seconds")
+    print(f"Top prediction: {predictions.max():.3f}")
+    print(f"System stats: {inference_engine.get_system_stats()}")
+```
+
+## 5. NVIDIA Jetson Deployment
+
+```python
+# NVIDIA Jetson optimized deployment
+import torch
+import tensorrt as trt
+import pycuda.driver as cuda
+import pycuda.autoinit
+import numpy as np
+
+class JetsonTensorRTInference:
+    def __init__(self, onnx_model_path, trt_engine_path=None):
+        self.onnx_path = onnx_model_path
+        self.engine_path = trt_engine_path or onnx_model_path.replace('.onnx', '.trt')
+        
+        # Build or load TensorRT engine
+        if not os.path.exists(self.engine_path):
+            self.build_engine()
+        
+        self.engine = self.load_engine()
+        self.context = self.engine.create_execution_context()
+        
+        # Allocate GPU memory
+        self.allocate_buffers()
+    
+    def build_engine(self):
+        """Build TensorRT engine from ONNX model"""
+        logger = trt.Logger(trt.Logger.WARNING)
+        builder = trt.Builder(logger)
+        network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+        parser = trt.OnnxParser(network, logger)
+        
+        # Parse ONNX model
+        with open(self.onnx_path, 'rb') as model:
+            if not parser.parse(model.read()):
+                for error in range(parser.num_errors):
+                    print(parser.get_error(error))
+                return None
+        
+        # Build engine
+        config = builder.create_builder_config()
+        config.max_workspace_size = 1 << 28  # 256MB
+        config.set_flag(trt.BuilderFlag.FP16)  # Enable FP16 precision
+        
+        engine = builder.build_engine(network, config)
+        
+        # Save engine
+        with open(self.engine_path, 'wb') as f:
+            f.write(engine.serialize())
+        
+        return engine
+    
+    def load_engine(self):
+        """Load TensorRT engine"""
+        runtime = trt.Runtime(trt.Logger(trt.Logger.WARNING))
+        with open(self.engine_path, 'rb') as f:
+            return runtime.deserialize_cuda_engine(f.read())
+    
+    def allocate_buffers(self):
+        """Allocate GPU memory buffers"""
+        self.bindings = []
+        self.inputs = []
+        self.outputs = []
+        
+        for binding in self.engine:
+            shape = self.engine.get_binding_shape(binding)
+            size = trt.volume(shape) * self.engine.max_batch_size
+            dtype = trt.nptype(self.engine.get_binding_dtype(binding))
+            
+            # Allocate host and device buffers
+            host_mem = cuda.pagelocked_empty(size, dtype)
+            device_mem = cuda.mem_alloc(host_mem.nbytes)
+            
+            self.bindings.append(int(device_mem))
+            
+            if self.engine.binding_is_input(binding):
+                self.inputs.append({'host': host_mem, 'device': device_mem})
+            else:
+                self.outputs.append({'host': host_mem, 'device': device_mem})
+    
+    def inference(self, input_data):
+        """Run TensorRT inference"""
+        # Copy input data to GPU
+        np.copyto(self.inputs[0]['host'], input_data.ravel())
+        cuda.memcpy_htod(self.inputs[0]['device'], self.inputs[0]['host'])
+        
+        # Run inference
+        self.context.execute_v2(bindings=self.bindings)
+        
+        # Copy output data from GPU
+        cuda.memcpy_dtoh(self.outputs[0]['host'], self.outputs[0]['device'])
+        
+        return self.outputs[0]['host']
+
+# Usage for Jetson
+jetson_inference = JetsonTensorRTInference("model.onnx")
+```
+
+## 6. Performance Optimization
+
+### Benchmarking Script
+
+```python
+import time
+import numpy as np
+import torch
+import psutil
+from contextlib import contextmanager
+
+@contextmanager
+def timer():
+    """Context manager for timing code execution"""
+    start = time.perf_counter()
+    yield
+    end = time.perf_counter()
+    print(f"Execution time: {end - start:.4f} seconds")
+
+class ModelBenchmark:
+    def __init__(self, model, input_shape, device='cpu'):
+        self.model = model.to(device)
+        self.device = device
+        self.input_shape = input_shape
+        
+    def benchmark_inference(self, num_runs=100, warmup_runs=10):
+        """Benchmark model inference performance"""
+        # Generate random input
+        dummy_input = torch.randn(self.input_shape).to(self.device)
+        
+        # Warmup runs
+        self.model.eval()
+        with torch.no_grad():
+            for _ in range(warmup_runs):
+                _ = self.model(dummy_input)
+        
+        # Benchmark runs
+        inference_times = []
+        memory_usage = []
+        
+        for i in range(num_runs):
+            # Monitor memory before inference
+            if self.device == 'cuda':
+                torch.cuda.empty_cache()
+                memory_before = torch.cuda.memory_allocated()
+            else:
+                memory_before = psutil.Process().memory_info().rss
+            
+            # Time inference
+            start_time = time.perf_counter()
+            with torch.no_grad():
+                output = self.model(dummy_input)
+            
+            if self.device == 'cuda':
+                torch.cuda.synchronize()
+            
+            end_time = time.perf_counter()
+            
+            # Monitor memory after inference
+            if self.device == 'cuda':
+                memory_after = torch.cuda.memory_allocated()
+            else:
+                memory_after = psutil.Process().memory_info().rss
+            
+            inference_times.append(end_time - start_time)
+            memory_usage.append(memory_after - memory_before)
+        
+        # Calculate statistics
+        stats = {
+            'mean_time': np.mean(inference_times),
+            'std_time': np.std(inference_times),
+            'min_time': np.min(inference_times),
+            'max_time': np.max(inference_times),
+            'fps': 1.0 / np.mean(inference_times),
+            'mean_memory': np.mean(memory_usage),
+            'max_memory': np.max(memory_usage)
+        }
+        
+        return stats
+    
+    def profile_model(self):
+        """Profile model to identify bottlenecks"""
+        dummy_input = torch.randn(self.input_shape).to(self.device)
+        
+        with torch.profiler.profile(
+            activities=[torch.profiler.ProfilerActivity.CPU, torch.profiler.ProfilerActivity.CUDA],
+            record_shapes=True,
+            profile_memory=True,
+            with_stack=True
+        ) as profiler:
+            with torch.no_grad():
+                self.model(dummy_input)
+        
+        # Print profiling results
+        print(profiler.key_averages().table(sort_by="cuda_time_total", row_limit=10))
+        
+        return profiler
+
+# Usage example
+benchmark = ModelBenchmark(model, (1, 3, 224, 224), device='cpu')
+stats = benchmark.benchmark_inference()
+print(f"Average inference time: {stats['mean_time']:.4f}s")
+print(f"FPS: {stats['fps']:.2f}")
+```
+
+### Memory Optimization
+
+```python
+def optimize_memory_usage(model):
+    """Apply memory optimization techniques"""
+    
+    # Enable memory efficient attention (for transformers)
+    if hasattr(model, 'enable_memory_efficient_attention'):
+        model.enable_memory_efficient_attention()
+    
+    # Use gradient checkpointing during training
+    if hasattr(model, 'gradient_checkpointing_enable'):
+        model.gradient_checkpointing_enable()
+    
+    # Fuse operations where possible
+    model = torch.jit.optimize_for_inference(torch.jit.script(model))
+    
+    return model
+
+def batch_inference(model, data_loader, batch_size=1):
+    """Perform batch inference with memory management"""
+    model.eval()
+    results = []
+    
+    with torch.no_grad():
+        for batch in data_loader:
+            # Process in smaller chunks if needed
+            if batch.size(0) > batch_size:
+                for i in range(0, batch.size(0), batch_size):
+                    chunk = batch[i:i+batch_size]
+                    output = model(chunk)
+                    results.append(output.cpu())
+                    
+                    # Clear GPU cache
+                    if torch.cuda.is_available():
+                        torch.cuda.empty_cache()
+            else:
+                output = model(batch)
+                results.append(output.cpu())
+    
+    return torch.cat(results, dim=0)
+```
+
+## 7. Best Practices
+
+### Model Deployment Checklist
+
+```python
+class DeploymentValidator:
+    def __init__(self, original_model, optimized_model, test_input):
+        self.original_model = original_model
+        self.optimized_model = optimized_model
+        self.test_input = test_input
+    
+    def validate_accuracy(self, tolerance=1e-3):
+        """Validate that optimized model maintains accuracy"""
+        self.original_model.eval()
+        self.optimized_model.eval()
+        
+        with torch.no_grad():
+            original_output = self.original_model(self.test_input)
+            optimized_output = self.optimized_model(self.test_input)
+        
+        # Check if outputs are close
+        if torch.allclose(original_output, optimized_output, atol=tolerance):
+            print("✓ Accuracy validation passed")
+            return True
+        else:
+            print("✗ Accuracy validation failed")
+            diff = torch.abs(original_output - optimized_output).max().item()
+            print(f"Maximum difference: {diff}")
+            return False
+    
+    def validate_performance(self):
+        """Compare performance metrics"""
+        # Benchmark both models
+        original_benchmark = ModelBenchmark(self.original_model, self.test_input.shape)
+        optimized_benchmark = ModelBenchmark(self.optimized_model, self.test_input.shape)
+        
+        original_stats = original_benchmark.benchmark_inference(num_runs=50)
+        optimized_stats = optimized_benchmark.benchmark_inference(num_runs=50)
+        
+        speedup = original_stats['mean_time'] / optimized_stats['mean_time']
+        memory_reduction = (original_stats['mean_memory'] - optimized_stats['mean_memory']) / original_stats['mean_memory'] * 100
+        
+        print(f"Performance improvement: {speedup:.2f}x speedup")
+        print(f"Memory reduction: {memory_reduction:.1f}%")
+        
+        return {
+            'speedup': speedup,
+            'memory_reduction': memory_reduction,
+            'original_fps': original_stats['fps'],
+            'optimized_fps': optimized_stats['fps']
+        }
+    
+    def check_model_size(self):
+        """Compare model file sizes"""
+        # Save both models temporarily
+        torch.save(self.original_model.state_dict(), 'temp_original.pth')
+        torch.jit.save(torch.jit.script(self.optimized_model), 'temp_optimized.pt')
+        
+        import os
+        original_size = os.path.getsize('temp_original.pth')
+        optimized_size = os.path.getsize('temp_optimized.pt')
+        
+        size_reduction = (original_size - optimized_size) / original_size * 100
+        
+        print(f"Original model size: {original_size / 1024 / 1024:.2f} MB")
+        print(f"Optimized model size: {optimized_size / 1024 / 1024:.2f} MB")
+        print(f"Size reduction: {size_reduction:.1f}%")
+        
+        # Clean up temporary files
+        os.remove('temp_original.pth')
+        os.remove('temp_optimized.pt')
+        
+        return size_reduction
+
+# Example usage
+validator = DeploymentValidator(model, quantized_model, sample_input)
+validator.validate_accuracy()
+performance_metrics = validator.validate_performance()
+size_reduction = validator.check_model_size()
+```
+
+### Error Handling and Logging
+
+```python
+import logging
+from functools import wraps
+
+def setup_logging():
+    """Setup logging for deployment"""
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler('model_deployment.log'),
+            logging.StreamHandler()
+        ]
+    )
+    return logging.getLogger(__name__)
+
+def handle_inference_errors(func):
+    """Decorator for handling inference errors"""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except torch.cuda.OutOfMemoryError:
+            logging.error("CUDA out of memory. Try reducing batch size.")
+            torch.cuda.empty_cache()
+            raise
+        except Exception as e:
+            logging.error(f"Inference error: {str(e)}")
+            raise
+    return wrapper
+
+class RobustInference:
+    def __init__(self, model_path, device='cpu'):
+        self.logger = setup_logging()
+        self.device = torch.device(device)
+        
+        try:
+            self.model = torch.jit.load(model_path, map_location=self.device)
+            self.model.eval()
+            self.logger.info(f"Model loaded successfully on {device}")
+        except Exception as e:
+            self.logger.error(f"Failed to load model: {e}")
+            raise
+    
+    @handle_inference_errors
+    def inference(self, input_data):
+        """Robust inference with error handling"""
+        start_time = time.time()
+        
+        with torch.no_grad():
+            output = self.model(input_data)
+        
+        inference_time = time.time() - start_time
+        self.logger.info(f"Inference completed in {inference_time:.3f}s")
+        
+        return output
+```
+
+## Conclusion
+
+This guide provides a comprehensive approach to deploying PyTorch models on edge devices. Key takeaways:
+
+1. **Model Optimization**: Always quantize and prune models before deployment
+2. **Format Selection**: Choose the right format (TorchScript, ONNX, TensorRT) based on your target device
+3. **Performance Monitoring**: Continuously monitor inference time, memory usage, and accuracy
+4. **Device-Specific Optimization**: Leverage device-specific optimizations (TensorRT for NVIDIA, Core ML for iOS)
+5. **Robust Deployment**: Implement proper error handling and logging for production systems
+
+Remember to validate your optimized models thoroughly before deployment and monitor their performance in production environments.
