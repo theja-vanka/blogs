@@ -195,7 +195,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="albumentations-vs-torchvision-transforms-complete-code-guide" class="level1">
 <h1>Albumentations vs TorchVision Transforms: Complete Code Guide</h1>
-<p><img src="albumentations.jpg" class="img-fluid"></p>
+<p><img src="albumentations.png" class="img-fluid"></p>
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
 <p>This guide compares two popular image augmentation libraries for PyTorch:</p>
@@ -214,7 +214,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="basic-setup-and-imports" class="level2">
 <h2 class="anchored" data-anchor-id="basic-setup-and-imports">Basic Setup and Imports</h2>
-<div id="8155b9b0" class="cell" data-execution_count="1">
+<div id="2fd17748" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torchvision.transforms <span class="im">as</span> T</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchvision.transforms <span class="im">import</span> functional <span class="im">as</span> TF</span>
@@ -284,7 +284,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="basic-transformations-comparison">Basic Transformations Comparison</h2>
 <section id="image-loading-and-format-differences" class="level3">
 <h3 class="anchored" data-anchor-id="image-loading-and-format-differences">Image Loading and Format Differences</h3>
-<div id="56785b3f" class="cell" data-execution_count="2">
+<div id="454bf018" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># TorchVision approach</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_image_torchvision(path):</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Image.<span class="bu">open</span>(path).convert(<span class="st">'RGB'</span>)</span>
@@ -303,7 +303,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="basic-augmentations" class="level3">
 <h3 class="anchored" data-anchor-id="basic-augmentations">Basic Augmentations</h3>
-<div id="181c2a11" class="cell" data-execution_count="3">
+<div id="a2de830e" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># TorchVision transforms</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>torchvision_transform <span class="op">=</span> T.Compose([</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    T.Resize((<span class="dv">224</span>, <span class="dv">224</span>)),</span>
@@ -461,7 +461,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="performance-comparison" class="level2">
 <h2 class="anchored" data-anchor-id="performance-comparison">Performance Comparison</h2>
-<div id="1768b2fb" class="cell" data-execution_count="4">
+<div id="8f5fb7bd" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> benchmark_transforms(image, iterations<span class="op">=</span><span class="dv">1000</span>):</span>
@@ -487,9 +487,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Run benchmark</span></span>
 <span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>benchmark_transforms(torch_img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>TorchVision: 39.096s (1000 iterations)
-Albumentations: 3.105s (1000 iterations)
-Speedup: 12.59x</code></pre>
+<pre><code>TorchVision: 39.680s (1000 iterations)
+Albumentations: 3.620s (1000 iterations)
+Speedup: 10.96x</code></pre>
 </div>
 </div>
 </section>
