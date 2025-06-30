@@ -353,8 +353,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="triton-backend-gpu" class="level3">
 <h3 class="anchored" data-anchor-id="triton-backend-gpu">Triton Backend (GPU)</h3>
 <p>Triton is a Python-like language for writing highly efficient GPU kernels. TorchInductor can generate Triton code that compiles to optimized CUDA kernels.</p>
-<p><strong>Advantages of Triton</strong>: - Higher-level abstraction than raw CUDA while maintaining performance - Automatic memory coalescing and shared memory optimization - Built-in support for blocked algorithms and tile-based computation - Seamless integration with PyTorch’s autograd system</p>
-<p><strong>Typical Triton workflow</strong>: 1. TorchInductor generates Triton kernel code based on the fused operations 2. Triton compiler optimizes the kernel for the target GPU architecture 3. Generated CUDA code is cached for future use</p>
+<p><strong>Advantages of Triton</strong>:</p>
+<ul>
+<li>Higher-level abstraction than raw CUDA while maintaining performance</li>
+<li>Automatic memory coalescing and shared memory optimization</li>
+<li>Built-in support for blocked algorithms and tile-based computation</li>
+<li>Seamless integration with PyTorch’s autograd system</li>
+</ul>
+<p><strong>Typical Triton workflow</strong>:</p>
+<ol type="1">
+<li>TorchInductor generates Triton kernel code based on the fused operations</li>
+<li>Triton compiler optimizes the kernel for the target GPU architecture</li>
+<li>Generated CUDA code is cached for future use</li>
+</ol>
 <div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example of Triton-compiled operation</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> triton</span>
@@ -386,12 +397,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="nvfuser-nvidias-fusion-runtime" class="level3">
 <h3 class="anchored" data-anchor-id="nvfuser-nvidias-fusion-runtime">NvFuser: NVIDIA’s Fusion Runtime</h3>
 <p>For NVIDIA GPUs, PyTorch can leverage NvFuser, a specialized fusion compiler that excels at optimizing element-wise operations and reductions.</p>
-<p><strong>NvFuser Strengths</strong>: - Deep integration with CUDA runtime and libraries - Sophisticated analysis for memory access patterns - Optimized handling of broadcasting and reduction operations - Advanced techniques like loop unrolling and vectorization</p>
+<p><strong>NvFuser Strengths</strong>:</p>
+<ul>
+<li>Deep integration with CUDA runtime and libraries</li>
+<li>Sophisticated analysis for memory access patterns</li>
+<li>Optimized handling of broadcasting and reduction operations</li>
+<li>Advanced techniques like loop unrolling and vectorization</li>
+</ul>
 </section>
 <section id="c-backend-cpu" class="level3">
 <h3 class="anchored" data-anchor-id="c-backend-cpu">C++ Backend (CPU)</h3>
 <p>For CPU execution, TorchInductor generates optimized C++ code that leverages vectorization and multi-threading.</p>
-<p><strong>CPU Optimization Features</strong>: - SIMD vectorization using AVX, AVX2, and AVX-512 instructions - OpenMP parallelization for multi-core utilization - Cache-aware algorithms and memory prefetching - Integration with optimized BLAS libraries like MKL and OpenBLAS</p>
+<p><strong>CPU Optimization Features</strong>:</p>
+<ul>
+<li>SIMD vectorization using AVX, AVX2, and AVX-512 instructions</li>
+<li>OpenMP parallelization for multi-core utilization</li>
+<li>Cache-aware algorithms and memory prefetching</li>
+<li>Integration with optimized BLAS libraries like MKL and OpenBLAS</li>
+</ul>
 <div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example of CPU compilation</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="at">@torch.compile</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cpu_intensive_function(x):</span>
@@ -452,7 +475,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="performance-impact-and-benefits">Performance Impact and Benefits</h2>
 <section id="quantitative-improvements" class="level3">
 <h3 class="anchored" data-anchor-id="quantitative-improvements">Quantitative Improvements</h3>
-<p>The PyTorch 2.x compilation pipeline typically delivers: - <strong>2-10x speedup</strong> for training workloads - <strong>3-20x speedup</strong> for inference scenarios - <strong>Significant memory efficiency</strong> improvements through fusion - <strong>Better hardware utilization</strong> across different architectures</p>
+<p>The PyTorch 2.x compilation pipeline typically delivers:</p>
+<ul>
+<li><strong>2-10x speedup</strong> for training workloads</li>
+<li><strong>3-20x speedup</strong> for inference scenarios</li>
+<li><strong>Significant memory efficiency</strong> improvements through fusion</li>
+<li><strong>Better hardware utilization</strong> across different architectures</li>
+</ul>
 </section>
 <section id="qualitative-advantages" class="level3">
 <h3 class="anchored" data-anchor-id="qualitative-advantages">Qualitative Advantages</h3>
