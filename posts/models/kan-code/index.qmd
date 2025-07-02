@@ -1,0 +1,608 @@
+---
+title: "Kolmogorov-Arnold Networks: Complete Implementation Guide"
+author: "Krishnatheja Vanka"
+date: "2025-07-02"
+categories: [code, tutorial, advanced]
+format:
+  html:
+    code-fold: false
+execute:
+  echo: true
+  timing: true
+jupyter: python3
+---
+
+# Kolmogorov-Arnold Networks: Complete Implementation Guide
+![](kan.png)
+
+## Introduction
+
+Kolmogorov-Arnold Networks (KANs) represent a paradigm shift in neural network architecture, drawing inspiration from the mathematical foundations laid by Andrey Kolmogorov and Vladimir Arnold in the 1950s. Unlike traditional Multi-Layer Perceptrons (MLPs) that place learnable parameters on nodes, KANs position learnable activation functions on edges, fundamentally changing how neural networks process and learn from data.
+
+## Architecture Overview
+
+### Traditional MLPs vs KANs
+
+**Multi-Layer Perceptrons (MLPs):**
+- Learnable parameters: weights and biases on nodes
+- Fixed activation functions (ReLU, sigmoid, etc.)
+- Linear transformations followed by pointwise nonlinearities
+
+**Kolmogorov-Arnold Networks (KANs):**
+- Learnable parameters: activation functions on edges
+- No traditional weight matrices
+- Each edge has its own learnable univariate function
+
+## Mathematical Formulation
+
+### Layer-wise Computation
+
+For a KAN with L layers, the computation at layer l can be expressed as:
+
+```python
+# Pseudocode for KAN layer computation
+def kan_layer_forward(x, phi_functions):
+    """
+    x: input tensor of shape (batch_size, input_dim)
+    phi_functions: learnable univariate functions for each edge
+    """
+    output = torch.zeros(batch_size, output_dim)
+    
+    for i in range(input_dim):
+        for j in range(output_dim):
+            # Apply learnable activation function φ_{i,j} to input x_i
+            output[:, j] += phi_functions[i][j](x[:, i])
+    
+    return output
+```
+
+### Learnable Activation Functions
+
+The core innovation of KANs lies in the learnable activation functions. These are typically implemented using:
+
+1. **B-splines**: Piecewise polynomial functions that provide smooth, differentiable approximations
+2. **Residual connections**: Allow the network to learn both the spline component and a base function
+3. **Grid-based parameterization**: Enables efficient computation and gradient flow
+
+## Implementation Details
+
+### B-spline Based Activation Functions
+
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import math
+
+class BSplineActivation(nn.Module):
+    def __init__(self, grid_size=5, spline_order=3, grid_range=(-1, 1)):
+        super().__init__()
+        self.grid_size = grid_size
+        self.spline_order = spline_order
+        self.grid_range = grid_range
+        
+        # Create uniform grid
+        self.register_buffer('grid', torch.linspace(
+            grid_range[0], grid_range[1], grid_size + 1
+        ))
+        
+        # Extend grid for B-spline computation
+        h = (grid_range[1] - grid_range[0]) / grid_size
+        extended_grid = torch.cat([
+            torch.arange(grid_range[0] - spline_order * h, grid_range[0], h),
+            self.grid,
+            torch.arange(grid_range[1] + h, grid_range[1] + (spline_order + 1) * h, h)
+        ])
+        self.register_buffer('extended_grid', extended_grid)
+        
+        # Learnable coefficients for B-spline
+        self.coefficients = nn.Parameter(
+            torch.randn(grid_size + spline_order)
+        )
+        
+        # Scale parameter for the activation
+        self.scale = nn.Parameter(torch.ones(1))
+        
+    def forward(self, x):
+        # Compute B-spline basis functions
+        batch_size = x.shape[0]
+        x_expanded = x.unsqueeze(-1)  # (batch_size, 1)
+        
+        # Compute B-spline values
+        spline_values = self.compute_bspline(x_expanded)
+        
+        # Linear combination with learnable coefficients
+        output = torch.sum(spline_values * self.coefficients, dim=-1)
+        
+        return self.scale * output
+    
+    def compute_bspline(self, x):
+        """Compute B-spline basis functions using Cox-de Boor recursion"""
+        grid = self.extended_grid
+        order = self.spline_order
+        
+        # Initialize basis functions
+        basis = torch.zeros(x.shape[0], len(grid) - 1, device=x.device)
+        
+        # Find intervals
+        for i in range(len(grid) - 1):
+            mask = (x.squeeze(-1) >= grid[i]) & (x.squeeze(-1) < grid[i + 1])
+            basis[mask, i] = 1.0
+        
+        # Cox-de Boor recursion
+        for k in range(1, order + 1):
+            new_basis = torch.zeros_like(basis)
+            for i in range(len(grid) - k - 1):
+                if grid[i + k] != grid[i]:
+                    alpha1 = (x.squeeze(-1) - grid[i]) / (grid[i + k] - grid[i])
+                    new_basis[:, i] += alpha1 * basis[:, i]
+                
+                if grid[i + k + 1] != grid[i + 1]:
+                    alpha2 = (grid[i + k + 1] - x.squeeze(-1)) / (grid[i + k + 1] - grid[i + 1])
+                    new_basis[:, i] += alpha2 * basis[:, i + 1]
+            
+            basis = new_basis
+        
+        return basis[:, :len(self.coefficients)]
+
+class KANLayer(nn.Module):
+    def __init__(self, input_dim, output_dim, grid_size=5, spline_order=3):
+        super().__init__()
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+        
+        # Create learnable activation functions for each edge
+        self.activations = nn.ModuleList([
+            nn.ModuleList([
+                BSplineActivation(grid_size, spline_order) 
+                for _ in range(output_dim)
+            ]) for _ in range(input_dim)
+        ])
+        
+        # Base linear transformation (residual connection)
+        self.base_weight = nn.Parameter(torch.randn(input_dim, output_dim) * 0.1)
+        
+    def forward(self, x):
+        batch_size = x.shape[0]
+        output = torch.zeros(batch_size, self.output_dim, device=x.device)
+        
+        # Apply learnable activations
+        for i in range(self.input_dim):
+            for j in range(self.output_dim):
+                activated = self.activations[i][j](x[:, i])
+                output[:, j] += activated
+        
+        # Add base linear transformation
+        base_output = torch.matmul(x, self.base_weight)
+        
+        return output + base_output
+
+class KolmogorovArnoldNetwork(nn.Module):
+    def __init__(self, layer_dims, grid_size=5, spline_order=3):
+        super().__init__()
+        self.layers = nn.ModuleList()
+        
+        for i in range(len(layer_dims) - 1):
+            layer = KANLayer(
+                layer_dims[i], 
+                layer_dims[i + 1], 
+                grid_size, 
+                spline_order
+            )
+            self.layers.append(layer)
+    
+    def forward(self, x):
+        for layer in self.layers:
+            x = layer(x)
+        return x
+    
+    def regularization_loss(self, regularization_factor=1e-4):
+        """Compute regularization loss to encourage sparsity"""
+        reg_loss = 0
+        for layer in self.layers:
+            for i in range(layer.input_dim):
+                for j in range(layer.output_dim):
+                    # L1 regularization on activation function coefficients
+                    reg_loss += torch.sum(torch.abs(layer.activations[i][j].coefficients))
+        
+        return regularization_factor * reg_loss
+```
+
+### Training Loop Implementation
+
+```python
+def train_kan(model, train_loader, val_loader, epochs=100, lr=1e-3):
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode='min', factor=0.5, patience=10
+    )
+    
+    criterion = nn.MSELoss()
+    
+    train_losses = []
+    val_losses = []
+    
+    for epoch in range(epochs):
+        # Training phase
+        model.train()
+        train_loss = 0
+        for batch_idx, (data, target) in enumerate(train_loader):
+            optimizer.zero_grad()
+            
+            output = model(data)
+            loss = criterion(output, target)
+            
+            # Add regularization
+            reg_loss = model.regularization_loss()
+            total_loss = loss + reg_loss
+            
+            total_loss.backward()
+            
+            # Gradient clipping for stability
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            
+            optimizer.step()
+            train_loss += total_loss.item()
+        
+        # Validation phase
+        model.eval()
+        val_loss = 0
+        with torch.no_grad():
+            for data, target in val_loader:
+                output = model(data)
+                val_loss += criterion(output, target).item()
+        
+        avg_train_loss = train_loss / len(train_loader)
+        avg_val_loss = val_loss / len(val_loader)
+        
+        train_losses.append(avg_train_loss)
+        val_losses.append(avg_val_loss)
+        
+        scheduler.step(avg_val_loss)
+        
+        if epoch % 10 == 0:
+            print(f'Epoch {epoch}: Train Loss = {avg_train_loss:.6f}, '
+                  f'Val Loss = {avg_val_loss:.6f}')
+    
+    return train_losses, val_losses
+```
+
+## Advanced Features and Optimizations
+
+### 1. Pruning and Sparsification
+
+```python
+def prune_kan(model, threshold=1e-2):
+    """Remove edges with small activation function magnitudes"""
+    with torch.no_grad():
+        for layer in model.layers:
+            for i in range(layer.input_dim):
+                for j in range(layer.output_dim):
+                    activation = layer.activations[i][j]
+                    
+                    # Compute magnitude of activation function
+                    magnitude = torch.norm(activation.coefficients)
+                    
+                    if magnitude < threshold:
+                        # Zero out the activation function
+                        activation.coefficients.fill_(0)
+                        activation.scale.fill_(0)
+```
+
+### 2. Symbolic Regression Capabilities
+
+```python
+def symbolic_extraction(model, input_names, output_names):
+    """Extract symbolic expressions from trained KAN"""
+    expressions = []
+    
+    for layer_idx, layer in enumerate(model.layers):
+        layer_expressions = []
+        
+        for j in range(layer.output_dim):
+            terms = []
+            
+            for i in range(layer.input_dim):
+                activation = layer.activations[i][j]
+                
+                # Check if activation is significant
+                if torch.norm(activation.coefficients) > 1e-3:
+                    # Fit simple function to activation
+                    func_type = fit_symbolic_function(activation)
+                    terms.append(f"{func_type}({input_names[i]})")
+            
+            if terms:
+                expression = " + ".join(terms)
+                layer_expressions.append(expression)
+        
+        expressions.append(layer_expressions)
+    
+    return expressions
+
+def fit_symbolic_function(activation):
+    """Fit symbolic function to learned activation"""
+    # Sample the activation function
+    x_test = torch.linspace(-1, 1, 100)
+    y_test = activation(x_test).detach()
+    
+    # Try fitting common functions
+    functions = {
+        'linear': lambda x, a, b: a * x + b,
+        'quadratic': lambda x, a, b, c: a * x**2 + b * x + c,
+        'sin': lambda x, a, b, c: a * torch.sin(b * x + c),
+        'exp': lambda x, a, b: a * torch.exp(b * x),
+        'tanh': lambda x, a, b: a * torch.tanh(b * x)
+    }
+    
+    best_fit = 'linear'  # Default
+    min_error = float('inf')
+    
+    for func_name, func in functions.items():
+        try:
+            # Simplified fitting (in practice, use scipy.optimize)
+            if func_name == 'linear':
+                # Simple linear regression
+                A = torch.stack([x_test, torch.ones_like(x_test)], dim=1)
+                params = torch.linalg.lstsq(A, y_test).solution
+                pred = func(x_test, params[0], params[1])
+            else:
+                # Use first-order approximation
+                pred = y_test  # Placeholder
+            
+            error = torch.mean((y_test - pred)**2)
+            
+            if error < min_error:
+                min_error = error
+                best_fit = func_name
+        
+        except:
+            continue
+    
+    return best_fit
+```
+
+### 3. Grid Adaptation
+
+```python
+def adaptive_grid_refinement(model, train_loader, refinement_factor=2):
+    """Adapt grid points based on function complexity"""
+    model.eval()
+    
+    with torch.no_grad():
+        # Collect statistics on activation function usage
+        activation_stats = {}
+        
+        for batch_idx, (data, target) in enumerate(train_loader):
+            if batch_idx > 10:  # Sample a few batches
+                break
+                
+            for layer_idx, layer in enumerate(model.layers):
+                if layer_idx not in activation_stats:
+                    activation_stats[layer_idx] = {}
+                
+                for i in range(layer.input_dim):
+                    for j in range(layer.output_dim):
+                        key = (i, j)
+                        if key not in activation_stats[layer_idx]:
+                            activation_stats[layer_idx][key] = []
+                        
+                        # Record input values for this activation
+                        if layer_idx == 0:
+                            input_vals = data[:, i]
+                        else:
+                            # Would need to track intermediate activations
+                            input_vals = data[:, i]  # Simplified
+                        
+                        activation_stats[layer_idx][key].extend(
+                            input_vals.cpu().numpy().tolist()
+                        )
+        
+        # Refine grids based on usage patterns
+        for layer_idx, layer in enumerate(model.layers):
+            for i in range(layer.input_dim):
+                for j in range(layer.output_dim):
+                    activation = layer.activations[i][j]
+                    key = (i, j)
+                    
+                    if key in activation_stats[layer_idx]:
+                        input_range = activation_stats[layer_idx][key]
+                        
+                        # Compute density and refine grid
+                        hist, bins = torch.histogram(
+                            torch.tensor(input_range), bins=activation.grid_size
+                        )
+                        
+                        # Areas with high density get more grid points
+                        high_density_regions = hist > hist.mean()
+                        
+                        if high_density_regions.any():
+                            # Refine grid (simplified implementation)
+                            new_grid_size = activation.grid_size * refinement_factor
+                            # Would need to properly interpolate coefficients
+```
+
+## Practical Applications and Use Cases
+
+### 1. Function Approximation
+
+```python
+# Example: Approximating a complex mathematical function
+def test_function_approximation():
+    # Generate synthetic data
+    def target_function(x):
+        return torch.sin(x[:, 0]) * torch.cos(x[:, 1]) + 0.5 * x[:, 0]**2
+    
+    # Create dataset
+    n_samples = 1000
+    x = torch.randn(n_samples, 2)
+    y = target_function(x).unsqueeze(1)
+    
+    # Split data
+    train_size = int(0.8 * n_samples)
+    train_x, test_x = x[:train_size], x[train_size:]
+    train_y, test_y = y[:train_size], y[train_size:]
+    
+    # Create KAN model
+    model = KolmogorovArnoldNetwork([2, 5, 1], grid_size=10)
+    
+    # Train model
+    train_dataset = torch.utils.data.TensorDataset(train_x, train_y)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=32)
+    
+    val_dataset = torch.utils.data.TensorDataset(test_x, test_y)
+    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=32)
+    
+    train_losses, val_losses = train_kan(model, train_loader, val_loader)
+    
+    # Evaluate
+    model.eval()
+    with torch.no_grad():
+        predictions = model(test_x)
+        mse = torch.mean((predictions - test_y)**2)
+        print(f"Test MSE: {mse.item():.6f}")
+    
+    return model, train_losses, val_losses
+```
+
+### 2. Scientific Computing
+
+```python
+# Example: Solving differential equations
+def solve_pde_with_kan():
+    """Use KAN to solve partial differential equations"""
+    
+    class PDESolver(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.kan = KolmogorovArnoldNetwork([2, 10, 10, 1])
+        
+        def forward(self, x, t):
+            inputs = torch.stack([x, t], dim=1)
+            return self.kan(inputs)
+        
+        def physics_loss(self, x, t):
+            """Compute physics-informed loss for PDE"""
+            x.requires_grad_(True)
+            t.requires_grad_(True)
+            
+            u = self.forward(x, t)
+            
+            # Compute derivatives
+            u_t = torch.autograd.grad(
+                u, t, torch.ones_like(u), create_graph=True
+            )[0]
+            
+            u_x = torch.autograd.grad(
+                u, x, torch.ones_like(u), create_graph=True
+            )[0]
+            
+            u_xx = torch.autograd.grad(
+                u_x, x, torch.ones_like(u_x), create_graph=True
+            )[0]
+            
+            # PDE residual: u_t - u_xx = 0 (heat equation)
+            pde_residual = u_t - u_xx
+            
+            return torch.mean(pde_residual**2)
+    
+    # Training would involve minimizing physics loss
+    # along with boundary and initial conditions
+    return PDESolver()
+```
+
+## Performance Analysis and Comparisons
+
+### Computational Complexity
+
+**Memory Complexity:**
+- MLPs: O(Σ(n_i × n_{i+1})) where n_i is the number of neurons in layer i
+- KANs: O(Σ(n_i × n_{i+1} × G)) where G is the grid size for B-splines
+
+**Time Complexity:**
+- Forward pass: O(Σ(n_i × n_{i+1} × G × k)) where k is the spline order
+- Backward pass: Similar, with additional complexity for B-spline derivative computation
+
+### Advantages of KANs
+
+1. **Interpretability**: Learnable activation functions can be visualized and analyzed
+2. **Expressiveness**: Can represent complex functions with fewer parameters in some cases
+3. **Scientific Computing**: Natural fit for problems requiring symbolic regression
+4. **Adaptive Capacity**: Can learn specialized activation functions for different parts of the input space
+
+### Limitations
+
+1. **Computational Overhead**: B-spline computation is more expensive than simple activations
+2. **Memory Usage**: Requires more memory due to grid-based parameterization
+3. **Training Stability**: Can be more sensitive to hyperparameter choices
+4. **Limited Scale**: Current implementations don't scale to very large networks easily
+
+## Best Practices and Hyperparameter Tuning
+
+### Grid Size Selection
+
+```python
+def tune_grid_size(data_complexity, input_dim):
+    """Heuristic for selecting appropriate grid size"""
+    base_grid_size = max(5, min(20, int(math.log(data_complexity) * 2)))
+    
+    # Adjust based on input dimensionality
+    if input_dim > 10:
+        base_grid_size = max(3, base_grid_size - 2)
+    elif input_dim < 3:
+        base_grid_size = min(25, base_grid_size + 3)
+    
+    return base_grid_size
+```
+
+### Regularization Strategies
+
+```python
+def advanced_regularization(model, l1_factor=1e-4, smoothness_factor=1e-3):
+    """Comprehensive regularization for KANs"""
+    reg_loss = 0
+    
+    for layer in model.layers:
+        for i in range(layer.input_dim):
+            for j in range(layer.output_dim):
+                activation = layer.activations[i][j]
+                
+                # L1 regularization for sparsity
+                l1_loss = torch.sum(torch.abs(activation.coefficients))
+                
+                # Smoothness regularization
+                if len(activation.coefficients) > 1:
+                    smoothness_loss = torch.sum(
+                        (activation.coefficients[1:] - activation.coefficients[:-1])**2
+                    )
+                else:
+                    smoothness_loss = 0
+                
+                reg_loss += l1_factor * l1_loss + smoothness_factor * smoothness_loss
+    
+    return reg_loss
+```
+
+## Future Directions and Research Opportunities
+
+### 1. Scalability Improvements
+- Efficient GPU implementations of B-spline computations
+- Sparse KAN architectures for high-dimensional problems
+- Distributed training strategies
+
+### 2. Theoretical Developments
+- Approximation theory for KAN architectures
+- Convergence guarantees and optimization landscapes
+- Connections to other function approximation methods
+
+### 3. Application Domains
+- Scientific machine learning and physics-informed neural networks
+- Automated theorem proving and symbolic computation
+- Interpretable AI for critical applications
+
+## Conclusion
+
+Kolmogorov-Arnold Networks represent a fundamental rethinking of neural network architecture, moving from node-based to edge-based learnable parameters. While they face challenges in terms of computational efficiency and scalability, their unique properties make them particularly well-suited for scientific computing, interpretable AI, and function approximation tasks.
+
+The mathematical elegance of KANs, rooted in classical approximation theory, combined with their practical capabilities for symbolic regression and interpretable modeling, positions them as an important tool in the modern machine learning toolkit. As implementation techniques improve and computational bottlenecks are addressed, we can expect to see broader adoption of KAN-based approaches across various domains.
+
+The code implementations provided here offer a foundation for experimenting with KANs, but ongoing research continues to refine these architectures and explore their full potential. Whether KANs will revolutionize neural network design remains to be seen, but they certainly offer a compelling alternative perspective on how neural networks can learn and represent complex functions.
