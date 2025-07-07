@@ -75,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -109,9 +109,9 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Matryoshka Transformer for Vision Language Models</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
@@ -121,7 +121,7 @@ ul.task-list li input[type="checkbox"] {
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -143,10 +143,79 @@ ul.task-list li input[type="checkbox"] {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#matryoshka-transformer-for-vision-language-models" id="toc-matryoshka-transformer-for-vision-language-models" class="nav-link active" data-scroll-target="#matryoshka-transformer-for-vision-language-models">Matryoshka Transformer for Vision Language Models</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#core-architecture" id="toc-core-architecture" class="nav-link" data-scroll-target="#core-architecture">Core Architecture</a>
+  <ul class="collapse">
+  <li><a href="#nested-representation-learning" id="toc-nested-representation-learning" class="nav-link" data-scroll-target="#nested-representation-learning">Nested Representation Learning</a></li>
+  <li><a href="#multi-scale-processing" id="toc-multi-scale-processing" class="nav-link" data-scroll-target="#multi-scale-processing">Multi-Scale Processing</a></li>
+  <li><a href="#adaptive-computation" id="toc-adaptive-computation" class="nav-link" data-scroll-target="#adaptive-computation">Adaptive Computation</a></li>
+  </ul></li>
+  <li><a href="#vision-language-integration" id="toc-vision-language-integration" class="nav-link" data-scroll-target="#vision-language-integration">Vision-Language Integration</a>
+  <ul class="collapse">
+  <li><a href="#cross-modal-attention-mechanisms" id="toc-cross-modal-attention-mechanisms" class="nav-link" data-scroll-target="#cross-modal-attention-mechanisms">Cross-Modal Attention Mechanisms</a></li>
+  <li><a href="#hierarchical-feature-fusion" id="toc-hierarchical-feature-fusion" class="nav-link" data-scroll-target="#hierarchical-feature-fusion">Hierarchical Feature Fusion</a></li>
+  </ul></li>
+  <li><a href="#training-methodology" id="toc-training-methodology" class="nav-link" data-scroll-target="#training-methodology">Training Methodology</a>
+  <ul class="collapse">
+  <li><a href="#multi-objective-learning" id="toc-multi-objective-learning" class="nav-link" data-scroll-target="#multi-objective-learning">Multi-Objective Learning</a></li>
+  <li><a href="#progressive-training-strategies" id="toc-progressive-training-strategies" class="nav-link" data-scroll-target="#progressive-training-strategies">Progressive Training Strategies</a></li>
+  </ul></li>
+  <li><a href="#applications-and-use-cases" id="toc-applications-and-use-cases" class="nav-link" data-scroll-target="#applications-and-use-cases">Applications and Use Cases</a>
+  <ul class="collapse">
+  <li><a href="#image-captioning" id="toc-image-captioning" class="nav-link" data-scroll-target="#image-captioning">Image Captioning</a></li>
+  <li><a href="#visual-question-answering" id="toc-visual-question-answering" class="nav-link" data-scroll-target="#visual-question-answering">Visual Question Answering</a></li>
+  <li><a href="#multimodal-retrieval" id="toc-multimodal-retrieval" class="nav-link" data-scroll-target="#multimodal-retrieval">Multimodal Retrieval</a></li>
+  <li><a href="#real-time-applications" id="toc-real-time-applications" class="nav-link" data-scroll-target="#real-time-applications">Real-Time Applications</a></li>
+  </ul></li>
+  <li><a href="#advantages-and-benefits" id="toc-advantages-and-benefits" class="nav-link" data-scroll-target="#advantages-and-benefits">Advantages and Benefits</a>
+  <ul class="collapse">
+  <li><a href="#computational-efficiency" id="toc-computational-efficiency" class="nav-link" data-scroll-target="#computational-efficiency">Computational Efficiency</a></li>
+  <li><a href="#scalability" id="toc-scalability" class="nav-link" data-scroll-target="#scalability">Scalability</a></li>
+  <li><a href="#robustness" id="toc-robustness" class="nav-link" data-scroll-target="#robustness">Robustness</a></li>
+  <li><a href="#interpretability" id="toc-interpretability" class="nav-link" data-scroll-target="#interpretability">Interpretability</a></li>
+  </ul></li>
+  <li><a href="#challenges-and-limitations" id="toc-challenges-and-limitations" class="nav-link" data-scroll-target="#challenges-and-limitations">Challenges and Limitations</a>
+  <ul class="collapse">
+  <li><a href="#training-complexity" id="toc-training-complexity" class="nav-link" data-scroll-target="#training-complexity">Training Complexity</a></li>
+  <li><a href="#memory-requirements" id="toc-memory-requirements" class="nav-link" data-scroll-target="#memory-requirements">Memory Requirements</a></li>
+  <li><a href="#architecture-design" id="toc-architecture-design" class="nav-link" data-scroll-target="#architecture-design">Architecture Design</a></li>
+  </ul></li>
+  <li><a href="#recent-developments-and-research" id="toc-recent-developments-and-research" class="nav-link" data-scroll-target="#recent-developments-and-research">Recent Developments and Research</a>
+  <ul class="collapse">
+  <li><a href="#architectural-variants" id="toc-architectural-variants" class="nav-link" data-scroll-target="#architectural-variants">Architectural Variants</a></li>
+  <li><a href="#performance-improvements" id="toc-performance-improvements" class="nav-link" data-scroll-target="#performance-improvements">Performance Improvements</a></li>
+  <li><a href="#domain-specific-adaptations" id="toc-domain-specific-adaptations" class="nav-link" data-scroll-target="#domain-specific-adaptations">Domain-Specific Adaptations</a></li>
+  </ul></li>
+  <li><a href="#implementation-considerations" id="toc-implementation-considerations" class="nav-link" data-scroll-target="#implementation-considerations">Implementation Considerations</a>
+  <ul class="collapse">
+  <li><a href="#framework-support" id="toc-framework-support" class="nav-link" data-scroll-target="#framework-support">Framework Support</a></li>
+  <li><a href="#hardware-optimization" id="toc-hardware-optimization" class="nav-link" data-scroll-target="#hardware-optimization">Hardware Optimization</a></li>
+  <li><a href="#deployment-strategies" id="toc-deployment-strategies" class="nav-link" data-scroll-target="#deployment-strategies">Deployment Strategies</a></li>
+  </ul></li>
+  <li><a href="#future-directions" id="toc-future-directions" class="nav-link" data-scroll-target="#future-directions">Future Directions</a>
+  <ul class="collapse">
+  <li><a href="#integration-with-large-language-models" id="toc-integration-with-large-language-models" class="nav-link" data-scroll-target="#integration-with-large-language-models">Integration with Large Language Models</a></li>
+  <li><a href="#automated-architecture-search" id="toc-automated-architecture-search" class="nav-link" data-scroll-target="#automated-architecture-search">Automated Architecture Search</a></li>
+  <li><a href="#continual-learning" id="toc-continual-learning" class="nav-link" data-scroll-target="#continual-learning">Continual Learning</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -429,7 +498,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

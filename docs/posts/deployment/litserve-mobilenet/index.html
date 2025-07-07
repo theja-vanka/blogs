@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">LitServe with MobileNetV2 - Complete Code Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#litserve-with-mobilenetv2---complete-code-guide" id="toc-litserve-with-mobilenetv2---complete-code-guide" class="nav-link active" data-scroll-target="#litserve-with-mobilenetv2---complete-code-guide">LitServe with MobileNetV2 - Complete Code Guide</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#basic-implementation" id="toc-basic-implementation" class="nav-link" data-scroll-target="#basic-implementation">Basic Implementation</a>
+  <ul class="collapse">
+  <li><a href="#simple-mobilenetv2-api" id="toc-simple-mobilenetv2-api" class="nav-link" data-scroll-target="#simple-mobilenetv2-api">Simple MobileNetV2 API</a></li>
+  <li><a href="#client-code-for-testing" id="toc-client-code-for-testing" class="nav-link" data-scroll-target="#client-code-for-testing">Client Code for Testing</a></li>
+  </ul></li>
+  <li><a href="#advanced-features" id="toc-advanced-features" class="nav-link" data-scroll-target="#advanced-features">Advanced Features</a>
+  <ul class="collapse">
+  <li><a href="#batch-processing-with-custom-batching" id="toc-batch-processing-with-custom-batching" class="nav-link" data-scroll-target="#batch-processing-with-custom-batching">Batch Processing with Custom Batching</a></li>
+  <li><a href="#adding-model-quantization-for-better-performance" id="toc-adding-model-quantization-for-better-performance" class="nav-link" data-scroll-target="#adding-model-quantization-for-better-performance">Adding Model Quantization for Better Performance</a></li>
+  </ul></li>
+  <li><a href="#performance-optimization" id="toc-performance-optimization" class="nav-link" data-scroll-target="#performance-optimization">Performance Optimization</a>
+  <ul class="collapse">
+  <li><a href="#configuration-for-production" id="toc-configuration-for-production" class="nav-link" data-scroll-target="#configuration-for-production">Configuration for Production</a></li>
+  <li><a href="#monitoring-and-logging" id="toc-monitoring-and-logging" class="nav-link" data-scroll-target="#monitoring-and-logging">Monitoring and Logging</a></li>
+  </ul></li>
+  <li><a href="#deployment" id="toc-deployment" class="nav-link" data-scroll-target="#deployment">Deployment</a>
+  <ul class="collapse">
+  <li><a href="#docker-deployment" id="toc-docker-deployment" class="nav-link" data-scroll-target="#docker-deployment">Docker Deployment</a></li>
+  <li><a href="#kubernetes-deployment" id="toc-kubernetes-deployment" class="nav-link" data-scroll-target="#kubernetes-deployment">Kubernetes Deployment</a></li>
+  </ul></li>
+  <li><a href="#testing" id="toc-testing" class="nav-link" data-scroll-target="#testing">Testing</a>
+  <ul class="collapse">
+  <li><a href="#comprehensive-test-suite" id="toc-comprehensive-test-suite" class="nav-link" data-scroll-target="#comprehensive-test-suite">Comprehensive Test Suite</a></li>
+  <li><a href="#load-testing" id="toc-load-testing" class="nav-link" data-scroll-target="#load-testing">Load Testing</a></li>
+  </ul></li>
+  <li><a href="#requirements-file" id="toc-requirements-file" class="nav-link" data-scroll-target="#requirements-file">Requirements File</a></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -981,7 +1023,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Active Learning Influence Selection: A Comprehensive Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,73 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#active-learning-influence-selection-a-comprehensive-guide" id="toc-active-learning-influence-selection-a-comprehensive-guide" class="nav-link active" data-scroll-target="#active-learning-influence-selection-a-comprehensive-guide">Active Learning Influence Selection: A Comprehensive Guide</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#fundamentals-of-active-learning" id="toc-fundamentals-of-active-learning" class="nav-link" data-scroll-target="#fundamentals-of-active-learning">Fundamentals of Active Learning</a>
+  <ul class="collapse">
+  <li><a href="#the-active-learning-loop" id="toc-the-active-learning-loop" class="nav-link" data-scroll-target="#the-active-learning-loop">The Active Learning Loop</a></li>
+  <li><a href="#pool-based-vs.-stream-based-learning" id="toc-pool-based-vs.-stream-based-learning" class="nav-link" data-scroll-target="#pool-based-vs.-stream-based-learning">Pool-Based vs.&nbsp;Stream-Based Learning</a></li>
+  </ul></li>
+  <li><a href="#influence-selection-strategies" id="toc-influence-selection-strategies" class="nav-link" data-scroll-target="#influence-selection-strategies">Influence Selection Strategies</a></li>
+  <li><a href="#uncertainty-based-methods" id="toc-uncertainty-based-methods" class="nav-link" data-scroll-target="#uncertainty-based-methods">Uncertainty-Based Methods</a>
+  <ul class="collapse">
+  <li><a href="#least-confidence" id="toc-least-confidence" class="nav-link" data-scroll-target="#least-confidence">Least Confidence</a></li>
+  <li><a href="#margin-sampling" id="toc-margin-sampling" class="nav-link" data-scroll-target="#margin-sampling">Margin Sampling</a></li>
+  <li><a href="#entropy-based-sampling" id="toc-entropy-based-sampling" class="nav-link" data-scroll-target="#entropy-based-sampling">Entropy-Based Sampling</a></li>
+  <li><a href="#bayesian-active-learning-by-disagreement-bald" id="toc-bayesian-active-learning-by-disagreement-bald" class="nav-link" data-scroll-target="#bayesian-active-learning-by-disagreement-bald">Bayesian Active Learning by Disagreement (BALD)</a></li>
+  </ul></li>
+  <li><a href="#diversity-based-methods" id="toc-diversity-based-methods" class="nav-link" data-scroll-target="#diversity-based-methods">Diversity-Based Methods</a>
+  <ul class="collapse">
+  <li><a href="#clustering-based-sampling" id="toc-clustering-based-sampling" class="nav-link" data-scroll-target="#clustering-based-sampling">Clustering-Based Sampling</a></li>
+  <li><a href="#core-set-approach" id="toc-core-set-approach" class="nav-link" data-scroll-target="#core-set-approach">Core-Set Approach</a></li>
+  </ul></li>
+  <li><a href="#expected-model-change" id="toc-expected-model-change" class="nav-link" data-scroll-target="#expected-model-change">Expected Model Change</a></li>
+  <li><a href="#expected-error-reduction" id="toc-expected-error-reduction" class="nav-link" data-scroll-target="#expected-error-reduction">Expected Error Reduction</a></li>
+  <li><a href="#influence-functions" id="toc-influence-functions" class="nav-link" data-scroll-target="#influence-functions">Influence Functions</a></li>
+  <li><a href="#query-by-committee" id="toc-query-by-committee" class="nav-link" data-scroll-target="#query-by-committee">Query-by-Committee</a></li>
+  <li><a href="#implementation-considerations" id="toc-implementation-considerations" class="nav-link" data-scroll-target="#implementation-considerations">Implementation Considerations</a>
+  <ul class="collapse">
+  <li><a href="#batch-mode-active-learning" id="toc-batch-mode-active-learning" class="nav-link" data-scroll-target="#batch-mode-active-learning">Batch Mode Active Learning</a></li>
+  <li><a href="#handling-imbalanced-data" id="toc-handling-imbalanced-data" class="nav-link" data-scroll-target="#handling-imbalanced-data">Handling Imbalanced Data</a></li>
+  <li><a href="#computational-efficiency" id="toc-computational-efficiency" class="nav-link" data-scroll-target="#computational-efficiency">Computational Efficiency</a></li>
+  </ul></li>
+  <li><a href="#evaluation-metrics" id="toc-evaluation-metrics" class="nav-link" data-scroll-target="#evaluation-metrics">Evaluation Metrics</a>
+  <ul class="collapse">
+  <li><a href="#learning-curves" id="toc-learning-curves" class="nav-link" data-scroll-target="#learning-curves">Learning Curves</a></li>
+  <li><a href="#comparison-with-random-sampling" id="toc-comparison-with-random-sampling" class="nav-link" data-scroll-target="#comparison-with-random-sampling">Comparison with Random Sampling</a></li>
+  <li><a href="#annotation-efficiency" id="toc-annotation-efficiency" class="nav-link" data-scroll-target="#annotation-efficiency">Annotation Efficiency</a></li>
+  </ul></li>
+  <li><a href="#practical-examples" id="toc-practical-examples" class="nav-link" data-scroll-target="#practical-examples">Practical Examples</a>
+  <ul class="collapse">
+  <li><a href="#image-classification-with-uncertainty-sampling" id="toc-image-classification-with-uncertainty-sampling" class="nav-link" data-scroll-target="#image-classification-with-uncertainty-sampling">Image Classification with Uncertainty Sampling</a></li>
+  <li><a href="#text-classification-with-query-by-committee" id="toc-text-classification-with-query-by-committee" class="nav-link" data-scroll-target="#text-classification-with-query-by-committee">Text Classification with Query-by-Committee</a></li>
+  </ul></li>
+  <li><a href="#advanced-topics" id="toc-advanced-topics" class="nav-link" data-scroll-target="#advanced-topics">Advanced Topics</a>
+  <ul class="collapse">
+  <li><a href="#transfer-learning-with-active-learning" id="toc-transfer-learning-with-active-learning" class="nav-link" data-scroll-target="#transfer-learning-with-active-learning">Transfer Learning with Active Learning</a></li>
+  <li><a href="#active-learning-with-deep-learning" id="toc-active-learning-with-deep-learning" class="nav-link" data-scroll-target="#active-learning-with-deep-learning">Active Learning with Deep Learning</a></li>
+  <li><a href="#semi-supervised-active-learning" id="toc-semi-supervised-active-learning" class="nav-link" data-scroll-target="#semi-supervised-active-learning">Semi-Supervised Active Learning</a></li>
+  <li><a href="#active-learning-for-domain-adaptation" id="toc-active-learning-for-domain-adaptation" class="nav-link" data-scroll-target="#active-learning-for-domain-adaptation">Active Learning for Domain Adaptation</a></li>
+  <li><a href="#human-in-the-loop-considerations" id="toc-human-in-the-loop-considerations" class="nav-link" data-scroll-target="#human-in-the-loop-considerations">Human-in-the-Loop Considerations</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -1059,7 +1122,7 @@ Iteration 10: 110 labeled samples, accuracy: 0.7450</code></pre>
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

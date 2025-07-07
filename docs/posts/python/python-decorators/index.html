@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Python Decorators: A Complete Guide with Useful Examples</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -156,7 +156,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -178,10 +178,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#python-decorators-a-complete-guide-with-useful-examples" id="toc-python-decorators-a-complete-guide-with-useful-examples" class="nav-link active" data-scroll-target="#python-decorators-a-complete-guide-with-useful-examples">Python Decorators: A Complete Guide with Useful Examples</a>
+  <ul class="collapse">
+  <li><a href="#understanding-decorators" id="toc-understanding-decorators" class="nav-link" data-scroll-target="#understanding-decorators">Understanding Decorators</a>
+  <ul class="collapse">
+  <li><a href="#basic-decorator-structure" id="toc-basic-decorator-structure" class="nav-link" data-scroll-target="#basic-decorator-structure">Basic Decorator Structure</a></li>
+  </ul></li>
+  <li><a href="#essential-decorator-patterns" id="toc-essential-decorator-patterns" class="nav-link" data-scroll-target="#essential-decorator-patterns">Essential Decorator Patterns</a>
+  <ul class="collapse">
+  <li><a href="#timing-decorator" id="toc-timing-decorator" class="nav-link" data-scroll-target="#timing-decorator">1. Timing Decorator</a></li>
+  <li><a href="#retry-decorator" id="toc-retry-decorator" class="nav-link" data-scroll-target="#retry-decorator">2. Retry Decorator</a></li>
+  <li><a href="#cachememoization-decorator" id="toc-cachememoization-decorator" class="nav-link" data-scroll-target="#cachememoization-decorator">3. Cache/Memoization Decorator</a></li>
+  <li><a href="#logging-decorator" id="toc-logging-decorator" class="nav-link" data-scroll-target="#logging-decorator">4. Logging Decorator</a></li>
+  <li><a href="#rate-limiting-decorator" id="toc-rate-limiting-decorator" class="nav-link" data-scroll-target="#rate-limiting-decorator">5. Rate Limiting Decorator</a></li>
+  <li><a href="#validation-decorator" id="toc-validation-decorator" class="nav-link" data-scroll-target="#validation-decorator">6. Validation Decorator</a></li>
+  <li><a href="#deprecated-decorator" id="toc-deprecated-decorator" class="nav-link" data-scroll-target="#deprecated-decorator">7. Deprecated Decorator</a></li>
+  </ul></li>
+  <li><a href="#advanced-decorator-concepts" id="toc-advanced-decorator-concepts" class="nav-link" data-scroll-target="#advanced-decorator-concepts">Advanced Decorator Concepts</a>
+  <ul class="collapse">
+  <li><a href="#class-based-decorators" id="toc-class-based-decorators" class="nav-link" data-scroll-target="#class-based-decorators">Class-Based Decorators</a></li>
+  <li><a href="#stacking-decorators" id="toc-stacking-decorators" class="nav-link" data-scroll-target="#stacking-decorators">Stacking Decorators</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -579,7 +613,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

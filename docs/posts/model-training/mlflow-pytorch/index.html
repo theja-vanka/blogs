@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">MLflow for PyTorch - Complete Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,68 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#mlflow-for-pytorch---complete-guide" id="toc-mlflow-for-pytorch---complete-guide" class="nav-link active" data-scroll-target="#mlflow-for-pytorch---complete-guide">MLflow for PyTorch - Complete Guide</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#installation-and-setup" id="toc-installation-and-setup" class="nav-link" data-scroll-target="#installation-and-setup">Installation and Setup</a>
+  <ul class="collapse">
+  <li><a href="#install-mlflow" id="toc-install-mlflow" class="nav-link" data-scroll-target="#install-mlflow">Install MLflow</a></li>
+  <li><a href="#start-mlflow-ui" id="toc-start-mlflow-ui" class="nav-link" data-scroll-target="#start-mlflow-ui">Start MLflow UI</a></li>
+  <li><a href="#basic-configuration" id="toc-basic-configuration" class="nav-link" data-scroll-target="#basic-configuration">Basic Configuration</a></li>
+  </ul></li>
+  <li><a href="#basic-mlflow-concepts" id="toc-basic-mlflow-concepts" class="nav-link" data-scroll-target="#basic-mlflow-concepts">Basic MLflow Concepts</a></li>
+  <li><a href="#experiment-tracking" id="toc-experiment-tracking" class="nav-link" data-scroll-target="#experiment-tracking">Experiment Tracking</a>
+  <ul class="collapse">
+  <li><a href="#basic-run-structure" id="toc-basic-run-structure" class="nav-link" data-scroll-target="#basic-run-structure">Basic Run Structure</a></li>
+  <li><a href="#complete-training-example" id="toc-complete-training-example" class="nav-link" data-scroll-target="#complete-training-example">Complete Training Example</a></li>
+  </ul></li>
+  <li><a href="#model-logging" id="toc-model-logging" class="nav-link" data-scroll-target="#model-logging">Model Logging</a>
+  <ul class="collapse">
+  <li><a href="#different-ways-to-log-pytorch-models" id="toc-different-ways-to-log-pytorch-models" class="nav-link" data-scroll-target="#different-ways-to-log-pytorch-models">Different Ways to Log PyTorch Models</a></li>
+  </ul></li>
+  <li><a href="#model-registry" id="toc-model-registry" class="nav-link" data-scroll-target="#model-registry">Model Registry</a>
+  <ul class="collapse">
+  <li><a href="#register-model" id="toc-register-model" class="nav-link" data-scroll-target="#register-model">Register Model</a></li>
+  <li><a href="#model-versioning-and-stages" id="toc-model-versioning-and-stages" class="nav-link" data-scroll-target="#model-versioning-and-stages">Model Versioning and Stages</a></li>
+  <li><a href="#load-registered-model" id="toc-load-registered-model" class="nav-link" data-scroll-target="#load-registered-model">Load Registered Model</a></li>
+  </ul></li>
+  <li><a href="#model-deployment" id="toc-model-deployment" class="nav-link" data-scroll-target="#model-deployment">Model Deployment</a>
+  <ul class="collapse">
+  <li><a href="#local-serving" id="toc-local-serving" class="nav-link" data-scroll-target="#local-serving">Local Serving</a></li>
+  <li><a href="#prediction-with-served-model" id="toc-prediction-with-served-model" class="nav-link" data-scroll-target="#prediction-with-served-model">Prediction with Served Model</a></li>
+  <li><a href="#docker-deployment" id="toc-docker-deployment" class="nav-link" data-scroll-target="#docker-deployment">Docker Deployment</a></li>
+  </ul></li>
+  <li><a href="#advanced-features" id="toc-advanced-features" class="nav-link" data-scroll-target="#advanced-features">Advanced Features</a>
+  <ul class="collapse">
+  <li><a href="#custom-mlflow-model" id="toc-custom-mlflow-model" class="nav-link" data-scroll-target="#custom-mlflow-model">Custom MLflow Model</a></li>
+  <li><a href="#automatic-logging" id="toc-automatic-logging" class="nav-link" data-scroll-target="#automatic-logging">Automatic Logging</a></li>
+  <li><a href="#logging-hyperparameter-sweeps" id="toc-logging-hyperparameter-sweeps" class="nav-link" data-scroll-target="#logging-hyperparameter-sweeps">Logging Hyperparameter Sweeps</a></li>
+  <li><a href="#logging-artifacts-and-plots" id="toc-logging-artifacts-and-plots" class="nav-link" data-scroll-target="#logging-artifacts-and-plots">Logging Artifacts and Plots</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#organize-experiments" id="toc-organize-experiments" class="nav-link" data-scroll-target="#organize-experiments">1. Organize Experiments</a></li>
+  <li><a href="#comprehensive-logging" id="toc-comprehensive-logging" class="nav-link" data-scroll-target="#comprehensive-logging">2. Comprehensive Logging</a></li>
+  <li><a href="#error-handling" id="toc-error-handling" class="nav-link" data-scroll-target="#error-handling">3. Error Handling</a></li>
+  <li><a href="#model-comparison" id="toc-model-comparison" class="nav-link" data-scroll-target="#model-comparison">4. Model Comparison</a></li>
+  <li><a href="#model-loading-best-practices" id="toc-model-loading-best-practices" class="nav-link" data-scroll-target="#model-loading-best-practices">5. Model Loading Best Practices</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -736,7 +794,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Vision-Language Models: Bridging Visual and Textual Understanding</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -156,7 +156,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -178,10 +178,76 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#vision-language-models-bridging-visual-and-textual-understanding" id="toc-vision-language-models-bridging-visual-and-textual-understanding" class="nav-link active" data-scroll-target="#vision-language-models-bridging-visual-and-textual-understanding">Vision-Language Models: Bridging Visual and Textual Understanding</a>
+  <ul class="collapse">
+  <li><a href="#what-are-vision-language-models" id="toc-what-are-vision-language-models" class="nav-link" data-scroll-target="#what-are-vision-language-models">What Are Vision-Language Models?</a></li>
+  <li><a href="#architecture-deep-dive" id="toc-architecture-deep-dive" class="nav-link" data-scroll-target="#architecture-deep-dive">Architecture Deep Dive</a>
+  <ul class="collapse">
+  <li><a href="#core-components" id="toc-core-components" class="nav-link" data-scroll-target="#core-components">Core Components</a></li>
+  <li><a href="#vision-encoder" id="toc-vision-encoder" class="nav-link" data-scroll-target="#vision-encoder">Vision Encoder</a></li>
+  <li><a href="#text-encoder" id="toc-text-encoder" class="nav-link" data-scroll-target="#text-encoder">Text Encoder</a></li>
+  <li><a href="#cross-modal-fusion" id="toc-cross-modal-fusion" class="nav-link" data-scroll-target="#cross-modal-fusion">Cross-Modal Fusion</a></li>
+  </ul></li>
+  <li><a href="#training-strategies" id="toc-training-strategies" class="nav-link" data-scroll-target="#training-strategies">Training Strategies</a>
+  <ul class="collapse">
+  <li><a href="#contrastive-learning" id="toc-contrastive-learning" class="nav-link" data-scroll-target="#contrastive-learning">Contrastive Learning</a></li>
+  <li><a href="#multi-task-learning" id="toc-multi-task-learning" class="nav-link" data-scroll-target="#multi-task-learning">Multi-Task Learning</a></li>
+  <li><a href="#data-requirements" id="toc-data-requirements" class="nav-link" data-scroll-target="#data-requirements">Data Requirements</a></li>
+  </ul></li>
+  <li><a href="#popular-vlm-architectures" id="toc-popular-vlm-architectures" class="nav-link" data-scroll-target="#popular-vlm-architectures">Popular VLM Architectures</a>
+  <ul class="collapse">
+  <li><a href="#clip-contrastive-language-image-pre-training" id="toc-clip-contrastive-language-image-pre-training" class="nav-link" data-scroll-target="#clip-contrastive-language-image-pre-training">CLIP (Contrastive Language-Image Pre-training)</a></li>
+  <li><a href="#blip-bootstrapping-language-image-pre-training" id="toc-blip-bootstrapping-language-image-pre-training" class="nav-link" data-scroll-target="#blip-bootstrapping-language-image-pre-training">BLIP (Bootstrapping Language-Image Pre-training)</a></li>
+  <li><a href="#flamingo" id="toc-flamingo" class="nav-link" data-scroll-target="#flamingo">Flamingo</a></li>
+  </ul></li>
+  <li><a href="#implementation-example" id="toc-implementation-example" class="nav-link" data-scroll-target="#implementation-example">Implementation Example</a></li>
+  <li><a href="#evaluation-metrics" id="toc-evaluation-metrics" class="nav-link" data-scroll-target="#evaluation-metrics">Evaluation Metrics</a>
+  <ul class="collapse">
+  <li><a href="#image-captioning" id="toc-image-captioning" class="nav-link" data-scroll-target="#image-captioning">Image Captioning</a></li>
+  <li><a href="#visual-question-answering" id="toc-visual-question-answering" class="nav-link" data-scroll-target="#visual-question-answering">Visual Question Answering</a></li>
+  <li><a href="#image-text-retrieval" id="toc-image-text-retrieval" class="nav-link" data-scroll-target="#image-text-retrieval">Image-Text Retrieval</a></li>
+  </ul></li>
+  <li><a href="#applications-and-use-cases" id="toc-applications-and-use-cases" class="nav-link" data-scroll-target="#applications-and-use-cases">Applications and Use Cases</a>
+  <ul class="collapse">
+  <li><a href="#content-generation" id="toc-content-generation" class="nav-link" data-scroll-target="#content-generation">Content Generation</a></li>
+  <li><a href="#document-understanding" id="toc-document-understanding" class="nav-link" data-scroll-target="#document-understanding">Document Understanding</a></li>
+  <li><a href="#accessibility" id="toc-accessibility" class="nav-link" data-scroll-target="#accessibility">Accessibility</a></li>
+  <li><a href="#e-commerce" id="toc-e-commerce" class="nav-link" data-scroll-target="#e-commerce">E-commerce</a></li>
+  </ul></li>
+  <li><a href="#challenges-and-limitations" id="toc-challenges-and-limitations" class="nav-link" data-scroll-target="#challenges-and-limitations">Challenges and Limitations</a>
+  <ul class="collapse">
+  <li><a href="#computational-requirements" id="toc-computational-requirements" class="nav-link" data-scroll-target="#computational-requirements">Computational Requirements</a></li>
+  <li><a href="#bias-and-fairness" id="toc-bias-and-fairness" class="nav-link" data-scroll-target="#bias-and-fairness">Bias and Fairness</a></li>
+  <li><a href="#hallucination" id="toc-hallucination" class="nav-link" data-scroll-target="#hallucination">Hallucination</a></li>
+  </ul></li>
+  <li><a href="#future-directions" id="toc-future-directions" class="nav-link" data-scroll-target="#future-directions">Future Directions</a>
+  <ul class="collapse">
+  <li><a href="#multimodal-reasoning" id="toc-multimodal-reasoning" class="nav-link" data-scroll-target="#multimodal-reasoning">Multimodal Reasoning</a></li>
+  <li><a href="#efficiency-improvements" id="toc-efficiency-improvements" class="nav-link" data-scroll-target="#efficiency-improvements">Efficiency Improvements</a></li>
+  <li><a href="#interactive-systems" id="toc-interactive-systems" class="nav-link" data-scroll-target="#interactive-systems">Interactive Systems</a></li>
+  </ul></li>
+  <li><a href="#best-practices-for-implementation" id="toc-best-practices-for-implementation" class="nav-link" data-scroll-target="#best-practices-for-implementation">Best Practices for Implementation</a>
+  <ul class="collapse">
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">Data Preparation</a></li>
+  <li><a href="#model-optimization" id="toc-model-optimization" class="nav-link" data-scroll-target="#model-optimization">Model Optimization</a></li>
+  <li><a href="#deployment-considerations" id="toc-deployment-considerations" class="nav-link" data-scroll-target="#deployment-considerations">Deployment Considerations</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -740,7 +806,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

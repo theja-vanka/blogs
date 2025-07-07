@@ -104,7 +104,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -138,9 +138,9 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">The Mathematics Behind Convolutional Kolmogorov-Arnold Networks</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
@@ -150,7 +150,7 @@ window.Quarto = {
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -172,10 +172,83 @@ window.Quarto = {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-mathematics-behind-convolutional-kolmogorov-arnold-networks" id="toc-the-mathematics-behind-convolutional-kolmogorov-arnold-networks" class="nav-link active" data-scroll-target="#the-mathematics-behind-convolutional-kolmogorov-arnold-networks">The Mathematics Behind Convolutional Kolmogorov-Arnold Networks</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-kolmogorov-arnold-representation-theorem" id="toc-the-kolmogorov-arnold-representation-theorem" class="nav-link" data-scroll-target="#the-kolmogorov-arnold-representation-theorem">The Kolmogorov-Arnold Representation Theorem</a>
+  <ul class="collapse">
+  <li><a href="#theoretical-foundation" id="toc-theoretical-foundation" class="nav-link" data-scroll-target="#theoretical-foundation">Theoretical Foundation</a></li>
+  <li><a href="#implications-for-neural-networks" id="toc-implications-for-neural-networks" class="nav-link" data-scroll-target="#implications-for-neural-networks">Implications for Neural Networks</a></li>
+  </ul></li>
+  <li><a href="#from-kans-to-convolutional-kans" id="toc-from-kans-to-convolutional-kans" class="nav-link" data-scroll-target="#from-kans-to-convolutional-kans">From KANs to Convolutional KANs</a>
+  <ul class="collapse">
+  <li><a href="#standard-kan-architecture" id="toc-standard-kan-architecture" class="nav-link" data-scroll-target="#standard-kan-architecture">Standard KAN Architecture</a></li>
+  <li><a href="#convolutional-extension" id="toc-convolutional-extension" class="nav-link" data-scroll-target="#convolutional-extension">Convolutional Extension</a></li>
+  </ul></li>
+  <li><a href="#mathematical-formulation-of-ckans" id="toc-mathematical-formulation-of-ckans" class="nav-link" data-scroll-target="#mathematical-formulation-of-ckans">Mathematical Formulation of CKANs</a>
+  <ul class="collapse">
+  <li><a href="#convolutional-kan-layer" id="toc-convolutional-kan-layer" class="nav-link" data-scroll-target="#convolutional-kan-layer">1. Convolutional KAN Layer</a></li>
+  <li><a href="#univariate-function-parameterization" id="toc-univariate-function-parameterization" class="nav-link" data-scroll-target="#univariate-function-parameterization">2. Univariate Function Parameterization</a></li>
+  <li><a href="#shared-function-approach" id="toc-shared-function-approach" class="nav-link" data-scroll-target="#shared-function-approach">3. Shared Function Approach</a></li>
+  </ul></li>
+  <li><a href="#activation-functions-in-ckans" id="toc-activation-functions-in-ckans" class="nav-link" data-scroll-target="#activation-functions-in-ckans">Activation Functions in CKANs</a>
+  <ul class="collapse">
+  <li><a href="#learnable-activation-functions" id="toc-learnable-activation-functions" class="nav-link" data-scroll-target="#learnable-activation-functions">Learnable Activation Functions</a></li>
+  </ul></li>
+  <li><a href="#training-dynamics-and-optimization" id="toc-training-dynamics-and-optimization" class="nav-link" data-scroll-target="#training-dynamics-and-optimization">Training Dynamics and Optimization</a>
+  <ul class="collapse">
+  <li><a href="#gradient-computation" id="toc-gradient-computation" class="nav-link" data-scroll-target="#gradient-computation">Gradient Computation</a></li>
+  <li><a href="#regularization-techniques" id="toc-regularization-techniques" class="nav-link" data-scroll-target="#regularization-techniques">Regularization Techniques</a></li>
+  </ul></li>
+  <li><a href="#computational-complexity-analysis" id="toc-computational-complexity-analysis" class="nav-link" data-scroll-target="#computational-complexity-analysis">Computational Complexity Analysis</a>
+  <ul class="collapse">
+  <li><a href="#parameter-count" id="toc-parameter-count" class="nav-link" data-scroll-target="#parameter-count">Parameter Count</a></li>
+  <li><a href="#computational-complexity" id="toc-computational-complexity" class="nav-link" data-scroll-target="#computational-complexity">Computational Complexity</a></li>
+  </ul></li>
+  <li><a href="#architectural-variations" id="toc-architectural-variations" class="nav-link" data-scroll-target="#architectural-variations">Architectural Variations</a>
+  <ul class="collapse">
+  <li><a href="#depthwise-separable-ckans" id="toc-depthwise-separable-ckans" class="nav-link" data-scroll-target="#depthwise-separable-ckans">1. Depthwise Separable CKANs</a></li>
+  <li><a href="#dilated-ckans" id="toc-dilated-ckans" class="nav-link" data-scroll-target="#dilated-ckans">2. Dilated CKANs</a></li>
+  <li><a href="#residual-ckans" id="toc-residual-ckans" class="nav-link" data-scroll-target="#residual-ckans">3. Residual CKANs</a></li>
+  </ul></li>
+  <li><a href="#approximation-properties" id="toc-approximation-properties" class="nav-link" data-scroll-target="#approximation-properties">Approximation Properties</a>
+  <ul class="collapse">
+  <li><a href="#universal-approximation" id="toc-universal-approximation" class="nav-link" data-scroll-target="#universal-approximation">Universal Approximation</a></li>
+  <li><a href="#convergence-analysis" id="toc-convergence-analysis" class="nav-link" data-scroll-target="#convergence-analysis">Convergence Analysis</a></li>
+  </ul></li>
+  <li><a href="#practical-implementation-considerations" id="toc-practical-implementation-considerations" class="nav-link" data-scroll-target="#practical-implementation-considerations">Practical Implementation Considerations</a>
+  <ul class="collapse">
+  <li><a href="#numerical-stability" id="toc-numerical-stability" class="nav-link" data-scroll-target="#numerical-stability">Numerical Stability</a></li>
+  <li><a href="#memory-optimization" id="toc-memory-optimization" class="nav-link" data-scroll-target="#memory-optimization">Memory Optimization</a></li>
+  </ul></li>
+  <li><a href="#comparison-with-traditional-cnns" id="toc-comparison-with-traditional-cnns" class="nav-link" data-scroll-target="#comparison-with-traditional-cnns">Comparison with Traditional CNNs</a>
+  <ul class="collapse">
+  <li><a href="#expressivity" id="toc-expressivity" class="nav-link" data-scroll-target="#expressivity">Expressivity</a></li>
+  <li><a href="#interpretability" id="toc-interpretability" class="nav-link" data-scroll-target="#interpretability">Interpretability</a></li>
+  <li><a href="#computational-trade-offs" id="toc-computational-trade-offs" class="nav-link" data-scroll-target="#computational-trade-offs">Computational Trade-offs</a></li>
+  </ul></li>
+  <li><a href="#future-directions-and-extensions" id="toc-future-directions-and-extensions" class="nav-link" data-scroll-target="#future-directions-and-extensions">Future Directions and Extensions</a>
+  <ul class="collapse">
+  <li><a href="#theoretical-advances" id="toc-theoretical-advances" class="nav-link" data-scroll-target="#theoretical-advances">Theoretical Advances</a></li>
+  <li><a href="#practical-improvements" id="toc-practical-improvements" class="nav-link" data-scroll-target="#practical-improvements">Practical Improvements</a></li>
+  <li><a href="#applications" id="toc-applications" class="nav-link" data-scroll-target="#applications">Applications</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -564,7 +637,7 @@ Y = \text{CKAN}(X) + \alpha \cdot X
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -75,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -109,9 +109,9 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Vision Transformers (ViT): A Simple Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
@@ -121,7 +121,7 @@ ul.task-list li input[type="checkbox"] {
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -143,10 +143,78 @@ ul.task-list li input[type="checkbox"] {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#vision-transformers-vit-a-simple-guide" id="toc-vision-transformers-vit-a-simple-guide" class="nav-link active" data-scroll-target="#vision-transformers-vit-a-simple-guide">Vision Transformers (ViT): A Simple Guide</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#background-from-cnns-to-transformers" id="toc-background-from-cnns-to-transformers" class="nav-link" data-scroll-target="#background-from-cnns-to-transformers">Background: From CNNs to Transformers</a></li>
+  <li><a href="#core-concept-images-as-sequences" id="toc-core-concept-images-as-sequences" class="nav-link" data-scroll-target="#core-concept-images-as-sequences">Core Concept: Images as Sequences</a>
+  <ul class="collapse">
+  <li><a href="#image-patch-embedding" id="toc-image-patch-embedding" class="nav-link" data-scroll-target="#image-patch-embedding">Image Patch Embedding</a></li>
+  <li><a href="#mathematical-formulation" id="toc-mathematical-formulation" class="nav-link" data-scroll-target="#mathematical-formulation">Mathematical Formulation</a></li>
+  </ul></li>
+  <li><a href="#architecture-components" id="toc-architecture-components" class="nav-link" data-scroll-target="#architecture-components">Architecture Components</a>
+  <ul class="collapse">
+  <li><a href="#patch-embedding-layer" id="toc-patch-embedding-layer" class="nav-link" data-scroll-target="#patch-embedding-layer">1. Patch Embedding Layer</a></li>
+  <li><a href="#transformer-encoder" id="toc-transformer-encoder" class="nav-link" data-scroll-target="#transformer-encoder">2. Transformer Encoder</a></li>
+  <li><a href="#classification-head" id="toc-classification-head" class="nav-link" data-scroll-target="#classification-head">3. Classification Head</a></li>
+  </ul></li>
+  <li><a href="#self-attention-in-vision" id="toc-self-attention-in-vision" class="nav-link" data-scroll-target="#self-attention-in-vision">Self-Attention in Vision</a>
+  <ul class="collapse">
+  <li><a href="#attention-maps" id="toc-attention-maps" class="nav-link" data-scroll-target="#attention-maps">Attention Maps</a></li>
+  <li><a href="#global-context" id="toc-global-context" class="nav-link" data-scroll-target="#global-context">Global Context</a></li>
+  </ul></li>
+  <li><a href="#training-considerations" id="toc-training-considerations" class="nav-link" data-scroll-target="#training-considerations">Training Considerations</a>
+  <ul class="collapse">
+  <li><a href="#data-requirements" id="toc-data-requirements" class="nav-link" data-scroll-target="#data-requirements">Data Requirements</a></li>
+  <li><a href="#optimization-challenges" id="toc-optimization-challenges" class="nav-link" data-scroll-target="#optimization-challenges">Optimization Challenges</a></li>
+  </ul></li>
+  <li><a href="#variants-and-improvements" id="toc-variants-and-improvements" class="nav-link" data-scroll-target="#variants-and-improvements">Variants and Improvements</a>
+  <ul class="collapse">
+  <li><a href="#vit-variants" id="toc-vit-variants" class="nav-link" data-scroll-target="#vit-variants">ViT Variants</a></li>
+  <li><a href="#architectural-improvements" id="toc-architectural-improvements" class="nav-link" data-scroll-target="#architectural-improvements">Architectural Improvements</a></li>
+  </ul></li>
+  <li><a href="#advantages-of-vision-transformers" id="toc-advantages-of-vision-transformers" class="nav-link" data-scroll-target="#advantages-of-vision-transformers">Advantages of Vision Transformers</a>
+  <ul class="collapse">
+  <li><a href="#strengths" id="toc-strengths" class="nav-link" data-scroll-target="#strengths">Strengths</a></li>
+  <li><a href="#performance-benefits" id="toc-performance-benefits" class="nav-link" data-scroll-target="#performance-benefits">Performance Benefits</a></li>
+  </ul></li>
+  <li><a href="#limitations-and-challenges" id="toc-limitations-and-challenges" class="nav-link" data-scroll-target="#limitations-and-challenges">Limitations and Challenges</a>
+  <ul class="collapse">
+  <li><a href="#current-limitations" id="toc-current-limitations" class="nav-link" data-scroll-target="#current-limitations">Current Limitations</a></li>
+  <li><a href="#ongoing-research-areas" id="toc-ongoing-research-areas" class="nav-link" data-scroll-target="#ongoing-research-areas">Ongoing Research Areas</a></li>
+  </ul></li>
+  <li><a href="#applications-beyond-classification" id="toc-applications-beyond-classification" class="nav-link" data-scroll-target="#applications-beyond-classification">Applications Beyond Classification</a>
+  <ul class="collapse">
+  <li><a href="#computer-vision-tasks" id="toc-computer-vision-tasks" class="nav-link" data-scroll-target="#computer-vision-tasks">Computer Vision Tasks</a></li>
+  <li><a href="#multimodal-applications" id="toc-multimodal-applications" class="nav-link" data-scroll-target="#multimodal-applications">Multimodal Applications</a></li>
+  </ul></li>
+  <li><a href="#implementation-considerations" id="toc-implementation-considerations" class="nav-link" data-scroll-target="#implementation-considerations">Implementation Considerations</a>
+  <ul class="collapse">
+  <li><a href="#model-selection" id="toc-model-selection" class="nav-link" data-scroll-target="#model-selection">Model Selection</a></li>
+  <li><a href="#training-strategy" id="toc-training-strategy" class="nav-link" data-scroll-target="#training-strategy">Training Strategy</a></li>
+  <li><a href="#optimization-tips" id="toc-optimization-tips" class="nav-link" data-scroll-target="#optimization-tips">Optimization Tips</a></li>
+  </ul></li>
+  <li><a href="#future-directions" id="toc-future-directions" class="nav-link" data-scroll-target="#future-directions">Future Directions</a>
+  <ul class="collapse">
+  <li><a href="#research-trends" id="toc-research-trends" class="nav-link" data-scroll-target="#research-trends">Research Trends</a></li>
+  <li><a href="#emerging-applications" id="toc-emerging-applications" class="nav-link" data-scroll-target="#emerging-applications">Emerging Applications</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -470,7 +538,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Student-Teacher Network Training Guide in PyTorch</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -156,7 +156,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -178,10 +178,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#student-teacher-network-training-guide-in-pytorch" id="toc-student-teacher-network-training-guide-in-pytorch" class="nav-link active" data-scroll-target="#student-teacher-network-training-guide-in-pytorch">Student-Teacher Network Training Guide in PyTorch</a>
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#key-concepts" id="toc-key-concepts" class="nav-link" data-scroll-target="#key-concepts">Key Concepts</a>
+  <ul class="collapse">
+  <li><a href="#knowledge-distillation-loss" id="toc-knowledge-distillation-loss" class="nav-link" data-scroll-target="#knowledge-distillation-loss">Knowledge Distillation Loss</a></li>
+  <li><a href="#temperature-scaling" id="toc-temperature-scaling" class="nav-link" data-scroll-target="#temperature-scaling">Temperature Scaling</a></li>
+  </ul></li>
+  <li><a href="#complete-implementation" id="toc-complete-implementation" class="nav-link" data-scroll-target="#complete-implementation">Complete Implementation</a>
+  <ul class="collapse">
+  <li><a href="#import-libraries" id="toc-import-libraries" class="nav-link" data-scroll-target="#import-libraries">Import Libraries</a></li>
+  <li><a href="#set-device" id="toc-set-device" class="nav-link" data-scroll-target="#set-device">Set device</a></li>
+  <li><a href="#define-teacher-model" id="toc-define-teacher-model" class="nav-link" data-scroll-target="#define-teacher-model">Define Teacher Model</a></li>
+  <li><a href="#define-student-model" id="toc-define-student-model" class="nav-link" data-scroll-target="#define-student-model">Define Student Model</a></li>
+  <li><a href="#define-distillation-loss" id="toc-define-distillation-loss" class="nav-link" data-scroll-target="#define-distillation-loss">Define Distillation Loss</a></li>
+  <li><a href="#load-and-preprocess-data" id="toc-load-and-preprocess-data" class="nav-link" data-scroll-target="#load-and-preprocess-data">Load and Preprocess Data</a></li>
+  <li><a href="#train-teacher-model" id="toc-train-teacher-model" class="nav-link" data-scroll-target="#train-teacher-model">Train Teacher Model</a></li>
+  <li><a href="#train-student-model-with-distillation" id="toc-train-student-model-with-distillation" class="nav-link" data-scroll-target="#train-student-model-with-distillation">Train Student Model with Distillation</a></li>
+  <li><a href="#train-student-model-baseline" id="toc-train-student-model-baseline" class="nav-link" data-scroll-target="#train-student-model-baseline">Train Student Model Baseline</a></li>
+  <li><a href="#evaluate-model" id="toc-evaluate-model" class="nav-link" data-scroll-target="#evaluate-model">Evaluate Model</a></li>
+  <li><a href="#count-parameters" id="toc-count-parameters" class="nav-link" data-scroll-target="#count-parameters">Count Parameters</a></li>
+  <li><a href="#main-execution" id="toc-main-execution" class="nav-link" data-scroll-target="#main-execution">Main Execution</a></li>
+  </ul></li>
+  <li><a href="#advanced-techniques" id="toc-advanced-techniques" class="nav-link" data-scroll-target="#advanced-techniques">Advanced Techniques</a>
+  <ul class="collapse">
+  <li><a href="#feature-level-distillation" id="toc-feature-level-distillation" class="nav-link" data-scroll-target="#feature-level-distillation">1. Feature-Level Distillation</a></li>
+  <li><a href="#attention-transfer" id="toc-attention-transfer" class="nav-link" data-scroll-target="#attention-transfer">2. Attention Transfer</a></li>
+  <li><a href="#progressive-knowledge-distillation" id="toc-progressive-knowledge-distillation" class="nav-link" data-scroll-target="#progressive-knowledge-distillation">3. Progressive Knowledge Distillation</a></li>
+  </ul></li>
+  <li><a href="#hyperparameter-guidelines" id="toc-hyperparameter-guidelines" class="nav-link" data-scroll-target="#hyperparameter-guidelines">Hyperparameter Guidelines</a>
+  <ul class="collapse">
+  <li><a href="#temperature-t" id="toc-temperature-t" class="nav-link" data-scroll-target="#temperature-t">Temperature (T)</a></li>
+  <li><a href="#alpha-α" id="toc-alpha-α" class="nav-link" data-scroll-target="#alpha-α">Alpha (α)</a></li>
+  <li><a href="#learning-rate" id="toc-learning-rate" class="nav-link" data-scroll-target="#learning-rate">Learning Rate</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a></li>
+  <li><a href="#common-issues-and-solutions" id="toc-common-issues-and-solutions" class="nav-link" data-scroll-target="#common-issues-and-solutions">Common Issues and Solutions</a>
+  <ul class="collapse">
+  <li><a href="#problem-student-performs-worse-than-baseline" id="toc-problem-student-performs-worse-than-baseline" class="nav-link" data-scroll-target="#problem-student-performs-worse-than-baseline">Problem: Student performs worse than baseline</a></li>
+  <li><a href="#problem-slow-convergence" id="toc-problem-slow-convergence" class="nav-link" data-scroll-target="#problem-slow-convergence">Problem: Slow convergence</a></li>
+  <li><a href="#problem-overfitting-to-teacher" id="toc-problem-overfitting-to-teacher" class="nav-link" data-scroll-target="#problem-overfitting-to-teacher">Problem: Overfitting to teacher</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -835,7 +888,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

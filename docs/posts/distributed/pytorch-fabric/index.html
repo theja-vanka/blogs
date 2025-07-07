@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">PyTorch Lightning Fabric Code Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,70 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#pytorch-lightning-fabric-code-guide" id="toc-pytorch-lightning-fabric-code-guide" class="nav-link active" data-scroll-target="#pytorch-lightning-fabric-code-guide">PyTorch Lightning Fabric Code Guide</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#basic-setup" id="toc-basic-setup" class="nav-link" data-scroll-target="#basic-setup">Basic Setup</a>
+  <ul class="collapse">
+  <li><a href="#minimal-example" id="toc-minimal-example" class="nav-link" data-scroll-target="#minimal-example">Minimal Example</a></li>
+  </ul></li>
+  <li><a href="#core-components" id="toc-core-components" class="nav-link" data-scroll-target="#core-components">Core Components</a>
+  <ul class="collapse">
+  <li><a href="#fabric-initialization" id="toc-fabric-initialization" class="nav-link" data-scroll-target="#fabric-initialization">1. Fabric Initialization</a></li>
+  <li><a href="#model-and-optimizer-setup" id="toc-model-and-optimizer-setup" class="nav-link" data-scroll-target="#model-and-optimizer-setup">2. Model and Optimizer Setup</a></li>
+  <li><a href="#dataloader-setup" id="toc-dataloader-setup" class="nav-link" data-scroll-target="#dataloader-setup">3. DataLoader Setup</a></li>
+  </ul></li>
+  <li><a href="#training-loop" id="toc-training-loop" class="nav-link" data-scroll-target="#training-loop">Training Loop</a>
+  <ul class="collapse">
+  <li><a href="#basic-training-loop" id="toc-basic-training-loop" class="nav-link" data-scroll-target="#basic-training-loop">Basic Training Loop</a></li>
+  <li><a href="#training-with-validation" id="toc-training-with-validation" class="nav-link" data-scroll-target="#training-with-validation">Training with Validation</a></li>
+  </ul></li>
+  <li><a href="#multi-gpu-training" id="toc-multi-gpu-training" class="nav-link" data-scroll-target="#multi-gpu-training">Multi-GPU Training</a>
+  <ul class="collapse">
+  <li><a href="#distributed-data-parallel-ddp" id="toc-distributed-data-parallel-ddp" class="nav-link" data-scroll-target="#distributed-data-parallel-ddp">Distributed Data Parallel (DDP)</a></li>
+  <li><a href="#fully-sharded-data-parallel-fsdp" id="toc-fully-sharded-data-parallel-fsdp" class="nav-link" data-scroll-target="#fully-sharded-data-parallel-fsdp">Fully Sharded Data Parallel (FSDP)</a></li>
+  </ul></li>
+  <li><a href="#mixed-precision" id="toc-mixed-precision" class="nav-link" data-scroll-target="#mixed-precision">Mixed Precision</a>
+  <ul class="collapse">
+  <li><a href="#automatic-mixed-precision" id="toc-automatic-mixed-precision" class="nav-link" data-scroll-target="#automatic-mixed-precision">Automatic Mixed Precision</a></li>
+  <li><a href="#manual-precision-control" id="toc-manual-precision-control" class="nav-link" data-scroll-target="#manual-precision-control">Manual Precision Control</a></li>
+  </ul></li>
+  <li><a href="#logging-and-checkpointing" id="toc-logging-and-checkpointing" class="nav-link" data-scroll-target="#logging-and-checkpointing">Logging and Checkpointing</a>
+  <ul class="collapse">
+  <li><a href="#checkpointing" id="toc-checkpointing" class="nav-link" data-scroll-target="#checkpointing">Checkpointing</a></li>
+  <li><a href="#logging-with-external-loggers" id="toc-logging-with-external-loggers" class="nav-link" data-scroll-target="#logging-with-external-loggers">Logging with External Loggers</a></li>
+  </ul></li>
+  <li><a href="#advanced-features" id="toc-advanced-features" class="nav-link" data-scroll-target="#advanced-features">Advanced Features</a>
+  <ul class="collapse">
+  <li><a href="#custom-precision-plugin" id="toc-custom-precision-plugin" class="nav-link" data-scroll-target="#custom-precision-plugin">Custom Precision Plugin</a></li>
+  <li><a href="#gradient-clipping" id="toc-gradient-clipping" class="nav-link" data-scroll-target="#gradient-clipping">Gradient Clipping</a></li>
+  <li><a href="#early-stopping" id="toc-early-stopping" class="nav-link" data-scroll-target="#early-stopping">Early Stopping</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#proper-fabric-launch" id="toc-proper-fabric-launch" class="nav-link" data-scroll-target="#proper-fabric-launch">1. Proper Fabric Launch</a></li>
+  <li><a href="#rank-specific-operations" id="toc-rank-specific-operations" class="nav-link" data-scroll-target="#rank-specific-operations">2. Rank-specific Operations</a></li>
+  <li><a href="#proper-device-management" id="toc-proper-device-management" class="nav-link" data-scroll-target="#proper-device-management">3. Proper Device Management</a></li>
+  <li><a href="#memory-efficient-training" id="toc-memory-efficient-training" class="nav-link" data-scroll-target="#memory-efficient-training">4. Memory Efficient Training</a></li>
+  <li><a href="#complete-training-script-template" id="toc-complete-training-script-template" class="nav-link" data-scroll-target="#complete-training-script-template">5. Complete Training Script Template</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -807,7 +867,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

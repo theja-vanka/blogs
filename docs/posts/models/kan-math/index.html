@@ -104,7 +104,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -138,9 +138,9 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">The Mathematics Behind Kolmogorov-Arnold Networks</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
@@ -150,7 +150,7 @@ window.Quarto = {
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -172,10 +172,79 @@ window.Quarto = {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-mathematics-behind-kolmogorov-arnold-networks" id="toc-the-mathematics-behind-kolmogorov-arnold-networks" class="nav-link active" data-scroll-target="#the-mathematics-behind-kolmogorov-arnold-networks">The Mathematics Behind Kolmogorov-Arnold Networks</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-kolmogorov-arnold-representation-theorem" id="toc-the-kolmogorov-arnold-representation-theorem" class="nav-link" data-scroll-target="#the-kolmogorov-arnold-representation-theorem">The Kolmogorov-Arnold Representation Theorem</a>
+  <ul class="collapse">
+  <li><a href="#historical-context-and-statement" id="toc-historical-context-and-statement" class="nav-link" data-scroll-target="#historical-context-and-statement">Historical Context and Statement</a></li>
+  <li><a href="#mathematical-significance" id="toc-mathematical-significance" class="nav-link" data-scroll-target="#mathematical-significance">Mathematical Significance</a></li>
+  </ul></li>
+  <li><a href="#from-classical-theory-to-neural-networks" id="toc-from-classical-theory-to-neural-networks" class="nav-link" data-scroll-target="#from-classical-theory-to-neural-networks">From Classical Theory to Neural Networks</a>
+  <ul class="collapse">
+  <li><a href="#traditional-neural-networks-vs.-kans" id="toc-traditional-neural-networks-vs.-kans" class="nav-link" data-scroll-target="#traditional-neural-networks-vs.-kans">Traditional Neural Networks vs.&nbsp;KANs</a></li>
+  <li><a href="#the-fundamental-difference" id="toc-the-fundamental-difference" class="nav-link" data-scroll-target="#the-fundamental-difference">The Fundamental Difference</a></li>
+  </ul></li>
+  <li><a href="#mathematical-foundations-of-kan-architecture" id="toc-mathematical-foundations-of-kan-architecture" class="nav-link" data-scroll-target="#mathematical-foundations-of-kan-architecture">Mathematical Foundations of KAN Architecture</a>
+  <ul class="collapse">
+  <li><a href="#function-parametrization" id="toc-function-parametrization" class="nav-link" data-scroll-target="#function-parametrization">Function Parametrization</a></li>
+  <li><a href="#layer-wise-composition" id="toc-layer-wise-composition" class="nav-link" data-scroll-target="#layer-wise-composition">Layer-wise Composition</a></li>
+  <li><a href="#residual-connections" id="toc-residual-connections" class="nav-link" data-scroll-target="#residual-connections">Residual Connections</a></li>
+  </ul></li>
+  <li><a href="#optimization-and-training" id="toc-optimization-and-training" class="nav-link" data-scroll-target="#optimization-and-training">Optimization and Training</a>
+  <ul class="collapse">
+  <li><a href="#loss-function" id="toc-loss-function" class="nav-link" data-scroll-target="#loss-function">Loss Function</a></li>
+  <li><a href="#sparsity-regularization" id="toc-sparsity-regularization" class="nav-link" data-scroll-target="#sparsity-regularization">Sparsity Regularization</a></li>
+  <li><a href="#smoothness-regularization" id="toc-smoothness-regularization" class="nav-link" data-scroll-target="#smoothness-regularization">Smoothness Regularization</a></li>
+  </ul></li>
+  <li><a href="#theoretical-properties" id="toc-theoretical-properties" class="nav-link" data-scroll-target="#theoretical-properties">Theoretical Properties</a>
+  <ul class="collapse">
+  <li><a href="#universal-approximation" id="toc-universal-approximation" class="nav-link" data-scroll-target="#universal-approximation">Universal Approximation</a></li>
+  <li><a href="#expressivity-analysis" id="toc-expressivity-analysis" class="nav-link" data-scroll-target="#expressivity-analysis">Expressivity Analysis</a></li>
+  <li><a href="#approximation-rates" id="toc-approximation-rates" class="nav-link" data-scroll-target="#approximation-rates">Approximation Rates</a></li>
+  </ul></li>
+  <li><a href="#computational-complexity" id="toc-computational-complexity" class="nav-link" data-scroll-target="#computational-complexity">Computational Complexity</a>
+  <ul class="collapse">
+  <li><a href="#forward-pass-complexity" id="toc-forward-pass-complexity" class="nav-link" data-scroll-target="#forward-pass-complexity">Forward Pass Complexity</a></li>
+  <li><a href="#backward-pass-complexity" id="toc-backward-pass-complexity" class="nav-link" data-scroll-target="#backward-pass-complexity">Backward Pass Complexity</a></li>
+  </ul></li>
+  <li><a href="#interpretability-and-symbolic-regression" id="toc-interpretability-and-symbolic-regression" class="nav-link" data-scroll-target="#interpretability-and-symbolic-regression">Interpretability and Symbolic Regression</a>
+  <ul class="collapse">
+  <li><a href="#automatic-symbolification" id="toc-automatic-symbolification" class="nav-link" data-scroll-target="#automatic-symbolification">Automatic Symbolification</a></li>
+  <li><a href="#mathematical-insights" id="toc-mathematical-insights" class="nav-link" data-scroll-target="#mathematical-insights">Mathematical Insights</a></li>
+  </ul></li>
+  <li><a href="#advanced-mathematical-concepts" id="toc-advanced-mathematical-concepts" class="nav-link" data-scroll-target="#advanced-mathematical-concepts">Advanced Mathematical Concepts</a>
+  <ul class="collapse">
+  <li><a href="#measure-theory-perspectives" id="toc-measure-theory-perspectives" class="nav-link" data-scroll-target="#measure-theory-perspectives">Measure Theory Perspectives</a></li>
+  <li><a href="#functional-analysis" id="toc-functional-analysis" class="nav-link" data-scroll-target="#functional-analysis">Functional Analysis</a></li>
+  <li><a href="#information-theory" id="toc-information-theory" class="nav-link" data-scroll-target="#information-theory">Information Theory</a></li>
+  </ul></li>
+  <li><a href="#limitations-and-extensions" id="toc-limitations-and-extensions" class="nav-link" data-scroll-target="#limitations-and-extensions">Limitations and Extensions</a>
+  <ul class="collapse">
+  <li><a href="#theoretical-limitations" id="toc-theoretical-limitations" class="nav-link" data-scroll-target="#theoretical-limitations">Theoretical Limitations</a></li>
+  <li><a href="#recent-extensions" id="toc-recent-extensions" class="nav-link" data-scroll-target="#recent-extensions">Recent Extensions</a></li>
+  </ul></li>
+  <li><a href="#future-directions" id="toc-future-directions" class="nav-link" data-scroll-target="#future-directions">Future Directions</a>
+  <ul class="collapse">
+  <li><a href="#theoretical-developments" id="toc-theoretical-developments" class="nav-link" data-scroll-target="#theoretical-developments">Theoretical Developments</a></li>
+  <li><a href="#practical-innovations" id="toc-practical-innovations" class="nav-link" data-scroll-target="#practical-innovations">Practical Innovations</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -506,7 +575,7 @@ f(x_1, x_2) = \sin(x_1) + x_2^2
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

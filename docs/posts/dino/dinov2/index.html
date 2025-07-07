@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">DINOv2: Comprehensive Implementation Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#dinov2-comprehensive-implementation-guide" id="toc-dinov2-comprehensive-implementation-guide" class="nav-link active" data-scroll-target="#dinov2-comprehensive-implementation-guide">DINOv2: Comprehensive Implementation Guide</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#introduction-to-dinov2" id="toc-introduction-to-dinov2" class="nav-link" data-scroll-target="#introduction-to-dinov2">Introduction to DINOv2</a></li>
+  <li><a href="#installation-and-setup" id="toc-installation-and-setup" class="nav-link" data-scroll-target="#installation-and-setup">Installation and Setup</a>
+  <ul class="collapse">
+  <li><a href="#dependencies" id="toc-dependencies" class="nav-link" data-scroll-target="#dependencies">Dependencies</a></li>
+  </ul></li>
+  <li><a href="#loading-pre-trained-models" id="toc-loading-pre-trained-models" class="nav-link" data-scroll-target="#loading-pre-trained-models">Loading Pre-trained Models</a></li>
+  <li><a href="#feature-extraction" id="toc-feature-extraction" class="nav-link" data-scroll-target="#feature-extraction">Feature Extraction</a></li>
+  <li><a href="#fine-tuning-for-downstream-tasks" id="toc-fine-tuning-for-downstream-tasks" class="nav-link" data-scroll-target="#fine-tuning-for-downstream-tasks">Fine-tuning for Downstream Tasks</a></li>
+  <li><a href="#image-classification-example" id="toc-image-classification-example" class="nav-link" data-scroll-target="#image-classification-example">Image Classification Example</a></li>
+  <li><a href="#semantic-segmentation-example" id="toc-semantic-segmentation-example" class="nav-link" data-scroll-target="#semantic-segmentation-example">Semantic Segmentation Example</a></li>
+  <li><a href="#object-detection-example" id="toc-object-detection-example" class="nav-link" data-scroll-target="#object-detection-example">Object Detection Example</a></li>
+  <li><a href="#advanced-usage-and-customization" id="toc-advanced-usage-and-customization" class="nav-link" data-scroll-target="#advanced-usage-and-customization">Advanced Usage and Customization</a>
+  <ul class="collapse">
+  <li><a href="#custom-vision-transformer-configurations" id="toc-custom-vision-transformer-configurations" class="nav-link" data-scroll-target="#custom-vision-transformer-configurations">Custom Vision Transformer Configurations</a></li>
+  <li><a href="#extracting-intermediate-features" id="toc-extracting-intermediate-features" class="nav-link" data-scroll-target="#extracting-intermediate-features">Extracting Intermediate Features</a></li>
+  </ul></li>
+  <li><a href="#performance-benchmarks" id="toc-performance-benchmarks" class="nav-link" data-scroll-target="#performance-benchmarks">Performance Benchmarks</a></li>
+  <li><a href="#troubleshooting" id="toc-troubleshooting" class="nav-link" data-scroll-target="#troubleshooting">Troubleshooting</a>
+  <ul class="collapse">
+  <li><a href="#common-issues-and-solutions" id="toc-common-issues-and-solutions" class="nav-link" data-scroll-target="#common-issues-and-solutions">Common Issues and Solutions</a></li>
+  <li><a href="#debugging-tips" id="toc-debugging-tips" class="nav-link" data-scroll-target="#debugging-tips">Debugging Tips</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -848,7 +884,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

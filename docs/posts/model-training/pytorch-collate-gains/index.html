@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">PyTorch Collate Function Speed-Up Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#pytorch-collate-function-speed-up-guide" id="toc-pytorch-collate-function-speed-up-guide" class="nav-link active" data-scroll-target="#pytorch-collate-function-speed-up-guide">PyTorch Collate Function Speed-Up Guide</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#default-vs-custom-collate-functions" id="toc-default-vs-custom-collate-functions" class="nav-link" data-scroll-target="#default-vs-custom-collate-functions">Default vs Custom Collate Functions</a>
+  <ul class="collapse">
+  <li><a href="#default-behavior" id="toc-default-behavior" class="nav-link" data-scroll-target="#default-behavior">Default Behavior</a></li>
+  <li><a href="#custom-collate-function---basic-optimization" id="toc-custom-collate-function---basic-optimization" class="nav-link" data-scroll-target="#custom-collate-function---basic-optimization">Custom Collate Function - Basic Optimization</a></li>
+  </ul></li>
+  <li><a href="#advanced-optimizations" id="toc-advanced-optimizations" class="nav-link" data-scroll-target="#advanced-optimizations">Advanced Optimizations</a>
+  <ul class="collapse">
+  <li><a href="#memory-efficient-collate-for-variable-length-sequences" id="toc-memory-efficient-collate-for-variable-length-sequences" class="nav-link" data-scroll-target="#memory-efficient-collate-for-variable-length-sequences">Memory-Efficient Collate for Variable-Length Sequences</a></li>
+  <li><a href="#gpu-accelerated-collate-function" id="toc-gpu-accelerated-collate-function" class="nav-link" data-scroll-target="#gpu-accelerated-collate-function">GPU-Accelerated Collate Function</a></li>
+  <li><a href="#memory-mapped-file-collate-for-large-datasets" id="toc-memory-mapped-file-collate-for-large-datasets" class="nav-link" data-scroll-target="#memory-mapped-file-collate-for-large-datasets">Memory-Mapped File Collate for Large Datasets</a></li>
+  </ul></li>
+  <li><a href="#specialized-collate-functions" id="toc-specialized-collate-functions" class="nav-link" data-scroll-target="#specialized-collate-functions">Specialized Collate Functions</a>
+  <ul class="collapse">
+  <li><a href="#multi-modal-data-collate" id="toc-multi-modal-data-collate" class="nav-link" data-scroll-target="#multi-modal-data-collate">Multi-Modal Data Collate</a></li>
+  <li><a href="#augmentation-aware-collate" id="toc-augmentation-aware-collate" class="nav-link" data-scroll-target="#augmentation-aware-collate">Augmentation-Aware Collate</a></li>
+  </ul></li>
+  <li><a href="#performance-tips-and-best-practices" id="toc-performance-tips-and-best-practices" class="nav-link" data-scroll-target="#performance-tips-and-best-practices">Performance Tips and Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#minimize-data-copying" id="toc-minimize-data-copying" class="nav-link" data-scroll-target="#minimize-data-copying">1. Minimize Data Copying</a></li>
+  <li><a href="#memory-usage-optimization" id="toc-memory-usage-optimization" class="nav-link" data-scroll-target="#memory-usage-optimization">2. Memory Usage Optimization</a></li>
+  <li><a href="#benchmarking-your-collate-functions" id="toc-benchmarking-your-collate-functions" class="nav-link" data-scroll-target="#benchmarking-your-collate-functions">3. Benchmarking Your Collate Functions</a></li>
+  </ul></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -685,7 +722,7 @@ Speed improvement: -13.3%</code></pre>
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

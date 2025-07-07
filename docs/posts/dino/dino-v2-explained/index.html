@@ -75,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -109,9 +109,9 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">DINOv2: A Deep Dive into Architecture and Training</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
@@ -121,7 +121,7 @@ ul.task-list li input[type="checkbox"] {
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -143,10 +143,51 @@ ul.task-list li input[type="checkbox"] {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#dinov2-a-deep-dive-into-architecture-and-training" id="toc-dinov2-a-deep-dive-into-architecture-and-training" class="nav-link active" data-scroll-target="#dinov2-a-deep-dive-into-architecture-and-training">DINOv2: A Deep Dive into Architecture and Training</a>
+  <ul class="collapse">
+  <li><a href="#architectural-foundation-vision-transformers" id="toc-architectural-foundation-vision-transformers" class="nav-link" data-scroll-target="#architectural-foundation-vision-transformers">Architectural Foundation: Vision Transformers</a>
+  <ul class="collapse">
+  <li><a href="#vit-backbone-variants" id="toc-vit-backbone-variants" class="nav-link" data-scroll-target="#vit-backbone-variants">ViT Backbone Variants</a></li>
+  <li><a href="#architectural-enhancements" id="toc-architectural-enhancements" class="nav-link" data-scroll-target="#architectural-enhancements">Architectural Enhancements</a></li>
+  </ul></li>
+  <li><a href="#training-methodology-self-distillation-framework" id="toc-training-methodology-self-distillation-framework" class="nav-link" data-scroll-target="#training-methodology-self-distillation-framework">Training Methodology: Self-Distillation Framework</a>
+  <ul class="collapse">
+  <li><a href="#teacher-student-architecture" id="toc-teacher-student-architecture" class="nav-link" data-scroll-target="#teacher-student-architecture">Teacher-Student Architecture</a></li>
+  <li><a href="#multi-crop-strategy" id="toc-multi-crop-strategy" class="nav-link" data-scroll-target="#multi-crop-strategy">Multi-Crop Strategy</a></li>
+  <li><a href="#self-supervised-objective" id="toc-self-supervised-objective" class="nav-link" data-scroll-target="#self-supervised-objective">Self-Supervised Objective</a></li>
+  </ul></li>
+  <li><a href="#data-curation-and-processing" id="toc-data-curation-and-processing" class="nav-link" data-scroll-target="#data-curation-and-processing">Data Curation and Processing</a>
+  <ul class="collapse">
+  <li><a href="#lvd-142m-dataset" id="toc-lvd-142m-dataset" class="nav-link" data-scroll-target="#lvd-142m-dataset">LVD-142M Dataset</a></li>
+  <li><a href="#data-augmentation-pipeline" id="toc-data-augmentation-pipeline" class="nav-link" data-scroll-target="#data-augmentation-pipeline">Data Augmentation Pipeline</a></li>
+  </ul></li>
+  <li><a href="#distributed-training-strategy" id="toc-distributed-training-strategy" class="nav-link" data-scroll-target="#distributed-training-strategy">Distributed Training Strategy</a>
+  <ul class="collapse">
+  <li><a href="#optimization-details" id="toc-optimization-details" class="nav-link" data-scroll-target="#optimization-details">Optimization Details</a></li>
+  <li><a href="#effective-batch-size" id="toc-effective-batch-size" class="nav-link" data-scroll-target="#effective-batch-size">Effective Batch Size</a></li>
+  </ul></li>
+  <li><a href="#regularization-techniques" id="toc-regularization-techniques" class="nav-link" data-scroll-target="#regularization-techniques">Regularization Techniques</a></li>
+  <li><a href="#feature-extraction-and-deployment" id="toc-feature-extraction-and-deployment" class="nav-link" data-scroll-target="#feature-extraction-and-deployment">Feature Extraction and Deployment</a>
+  <ul class="collapse">
+  <li><a href="#feature-extraction-methods" id="toc-feature-extraction-methods" class="nav-link" data-scroll-target="#feature-extraction-methods">Feature Extraction Methods</a></li>
+  <li><a href="#model-distillation" id="toc-model-distillation" class="nav-link" data-scroll-target="#model-distillation">Model Distillation</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -368,7 +409,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Matryoshka Transformer: Complete Implementation Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#matryoshka-transformer-complete-implementation-guide" id="toc-matryoshka-transformer-complete-implementation-guide" class="nav-link active" data-scroll-target="#matryoshka-transformer-complete-implementation-guide">Matryoshka Transformer: Complete Implementation Guide</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#key-concepts" id="toc-key-concepts" class="nav-link" data-scroll-target="#key-concepts">Key Concepts</a>
+  <ul class="collapse">
+  <li><a href="#core-ideas" id="toc-core-ideas" class="nav-link" data-scroll-target="#core-ideas">Core Ideas</a></li>
+  <li><a href="#architecture-overview" id="toc-architecture-overview" class="nav-link" data-scroll-target="#architecture-overview">Architecture Overview</a></li>
+  </ul></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a>
+  <ul class="collapse">
+  <li><a href="#basic-matryoshka-transformer-block" id="toc-basic-matryoshka-transformer-block" class="nav-link" data-scroll-target="#basic-matryoshka-transformer-block">1. Basic Matryoshka Transformer Block</a></li>
+  <li><a href="#complete-matryoshka-transformer-model" id="toc-complete-matryoshka-transformer-model" class="nav-link" data-scroll-target="#complete-matryoshka-transformer-model">2. Complete Matryoshka Transformer Model</a></li>
+  <li><a href="#training-strategy" id="toc-training-strategy" class="nav-link" data-scroll-target="#training-strategy">3. Training Strategy</a></li>
+  <li><a href="#inference-with-adaptive-computation" id="toc-inference-with-adaptive-computation" class="nav-link" data-scroll-target="#inference-with-adaptive-computation">4. Inference with Adaptive Computation</a></li>
+  <li><a href="#usage-example" id="toc-usage-example" class="nav-link" data-scroll-target="#usage-example">5. Usage Example</a></li>
+  </ul></li>
+  <li><a href="#advanced-features" id="toc-advanced-features" class="nav-link" data-scroll-target="#advanced-features">Advanced Features</a>
+  <ul class="collapse">
+  <li><a href="#dynamic-confidence-thresholds" id="toc-dynamic-confidence-thresholds" class="nav-link" data-scroll-target="#dynamic-confidence-thresholds">1. Dynamic Confidence Thresholds</a></li>
+  <li><a href="#ensemble-early-exits" id="toc-ensemble-early-exits" class="nav-link" data-scroll-target="#ensemble-early-exits">2. Ensemble Early Exits</a></li>
+  </ul></li>
+  <li><a href="#performance-optimization-tips" id="toc-performance-optimization-tips" class="nav-link" data-scroll-target="#performance-optimization-tips">Performance Optimization Tips</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -740,7 +774,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

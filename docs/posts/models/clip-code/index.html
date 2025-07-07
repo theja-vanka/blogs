@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">CLIP Code Guide: Complete Implementation and Usage</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,74 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#clip-code-guide-complete-implementation-and-usage" id="toc-clip-code-guide-complete-implementation-and-usage" class="nav-link active" data-scroll-target="#clip-code-guide-complete-implementation-and-usage">CLIP Code Guide: Complete Implementation and Usage</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#introduction-to-clip" id="toc-introduction-to-clip" class="nav-link" data-scroll-target="#introduction-to-clip">Introduction to CLIP</a>
+  <ul class="collapse">
+  <li><a href="#key-features" id="toc-key-features" class="nav-link" data-scroll-target="#key-features">Key Features:</a></li>
+  </ul></li>
+  <li><a href="#architecture-overview" id="toc-architecture-overview" class="nav-link" data-scroll-target="#architecture-overview">Architecture Overview</a></li>
+  <li><a href="#setting-up-the-environment" id="toc-setting-up-the-environment" class="nav-link" data-scroll-target="#setting-up-the-environment">Setting Up the Environment</a>
+  <ul class="collapse">
+  <li><a href="#installing-dependencies" id="toc-installing-dependencies" class="nav-link" data-scroll-target="#installing-dependencies">Installing Dependencies</a></li>
+  <li><a href="#alternative-installation" id="toc-alternative-installation" class="nav-link" data-scroll-target="#alternative-installation">Alternative Installation</a></li>
+  </ul></li>
+  <li><a href="#basic-clip-usage" id="toc-basic-clip-usage" class="nav-link" data-scroll-target="#basic-clip-usage">Basic CLIP Usage</a>
+  <ul class="collapse">
+  <li><a href="#loading-pre-trained-clip-model" id="toc-loading-pre-trained-clip-model" class="nav-link" data-scroll-target="#loading-pre-trained-clip-model">1. Loading Pre-trained CLIP Model</a></li>
+  <li><a href="#image-classification-zero-shot" id="toc-image-classification-zero-shot" class="nav-link" data-scroll-target="#image-classification-zero-shot">2. Image Classification (Zero-shot)</a></li>
+  <li><a href="#text-image-similarity" id="toc-text-image-similarity" class="nav-link" data-scroll-target="#text-image-similarity">3. Text-Image Similarity</a></li>
+  </ul></li>
+  <li><a href="#custom-clip-implementation" id="toc-custom-clip-implementation" class="nav-link" data-scroll-target="#custom-clip-implementation">Custom CLIP Implementation</a>
+  <ul class="collapse">
+  <li><a href="#basic-clip-architecture" id="toc-basic-clip-architecture" class="nav-link" data-scroll-target="#basic-clip-architecture">Basic CLIP Architecture</a></li>
+  <li><a href="#clip-loss-function" id="toc-clip-loss-function" class="nav-link" data-scroll-target="#clip-loss-function">CLIP Loss Function</a></li>
+  </ul></li>
+  <li><a href="#training-clip-from-scratch" id="toc-training-clip-from-scratch" class="nav-link" data-scroll-target="#training-clip-from-scratch">Training CLIP from Scratch</a>
+  <ul class="collapse">
+  <li><a href="#dataset-preparation" id="toc-dataset-preparation" class="nav-link" data-scroll-target="#dataset-preparation">Dataset Preparation</a></li>
+  <li><a href="#training-loop" id="toc-training-loop" class="nav-link" data-scroll-target="#training-loop">Training Loop</a></li>
+  </ul></li>
+  <li><a href="#fine-tuning-clip" id="toc-fine-tuning-clip" class="nav-link" data-scroll-target="#fine-tuning-clip">Fine-tuning CLIP</a>
+  <ul class="collapse">
+  <li><a href="#domain-specific-fine-tuning" id="toc-domain-specific-fine-tuning" class="nav-link" data-scroll-target="#domain-specific-fine-tuning">Domain-Specific Fine-tuning</a></li>
+  </ul></li>
+  <li><a href="#advanced-applications" id="toc-advanced-applications" class="nav-link" data-scroll-target="#advanced-applications">Advanced Applications</a>
+  <ul class="collapse">
+  <li><a href="#image-search-with-clip" id="toc-image-search-with-clip" class="nav-link" data-scroll-target="#image-search-with-clip">1. Image Search with CLIP</a></li>
+  <li><a href="#content-based-image-clustering" id="toc-content-based-image-clustering" class="nav-link" data-scroll-target="#content-based-image-clustering">2. Content-Based Image Clustering</a></li>
+  <li><a href="#visual-question-answering" id="toc-visual-question-answering" class="nav-link" data-scroll-target="#visual-question-answering">3. Visual Question Answering</a></li>
+  </ul></li>
+  <li><a href="#performance-optimization" id="toc-performance-optimization" class="nav-link" data-scroll-target="#performance-optimization">Performance Optimization</a>
+  <ul class="collapse">
+  <li><a href="#batch-processing" id="toc-batch-processing" class="nav-link" data-scroll-target="#batch-processing">1. Batch Processing</a></li>
+  <li><a href="#mixed-precision-training" id="toc-mixed-precision-training" class="nav-link" data-scroll-target="#mixed-precision-training">2. Mixed Precision Training</a></li>
+  <li><a href="#model-quantization" id="toc-model-quantization" class="nav-link" data-scroll-target="#model-quantization">3. Model Quantization</a></li>
+  </ul></li>
+  <li><a href="#common-issues-and-solutions" id="toc-common-issues-and-solutions" class="nav-link" data-scroll-target="#common-issues-and-solutions">Common Issues and Solutions</a>
+  <ul class="collapse">
+  <li><a href="#memory-management" id="toc-memory-management" class="nav-link" data-scroll-target="#memory-management">1. Memory Management</a></li>
+  <li><a href="#handling-different-image-sizes" id="toc-handling-different-image-sizes" class="nav-link" data-scroll-target="#handling-different-image-sizes">2. Handling Different Image Sizes</a></li>
+  <li><a href="#text-preprocessing" id="toc-text-preprocessing" class="nav-link" data-scroll-target="#text-preprocessing">3. Text Preprocessing</a></li>
+  <li><a href="#model-evaluation-utilities" id="toc-model-evaluation-utilities" class="nav-link" data-scroll-target="#model-evaluation-utilities">4. Model Evaluation Utilities</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -927,7 +991,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

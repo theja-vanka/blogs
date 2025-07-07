@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">PyTorch Training and Inference Optimization Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,65 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#pytorch-training-and-inference-optimization-guide" id="toc-pytorch-training-and-inference-optimization-guide" class="nav-link active" data-scroll-target="#pytorch-training-and-inference-optimization-guide">PyTorch Training and Inference Optimization Guide</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#general-optimization-principles" id="toc-general-optimization-principles" class="nav-link" data-scroll-target="#general-optimization-principles">General Optimization Principles</a>
+  <ul class="collapse">
+  <li><a href="#use-the-right-data-types" id="toc-use-the-right-data-types" class="nav-link" data-scroll-target="#use-the-right-data-types">1. Use the Right Data Types</a></li>
+  <li><a href="#optimize-data-loading" id="toc-optimize-data-loading" class="nav-link" data-scroll-target="#optimize-data-loading">2. Optimize Data Loading</a></li>
+  <li><a href="#tensor-operations-best-practices" id="toc-tensor-operations-best-practices" class="nav-link" data-scroll-target="#tensor-operations-best-practices">3. Tensor Operations Best Practices</a></li>
+  </ul></li>
+  <li><a href="#training-optimizations" id="toc-training-optimizations" class="nav-link" data-scroll-target="#training-optimizations">Training Optimizations</a>
+  <ul class="collapse">
+  <li><a href="#mixed-precision-training" id="toc-mixed-precision-training" class="nav-link" data-scroll-target="#mixed-precision-training">1. Mixed Precision Training</a></li>
+  <li><a href="#gradient-accumulation" id="toc-gradient-accumulation" class="nav-link" data-scroll-target="#gradient-accumulation">2. Gradient Accumulation</a></li>
+  <li><a href="#efficient-learning-rate-scheduling" id="toc-efficient-learning-rate-scheduling" class="nav-link" data-scroll-target="#efficient-learning-rate-scheduling">3. Efficient Learning Rate Scheduling</a></li>
+  <li><a href="#model-compilation-pytorch-2.0" id="toc-model-compilation-pytorch-2.0" class="nav-link" data-scroll-target="#model-compilation-pytorch-2.0">4. Model Compilation (PyTorch 2.0+)</a></li>
+  <li><a href="#checkpoint-and-resume-training" id="toc-checkpoint-and-resume-training" class="nav-link" data-scroll-target="#checkpoint-and-resume-training">5. Checkpoint and Resume Training</a></li>
+  </ul></li>
+  <li><a href="#inference-optimizations" id="toc-inference-optimizations" class="nav-link" data-scroll-target="#inference-optimizations">Inference Optimizations</a>
+  <ul class="collapse">
+  <li><a href="#model-optimization-for-inference" id="toc-model-optimization-for-inference" class="nav-link" data-scroll-target="#model-optimization-for-inference">1. Model Optimization for Inference</a></li>
+  <li><a href="#torchscript-optimization" id="toc-torchscript-optimization" class="nav-link" data-scroll-target="#torchscript-optimization">2. TorchScript Optimization</a></li>
+  <li><a href="#quantization" id="toc-quantization" class="nav-link" data-scroll-target="#quantization">3. Quantization</a></li>
+  <li><a href="#batch-processing-for-inference" id="toc-batch-processing-for-inference" class="nav-link" data-scroll-target="#batch-processing-for-inference">4. Batch Processing for Inference</a></li>
+  </ul></li>
+  <li><a href="#memory-management" id="toc-memory-management" class="nav-link" data-scroll-target="#memory-management">Memory Management</a>
+  <ul class="collapse">
+  <li><a href="#memory-efficient-training" id="toc-memory-efficient-training" class="nav-link" data-scroll-target="#memory-efficient-training">1. Memory Efficient Training</a></li>
+  <li><a href="#monitor-memory-usage" id="toc-monitor-memory-usage" class="nav-link" data-scroll-target="#monitor-memory-usage">2. Monitor Memory Usage</a></li>
+  <li><a href="#memory-efficient-data-loading" id="toc-memory-efficient-data-loading" class="nav-link" data-scroll-target="#memory-efficient-data-loading">3. Memory-Efficient Data Loading</a></li>
+  </ul></li>
+  <li><a href="#hardware-specific-optimizations" id="toc-hardware-specific-optimizations" class="nav-link" data-scroll-target="#hardware-specific-optimizations">Hardware-Specific Optimizations</a>
+  <ul class="collapse">
+  <li><a href="#gpu-optimizations" id="toc-gpu-optimizations" class="nav-link" data-scroll-target="#gpu-optimizations">1. GPU Optimizations</a></li>
+  <li><a href="#cpu-optimizations" id="toc-cpu-optimizations" class="nav-link" data-scroll-target="#cpu-optimizations">2. CPU Optimizations</a></li>
+  <li><a href="#apple-silicon-mps-support" id="toc-apple-silicon-mps-support" class="nav-link" data-scroll-target="#apple-silicon-mps-support">3. Apple Silicon (MPS) Support</a></li>
+  </ul></li>
+  <li><a href="#profiling-and-debugging" id="toc-profiling-and-debugging" class="nav-link" data-scroll-target="#profiling-and-debugging">Profiling and Debugging</a>
+  <ul class="collapse">
+  <li><a href="#pytorch-profiler" id="toc-pytorch-profiler" class="nav-link" data-scroll-target="#pytorch-profiler">1. PyTorch Profiler</a></li>
+  <li><a href="#memory-profiling" id="toc-memory-profiling" class="nav-link" data-scroll-target="#memory-profiling">2. Memory Profiling</a></li>
+  <li><a href="#speed-benchmarking" id="toc-speed-benchmarking" class="nav-link" data-scroll-target="#speed-benchmarking">3. Speed Benchmarking</a></li>
+  </ul></li>
+  <li><a href="#best-practices-summary" id="toc-best-practices-summary" class="nav-link" data-scroll-target="#best-practices-summary">Best Practices Summary</a></li>
+  <li><a href="#common-pitfalls-to-avoid" id="toc-common-pitfalls-to-avoid" class="nav-link" data-scroll-target="#common-pitfalls-to-avoid">Common Pitfalls to Avoid</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -646,7 +701,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

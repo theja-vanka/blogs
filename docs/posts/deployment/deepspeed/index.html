@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">DeepSpeed with PyTorch: Complete Code Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#deepspeed-with-pytorch-complete-code-guide" id="toc-deepspeed-with-pytorch-complete-code-guide" class="nav-link active" data-scroll-target="#deepspeed-with-pytorch-complete-code-guide">DeepSpeed with PyTorch: Complete Code Guide</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#basic-setup" id="toc-basic-setup" class="nav-link" data-scroll-target="#basic-setup">Basic Setup</a>
+  <ul class="collapse">
+  <li><a href="#simple-model-training" id="toc-simple-model-training" class="nav-link" data-scroll-target="#simple-model-training">Simple Model Training</a></li>
+  <li><a href="#configuration-file-approach" id="toc-configuration-file-approach" class="nav-link" data-scroll-target="#configuration-file-approach">Configuration File Approach</a></li>
+  </ul></li>
+  <li><a href="#configuration-files" id="toc-configuration-files" class="nav-link" data-scroll-target="#configuration-files">Configuration Files</a>
+  <ul class="collapse">
+  <li><a href="#basic-configuration-ds_config.json" id="toc-basic-configuration-ds_config.json" class="nav-link" data-scroll-target="#basic-configuration-ds_config.json">Basic Configuration (<code>ds_config.json</code>)</a></li>
+  <li><a href="#advanced-configuration-with-zero-stage-3" id="toc-advanced-configuration-with-zero-stage-3" class="nav-link" data-scroll-target="#advanced-configuration-with-zero-stage-3">Advanced Configuration with ZeRO Stage 3</a></li>
+  </ul></li>
+  <li><a href="#zero-optimizer-states" id="toc-zero-optimizer-states" class="nav-link" data-scroll-target="#zero-optimizer-states">ZeRO Optimizer States</a>
+  <ul class="collapse">
+  <li><a href="#zero-stage-1-optimizer-state-partitioning" id="toc-zero-stage-1-optimizer-state-partitioning" class="nav-link" data-scroll-target="#zero-stage-1-optimizer-state-partitioning">ZeRO Stage 1: Optimizer State Partitioning</a></li>
+  <li><a href="#zero-stage-2-gradient-optimizer-state-partitioning" id="toc-zero-stage-2-gradient-optimizer-state-partitioning" class="nav-link" data-scroll-target="#zero-stage-2-gradient-optimizer-state-partitioning">ZeRO Stage 2: Gradient + Optimizer State Partitioning</a></li>
+  <li><a href="#zero-stage-3-full-parameter-partitioning" id="toc-zero-stage-3-full-parameter-partitioning" class="nav-link" data-scroll-target="#zero-stage-3-full-parameter-partitioning">ZeRO Stage 3: Full Parameter Partitioning</a></li>
+  </ul></li>
+  <li><a href="#model-parallelism" id="toc-model-parallelism" class="nav-link" data-scroll-target="#model-parallelism">Model Parallelism</a>
+  <ul class="collapse">
+  <li><a href="#pipeline-parallelism" id="toc-pipeline-parallelism" class="nav-link" data-scroll-target="#pipeline-parallelism">Pipeline Parallelism</a></li>
+  <li><a href="#tensor-parallelism-with-megatron" id="toc-tensor-parallelism-with-megatron" class="nav-link" data-scroll-target="#tensor-parallelism-with-megatron">Tensor Parallelism (with Megatron)</a></li>
+  </ul></li>
+  <li><a href="#mixed-precision-training" id="toc-mixed-precision-training" class="nav-link" data-scroll-target="#mixed-precision-training">Mixed Precision Training</a>
+  <ul class="collapse">
+  <li><a href="#fp16-configuration" id="toc-fp16-configuration" class="nav-link" data-scroll-target="#fp16-configuration">FP16 Configuration</a></li>
+  <li><a href="#bf16-configuration" id="toc-bf16-configuration" class="nav-link" data-scroll-target="#bf16-configuration">BF16 Configuration</a></li>
+  </ul></li>
+  <li><a href="#advanced-features" id="toc-advanced-features" class="nav-link" data-scroll-target="#advanced-features">Advanced Features</a>
+  <ul class="collapse">
+  <li><a href="#activation-checkpointing" id="toc-activation-checkpointing" class="nav-link" data-scroll-target="#activation-checkpointing">Activation Checkpointing</a></li>
+  <li><a href="#cpu-offloading" id="toc-cpu-offloading" class="nav-link" data-scroll-target="#cpu-offloading">CPU Offloading</a></li>
+  <li><a href="#mixture-of-experts-moe" id="toc-mixture-of-experts-moe" class="nav-link" data-scroll-target="#mixture-of-experts-moe">Mixture of Experts (MoE)</a></li>
+  <li><a href="#model-saving-and-loading" id="toc-model-saving-and-loading" class="nav-link" data-scroll-target="#model-saving-and-loading">Model Saving and Loading</a></li>
+  </ul></li>
+  <li><a href="#troubleshooting" id="toc-troubleshooting" class="nav-link" data-scroll-target="#troubleshooting">Troubleshooting</a>
+  <ul class="collapse">
+  <li><a href="#common-issues-and-solutions" id="toc-common-issues-and-solutions" class="nav-link" data-scroll-target="#common-issues-and-solutions">Common Issues and Solutions</a></li>
+  <li><a href="#debugging-tools" id="toc-debugging-tools" class="nav-link" data-scroll-target="#debugging-tools">Debugging Tools</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#batch-size-tuning" id="toc-batch-size-tuning" class="nav-link" data-scroll-target="#batch-size-tuning">1. Batch Size Tuning</a></li>
+  <li><a href="#learning-rate-scaling" id="toc-learning-rate-scaling" class="nav-link" data-scroll-target="#learning-rate-scaling">2. Learning Rate Scaling</a></li>
+  <li><a href="#efficient-data-loading" id="toc-efficient-data-loading" class="nav-link" data-scroll-target="#efficient-data-loading">3. Efficient Data Loading</a></li>
+  <li><a href="#model-architecture-tips" id="toc-model-architecture-tips" class="nav-link" data-scroll-target="#model-architecture-tips">4. Model Architecture Tips</a></li>
+  <li><a href="#multi-node-training-script" id="toc-multi-node-training-script" class="nav-link" data-scroll-target="#multi-node-training-script">5. Multi-Node Training Script</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -990,7 +1052,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

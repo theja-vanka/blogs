@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Python Package Development with Rust - Complete Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">tutorial</div>
@@ -156,7 +156,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -178,10 +178,74 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#python-package-development-with-rust---complete-guide" id="toc-python-package-development-with-rust---complete-guide" class="nav-link active" data-scroll-target="#python-package-development-with-rust---complete-guide">Python Package Development with Rust - Complete Guide</a>
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#project-setup" id="toc-project-setup" class="nav-link" data-scroll-target="#project-setup">Project Setup</a>
+  <ul class="collapse">
+  <li><a href="#initialize-the-project" id="toc-initialize-the-project" class="nav-link" data-scroll-target="#initialize-the-project">1. Initialize the Project</a></li>
+  <li><a href="#configure-cargo.toml" id="toc-configure-cargo.toml" class="nav-link" data-scroll-target="#configure-cargo.toml">2. Configure Cargo.toml</a></li>
+  <li><a href="#configure-pyproject.toml" id="toc-configure-pyproject.toml" class="nav-link" data-scroll-target="#configure-pyproject.toml">3. Configure pyproject.toml</a></li>
+  </ul></li>
+  <li><a href="#writing-rust-code" id="toc-writing-rust-code" class="nav-link" data-scroll-target="#writing-rust-code">Writing Rust Code</a>
+  <ul class="collapse">
+  <li><a href="#basic-function-example" id="toc-basic-function-example" class="nav-link" data-scroll-target="#basic-function-example">Basic Function Example</a></li>
+  <li><a href="#working-with-python-objects" id="toc-working-with-python-objects" class="nav-link" data-scroll-target="#working-with-python-objects">Working with Python Objects</a></li>
+  <li><a href="#creating-python-classes" id="toc-creating-python-classes" class="nav-link" data-scroll-target="#creating-python-classes">Creating Python Classes</a></li>
+  <li><a href="#error-handling" id="toc-error-handling" class="nav-link" data-scroll-target="#error-handling">Error Handling</a></li>
+  </ul></li>
+  <li><a href="#building-and-testing" id="toc-building-and-testing" class="nav-link" data-scroll-target="#building-and-testing">Building and Testing</a>
+  <ul class="collapse">
+  <li><a href="#development-build" id="toc-development-build" class="nav-link" data-scroll-target="#development-build">Development Build</a></li>
+  <li><a href="#production-build" id="toc-production-build" class="nav-link" data-scroll-target="#production-build">Production Build</a></li>
+  <li><a href="#testing-the-package" id="toc-testing-the-package" class="nav-link" data-scroll-target="#testing-the-package">Testing the Package</a></li>
+  </ul></li>
+  <li><a href="#python-integration" id="toc-python-integration" class="nav-link" data-scroll-target="#python-integration">Python Integration</a>
+  <ul class="collapse">
+  <li><a href="#package-initialization" id="toc-package-initialization" class="nav-link" data-scroll-target="#package-initialization">Package Initialization</a></li>
+  <li><a href="#type-hints" id="toc-type-hints" class="nav-link" data-scroll-target="#type-hints">Type Hints</a></li>
+  </ul></li>
+  <li><a href="#performance-optimization" id="toc-performance-optimization" class="nav-link" data-scroll-target="#performance-optimization">Performance Optimization</a>
+  <ul class="collapse">
+  <li><a href="#using-rusts-parallel-processing" id="toc-using-rusts-parallel-processing" class="nav-link" data-scroll-target="#using-rusts-parallel-processing">Using Rust’s Parallel Processing</a></li>
+  <li><a href="#memory-efficient-operations" id="toc-memory-efficient-operations" class="nav-link" data-scroll-target="#memory-efficient-operations">Memory-Efficient Operations</a></li>
+  </ul></li>
+  <li><a href="#distribution-and-publishing" id="toc-distribution-and-publishing" class="nav-link" data-scroll-target="#distribution-and-publishing">Distribution and Publishing</a>
+  <ul class="collapse">
+  <li><a href="#building-wheels" id="toc-building-wheels" class="nav-link" data-scroll-target="#building-wheels">Building Wheels</a></li>
+  <li><a href="#github-actions-cicd" id="toc-github-actions-cicd" class="nav-link" data-scroll-target="#github-actions-cicd">GitHub Actions CI/CD</a></li>
+  <li><a href="#publishing-to-pypi" id="toc-publishing-to-pypi" class="nav-link" data-scroll-target="#publishing-to-pypi">Publishing to PyPI</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#error-handling-1" id="toc-error-handling-1" class="nav-link" data-scroll-target="#error-handling-1">1. Error Handling</a></li>
+  <li><a href="#memory-management" id="toc-memory-management" class="nav-link" data-scroll-target="#memory-management">2. Memory Management</a></li>
+  <li><a href="#api-design" id="toc-api-design" class="nav-link" data-scroll-target="#api-design">3. API Design</a></li>
+  <li><a href="#testing" id="toc-testing" class="nav-link" data-scroll-target="#testing">4. Testing</a></li>
+  <li><a href="#documentation" id="toc-documentation" class="nav-link" data-scroll-target="#documentation">5. Documentation</a></li>
+  </ul></li>
+  <li><a href="#troubleshooting" id="toc-troubleshooting" class="nav-link" data-scroll-target="#troubleshooting">Troubleshooting</a>
+  <ul class="collapse">
+  <li><a href="#common-issues" id="toc-common-issues" class="nav-link" data-scroll-target="#common-issues">Common Issues</a></li>
+  <li><a href="#debugging" id="toc-debugging" class="nav-link" data-scroll-target="#debugging">Debugging</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -767,7 +831,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

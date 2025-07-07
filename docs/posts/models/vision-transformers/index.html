@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Vision Transformer (ViT) Implementation Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#vision-transformer-vit-implementation-guide" id="toc-vision-transformer-vit-implementation-guide" class="nav-link active" data-scroll-target="#vision-transformer-vit-implementation-guide">Vision Transformer (ViT) Implementation Guide</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#introduction-to-vision-transformers" id="toc-introduction-to-vision-transformers" class="nav-link" data-scroll-target="#introduction-to-vision-transformers">1. Introduction to Vision Transformers</a></li>
+  <li><a href="#understanding-the-architecture" id="toc-understanding-the-architecture" class="nav-link" data-scroll-target="#understanding-the-architecture">2. Understanding the Architecture</a></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">3. Implementation</a>
+  <ul class="collapse">
+  <li><a href="#image-patching" id="toc-image-patching" class="nav-link" data-scroll-target="#image-patching">Image Patching</a></li>
+  <li><a href="#patch-embedding" id="toc-patch-embedding" class="nav-link" data-scroll-target="#patch-embedding">Patch Embedding</a></li>
+  <li><a href="#position-embedding" id="toc-position-embedding" class="nav-link" data-scroll-target="#position-embedding">Position Embedding</a></li>
+  <li><a href="#transformer-encoder" id="toc-transformer-encoder" class="nav-link" data-scroll-target="#transformer-encoder">Transformer Encoder</a></li>
+  <li><a href="#mlp-head" id="toc-mlp-head" class="nav-link" data-scroll-target="#mlp-head">MLP Head</a></li>
+  </ul></li>
+  <li><a href="#training-the-model" id="toc-training-the-model" class="nav-link" data-scroll-target="#training-the-model">4. Training the Model</a></li>
+  <li><a href="#inference-and-usage" id="toc-inference-and-usage" class="nav-link" data-scroll-target="#inference-and-usage">5. Inference and Usage</a></li>
+  <li><a href="#optimization-techniques" id="toc-optimization-techniques" class="nav-link" data-scroll-target="#optimization-techniques">6. Optimization Techniques</a>
+  <ul class="collapse">
+  <li><a href="#custom-attention-implementation" id="toc-custom-attention-implementation" class="nav-link" data-scroll-target="#custom-attention-implementation">Custom Attention Implementation</a></li>
+  <li><a href="#mixed-precision-training" id="toc-mixed-precision-training" class="nav-link" data-scroll-target="#mixed-precision-training">Mixed Precision Training</a></li>
+  <li><a href="#regularization-techniques" id="toc-regularization-techniques" class="nav-link" data-scroll-target="#regularization-techniques">Regularization Techniques</a></li>
+  </ul></li>
+  <li><a href="#advanced-variants" id="toc-advanced-variants" class="nav-link" data-scroll-target="#advanced-variants">7. Advanced Variants</a>
+  <ul class="collapse">
+  <li><a href="#deit-data-efficient-image-transformer" id="toc-deit-data-efficient-image-transformer" class="nav-link" data-scroll-target="#deit-data-efficient-image-transformer">DeiT (Data-efficient Image Transformer)</a></li>
+  <li><a href="#swin-transformer" id="toc-swin-transformer" class="nav-link" data-scroll-target="#swin-transformer">Swin Transformer</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -874,7 +913,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

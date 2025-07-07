@@ -113,7 +113,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -147,9 +147,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Python Data Visualization: Matplotlib vs Seaborn vs Altair</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -160,7 +160,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -182,10 +182,71 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#python-data-visualization-matplotlib-vs-seaborn-vs-altair" id="toc-python-data-visualization-matplotlib-vs-seaborn-vs-altair" class="nav-link active" data-scroll-target="#python-data-visualization-matplotlib-vs-seaborn-vs-altair">Python Data Visualization: Matplotlib vs Seaborn vs Altair</a>
+  <ul class="collapse">
+  <li><a href="#quick-reference-comparison" id="toc-quick-reference-comparison" class="nav-link" data-scroll-target="#quick-reference-comparison">Quick Reference Comparison</a></li>
+  <li><a href="#matplotlib" id="toc-matplotlib" class="nav-link" data-scroll-target="#matplotlib">Matplotlib</a>
+  <ul class="collapse">
+  <li><a href="#strengths" id="toc-strengths" class="nav-link" data-scroll-target="#strengths">Strengths:</a></li>
+  <li><a href="#weaknesses" id="toc-weaknesses" class="nav-link" data-scroll-target="#weaknesses">Weaknesses:</a></li>
+  <li><a href="#example-code" id="toc-example-code" class="nav-link" data-scroll-target="#example-code">Example Code:</a></li>
+  <li><a href="#when-to-use-matplotlib" id="toc-when-to-use-matplotlib" class="nav-link" data-scroll-target="#when-to-use-matplotlib">When to use Matplotlib:</a></li>
+  </ul></li>
+  <li><a href="#seaborn" id="toc-seaborn" class="nav-link" data-scroll-target="#seaborn">Seaborn</a>
+  <ul class="collapse">
+  <li><a href="#strengths-1" id="toc-strengths-1" class="nav-link" data-scroll-target="#strengths-1">Strengths:</a></li>
+  <li><a href="#weaknesses-1" id="toc-weaknesses-1" class="nav-link" data-scroll-target="#weaknesses-1">Weaknesses:</a></li>
+  <li><a href="#example-code-1" id="toc-example-code-1" class="nav-link" data-scroll-target="#example-code-1">Example Code:</a></li>
+  <li><a href="#when-to-use-seaborn" id="toc-when-to-use-seaborn" class="nav-link" data-scroll-target="#when-to-use-seaborn">When to use Seaborn:</a></li>
+  </ul></li>
+  <li><a href="#altair-vega-altair" id="toc-altair-vega-altair" class="nav-link" data-scroll-target="#altair-vega-altair">Altair (Vega-Altair)</a>
+  <ul class="collapse">
+  <li><a href="#strengths-2" id="toc-strengths-2" class="nav-link" data-scroll-target="#strengths-2">Strengths:</a></li>
+  <li><a href="#weaknesses-2" id="toc-weaknesses-2" class="nav-link" data-scroll-target="#weaknesses-2">Weaknesses:</a></li>
+  <li><a href="#example-code-2" id="toc-example-code-2" class="nav-link" data-scroll-target="#example-code-2">Example Code:</a></li>
+  <li><a href="#when-to-use-altair" id="toc-when-to-use-altair" class="nav-link" data-scroll-target="#when-to-use-altair">When to use Altair:</a></li>
+  </ul></li>
+  <li><a href="#common-visualization-types-comparison" id="toc-common-visualization-types-comparison" class="nav-link" data-scroll-target="#common-visualization-types-comparison">Common Visualization Types Comparison</a>
+  <ul class="collapse">
+  <li><a href="#scatter-plot" id="toc-scatter-plot" class="nav-link" data-scroll-target="#scatter-plot">Scatter Plot</a></li>
+  <li><a href="#histogram" id="toc-histogram" class="nav-link" data-scroll-target="#histogram">Histogram</a></li>
+  <li><a href="#line-plot" id="toc-line-plot" class="nav-link" data-scroll-target="#line-plot">Line Plot</a></li>
+  <li><a href="#heatmap" id="toc-heatmap" class="nav-link" data-scroll-target="#heatmap">Heatmap</a></li>
+  </ul></li>
+  <li><a href="#decision-framework-for-choosing-a-library" id="toc-decision-framework-for-choosing-a-library" class="nav-link" data-scroll-target="#decision-framework-for-choosing-a-library">Decision Framework for Choosing a Library</a>
+  <ul class="collapse">
+  <li><a href="#choose-matplotlib-when" id="toc-choose-matplotlib-when" class="nav-link" data-scroll-target="#choose-matplotlib-when">Choose Matplotlib when:</a></li>
+  <li><a href="#choose-seaborn-when" id="toc-choose-seaborn-when" class="nav-link" data-scroll-target="#choose-seaborn-when">Choose Seaborn when:</a></li>
+  <li><a href="#choose-altair-when" id="toc-choose-altair-when" class="nav-link" data-scroll-target="#choose-altair-when">Choose Altair when:</a></li>
+  </ul></li>
+  <li><a href="#integration-examples" id="toc-integration-examples" class="nav-link" data-scroll-target="#integration-examples">Integration Examples</a>
+  <ul class="collapse">
+  <li><a href="#combining-seaborn-with-matplotlib" id="toc-combining-seaborn-with-matplotlib" class="nav-link" data-scroll-target="#combining-seaborn-with-matplotlib">Combining Seaborn with Matplotlib:</a></li>
+  <li><a href="#using-altair-with-pandas" id="toc-using-altair-with-pandas" class="nav-link" data-scroll-target="#using-altair-with-pandas">Using Altair with Pandas:</a></li>
+  </ul></li>
+  <li><a href="#performance-comparison" id="toc-performance-comparison" class="nav-link" data-scroll-target="#performance-comparison">Performance Comparison</a>
+  <ul class="collapse">
+  <li><a href="#small-datasets-1000-points" id="toc-small-datasets-1000-points" class="nav-link" data-scroll-target="#small-datasets-1000-points">Small Datasets (&lt; 1,000 points):</a></li>
+  <li><a href="#medium-datasets-1000---10000-points" id="toc-medium-datasets-1000---10000-points" class="nav-link" data-scroll-target="#medium-datasets-1000---10000-points">Medium Datasets (1,000 - 10,000 points):</a></li>
+  <li><a href="#large-datasets-10000-points" id="toc-large-datasets-10000-points" class="nav-link" data-scroll-target="#large-datasets-10000-points">Large Datasets (&gt; 10,000 points):</a></li>
+  <li><a href="#recommended-approaches-for-large-data" id="toc-recommended-approaches-for-large-data" class="nav-link" data-scroll-target="#recommended-approaches-for-large-data">Recommended Approaches for Large Data:</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -1430,7 +1491,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">CUDA Python: Accelerating Python Applications with GPU Computing</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#cuda-python-accelerating-python-applications-with-gpu-computing" id="toc-cuda-python-accelerating-python-applications-with-gpu-computing" class="nav-link active" data-scroll-target="#cuda-python-accelerating-python-applications-with-gpu-computing">CUDA Python: Accelerating Python Applications with GPU Computing</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#what-is-cuda-python" id="toc-what-is-cuda-python" class="nav-link" data-scroll-target="#what-is-cuda-python">What is CUDA Python?</a></li>
+  <li><a href="#setting-up-your-environment" id="toc-setting-up-your-environment" class="nav-link" data-scroll-target="#setting-up-your-environment">Setting Up Your Environment</a>
+  <ul class="collapse">
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  </ul></li>
+  <li><a href="#getting-started-with-cupy" id="toc-getting-started-with-cupy" class="nav-link" data-scroll-target="#getting-started-with-cupy">Getting Started with CuPy</a>
+  <ul class="collapse">
+  <li><a href="#basic-array-operations" id="toc-basic-array-operations" class="nav-link" data-scroll-target="#basic-array-operations">Basic Array Operations</a></li>
+  <li><a href="#performance-comparison" id="toc-performance-comparison" class="nav-link" data-scroll-target="#performance-comparison">Performance Comparison</a></li>
+  </ul></li>
+  <li><a href="#advanced-cupy-custom-kernels" id="toc-advanced-cupy-custom-kernels" class="nav-link" data-scroll-target="#advanced-cupy-custom-kernels">Advanced CuPy: Custom Kernels</a></li>
+  <li><a href="#numba-cuda-python-to-cuda-jit-compilation" id="toc-numba-cuda-python-to-cuda-jit-compilation" class="nav-link" data-scroll-target="#numba-cuda-python-to-cuda-jit-compilation">Numba CUDA: Python-to-CUDA JIT Compilation</a></li>
+  <li><a href="#memory-management-best-practices" id="toc-memory-management-best-practices" class="nav-link" data-scroll-target="#memory-management-best-practices">Memory Management Best Practices</a></li>
+  <li><a href="#real-world-applications" id="toc-real-world-applications" class="nav-link" data-scroll-target="#real-world-applications">Real-World Applications</a>
+  <ul class="collapse">
+  <li><a href="#image-processing-pipeline" id="toc-image-processing-pipeline" class="nav-link" data-scroll-target="#image-processing-pipeline">Image Processing Pipeline</a></li>
+  <li><a href="#monte-carlo-simulation" id="toc-monte-carlo-simulation" class="nav-link" data-scroll-target="#monte-carlo-simulation">Monte Carlo Simulation</a></li>
+  </ul></li>
+  <li><a href="#performance-optimization-tips" id="toc-performance-optimization-tips" class="nav-link" data-scroll-target="#performance-optimization-tips">Performance Optimization Tips</a>
+  <ul class="collapse">
+  <li><a href="#memory-access-patterns" id="toc-memory-access-patterns" class="nav-link" data-scroll-target="#memory-access-patterns">1. Memory Access Patterns</a></li>
+  <li><a href="#stream-processing" id="toc-stream-processing" class="nav-link" data-scroll-target="#stream-processing">2. Stream Processing</a></li>
+  </ul></li>
+  <li><a href="#debugging-and-profiling" id="toc-debugging-and-profiling" class="nav-link" data-scroll-target="#debugging-and-profiling">Debugging and Profiling</a>
+  <ul class="collapse">
+  <li><a href="#error-handling" id="toc-error-handling" class="nav-link" data-scroll-target="#error-handling">Error Handling</a></li>
+  <li><a href="#profiling-with-cupy" id="toc-profiling-with-cupy" class="nav-link" data-scroll-target="#profiling-with-cupy">Profiling with CuPy</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -640,7 +684,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

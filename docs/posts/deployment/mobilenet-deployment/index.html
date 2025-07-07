@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
+    <div class="quarto-title column-page-right">
       <h1 class="title">MobileNetV2 PyTorch Docker Deployment Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -179,10 +179,65 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#mobilenetv2-pytorch-docker-deployment-guide" id="toc-mobilenetv2-pytorch-docker-deployment-guide" class="nav-link active" data-scroll-target="#mobilenetv2-pytorch-docker-deployment-guide">MobileNetV2 PyTorch Docker Deployment Guide</a>
+  <ul class="collapse">
+  <li><a href="#project-structure" id="toc-project-structure" class="nav-link" data-scroll-target="#project-structure">Project Structure</a></li>
+  <li><a href="#application-code" id="toc-application-code" class="nav-link" data-scroll-target="#application-code">1. Application Code</a>
+  <ul class="collapse">
+  <li><a href="#appmain.py---fastapi-application" id="toc-appmain.py---fastapi-application" class="nav-link" data-scroll-target="#appmain.py---fastapi-application"><code>app/main.py</code> - FastAPI Application</a></li>
+  <li><a href="#appmodel_handler.py---pytorch-model-management" id="toc-appmodel_handler.py---pytorch-model-management" class="nav-link" data-scroll-target="#appmodel_handler.py---pytorch-model-management"><code>app/model_handler.py</code> - PyTorch Model Management</a></li>
+  <li><a href="#apputils.py---utility-functions" id="toc-apputils.py---utility-functions" class="nav-link" data-scroll-target="#apputils.py---utility-functions"><code>app/utils.py</code> - Utility Functions</a></li>
+  <li><a href="#app__init__.py" id="toc-app__init__.py" class="nav-link" data-scroll-target="#app__init__.py"><code>app/__init__.py</code></a></li>
+  </ul></li>
+  <li><a href="#configuration-files" id="toc-configuration-files" class="nav-link" data-scroll-target="#configuration-files">2. Configuration Files</a>
+  <ul class="collapse">
+  <li><a href="#requirements.txt" id="toc-requirements.txt" class="nav-link" data-scroll-target="#requirements.txt"><code>requirements.txt</code></a></li>
+  <li><a href="#dockerfile" id="toc-dockerfile" class="nav-link" data-scroll-target="#dockerfile"><code>Dockerfile</code></a></li>
+  <li><a href="#dockerfile.gpu-for-gpu-support" id="toc-dockerfile.gpu-for-gpu-support" class="nav-link" data-scroll-target="#dockerfile.gpu-for-gpu-support"><code>Dockerfile.gpu</code> (For GPU Support)</a></li>
+  <li><a href="#docker-compose.yml" id="toc-docker-compose.yml" class="nav-link" data-scroll-target="#docker-compose.yml"><code>docker-compose.yml</code></a></li>
+  <li><a href="#dockerignore" id="toc-dockerignore" class="nav-link" data-scroll-target="#dockerignore"><code>.dockerignore</code></a></li>
+  <li><a href="#nginx.conf-optional---for-production" id="toc-nginx.conf-optional---for-production" class="nav-link" data-scroll-target="#nginx.conf-optional---for-production"><code>nginx.conf</code> (Optional - for production)</a></li>
+  </ul></li>
+  <li><a href="#deployment-commands" id="toc-deployment-commands" class="nav-link" data-scroll-target="#deployment-commands">3. Deployment Commands</a>
+  <ul class="collapse">
+  <li><a href="#build-and-run-with-docker" id="toc-build-and-run-with-docker" class="nav-link" data-scroll-target="#build-and-run-with-docker">Build and Run with Docker</a></li>
+  <li><a href="#using-docker-compose" id="toc-using-docker-compose" class="nav-link" data-scroll-target="#using-docker-compose">Using Docker Compose</a></li>
+  </ul></li>
+  <li><a href="#usage-examples" id="toc-usage-examples" class="nav-link" data-scroll-target="#usage-examples">4. Usage Examples</a>
+  <ul class="collapse">
+  <li><a href="#test-the-api" id="toc-test-the-api" class="nav-link" data-scroll-target="#test-the-api">Test the API</a></li>
+  <li><a href="#python-client-example" id="toc-python-client-example" class="nav-link" data-scroll-target="#python-client-example">Python Client Example</a></li>
+  <li><a href="#response-format" id="toc-response-format" class="nav-link" data-scroll-target="#response-format">Response Format</a></li>
+  </ul></li>
+  <li><a href="#performance-optimization" id="toc-performance-optimization" class="nav-link" data-scroll-target="#performance-optimization">5. Performance Optimization</a>
+  <ul class="collapse">
+  <li><a href="#model-optimization" id="toc-model-optimization" class="nav-link" data-scroll-target="#model-optimization">Model Optimization</a></li>
+  <li><a href="#docker-optimization" id="toc-docker-optimization" class="nav-link" data-scroll-target="#docker-optimization">Docker Optimization</a></li>
+  </ul></li>
+  <li><a href="#monitoring-and-logging" id="toc-monitoring-and-logging" class="nav-link" data-scroll-target="#monitoring-and-logging">6. Monitoring and Logging</a>
+  <ul class="collapse">
+  <li><a href="#enhanced-logging" id="toc-enhanced-logging" class="nav-link" data-scroll-target="#enhanced-logging">Enhanced Logging</a></li>
+  </ul></li>
+  <li><a href="#cloud-deployment" id="toc-cloud-deployment" class="nav-link" data-scroll-target="#cloud-deployment">7. Cloud Deployment</a>
+  <ul class="collapse">
+  <li><a href="#aws-ecs-task-definition" id="toc-aws-ecs-task-definition" class="nav-link" data-scroll-target="#aws-ecs-task-definition">AWS ECS Task Definition</a></li>
+  <li><a href="#kubernetes-deployment" id="toc-kubernetes-deployment" class="nav-link" data-scroll-target="#kubernetes-deployment">Kubernetes Deployment</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -1195,7 +1250,7 @@ http {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
