@@ -42,7 +42,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-7cf12f9d5c5caf5e13008aedb6606350.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -104,7 +104,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -133,19 +133,14 @@ window.Quarto = {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
-  <div class="quarto-reader-toggle-btn">
-  <i class="bi"></i>
-  </div>
-</a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Convolutional Kolmogorov-Arnold Networks vs Convolutional Neural Networks: A Comprehensive Analysis</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
@@ -155,7 +150,7 @@ window.Quarto = {
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -175,12 +170,66 @@ window.Quarto = {
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#convolutional-kolmogorov-arnold-networks-vs-convolutional-neural-networks-a-comprehensive-analysis" id="toc-convolutional-kolmogorov-arnold-networks-vs-convolutional-neural-networks-a-comprehensive-analysis" class="nav-link active" data-scroll-target="#convolutional-kolmogorov-arnold-networks-vs-convolutional-neural-networks-a-comprehensive-analysis">Convolutional Kolmogorov-Arnold Networks vs Convolutional Neural Networks: A Comprehensive Analysis</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#theoretical-foundation" id="toc-theoretical-foundation" class="nav-link" data-scroll-target="#theoretical-foundation">Theoretical Foundation</a>
+  <ul class="collapse">
+  <li><a href="#the-kolmogorov-arnold-representation-theorem" id="toc-the-kolmogorov-arnold-representation-theorem" class="nav-link" data-scroll-target="#the-kolmogorov-arnold-representation-theorem">The Kolmogorov-Arnold Representation Theorem</a></li>
+  <li><a href="#architectural-differences" id="toc-architectural-differences" class="nav-link" data-scroll-target="#architectural-differences">Architectural Differences</a></li>
+  </ul></li>
+  <li><a href="#convolutional-neural-networks-the-established-paradigm" id="toc-convolutional-neural-networks-the-established-paradigm" class="nav-link" data-scroll-target="#convolutional-neural-networks-the-established-paradigm">Convolutional Neural Networks: The Established Paradigm</a>
+  <ul class="collapse">
+  <li><a href="#architecture-overview" id="toc-architecture-overview" class="nav-link" data-scroll-target="#architecture-overview">Architecture Overview</a></li>
+  <li><a href="#key-characteristics" id="toc-key-characteristics" class="nav-link" data-scroll-target="#key-characteristics">Key Characteristics</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  </ul></li>
+  <li><a href="#convolutional-kolmogorov-arnold-networks-the-new-paradigm" id="toc-convolutional-kolmogorov-arnold-networks-the-new-paradigm" class="nav-link" data-scroll-target="#convolutional-kolmogorov-arnold-networks-the-new-paradigm">Convolutional Kolmogorov-Arnold Networks: The New Paradigm</a>
+  <ul class="collapse">
+  <li><a href="#architecture-innovation" id="toc-architecture-innovation" class="nav-link" data-scroll-target="#architecture-innovation">Architecture Innovation</a></li>
+  <li><a href="#technical-implementation" id="toc-technical-implementation" class="nav-link" data-scroll-target="#technical-implementation">Technical Implementation</a></li>
+  <li><a href="#architectural-flexibility" id="toc-architectural-flexibility" class="nav-link" data-scroll-target="#architectural-flexibility">Architectural Flexibility</a></li>
+  </ul></li>
+  <li><a href="#comparative-analysis" id="toc-comparative-analysis" class="nav-link" data-scroll-target="#comparative-analysis">Comparative Analysis</a>
+  <ul class="collapse">
+  <li><a href="#parameter-efficiency" id="toc-parameter-efficiency" class="nav-link" data-scroll-target="#parameter-efficiency">Parameter Efficiency</a></li>
+  <li><a href="#expressive-power" id="toc-expressive-power" class="nav-link" data-scroll-target="#expressive-power">Expressive Power</a></li>
+  <li><a href="#interpretability" id="toc-interpretability" class="nav-link" data-scroll-target="#interpretability">Interpretability</a></li>
+  <li><a href="#performance-characteristics" id="toc-performance-characteristics" class="nav-link" data-scroll-target="#performance-characteristics">Performance Characteristics</a></li>
+  </ul></li>
+  <li><a href="#practical-applications-and-limitations" id="toc-practical-applications-and-limitations" class="nav-link" data-scroll-target="#practical-applications-and-limitations">Practical Applications and Limitations</a>
+  <ul class="collapse">
+  <li><a href="#suitable-applications" id="toc-suitable-applications" class="nav-link" data-scroll-target="#suitable-applications">Suitable Applications</a></li>
+  <li><a href="#current-limitations" id="toc-current-limitations" class="nav-link" data-scroll-target="#current-limitations">Current Limitations</a></li>
+  </ul></li>
+  <li><a href="#implementation-considerations" id="toc-implementation-considerations" class="nav-link" data-scroll-target="#implementation-considerations">Implementation Considerations</a>
+  <ul class="collapse">
+  <li><a href="#training-strategies" id="toc-training-strategies" class="nav-link" data-scroll-target="#training-strategies">Training Strategies</a></li>
+  <li><a href="#hyperparameter-tuning" id="toc-hyperparameter-tuning" class="nav-link" data-scroll-target="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
+  </ul></li>
+  <li><a href="#future-directions-and-research-opportunities" id="toc-future-directions-and-research-opportunities" class="nav-link" data-scroll-target="#future-directions-and-research-opportunities">Future Directions and Research Opportunities</a>
+  <ul class="collapse">
+  <li><a href="#emerging-research-areas" id="toc-emerging-research-areas" class="nav-link" data-scroll-target="#emerging-research-areas">Emerging Research Areas</a></li>
+  <li><a href="#potential-developments" id="toc-potential-developments" class="nav-link" data-scroll-target="#potential-developments">Potential Developments</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -796,6 +845,19 @@ f(x_1, x_2, \ldots, x_n) = \sum_{q=0}^{2n} \Phi_q\left( \sum_{p=1}^{n} \phi_{q,p
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© 2025 Krishnatheja Vanka</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
 
 
 

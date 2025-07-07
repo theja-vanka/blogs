@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-7cf12f9d5c5caf5e13008aedb6606350.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -139,7 +139,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -168,19 +168,14 @@ window.Quarto = {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
-  <div class="quarto-reader-toggle-btn">
-  <i class="bi"></i>
-  </div>
-</a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Convolutional Kolmogorov-Arnold Networks: A Deep Dive into Next-Generation Neural Architectures</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -191,7 +186,7 @@ window.Quarto = {
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -211,12 +206,57 @@ window.Quarto = {
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#convolutional-kolmogorov-arnold-networks-a-deep-dive-into-next-generation-neural-architectures" id="toc-convolutional-kolmogorov-arnold-networks-a-deep-dive-into-next-generation-neural-architectures" class="nav-link active" data-scroll-target="#convolutional-kolmogorov-arnold-networks-a-deep-dive-into-next-generation-neural-architectures">Convolutional Kolmogorov-Arnold Networks: A Deep Dive into Next-Generation Neural Architectures</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#theoretical-foundation-the-kolmogorov-arnold-representation-theorem" id="toc-theoretical-foundation-the-kolmogorov-arnold-representation-theorem" class="nav-link" data-scroll-target="#theoretical-foundation-the-kolmogorov-arnold-representation-theorem">Theoretical Foundation: The Kolmogorov-Arnold Representation Theorem</a></li>
+  <li><a href="#architecture-design" id="toc-architecture-design" class="nav-link" data-scroll-target="#architecture-design">Architecture Design</a>
+  <ul class="collapse">
+  <li><a href="#core-components" id="toc-core-components" class="nav-link" data-scroll-target="#core-components">Core Components</a></li>
+  <li><a href="#convolutional-kan-layer-structure" id="toc-convolutional-kan-layer-structure" class="nav-link" data-scroll-target="#convolutional-kan-layer-structure">Convolutional KAN Layer Structure</a></li>
+  </ul></li>
+  <li><a href="#implementation-details" id="toc-implementation-details" class="nav-link" data-scroll-target="#implementation-details">Implementation Details</a>
+  <ul class="collapse">
+  <li><a href="#spline-based-activation-functions" id="toc-spline-based-activation-functions" class="nav-link" data-scroll-target="#spline-based-activation-functions">Spline-based Activation Functions</a></li>
+  <li><a href="#complete-ckan-architecture" id="toc-complete-ckan-architecture" class="nav-link" data-scroll-target="#complete-ckan-architecture">Complete CKAN Architecture</a></li>
+  </ul></li>
+  <li><a href="#training-considerations" id="toc-training-considerations" class="nav-link" data-scroll-target="#training-considerations">Training Considerations</a>
+  <ul class="collapse">
+  <li><a href="#optimization-challenges" id="toc-optimization-challenges" class="nav-link" data-scroll-target="#optimization-challenges">Optimization Challenges</a></li>
+  </ul></li>
+  <li><a href="#performance-analysis" id="toc-performance-analysis" class="nav-link" data-scroll-target="#performance-analysis">Performance Analysis</a>
+  <ul class="collapse">
+  <li><a href="#theoretical-advantages" id="toc-theoretical-advantages" class="nav-link" data-scroll-target="#theoretical-advantages">Theoretical Advantages</a></li>
+  <li><a href="#empirical-evaluation" id="toc-empirical-evaluation" class="nav-link" data-scroll-target="#empirical-evaluation">Empirical Evaluation</a></li>
+  </ul></li>
+  <li><a href="#advanced-techniques" id="toc-advanced-techniques" class="nav-link" data-scroll-target="#advanced-techniques">Advanced Techniques</a>
+  <ul class="collapse">
+  <li><a href="#adaptive-grid-refinement" id="toc-adaptive-grid-refinement" class="nav-link" data-scroll-target="#adaptive-grid-refinement">Adaptive Grid Refinement</a></li>
+  <li><a href="#multi-scale-ckan-architecture" id="toc-multi-scale-ckan-architecture" class="nav-link" data-scroll-target="#multi-scale-ckan-architecture">Multi-scale CKAN Architecture</a></li>
+  </ul></li>
+  <li><a href="#applications-and-future-directions" id="toc-applications-and-future-directions" class="nav-link" data-scroll-target="#applications-and-future-directions">Applications and Future Directions</a>
+  <ul class="collapse">
+  <li><a href="#computer-vision-applications" id="toc-computer-vision-applications" class="nav-link" data-scroll-target="#computer-vision-applications">Computer Vision Applications</a></li>
+  <li><a href="#research-directions" id="toc-research-directions" class="nav-link" data-scroll-target="#research-directions">Research Directions</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
@@ -1089,6 +1129,19 @@ f(x_1, x_2, \ldots, x_n) = \sum_{q=0}^{2n} \Phi_q\left( \sum_{p=1}^{n} \phi_{q,p
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© 2025 Krishnatheja Vanka</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
 
 
 
