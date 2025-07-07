@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">From Pandas to Polars</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -177,12 +177,83 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#from-pandas-to-polars" id="toc-from-pandas-to-polars" class="nav-link active" data-scroll-target="#from-pandas-to-polars">🐼 From Pandas to Polars 🐻‍❄️</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#installation-and-setup" id="toc-installation-and-setup" class="nav-link" data-scroll-target="#installation-and-setup">Installation and Setup</a>
+  <ul class="collapse">
+  <li><a href="#pandas" id="toc-pandas" class="nav-link" data-scroll-target="#pandas">Pandas</a></li>
+  <li><a href="#polars" id="toc-polars" class="nav-link" data-scroll-target="#polars">Polars</a></li>
+  </ul></li>
+  <li><a href="#creating-dataframes" id="toc-creating-dataframes" class="nav-link" data-scroll-target="#creating-dataframes">Creating DataFrames</a>
+  <ul class="collapse">
+  <li><a href="#from-dictionaries" id="toc-from-dictionaries" class="nav-link" data-scroll-target="#from-dictionaries">From dictionaries</a></li>
+  </ul></li>
+  <li><a href="#basic-operations" id="toc-basic-operations" class="nav-link" data-scroll-target="#basic-operations">Basic Operations</a>
+  <ul class="collapse">
+  <li><a href="#selecting-columns" id="toc-selecting-columns" class="nav-link" data-scroll-target="#selecting-columns">Selecting columns</a></li>
+  <li><a href="#adding-a-new-column" id="toc-adding-a-new-column" class="nav-link" data-scroll-target="#adding-a-new-column">Adding a new column</a></li>
+  <li><a href="#basic-statistics" id="toc-basic-statistics" class="nav-link" data-scroll-target="#basic-statistics">Basic statistics</a></li>
+  </ul></li>
+  <li><a href="#filtering-data" id="toc-filtering-data" class="nav-link" data-scroll-target="#filtering-data">Filtering Data</a>
+  <ul class="collapse">
+  <li><a href="#simple-filtering" id="toc-simple-filtering" class="nav-link" data-scroll-target="#simple-filtering">Simple filtering</a></li>
+  <li><a href="#complex-filtering" id="toc-complex-filtering" class="nav-link" data-scroll-target="#complex-filtering">Complex filtering</a></li>
+  </ul></li>
+  <li><a href="#grouping-and-aggregation" id="toc-grouping-and-aggregation" class="nav-link" data-scroll-target="#grouping-and-aggregation">Grouping and Aggregation</a>
+  <ul class="collapse">
+  <li><a href="#basic-groupby" id="toc-basic-groupby" class="nav-link" data-scroll-target="#basic-groupby">Basic groupby</a></li>
+  </ul></li>
+  <li><a href="#joiningmerging-dataframes" id="toc-joiningmerging-dataframes" class="nav-link" data-scroll-target="#joiningmerging-dataframes">Joining/Merging DataFrames</a>
+  <ul class="collapse">
+  <li><a href="#inner-join" id="toc-inner-join" class="nav-link" data-scroll-target="#inner-join">Inner Join</a></li>
+  <li><a href="#different-join-types" id="toc-different-join-types" class="nav-link" data-scroll-target="#different-join-types">Different join types</a></li>
+  </ul></li>
+  <li><a href="#handling-missing-values" id="toc-handling-missing-values" class="nav-link" data-scroll-target="#handling-missing-values">Handling Missing Values</a>
+  <ul class="collapse">
+  <li><a href="#checking-for-missing-values" id="toc-checking-for-missing-values" class="nav-link" data-scroll-target="#checking-for-missing-values">Checking for missing values</a></li>
+  <li><a href="#handling-missing-values-1" id="toc-handling-missing-values-1" class="nav-link" data-scroll-target="#handling-missing-values-1">Handling missing values</a></li>
+  </ul></li>
+  <li><a href="#string-operations" id="toc-string-operations" class="nav-link" data-scroll-target="#string-operations">String Operations</a>
+  <ul class="collapse">
+  <li><a href="#basic-string-operations" id="toc-basic-string-operations" class="nav-link" data-scroll-target="#basic-string-operations">Basic string operations</a></li>
+  <li><a href="#advanced-string-operations" id="toc-advanced-string-operations" class="nav-link" data-scroll-target="#advanced-string-operations">Advanced string operations</a></li>
+  </ul></li>
+  <li><a href="#time-series-operations" id="toc-time-series-operations" class="nav-link" data-scroll-target="#time-series-operations">Time Series Operations</a>
+  <ul class="collapse">
+  <li><a href="#date-parsing-and-creation" id="toc-date-parsing-and-creation" class="nav-link" data-scroll-target="#date-parsing-and-creation">Date parsing and creation</a></li>
+  <li><a href="#date-arithmetic" id="toc-date-arithmetic" class="nav-link" data-scroll-target="#date-arithmetic">Date arithmetic</a></li>
+  </ul></li>
+  <li><a href="#performance-comparison" id="toc-performance-comparison" class="nav-link" data-scroll-target="#performance-comparison">Performance Comparison</a></li>
+  <li><a href="#api-philosophy-differences" id="toc-api-philosophy-differences" class="nav-link" data-scroll-target="#api-philosophy-differences">API Philosophy Differences</a>
+  <ul class="collapse">
+  <li><a href="#eager-vs.-lazy-execution" id="toc-eager-vs.-lazy-execution" class="nav-link" data-scroll-target="#eager-vs.-lazy-execution">1. Eager vs.&nbsp;Lazy Execution</a></li>
+  <li><a href="#method-chaining-vs.-assignment" id="toc-method-chaining-vs.-assignment" class="nav-link" data-scroll-target="#method-chaining-vs.-assignment">2. Method Chaining vs.&nbsp;Assignment</a></li>
+  <li><a href="#expression-api-vs.-direct-references" id="toc-expression-api-vs.-direct-references" class="nav-link" data-scroll-target="#expression-api-vs.-direct-references">3. Expression API vs.&nbsp;Direct References</a></li>
+  </ul></li>
+  <li><a href="#migration-guide" id="toc-migration-guide" class="nav-link" data-scroll-target="#migration-guide">Migration Guide</a>
+  <ul class="collapse">
+  <li><a href="#key-tips-for-migration" id="toc-key-tips-for-migration" class="nav-link" data-scroll-target="#key-tips-for-migration">Key Tips for Migration</a></li>
+  <li><a href="#when-to-keep-using-pandas" id="toc-when-to-keep-using-pandas" class="nav-link" data-scroll-target="#when-to-keep-using-pandas">When to Keep Using Pandas</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

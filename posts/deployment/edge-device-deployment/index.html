@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">PyTorch Model Deployment on Edge Devices - Complete Code Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -177,12 +177,57 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#pytorch-model-deployment-on-edge-devices---complete-code-guide" id="toc-pytorch-model-deployment-on-edge-devices---complete-code-guide" class="nav-link active" data-scroll-target="#pytorch-model-deployment-on-edge-devices---complete-code-guide">PyTorch Model Deployment on Edge Devices - Complete Code Guide</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#model-optimization" id="toc-model-optimization" class="nav-link" data-scroll-target="#model-optimization">1. Model Optimization</a>
+  <ul class="collapse">
+  <li><a href="#quantization" id="toc-quantization" class="nav-link" data-scroll-target="#quantization">Quantization</a></li>
+  <li><a href="#pruning" id="toc-pruning" class="nav-link" data-scroll-target="#pruning">Pruning</a></li>
+  </ul></li>
+  <li><a href="#model-conversion" id="toc-model-conversion" class="nav-link" data-scroll-target="#model-conversion">2. Model Conversion</a>
+  <ul class="collapse">
+  <li><a href="#convert-to-torchscript" id="toc-convert-to-torchscript" class="nav-link" data-scroll-target="#convert-to-torchscript">Convert to TorchScript</a></li>
+  <li><a href="#convert-to-onnx" id="toc-convert-to-onnx" class="nav-link" data-scroll-target="#convert-to-onnx">Convert to ONNX</a></li>
+  <li><a href="#convert-to-tensorflow-lite" id="toc-convert-to-tensorflow-lite" class="nav-link" data-scroll-target="#convert-to-tensorflow-lite">Convert to TensorFlow Lite</a></li>
+  </ul></li>
+  <li><a href="#mobile-deployment" id="toc-mobile-deployment" class="nav-link" data-scroll-target="#mobile-deployment">3. Mobile Deployment</a>
+  <ul class="collapse">
+  <li><a href="#android-deployment" id="toc-android-deployment" class="nav-link" data-scroll-target="#android-deployment">Android Deployment</a></li>
+  <li><a href="#ios-deployment-swift" id="toc-ios-deployment-swift" class="nav-link" data-scroll-target="#ios-deployment-swift">iOS Deployment (Swift)</a></li>
+  <li><a href="#python-mobile-preprocessing" id="toc-python-mobile-preprocessing" class="nav-link" data-scroll-target="#python-mobile-preprocessing">Python Mobile Preprocessing</a></li>
+  </ul></li>
+  <li><a href="#raspberry-pi-deployment" id="toc-raspberry-pi-deployment" class="nav-link" data-scroll-target="#raspberry-pi-deployment">4. Raspberry Pi Deployment</a></li>
+  <li><a href="#nvidia-jetson-deployment" id="toc-nvidia-jetson-deployment" class="nav-link" data-scroll-target="#nvidia-jetson-deployment">5. NVIDIA Jetson Deployment</a></li>
+  <li><a href="#performance-optimization" id="toc-performance-optimization" class="nav-link" data-scroll-target="#performance-optimization">6. Performance Optimization</a>
+  <ul class="collapse">
+  <li><a href="#benchmarking-script" id="toc-benchmarking-script" class="nav-link" data-scroll-target="#benchmarking-script">Benchmarking Script</a></li>
+  <li><a href="#memory-optimization" id="toc-memory-optimization" class="nav-link" data-scroll-target="#memory-optimization">Memory Optimization</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">7. Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#model-deployment-checklist" id="toc-model-deployment-checklist" class="nav-link" data-scroll-target="#model-deployment-checklist">Model Deployment Checklist</a></li>
+  <li><a href="#error-handling-and-logging" id="toc-error-handling-and-logging" class="nav-link" data-scroll-target="#error-handling-and-logging">Error Handling and Logging</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

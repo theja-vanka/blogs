@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Kolmogorov-Arnold Networks: Complete Implementation Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -177,12 +177,69 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#kolmogorov-arnold-networks-complete-implementation-guide" id="toc-kolmogorov-arnold-networks-complete-implementation-guide" class="nav-link active" data-scroll-target="#kolmogorov-arnold-networks-complete-implementation-guide">Kolmogorov-Arnold Networks: Complete Implementation Guide</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#architecture-overview" id="toc-architecture-overview" class="nav-link" data-scroll-target="#architecture-overview">Architecture Overview</a>
+  <ul class="collapse">
+  <li><a href="#traditional-mlps-vs-kans" id="toc-traditional-mlps-vs-kans" class="nav-link" data-scroll-target="#traditional-mlps-vs-kans">Traditional MLPs vs KANs</a></li>
+  </ul></li>
+  <li><a href="#mathematical-formulation" id="toc-mathematical-formulation" class="nav-link" data-scroll-target="#mathematical-formulation">Mathematical Formulation</a>
+  <ul class="collapse">
+  <li><a href="#layer-wise-computation" id="toc-layer-wise-computation" class="nav-link" data-scroll-target="#layer-wise-computation">Layer-wise Computation</a></li>
+  <li><a href="#learnable-activation-functions" id="toc-learnable-activation-functions" class="nav-link" data-scroll-target="#learnable-activation-functions">Learnable Activation Functions</a></li>
+  </ul></li>
+  <li><a href="#implementation-details" id="toc-implementation-details" class="nav-link" data-scroll-target="#implementation-details">Implementation Details</a>
+  <ul class="collapse">
+  <li><a href="#b-spline-based-activation-functions" id="toc-b-spline-based-activation-functions" class="nav-link" data-scroll-target="#b-spline-based-activation-functions">B-spline Based Activation Functions</a></li>
+  <li><a href="#training-loop-implementation" id="toc-training-loop-implementation" class="nav-link" data-scroll-target="#training-loop-implementation">Training Loop Implementation</a></li>
+  </ul></li>
+  <li><a href="#advanced-features-and-optimizations" id="toc-advanced-features-and-optimizations" class="nav-link" data-scroll-target="#advanced-features-and-optimizations">Advanced Features and Optimizations</a>
+  <ul class="collapse">
+  <li><a href="#pruning-and-sparsification" id="toc-pruning-and-sparsification" class="nav-link" data-scroll-target="#pruning-and-sparsification">1. Pruning and Sparsification</a></li>
+  <li><a href="#symbolic-regression-capabilities" id="toc-symbolic-regression-capabilities" class="nav-link" data-scroll-target="#symbolic-regression-capabilities">2. Symbolic Regression Capabilities</a></li>
+  <li><a href="#grid-adaptation" id="toc-grid-adaptation" class="nav-link" data-scroll-target="#grid-adaptation">3. Grid Adaptation</a></li>
+  </ul></li>
+  <li><a href="#practical-applications-and-use-cases" id="toc-practical-applications-and-use-cases" class="nav-link" data-scroll-target="#practical-applications-and-use-cases">Practical Applications and Use Cases</a>
+  <ul class="collapse">
+  <li><a href="#function-approximation" id="toc-function-approximation" class="nav-link" data-scroll-target="#function-approximation">1. Function Approximation</a></li>
+  <li><a href="#scientific-computing" id="toc-scientific-computing" class="nav-link" data-scroll-target="#scientific-computing">2. Scientific Computing</a></li>
+  </ul></li>
+  <li><a href="#performance-analysis-and-comparisons" id="toc-performance-analysis-and-comparisons" class="nav-link" data-scroll-target="#performance-analysis-and-comparisons">Performance Analysis and Comparisons</a>
+  <ul class="collapse">
+  <li><a href="#computational-complexity" id="toc-computational-complexity" class="nav-link" data-scroll-target="#computational-complexity">Computational Complexity</a></li>
+  <li><a href="#advantages-of-kans" id="toc-advantages-of-kans" class="nav-link" data-scroll-target="#advantages-of-kans">Advantages of KANs</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  </ul></li>
+  <li><a href="#best-practices-and-hyperparameter-tuning" id="toc-best-practices-and-hyperparameter-tuning" class="nav-link" data-scroll-target="#best-practices-and-hyperparameter-tuning">Best Practices and Hyperparameter Tuning</a>
+  <ul class="collapse">
+  <li><a href="#grid-size-selection" id="toc-grid-size-selection" class="nav-link" data-scroll-target="#grid-size-selection">Grid Size Selection</a></li>
+  <li><a href="#regularization-strategies" id="toc-regularization-strategies" class="nav-link" data-scroll-target="#regularization-strategies">Regularization Strategies</a></li>
+  </ul></li>
+  <li><a href="#future-directions-and-research-opportunities" id="toc-future-directions-and-research-opportunities" class="nav-link" data-scroll-target="#future-directions-and-research-opportunities">Future Directions and Research Opportunities</a>
+  <ul class="collapse">
+  <li><a href="#scalability-improvements" id="toc-scalability-improvements" class="nav-link" data-scroll-target="#scalability-improvements">1. Scalability Improvements</a></li>
+  <li><a href="#theoretical-developments" id="toc-theoretical-developments" class="nav-link" data-scroll-target="#theoretical-developments">2. Theoretical Developments</a></li>
+  <li><a href="#application-domains" id="toc-application-domains" class="nav-link" data-scroll-target="#application-domains">3. Application Domains</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

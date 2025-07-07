@@ -75,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -109,9 +109,9 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">DINO: Emerging Properties in Self-Supervised Vision Transformers</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
@@ -121,7 +121,7 @@ ul.task-list li input[type="checkbox"] {
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -141,12 +141,59 @@ ul.task-list li input[type="checkbox"] {
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#dino-emerging-properties-in-self-supervised-vision-transformers" id="toc-dino-emerging-properties-in-self-supervised-vision-transformers" class="nav-link active" data-scroll-target="#dino-emerging-properties-in-self-supervised-vision-transformers">DINO: Emerging Properties in Self-Supervised Vision Transformers</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-challenge-of-self-supervised-learning" id="toc-the-challenge-of-self-supervised-learning" class="nav-link" data-scroll-target="#the-challenge-of-self-supervised-learning">The Challenge of Self-Supervised Learning</a></li>
+  <li><a href="#dinos-core-methodology" id="toc-dinos-core-methodology" class="nav-link" data-scroll-target="#dinos-core-methodology">DINO’s Core Methodology</a>
+  <ul class="collapse">
+  <li><a href="#self-distillation-framework" id="toc-self-distillation-framework" class="nav-link" data-scroll-target="#self-distillation-framework">Self-Distillation Framework</a></li>
+  <li><a href="#multi-crop-training-strategy" id="toc-multi-crop-training-strategy" class="nav-link" data-scroll-target="#multi-crop-training-strategy">Multi-crop Training Strategy</a></li>
+  <li><a href="#self-supervision-objective" id="toc-self-supervision-objective" class="nav-link" data-scroll-target="#self-supervision-objective">Self-Supervision Objective</a></li>
+  <li><a href="#collapse-prevention" id="toc-collapse-prevention" class="nav-link" data-scroll-target="#collapse-prevention">Collapse Prevention</a></li>
+  </ul></li>
+  <li><a href="#vision-transformer-architecture" id="toc-vision-transformer-architecture" class="nav-link" data-scroll-target="#vision-transformer-architecture">Vision Transformer Architecture</a></li>
+  <li><a href="#emergent-properties" id="toc-emergent-properties" class="nav-link" data-scroll-target="#emergent-properties">Emergent Properties</a>
+  <ul class="collapse">
+  <li><a href="#unsupervised-segmentation" id="toc-unsupervised-segmentation" class="nav-link" data-scroll-target="#unsupervised-segmentation">Unsupervised Segmentation</a></li>
+  <li><a href="#local-feature-quality" id="toc-local-feature-quality" class="nav-link" data-scroll-target="#local-feature-quality">Local Feature Quality</a></li>
+  <li><a href="#nearest-neighbor-performance" id="toc-nearest-neighbor-performance" class="nav-link" data-scroll-target="#nearest-neighbor-performance">Nearest Neighbor Performance</a></li>
+  </ul></li>
+  <li><a href="#training-details" id="toc-training-details" class="nav-link" data-scroll-target="#training-details">Training Details</a>
+  <ul class="collapse">
+  <li><a href="#data-augmentation" id="toc-data-augmentation" class="nav-link" data-scroll-target="#data-augmentation">Data Augmentation</a></li>
+  <li><a href="#optimization" id="toc-optimization" class="nav-link" data-scroll-target="#optimization">Optimization</a></li>
+  <li><a href="#architectural-choices" id="toc-architectural-choices" class="nav-link" data-scroll-target="#architectural-choices">Architectural Choices</a></li>
+  </ul></li>
+  <li><a href="#results-and-impact" id="toc-results-and-impact" class="nav-link" data-scroll-target="#results-and-impact">Results and Impact</a>
+  <ul class="collapse">
+  <li><a href="#imagenet-classification" id="toc-imagenet-classification" class="nav-link" data-scroll-target="#imagenet-classification">ImageNet Classification</a></li>
+  <li><a href="#downstream-tasks" id="toc-downstream-tasks" class="nav-link" data-scroll-target="#downstream-tasks">Downstream Tasks</a></li>
+  <li><a href="#robustness" id="toc-robustness" class="nav-link" data-scroll-target="#robustness">Robustness</a></li>
+  </ul></li>
+  <li><a href="#comparison-with-previous-methods" id="toc-comparison-with-previous-methods" class="nav-link" data-scroll-target="#comparison-with-previous-methods">Comparison with Previous Methods</a>
+  <ul class="collapse">
+  <li><a href="#versus-contrastive-learning" id="toc-versus-contrastive-learning" class="nav-link" data-scroll-target="#versus-contrastive-learning">Versus Contrastive Learning</a></li>
+  <li><a href="#versus-clustering-based-methods" id="toc-versus-clustering-based-methods" class="nav-link" data-scroll-target="#versus-clustering-based-methods">Versus Clustering-Based Methods</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

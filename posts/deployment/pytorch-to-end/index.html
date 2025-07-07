@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">PyTorch 2.x Compilation Pipeline: From FX to Hardware</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">mlops</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -177,12 +177,89 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#pytorch-2.x-compilation-pipeline-from-fx-to-hardware" id="toc-pytorch-2.x-compilation-pipeline-from-fx-to-hardware" class="nav-link active" data-scroll-target="#pytorch-2.x-compilation-pipeline-from-fx-to-hardware">PyTorch 2.x Compilation Pipeline: From FX to Hardware</a>
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#the-big-picture" id="toc-the-big-picture" class="nav-link" data-scroll-target="#the-big-picture">The Big Picture</a></li>
+  <li><a href="#pytorch-fx-graph-capture" id="toc-pytorch-fx-graph-capture" class="nav-link" data-scroll-target="#pytorch-fx-graph-capture">PyTorch FX: Graph Capture</a>
+  <ul class="collapse">
+  <li><a href="#what-is-fx" id="toc-what-is-fx" class="nav-link" data-scroll-target="#what-is-fx">What is FX?</a></li>
+  <li><a href="#basic-fx-usage" id="toc-basic-fx-usage" class="nav-link" data-scroll-target="#basic-fx-usage">Basic FX Usage</a></li>
+  <li><a href="#fx-graph-representation" id="toc-fx-graph-representation" class="nav-link" data-scroll-target="#fx-graph-representation">FX Graph Representation</a></li>
+  <li><a href="#manual-fx-transformations" id="toc-manual-fx-transformations" class="nav-link" data-scroll-target="#manual-fx-transformations">Manual FX Transformations</a></li>
+  <li><a href="#key-features-of-fx" id="toc-key-features-of-fx" class="nav-link" data-scroll-target="#key-features-of-fx">Key Features of FX</a></li>
+  </ul></li>
+  <li><a href="#torchinductor-the-compiler" id="toc-torchinductor-the-compiler" class="nav-link" data-scroll-target="#torchinductor-the-compiler">TorchInductor: The Compiler</a>
+  <ul class="collapse">
+  <li><a href="#understanding-inductor" id="toc-understanding-inductor" class="nav-link" data-scroll-target="#understanding-inductor">Understanding Inductor</a></li>
+  <li><a href="#core-optimization-strategies" id="toc-core-optimization-strategies" class="nav-link" data-scroll-target="#core-optimization-strategies">Core Optimization Strategies</a></li>
+  <li><a href="#basic-compilation-with-torch.compile" id="toc-basic-compilation-with-torch.compile" class="nav-link" data-scroll-target="#basic-compilation-with-torch.compile">Basic Compilation with torch.compile()</a></li>
+  <li><a href="#compilation-modes" id="toc-compilation-modes" class="nav-link" data-scroll-target="#compilation-modes">Compilation Modes</a></li>
+  <li><a href="#inductor-configuration" id="toc-inductor-configuration" class="nav-link" data-scroll-target="#inductor-configuration">Inductor Configuration</a></li>
+  </ul></li>
+  <li><a href="#backend-targets" id="toc-backend-targets" class="nav-link" data-scroll-target="#backend-targets">Backend Targets</a>
+  <ul class="collapse">
+  <li><a href="#triton-backend-gpu" id="toc-triton-backend-gpu" class="nav-link" data-scroll-target="#triton-backend-gpu">Triton Backend (GPU)</a></li>
+  <li><a href="#nvfuser-nvidias-fusion-runtime" id="toc-nvfuser-nvidias-fusion-runtime" class="nav-link" data-scroll-target="#nvfuser-nvidias-fusion-runtime">NvFuser: NVIDIA’s Fusion Runtime</a></li>
+  <li><a href="#c-backend-cpu" id="toc-c-backend-cpu" class="nav-link" data-scroll-target="#c-backend-cpu">C++ Backend (CPU)</a></li>
+  <li><a href="#backend-selection" id="toc-backend-selection" class="nav-link" data-scroll-target="#backend-selection">Backend Selection</a></li>
+  </ul></li>
+  <li><a href="#hardware-execution" id="toc-hardware-execution" class="nav-link" data-scroll-target="#hardware-execution">Hardware Execution</a>
+  <ul class="collapse">
+  <li><a href="#gpu-execution-pipeline" id="toc-gpu-execution-pipeline" class="nav-link" data-scroll-target="#gpu-execution-pipeline">GPU Execution Pipeline</a></li>
+  <li><a href="#cpu-execution-optimization" id="toc-cpu-execution-optimization" class="nav-link" data-scroll-target="#cpu-execution-optimization">CPU Execution Optimization</a></li>
+  </ul></li>
+  <li><a href="#performance-impact-and-benefits" id="toc-performance-impact-and-benefits" class="nav-link" data-scroll-target="#performance-impact-and-benefits">Performance Impact and Benefits</a>
+  <ul class="collapse">
+  <li><a href="#quantitative-improvements" id="toc-quantitative-improvements" class="nav-link" data-scroll-target="#quantitative-improvements">Quantitative Improvements</a></li>
+  <li><a href="#qualitative-advantages" id="toc-qualitative-advantages" class="nav-link" data-scroll-target="#qualitative-advantages">Qualitative Advantages</a></li>
+  </ul></li>
+  <li><a href="#complete-example-walkthrough" id="toc-complete-example-walkthrough" class="nav-link" data-scroll-target="#complete-example-walkthrough">Complete Example Walkthrough</a>
+  <ul class="collapse">
+  <li><a href="#resnet-block-compilation" id="toc-resnet-block-compilation" class="nav-link" data-scroll-target="#resnet-block-compilation">ResNet Block Compilation</a></li>
+  <li><a href="#attention-mechanism-optimization" id="toc-attention-mechanism-optimization" class="nav-link" data-scroll-target="#attention-mechanism-optimization">Attention Mechanism Optimization</a></li>
+  </ul></li>
+  <li><a href="#advanced-optimization-techniques" id="toc-advanced-optimization-techniques" class="nav-link" data-scroll-target="#advanced-optimization-techniques">Advanced Optimization Techniques</a>
+  <ul class="collapse">
+  <li><a href="#custom-fusion-patterns" id="toc-custom-fusion-patterns" class="nav-link" data-scroll-target="#custom-fusion-patterns">Custom Fusion Patterns</a></li>
+  <li><a href="#dynamic-shape-handling" id="toc-dynamic-shape-handling" class="nav-link" data-scroll-target="#dynamic-shape-handling">Dynamic Shape Handling</a></li>
+  <li><a href="#reduce-overhead-mode" id="toc-reduce-overhead-mode" class="nav-link" data-scroll-target="#reduce-overhead-mode">Reduce Overhead Mode</a></li>
+  </ul></li>
+  <li><a href="#debugging-and-profiling" id="toc-debugging-and-profiling" class="nav-link" data-scroll-target="#debugging-and-profiling">Debugging and Profiling</a>
+  <ul class="collapse">
+  <li><a href="#compilation-debugging" id="toc-compilation-debugging" class="nav-link" data-scroll-target="#compilation-debugging">Compilation Debugging</a></li>
+  <li><a href="#performance-profiling" id="toc-performance-profiling" class="nav-link" data-scroll-target="#performance-profiling">Performance Profiling</a></li>
+  <li><a href="#inspecting-generated-code" id="toc-inspecting-generated-code" class="nav-link" data-scroll-target="#inspecting-generated-code">Inspecting Generated Code</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#model-preparation" id="toc-model-preparation" class="nav-link" data-scroll-target="#model-preparation">1. Model Preparation</a></li>
+  <li><a href="#effective-warmup" id="toc-effective-warmup" class="nav-link" data-scroll-target="#effective-warmup">2. Effective Warmup</a></li>
+  <li><a href="#memory-management" id="toc-memory-management" class="nav-link" data-scroll-target="#memory-management">3. Memory Management</a></li>
+  <li><a href="#performance-tuning-tips" id="toc-performance-tuning-tips" class="nav-link" data-scroll-target="#performance-tuning-tips">4. Performance Tuning Tips</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a>
+  <ul class="collapse">
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

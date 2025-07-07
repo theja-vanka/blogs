@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Kubeflow Deep Learning Guide with PyTorch</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -177,12 +177,70 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#kubeflow-deep-learning-guide-with-pytorch" id="toc-kubeflow-deep-learning-guide-with-pytorch" class="nav-link active" data-scroll-target="#kubeflow-deep-learning-guide-with-pytorch">Kubeflow Deep Learning Guide with PyTorch</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#key-kubeflow-components-for-deep-learning" id="toc-key-kubeflow-components-for-deep-learning" class="nav-link" data-scroll-target="#key-kubeflow-components-for-deep-learning">Key Kubeflow Components for Deep Learning:</a></li>
+  </ul></li>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#setting-up-your-environment" id="toc-setting-up-your-environment" class="nav-link" data-scroll-target="#setting-up-your-environment">Setting Up Your Environment</a>
+  <ul class="collapse">
+  <li><a href="#create-a-namespace" id="toc-create-a-namespace" class="nav-link" data-scroll-target="#create-a-namespace">1. Create a Namespace</a></li>
+  <li><a href="#base-docker-image-for-pytorch" id="toc-base-docker-image-for-pytorch" class="nav-link" data-scroll-target="#base-docker-image-for-pytorch">2. Base Docker Image for PyTorch</a></li>
+  </ul></li>
+  <li><a href="#creating-pytorch-training-jobs" id="toc-creating-pytorch-training-jobs" class="nav-link" data-scroll-target="#creating-pytorch-training-jobs">Creating PyTorch Training Jobs</a>
+  <ul class="collapse">
+  <li><a href="#simple-training-job" id="toc-simple-training-job" class="nav-link" data-scroll-target="#simple-training-job">Simple Training Job</a></li>
+  <li><a href="#pytorchjob-yaml-configuration" id="toc-pytorchjob-yaml-configuration" class="nav-link" data-scroll-target="#pytorchjob-yaml-configuration">PyTorchJob YAML Configuration</a></li>
+  </ul></li>
+  <li><a href="#distributed-training" id="toc-distributed-training" class="nav-link" data-scroll-target="#distributed-training">Distributed Training</a>
+  <ul class="collapse">
+  <li><a href="#distributed-training-script" id="toc-distributed-training-script" class="nav-link" data-scroll-target="#distributed-training-script">Distributed Training Script</a></li>
+  <li><a href="#distributed-pytorchjob-yaml" id="toc-distributed-pytorchjob-yaml" class="nav-link" data-scroll-target="#distributed-pytorchjob-yaml">Distributed PyTorchJob YAML</a></li>
+  </ul></li>
+  <li><a href="#hyperparameter-tuning-with-katib" id="toc-hyperparameter-tuning-with-katib" class="nav-link" data-scroll-target="#hyperparameter-tuning-with-katib">Hyperparameter Tuning with Katib</a>
+  <ul class="collapse">
+  <li><a href="#katib-experiment-configuration" id="toc-katib-experiment-configuration" class="nav-link" data-scroll-target="#katib-experiment-configuration">Katib Experiment Configuration</a></li>
+  <li><a href="#training-script-with-metrics-for-katib" id="toc-training-script-with-metrics-for-katib" class="nav-link" data-scroll-target="#training-script-with-metrics-for-katib">Training Script with Metrics for Katib</a></li>
+  </ul></li>
+  <li><a href="#model-serving-with-kserve" id="toc-model-serving-with-kserve" class="nav-link" data-scroll-target="#model-serving-with-kserve">Model Serving with KServe</a>
+  <ul class="collapse">
+  <li><a href="#create-a-model-server" id="toc-create-a-model-server" class="nav-link" data-scroll-target="#create-a-model-server">Create a Model Server</a></li>
+  <li><a href="#inferenceservice-yaml" id="toc-inferenceservice-yaml" class="nav-link" data-scroll-target="#inferenceservice-yaml">InferenceService YAML</a></li>
+  </ul></li>
+  <li><a href="#complete-pipeline-example" id="toc-complete-pipeline-example" class="nav-link" data-scroll-target="#complete-pipeline-example">Complete Pipeline Example</a>
+  <ul class="collapse">
+  <li><a href="#kubeflow-pipeline-with-pytorch" id="toc-kubeflow-pipeline-with-pytorch" class="nav-link" data-scroll-target="#kubeflow-pipeline-with-pytorch">Kubeflow Pipeline with PyTorch</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#resource-management" id="toc-resource-management" class="nav-link" data-scroll-target="#resource-management">1. Resource Management</a></li>
+  <li><a href="#data-management" id="toc-data-management" class="nav-link" data-scroll-target="#data-management">2. Data Management</a></li>
+  <li><a href="#monitoring-and-logging" id="toc-monitoring-and-logging" class="nav-link" data-scroll-target="#monitoring-and-logging">3. Monitoring and Logging</a></li>
+  <li><a href="#security" id="toc-security" class="nav-link" data-scroll-target="#security">4. Security</a></li>
+  <li><a href="#scalability" id="toc-scalability" class="nav-link" data-scroll-target="#scalability">5. Scalability</a></li>
+  <li><a href="#model-versioning" id="toc-model-versioning" class="nav-link" data-scroll-target="#model-versioning">6. Model Versioning</a></li>
+  <li><a href="#error-handling" id="toc-error-handling" class="nav-link" data-scroll-target="#error-handling">7. Error Handling</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

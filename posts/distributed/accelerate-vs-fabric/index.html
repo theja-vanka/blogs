@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Hugging Face Accelerate vs PyTorch Lightning Fabric: A Deep Dive Comparison</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
@@ -156,7 +156,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -176,12 +176,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#hugging-face-accelerate-vs-pytorch-lightning-fabric-a-deep-dive-comparison" id="toc-hugging-face-accelerate-vs-pytorch-lightning-fabric-a-deep-dive-comparison" class="nav-link active" data-scroll-target="#hugging-face-accelerate-vs-pytorch-lightning-fabric-a-deep-dive-comparison">Hugging Face Accelerate vs PyTorch Lightning Fabric: A Deep Dive Comparison</a>
+  <ul class="collapse">
+  <li><a href="#understanding-the-core-philosophy" id="toc-understanding-the-core-philosophy" class="nav-link" data-scroll-target="#understanding-the-core-philosophy">Understanding the Core Philosophy</a></li>
+  <li><a href="#code-integration-and-learning-curve" id="toc-code-integration-and-learning-curve" class="nav-link" data-scroll-target="#code-integration-and-learning-curve">Code Integration and Learning Curve</a></li>
+  <li><a href="#performance-and-optimization-capabilities" id="toc-performance-and-optimization-capabilities" class="nav-link" data-scroll-target="#performance-and-optimization-capabilities">Performance and Optimization Capabilities</a></li>
+  <li><a href="#code-examples-and-practical-implementation" id="toc-code-examples-and-practical-implementation" class="nav-link" data-scroll-target="#code-examples-and-practical-implementation">Code Examples and Practical Implementation</a>
+  <ul class="collapse">
+  <li><a href="#hugging-face-accelerate-example" id="toc-hugging-face-accelerate-example" class="nav-link" data-scroll-target="#hugging-face-accelerate-example">Hugging Face Accelerate Example</a></li>
+  <li><a href="#lightning-fabric-example" id="toc-lightning-fabric-example" class="nav-link" data-scroll-target="#lightning-fabric-example">Lightning Fabric Example</a></li>
+  </ul></li>
+  <li><a href="#ecosystem-integration-and-tooling" id="toc-ecosystem-integration-and-tooling" class="nav-link" data-scroll-target="#ecosystem-integration-and-tooling">Ecosystem Integration and Tooling</a></li>
+  <li><a href="#advanced-features-and-customization" id="toc-advanced-features-and-customization" class="nav-link" data-scroll-target="#advanced-features-and-customization">Advanced Features and Customization</a>
+  <ul class="collapse">
+  <li><a href="#memory-management-and-optimization" id="toc-memory-management-and-optimization" class="nav-link" data-scroll-target="#memory-management-and-optimization">Memory Management and Optimization</a></li>
+  <li><a href="#hardware-support-and-scalability" id="toc-hardware-support-and-scalability" class="nav-link" data-scroll-target="#hardware-support-and-scalability">Hardware Support and Scalability</a></li>
+  </ul></li>
+  <li><a href="#debugging-and-development-experience" id="toc-debugging-and-development-experience" class="nav-link" data-scroll-target="#debugging-and-development-experience">Debugging and Development Experience</a></li>
+  <li><a href="#performance-benchmarks-and-real-world-usage" id="toc-performance-benchmarks-and-real-world-usage" class="nav-link" data-scroll-target="#performance-benchmarks-and-real-world-usage">Performance Benchmarks and Real-World Usage</a></li>
+  <li><a href="#migration-and-adoption-strategies" id="toc-migration-and-adoption-strategies" class="nav-link" data-scroll-target="#migration-and-adoption-strategies">Migration and Adoption Strategies</a></li>
+  <li><a href="#community-and-support" id="toc-community-and-support" class="nav-link" data-scroll-target="#community-and-support">Community and Support</a></li>
+  <li><a href="#making-the-right-choice-for-your-team" id="toc-making-the-right-choice-for-your-team" class="nav-link" data-scroll-target="#making-the-right-choice-for-your-team">Making the Right Choice for Your Team</a></li>
+  <li><a href="#future-considerations" id="toc-future-considerations" class="nav-link" data-scroll-target="#future-considerations">Future Considerations</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

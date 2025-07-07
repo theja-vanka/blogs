@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Albumentations vs TorchVision Transforms: Complete Code Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -177,12 +177,71 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#albumentations-vs-torchvision-transforms-complete-code-guide" id="toc-albumentations-vs-torchvision-transforms-complete-code-guide" class="nav-link active" data-scroll-target="#albumentations-vs-torchvision-transforms-complete-code-guide">Albumentations vs TorchVision Transforms: Complete Code Guide</a>
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#basic-setup-and-imports" id="toc-basic-setup-and-imports" class="nav-link" data-scroll-target="#basic-setup-and-imports">Basic Setup and Imports</a></li>
+  <li><a href="#key-differences-at-a-glance" id="toc-key-differences-at-a-glance" class="nav-link" data-scroll-target="#key-differences-at-a-glance">Key Differences at a Glance</a></li>
+  <li><a href="#basic-transformations-comparison" id="toc-basic-transformations-comparison" class="nav-link" data-scroll-target="#basic-transformations-comparison">Basic Transformations Comparison</a>
+  <ul class="collapse">
+  <li><a href="#image-loading-and-format-differences" id="toc-image-loading-and-format-differences" class="nav-link" data-scroll-target="#image-loading-and-format-differences">Image Loading and Format Differences</a></li>
+  <li><a href="#basic-augmentations" id="toc-basic-augmentations" class="nav-link" data-scroll-target="#basic-augmentations">Basic Augmentations</a></li>
+  </ul></li>
+  <li><a href="#advanced-augmentations" id="toc-advanced-augmentations" class="nav-link" data-scroll-target="#advanced-augmentations">Advanced Augmentations</a>
+  <ul class="collapse">
+  <li><a href="#albumentations-exclusive-features" id="toc-albumentations-exclusive-features" class="nav-link" data-scroll-target="#albumentations-exclusive-features">Albumentations Exclusive Features</a></li>
+  <li><a href="#torchvision-v2-enhanced-features" id="toc-torchvision-v2-enhanced-features" class="nav-link" data-scroll-target="#torchvision-v2-enhanced-features">TorchVision v2 Enhanced Features</a></li>
+  </ul></li>
+  <li><a href="#working-with-bounding-boxes" id="toc-working-with-bounding-boxes" class="nav-link" data-scroll-target="#working-with-bounding-boxes">Working with Bounding Boxes</a>
+  <ul class="collapse">
+  <li><a href="#albumentations-excellent-support" id="toc-albumentations-excellent-support" class="nav-link" data-scroll-target="#albumentations-excellent-support">Albumentations (Excellent Support)</a></li>
+  <li><a href="#torchvision-limited-support" id="toc-torchvision-limited-support" class="nav-link" data-scroll-target="#torchvision-limited-support">TorchVision (Limited Support)</a></li>
+  </ul></li>
+  <li><a href="#working-with-segmentation-masks" id="toc-working-with-segmentation-masks" class="nav-link" data-scroll-target="#working-with-segmentation-masks">Working with Segmentation Masks</a>
+  <ul class="collapse">
+  <li><a href="#albumentations" id="toc-albumentations" class="nav-link" data-scroll-target="#albumentations">Albumentations</a></li>
+  <li><a href="#torchvision" id="toc-torchvision" class="nav-link" data-scroll-target="#torchvision">TorchVision</a></li>
+  </ul></li>
+  <li><a href="#performance-comparison" id="toc-performance-comparison" class="nav-link" data-scroll-target="#performance-comparison">Performance Comparison</a></li>
+  <li><a href="#custom-pipeline-examples" id="toc-custom-pipeline-examples" class="nav-link" data-scroll-target="#custom-pipeline-examples">Custom Pipeline Examples</a>
+  <ul class="collapse">
+  <li><a href="#data-science-pipeline-with-albumentations" id="toc-data-science-pipeline-with-albumentations" class="nav-link" data-scroll-target="#data-science-pipeline-with-albumentations">Data Science Pipeline with Albumentations</a></li>
+  <li><a href="#torchvision-pipeline-for-simple-cases" id="toc-torchvision-pipeline-for-simple-cases" class="nav-link" data-scroll-target="#torchvision-pipeline-for-simple-cases">TorchVision Pipeline for Simple Cases</a></li>
+  </ul></li>
+  <li><a href="#dataset-integration" id="toc-dataset-integration" class="nav-link" data-scroll-target="#dataset-integration">Dataset Integration</a>
+  <ul class="collapse">
+  <li><a href="#pytorch-dataset-with-albumentations" id="toc-pytorch-dataset-with-albumentations" class="nav-link" data-scroll-target="#pytorch-dataset-with-albumentations">PyTorch Dataset with Albumentations</a></li>
+  <li><a href="#pytorch-dataset-with-torchvision" id="toc-pytorch-dataset-with-torchvision" class="nav-link" data-scroll-target="#pytorch-dataset-with-torchvision">PyTorch Dataset with TorchVision</a></li>
+  </ul></li>
+  <li><a href="#when-to-use-which-library" id="toc-when-to-use-which-library" class="nav-link" data-scroll-target="#when-to-use-which-library">When to Use Which Library</a>
+  <ul class="collapse">
+  <li><a href="#choose-albumentations-when" id="toc-choose-albumentations-when" class="nav-link" data-scroll-target="#choose-albumentations-when">Choose Albumentations When:</a></li>
+  <li><a href="#choose-torchvision-when" id="toc-choose-torchvision-when" class="nav-link" data-scroll-target="#choose-torchvision-when">Choose TorchVision When:</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#albumentations-best-practices" id="toc-albumentations-best-practices" class="nav-link" data-scroll-target="#albumentations-best-practices">Albumentations Best Practices</a></li>
+  <li><a href="#torchvision-best-practices" id="toc-torchvision-best-practices" class="nav-link" data-scroll-target="#torchvision-best-practices">TorchVision Best Practices</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

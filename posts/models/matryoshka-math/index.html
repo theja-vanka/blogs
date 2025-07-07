@@ -104,7 +104,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -138,9 +138,9 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">The Mathematics Behind Matryoshka Transformers</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
@@ -150,7 +150,7 @@ window.Quarto = {
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -170,12 +170,67 @@ window.Quarto = {
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-mathematics-behind-matryoshka-transformers" id="toc-the-mathematics-behind-matryoshka-transformers" class="nav-link active" data-scroll-target="#the-mathematics-behind-matryoshka-transformers">The Mathematics Behind Matryoshka Transformers</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#core-mathematical-framework" id="toc-core-mathematical-framework" class="nav-link" data-scroll-target="#core-mathematical-framework">Core Mathematical Framework</a>
+  <ul class="collapse">
+  <li><a href="#nested-representation-learning" id="toc-nested-representation-learning" class="nav-link" data-scroll-target="#nested-representation-learning">1. Nested Representation Learning</a></li>
+  <li><a href="#multi-scale-attention-mechanism" id="toc-multi-scale-attention-mechanism" class="nav-link" data-scroll-target="#multi-scale-attention-mechanism">2. Multi-Scale Attention Mechanism</a></li>
+  <li><a href="#nested-loss-function" id="toc-nested-loss-function" class="nav-link" data-scroll-target="#nested-loss-function">3. Nested Loss Function</a></li>
+  <li><a href="#progressive-training-strategy" id="toc-progressive-training-strategy" class="nav-link" data-scroll-target="#progressive-training-strategy">4. Progressive Training Strategy</a></li>
+  </ul></li>
+  <li><a href="#mathematical-properties" id="toc-mathematical-properties" class="nav-link" data-scroll-target="#mathematical-properties">Mathematical Properties</a>
+  <ul class="collapse">
+  <li><a href="#representation-efficiency" id="toc-representation-efficiency" class="nav-link" data-scroll-target="#representation-efficiency">1. Representation Efficiency</a></li>
+  <li><a href="#information-preservation" id="toc-information-preservation" class="nav-link" data-scroll-target="#information-preservation">2. Information Preservation</a></li>
+  <li><a href="#gradient-flow-analysis" id="toc-gradient-flow-analysis" class="nav-link" data-scroll-target="#gradient-flow-analysis">3. Gradient Flow Analysis</a></li>
+  </ul></li>
+  <li><a href="#layer-wise-mathematical-operations" id="toc-layer-wise-mathematical-operations" class="nav-link" data-scroll-target="#layer-wise-mathematical-operations">Layer-wise Mathematical Operations</a>
+  <ul class="collapse">
+  <li><a href="#nested-feed-forward-networks" id="toc-nested-feed-forward-networks" class="nav-link" data-scroll-target="#nested-feed-forward-networks">1. Nested Feed-Forward Networks</a></li>
+  <li><a href="#layer-normalization-adaptation" id="toc-layer-normalization-adaptation" class="nav-link" data-scroll-target="#layer-normalization-adaptation">2. Layer Normalization Adaptation</a></li>
+  <li><a href="#positional-encoding" id="toc-positional-encoding" class="nav-link" data-scroll-target="#positional-encoding">3. Positional Encoding</a></li>
+  </ul></li>
+  <li><a href="#optimization-considerations" id="toc-optimization-considerations" class="nav-link" data-scroll-target="#optimization-considerations">Optimization Considerations</a>
+  <ul class="collapse">
+  <li><a href="#learning-rate-scheduling" id="toc-learning-rate-scheduling" class="nav-link" data-scroll-target="#learning-rate-scheduling">1. Learning Rate Scheduling</a></li>
+  <li><a href="#regularization" id="toc-regularization" class="nav-link" data-scroll-target="#regularization">2. Regularization</a></li>
+  </ul></li>
+  <li><a href="#theoretical-analysis" id="toc-theoretical-analysis" class="nav-link" data-scroll-target="#theoretical-analysis">Theoretical Analysis</a>
+  <ul class="collapse">
+  <li><a href="#approximation-theory" id="toc-approximation-theory" class="nav-link" data-scroll-target="#approximation-theory">1. Approximation Theory</a></li>
+  <li><a href="#generalization-bounds" id="toc-generalization-bounds" class="nav-link" data-scroll-target="#generalization-bounds">2. Generalization Bounds</a></li>
+  </ul></li>
+  <li><a href="#implementation-considerations" id="toc-implementation-considerations" class="nav-link" data-scroll-target="#implementation-considerations">Implementation Considerations</a>
+  <ul class="collapse">
+  <li><a href="#memory-efficiency" id="toc-memory-efficiency" class="nav-link" data-scroll-target="#memory-efficiency">1. Memory Efficiency</a></li>
+  <li><a href="#computational-flexibility" id="toc-computational-flexibility" class="nav-link" data-scroll-target="#computational-flexibility">2. Computational Flexibility</a></li>
+  </ul></li>
+  <li><a href="#applications-and-extensions" id="toc-applications-and-extensions" class="nav-link" data-scroll-target="#applications-and-extensions">Applications and Extensions</a>
+  <ul class="collapse">
+  <li><a href="#adaptive-inference" id="toc-adaptive-inference" class="nav-link" data-scroll-target="#adaptive-inference">1. Adaptive Inference</a></li>
+  <li><a href="#distillation-integration" id="toc-distillation-integration" class="nav-link" data-scroll-target="#distillation-integration">2. Distillation Integration</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

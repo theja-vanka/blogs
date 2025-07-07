@@ -104,7 +104,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -138,9 +138,9 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Kolmogorov-Arnold Networks: Revolutionizing Neural Architecture Design</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
@@ -150,7 +150,7 @@ window.Quarto = {
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -170,12 +170,88 @@ window.Quarto = {
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#kolmogorov-arnold-networks-revolutionizing-neural-architecture-design" id="toc-kolmogorov-arnold-networks-revolutionizing-neural-architecture-design" class="nav-link active" data-scroll-target="#kolmogorov-arnold-networks-revolutionizing-neural-architecture-design">Kolmogorov-Arnold Networks: Revolutionizing Neural Architecture Design</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#mathematical-foundation-the-kolmogorov-arnold-theorem" id="toc-mathematical-foundation-the-kolmogorov-arnold-theorem" class="nav-link" data-scroll-target="#mathematical-foundation-the-kolmogorov-arnold-theorem">Mathematical Foundation: The Kolmogorov-Arnold Theorem</a></li>
+  <li><a href="#architecture-overview" id="toc-architecture-overview" class="nav-link" data-scroll-target="#architecture-overview">Architecture Overview</a>
+  <ul class="collapse">
+  <li><a href="#traditional-mlps-vs-kans" id="toc-traditional-mlps-vs-kans" class="nav-link" data-scroll-target="#traditional-mlps-vs-kans">Traditional MLPs vs KANs</a></li>
+  <li><a href="#kan-layer-structure" id="toc-kan-layer-structure" class="nav-link" data-scroll-target="#kan-layer-structure">KAN Layer Structure</a></li>
+  </ul></li>
+  <li><a href="#key-components-and-implementation" id="toc-key-components-and-implementation" class="nav-link" data-scroll-target="#key-components-and-implementation">Key Components and Implementation</a>
+  <ul class="collapse">
+  <li><a href="#b-spline-parameterization" id="toc-b-spline-parameterization" class="nav-link" data-scroll-target="#b-spline-parameterization">B-Spline Parameterization</a></li>
+  <li><a href="#grid-structure" id="toc-grid-structure" class="nav-link" data-scroll-target="#grid-structure">Grid Structure</a></li>
+  <li><a href="#residual-connections" id="toc-residual-connections" class="nav-link" data-scroll-target="#residual-connections">Residual Connections</a></li>
+  </ul></li>
+  <li><a href="#training-process" id="toc-training-process" class="nav-link" data-scroll-target="#training-process">Training Process</a>
+  <ul class="collapse">
+  <li><a href="#forward-pass" id="toc-forward-pass" class="nav-link" data-scroll-target="#forward-pass">Forward Pass</a></li>
+  <li><a href="#backward-pass" id="toc-backward-pass" class="nav-link" data-scroll-target="#backward-pass">Backward Pass</a></li>
+  <li><a href="#optimization-challenges" id="toc-optimization-challenges" class="nav-link" data-scroll-target="#optimization-challenges">Optimization Challenges</a></li>
+  </ul></li>
+  <li><a href="#advantages-of-kans" id="toc-advantages-of-kans" class="nav-link" data-scroll-target="#advantages-of-kans">Advantages of KANs</a>
+  <ul class="collapse">
+  <li><a href="#enhanced-interpretability" id="toc-enhanced-interpretability" class="nav-link" data-scroll-target="#enhanced-interpretability">Enhanced Interpretability</a></li>
+  <li><a href="#parameter-efficiency" id="toc-parameter-efficiency" class="nav-link" data-scroll-target="#parameter-efficiency">Parameter Efficiency</a></li>
+  <li><a href="#better-generalization" id="toc-better-generalization" class="nav-link" data-scroll-target="#better-generalization">Better Generalization</a></li>
+  </ul></li>
+  <li><a href="#applications-and-use-cases" id="toc-applications-and-use-cases" class="nav-link" data-scroll-target="#applications-and-use-cases">Applications and Use Cases</a>
+  <ul class="collapse">
+  <li><a href="#scientific-computing" id="toc-scientific-computing" class="nav-link" data-scroll-target="#scientific-computing">Scientific Computing</a></li>
+  <li><a href="#function-approximation" id="toc-function-approximation" class="nav-link" data-scroll-target="#function-approximation">Function Approximation</a></li>
+  <li><a href="#symbolic-regression" id="toc-symbolic-regression" class="nav-link" data-scroll-target="#symbolic-regression">Symbolic Regression</a></li>
+  </ul></li>
+  <li><a href="#implementation-considerations" id="toc-implementation-considerations" class="nav-link" data-scroll-target="#implementation-considerations">Implementation Considerations</a>
+  <ul class="collapse">
+  <li><a href="#computational-complexity" id="toc-computational-complexity" class="nav-link" data-scroll-target="#computational-complexity">Computational Complexity</a></li>
+  <li><a href="#hyperparameter-tuning" id="toc-hyperparameter-tuning" class="nav-link" data-scroll-target="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
+  <li><a href="#software-implementation" id="toc-software-implementation" class="nav-link" data-scroll-target="#software-implementation">Software Implementation</a></li>
+  </ul></li>
+  <li><a href="#current-limitations-and-challenges" id="toc-current-limitations-and-challenges" class="nav-link" data-scroll-target="#current-limitations-and-challenges">Current Limitations and Challenges</a>
+  <ul class="collapse">
+  <li><a href="#scalability-issues" id="toc-scalability-issues" class="nav-link" data-scroll-target="#scalability-issues">Scalability Issues</a></li>
+  <li><a href="#theoretical-gaps" id="toc-theoretical-gaps" class="nav-link" data-scroll-target="#theoretical-gaps">Theoretical Gaps</a></li>
+  <li><a href="#practical-considerations" id="toc-practical-considerations" class="nav-link" data-scroll-target="#practical-considerations">Practical Considerations</a></li>
+  </ul></li>
+  <li><a href="#recent-developments-and-research-directions" id="toc-recent-developments-and-research-directions" class="nav-link" data-scroll-target="#recent-developments-and-research-directions">Recent Developments and Research Directions</a>
+  <ul class="collapse">
+  <li><a href="#architectural-innovations" id="toc-architectural-innovations" class="nav-link" data-scroll-target="#architectural-innovations">Architectural Innovations</a></li>
+  <li><a href="#optimization-improvements" id="toc-optimization-improvements" class="nav-link" data-scroll-target="#optimization-improvements">Optimization Improvements</a></li>
+  <li><a href="#application-expansions" id="toc-application-expansions" class="nav-link" data-scroll-target="#application-expansions">Application Expansions</a></li>
+  </ul></li>
+  <li><a href="#comparison-with-other-architectures" id="toc-comparison-with-other-architectures" class="nav-link" data-scroll-target="#comparison-with-other-architectures">Comparison with Other Architectures</a>
+  <ul class="collapse">
+  <li><a href="#kans-vs-mlps" id="toc-kans-vs-mlps" class="nav-link" data-scroll-target="#kans-vs-mlps">KANs vs MLPs</a></li>
+  <li><a href="#kans-vs-transformers" id="toc-kans-vs-transformers" class="nav-link" data-scroll-target="#kans-vs-transformers">KANs vs Transformers</a></li>
+  <li><a href="#kans-vs-decision-trees" id="toc-kans-vs-decision-trees" class="nav-link" data-scroll-target="#kans-vs-decision-trees">KANs vs Decision Trees</a></li>
+  </ul></li>
+  <li><a href="#future-outlook" id="toc-future-outlook" class="nav-link" data-scroll-target="#future-outlook">Future Outlook</a>
+  <ul class="collapse">
+  <li><a href="#emerging-trends" id="toc-emerging-trends" class="nav-link" data-scroll-target="#emerging-trends">Emerging Trends</a></li>
+  <li><a href="#research-opportunities" id="toc-research-opportunities" class="nav-link" data-scroll-target="#research-opportunities">Research Opportunities</a></li>
+  <li><a href="#industry-adoption" id="toc-industry-adoption" class="nav-link" data-scroll-target="#industry-adoption">Industry Adoption</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#references-and-further-reading" id="toc-references-and-further-reading" class="nav-link" data-scroll-target="#references-and-further-reading">References and Further Reading</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

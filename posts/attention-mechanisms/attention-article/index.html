@@ -104,7 +104,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -138,9 +138,9 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Attention Mechanisms: Transformers vs Convolutional Neural Networks</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
@@ -150,7 +150,7 @@ window.Quarto = {
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -170,12 +170,61 @@ window.Quarto = {
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#attention-mechanisms-transformers-vs-convolutional-neural-networks" id="toc-attention-mechanisms-transformers-vs-convolutional-neural-networks" class="nav-link active" data-scroll-target="#attention-mechanisms-transformers-vs-convolutional-neural-networks">Attention Mechanisms: Transformers vs Convolutional Neural Networks</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#attention-in-transformers" id="toc-attention-in-transformers" class="nav-link" data-scroll-target="#attention-in-transformers">Attention in Transformers</a>
+  <ul class="collapse">
+  <li><a href="#core-concept" id="toc-core-concept" class="nav-link" data-scroll-target="#core-concept">Core Concept</a></li>
+  <li><a href="#mathematical-foundation" id="toc-mathematical-foundation" class="nav-link" data-scroll-target="#mathematical-foundation">Mathematical Foundation</a></li>
+  <li><a href="#multi-head-attention" id="toc-multi-head-attention" class="nav-link" data-scroll-target="#multi-head-attention">Multi-Head Attention</a></li>
+  <li><a href="#key-characteristics" id="toc-key-characteristics" class="nav-link" data-scroll-target="#key-characteristics">Key Characteristics</a></li>
+  <li><a href="#applications" id="toc-applications" class="nav-link" data-scroll-target="#applications">Applications</a></li>
+  </ul></li>
+  <li><a href="#attention-in-convolutional-neural-networks" id="toc-attention-in-convolutional-neural-networks" class="nav-link" data-scroll-target="#attention-in-convolutional-neural-networks">Attention in Convolutional Neural Networks</a>
+  <ul class="collapse">
+  <li><a href="#core-concept-1" id="toc-core-concept-1" class="nav-link" data-scroll-target="#core-concept-1">Core Concept</a></li>
+  <li><a href="#types-of-cnn-attention" id="toc-types-of-cnn-attention" class="nav-link" data-scroll-target="#types-of-cnn-attention">Types of CNN Attention</a></li>
+  <li><a href="#key-characteristics-1" id="toc-key-characteristics-1" class="nav-link" data-scroll-target="#key-characteristics-1">Key Characteristics</a></li>
+  <li><a href="#applications-1" id="toc-applications-1" class="nav-link" data-scroll-target="#applications-1">Applications</a></li>
+  </ul></li>
+  <li><a href="#comparative-analysis" id="toc-comparative-analysis" class="nav-link" data-scroll-target="#comparative-analysis">Comparative Analysis</a>
+  <ul class="collapse">
+  <li><a href="#computational-complexity" id="toc-computational-complexity" class="nav-link" data-scroll-target="#computational-complexity">Computational Complexity</a></li>
+  <li><a href="#architectural-differences" id="toc-architectural-differences" class="nav-link" data-scroll-target="#architectural-differences">Architectural Differences</a></li>
+  <li><a href="#performance-characteristics" id="toc-performance-characteristics" class="nav-link" data-scroll-target="#performance-characteristics">Performance Characteristics</a></li>
+  </ul></li>
+  <li><a href="#hybrid-approaches" id="toc-hybrid-approaches" class="nav-link" data-scroll-target="#hybrid-approaches">Hybrid Approaches</a>
+  <ul class="collapse">
+  <li><a href="#convnets-with-transformer-blocks" id="toc-convnets-with-transformer-blocks" class="nav-link" data-scroll-target="#convnets-with-transformer-blocks">ConvNets with Transformer Blocks</a></li>
+  <li><a href="#vision-transformers-with-convolutional-elements" id="toc-vision-transformers-with-convolutional-elements" class="nav-link" data-scroll-target="#vision-transformers-with-convolutional-elements">Vision Transformers with Convolutional Elements</a></li>
+  <li><a href="#advantages-of-hybrid-models" id="toc-advantages-of-hybrid-models" class="nav-link" data-scroll-target="#advantages-of-hybrid-models">Advantages of Hybrid Models</a></li>
+  </ul></li>
+  <li><a href="#use-case-recommendations" id="toc-use-case-recommendations" class="nav-link" data-scroll-target="#use-case-recommendations">Use Case Recommendations</a>
+  <ul class="collapse">
+  <li><a href="#choose-transformer-attention-when" id="toc-choose-transformer-attention-when" class="nav-link" data-scroll-target="#choose-transformer-attention-when">Choose Transformer Attention When:</a></li>
+  <li><a href="#choose-cnn-attention-when" id="toc-choose-cnn-attention-when" class="nav-link" data-scroll-target="#choose-cnn-attention-when">Choose CNN Attention When:</a></li>
+  <li><a href="#consider-hybrid-approaches-when" id="toc-consider-hybrid-approaches-when" class="nav-link" data-scroll-target="#consider-hybrid-approaches-when">Consider Hybrid Approaches When:</a></li>
+  </ul></li>
+  <li><a href="#future-directions" id="toc-future-directions" class="nav-link" data-scroll-target="#future-directions">Future Directions</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

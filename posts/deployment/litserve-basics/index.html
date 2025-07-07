@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">LitServe Code Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -177,12 +177,69 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#litserve-code-guide" id="toc-litserve-code-guide" class="nav-link active" data-scroll-target="#litserve-code-guide">LitServe Code Guide</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#basic-usage" id="toc-basic-usage" class="nav-link" data-scroll-target="#basic-usage">Basic Usage</a>
+  <ul class="collapse">
+  <li><a href="#creating-your-first-litserve-api" id="toc-creating-your-first-litserve-api" class="nav-link" data-scroll-target="#creating-your-first-litserve-api">1. Creating Your First LitServe API</a></li>
+  <li><a href="#making-requests-to-your-api" id="toc-making-requests-to-your-api" class="nav-link" data-scroll-target="#making-requests-to-your-api">2. Making Requests to Your API</a></li>
+  </ul></li>
+  <li><a href="#core-concepts" id="toc-core-concepts" class="nav-link" data-scroll-target="#core-concepts">Core Concepts</a>
+  <ul class="collapse">
+  <li><a href="#litapi-class-structure" id="toc-litapi-class-structure" class="nav-link" data-scroll-target="#litapi-class-structure">LitAPI Class Structure</a></li>
+  <li><a href="#optional-methods" id="toc-optional-methods" class="nav-link" data-scroll-target="#optional-methods">Optional Methods</a></li>
+  </ul></li>
+  <li><a href="#advanced-features" id="toc-advanced-features" class="nav-link" data-scroll-target="#advanced-features">Advanced Features</a>
+  <ul class="collapse">
+  <li><a href="#custom-batching" id="toc-custom-batching" class="nav-link" data-scroll-target="#custom-batching">1. Custom Batching</a></li>
+  <li><a href="#streaming-responses" id="toc-streaming-responses" class="nav-link" data-scroll-target="#streaming-responses">2. Streaming Responses</a></li>
+  <li><a href="#multiple-gpu-support" id="toc-multiple-gpu-support" class="nav-link" data-scroll-target="#multiple-gpu-support">3. Multiple GPU Support</a></li>
+  <li><a href="#authentication-and-middleware" id="toc-authentication-and-middleware" class="nav-link" data-scroll-target="#authentication-and-middleware">4. Authentication and Middleware</a></li>
+  </ul></li>
+  <li><a href="#configuration-options" id="toc-configuration-options" class="nav-link" data-scroll-target="#configuration-options">Configuration Options</a>
+  <ul class="collapse">
+  <li><a href="#server-configuration" id="toc-server-configuration" class="nav-link" data-scroll-target="#server-configuration">Server Configuration</a></li>
+  <li><a href="#environment-variables" id="toc-environment-variables" class="nav-link" data-scroll-target="#environment-variables">Environment Variables</a></li>
+  <li><a href="#custom-configuration-file" id="toc-custom-configuration-file" class="nav-link" data-scroll-target="#custom-configuration-file">Custom Configuration File</a></li>
+  </ul></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a>
+  <ul class="collapse">
+  <li><a href="#image-classification-api" id="toc-image-classification-api" class="nav-link" data-scroll-target="#image-classification-api">1. Image Classification API</a></li>
+  <li><a href="#text-embedding-api" id="toc-text-embedding-api" class="nav-link" data-scroll-target="#text-embedding-api">2. Text Embedding API</a></li>
+  <li><a href="#multi-modal-api-text-image" id="toc-multi-modal-api-text-image" class="nav-link" data-scroll-target="#multi-modal-api-text-image">3. Multi-Modal API (Text + Image)</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#resource-management" id="toc-resource-management" class="nav-link" data-scroll-target="#resource-management">1. Resource Management</a></li>
+  <li><a href="#error-handling" id="toc-error-handling" class="nav-link" data-scroll-target="#error-handling">2. Error Handling</a></li>
+  <li><a href="#monitoring-and-logging" id="toc-monitoring-and-logging" class="nav-link" data-scroll-target="#monitoring-and-logging">3. Monitoring and Logging</a></li>
+  <li><a href="#model-versioning" id="toc-model-versioning" class="nav-link" data-scroll-target="#model-versioning">4. Model Versioning</a></li>
+  </ul></li>
+  <li><a href="#troubleshooting" id="toc-troubleshooting" class="nav-link" data-scroll-target="#troubleshooting">Troubleshooting</a>
+  <ul class="collapse">
+  <li><a href="#common-issues-and-solutions" id="toc-common-issues-and-solutions" class="nav-link" data-scroll-target="#common-issues-and-solutions">Common Issues and Solutions</a></li>
+  <li><a href="#performance-optimization-tips" id="toc-performance-optimization-tips" class="nav-link" data-scroll-target="#performance-optimization-tips">Performance Optimization Tips</a></li>
+  <li><a href="#deployment-checklist" id="toc-deployment-checklist" class="nav-link" data-scroll-target="#deployment-checklist">Deployment Checklist</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

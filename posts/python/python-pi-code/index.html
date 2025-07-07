@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Python 3.14: Key Improvements and New Features</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -156,7 +156,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -176,12 +176,67 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#python-3.14-key-improvements-and-new-features" id="toc-python-3.14-key-improvements-and-new-features" class="nav-link active" data-scroll-target="#python-3.14-key-improvements-and-new-features">Python 3.14: Key Improvements and New Features</a>
+  <ul class="collapse">
+  <li><a href="#performance-improvements" id="toc-performance-improvements" class="nav-link" data-scroll-target="#performance-improvements">Performance Improvements</a>
+  <ul class="collapse">
+  <li><a href="#free-threading-experimental" id="toc-free-threading-experimental" class="nav-link" data-scroll-target="#free-threading-experimental">Free-Threading (Experimental)</a></li>
+  <li><a href="#jit-compilation-improvements" id="toc-jit-compilation-improvements" class="nav-link" data-scroll-target="#jit-compilation-improvements">JIT Compilation Improvements</a></li>
+  </ul></li>
+  <li><a href="#language-features" id="toc-language-features" class="nav-link" data-scroll-target="#language-features">Language Features</a>
+  <ul class="collapse">
+  <li><a href="#improved-type-annotations" id="toc-improved-type-annotations" class="nav-link" data-scroll-target="#improved-type-annotations">Improved Type Annotations</a></li>
+  <li><a href="#pattern-matching-enhancements" id="toc-pattern-matching-enhancements" class="nav-link" data-scroll-target="#pattern-matching-enhancements">Pattern Matching Enhancements</a></li>
+  <li><a href="#new-string-methods" id="toc-new-string-methods" class="nav-link" data-scroll-target="#new-string-methods">New String Methods</a></li>
+  </ul></li>
+  <li><a href="#error-handling-improvements" id="toc-error-handling-improvements" class="nav-link" data-scroll-target="#error-handling-improvements">Error Handling Improvements</a>
+  <ul class="collapse">
+  <li><a href="#enhanced-exception-groups" id="toc-enhanced-exception-groups" class="nav-link" data-scroll-target="#enhanced-exception-groups">Enhanced Exception Groups</a></li>
+  <li><a href="#improved-traceback-information" id="toc-improved-traceback-information" class="nav-link" data-scroll-target="#improved-traceback-information">Improved Traceback Information</a></li>
+  </ul></li>
+  <li><a href="#standard-library-updates" id="toc-standard-library-updates" class="nav-link" data-scroll-target="#standard-library-updates">Standard Library Updates</a>
+  <ul class="collapse">
+  <li><a href="#enhanced-pathlib" id="toc-enhanced-pathlib" class="nav-link" data-scroll-target="#enhanced-pathlib">Enhanced <code>pathlib</code></a></li>
+  <li><a href="#improved-asyncio" id="toc-improved-asyncio" class="nav-link" data-scroll-target="#improved-asyncio">Improved <code>asyncio</code></a></li>
+  <li><a href="#new-itertools-functions" id="toc-new-itertools-functions" class="nav-link" data-scroll-target="#new-itertools-functions">New <code>itertools</code> Functions</a></li>
+  </ul></li>
+  <li><a href="#development-tools" id="toc-development-tools" class="nav-link" data-scroll-target="#development-tools">Development Tools</a>
+  <ul class="collapse">
+  <li><a href="#better-repl-experience" id="toc-better-repl-experience" class="nav-link" data-scroll-target="#better-repl-experience">Better REPL Experience</a></li>
+  <li><a href="#debugging-improvements" id="toc-debugging-improvements" class="nav-link" data-scroll-target="#debugging-improvements">Debugging Improvements</a></li>
+  </ul></li>
+  <li><a href="#migration-considerations" id="toc-migration-considerations" class="nav-link" data-scroll-target="#migration-considerations">Migration Considerations</a>
+  <ul class="collapse">
+  <li><a href="#deprecated-features" id="toc-deprecated-features" class="nav-link" data-scroll-target="#deprecated-features">Deprecated Features</a></li>
+  <li><a href="#compatibility-notes" id="toc-compatibility-notes" class="nav-link" data-scroll-target="#compatibility-notes">Compatibility Notes</a></li>
+  </ul></li>
+  <li><a href="#performance-benchmarks" id="toc-performance-benchmarks" class="nav-link" data-scroll-target="#performance-benchmarks">Performance Benchmarks</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting Started</a>
+  <ul class="collapse">
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#migration-checklist" id="toc-migration-checklist" class="nav-link" data-scroll-target="#migration-checklist">Migration Checklist</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#taking-advantage-of-new-features" id="toc-taking-advantage-of-new-features" class="nav-link" data-scroll-target="#taking-advantage-of-new-features">Taking Advantage of New Features</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

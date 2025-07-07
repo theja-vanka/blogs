@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">PyTorch to PyTorch Lightning Migration Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -177,12 +177,67 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#pytorch-to-pytorch-lightning-migration-guide" id="toc-pytorch-to-pytorch-lightning-migration-guide" class="nav-link active" data-scroll-target="#pytorch-to-pytorch-lightning-migration-guide">PyTorch to PyTorch Lightning Migration Guide</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#why-migrate" id="toc-why-migrate" class="nav-link" data-scroll-target="#why-migrate">Why Migrate?</a></li>
+  </ul></li>
+  <li><a href="#key-concepts" id="toc-key-concepts" class="nav-link" data-scroll-target="#key-concepts">Key Concepts</a>
+  <ul class="collapse">
+  <li><a href="#lightningmodule" id="toc-lightningmodule" class="nav-link" data-scroll-target="#lightningmodule">LightningModule</a></li>
+  <li><a href="#trainer" id="toc-trainer" class="nav-link" data-scroll-target="#trainer">Trainer</a></li>
+  <li><a href="#datamodule" id="toc-datamodule" class="nav-link" data-scroll-target="#datamodule">DataModule</a></li>
+  </ul></li>
+  <li><a href="#basic-migration-steps" id="toc-basic-migration-steps" class="nav-link" data-scroll-target="#basic-migration-steps">Basic Migration Steps</a>
+  <ul class="collapse">
+  <li><a href="#step-1-convert-model-to-lightningmodule" id="toc-step-1-convert-model-to-lightningmodule" class="nav-link" data-scroll-target="#step-1-convert-model-to-lightningmodule">Step 1: Convert Model to LightningModule</a></li>
+  <li><a href="#step-2-replace-training-loop-with-trainer" id="toc-step-2-replace-training-loop-with-trainer" class="nav-link" data-scroll-target="#step-2-replace-training-loop-with-trainer">Step 2: Replace Training Loop with Trainer</a></li>
+  </ul></li>
+  <li><a href="#code-examples" id="toc-code-examples" class="nav-link" data-scroll-target="#code-examples">Code Examples</a>
+  <ul class="collapse">
+  <li><a href="#complete-mnist-example" id="toc-complete-mnist-example" class="nav-link" data-scroll-target="#complete-mnist-example">Complete MNIST Example</a></li>
+  <li><a href="#advanced-model-with-custom-metrics" id="toc-advanced-model-with-custom-metrics" class="nav-link" data-scroll-target="#advanced-model-with-custom-metrics">Advanced Model with Custom Metrics</a></li>
+  </ul></li>
+  <li><a href="#advanced-features" id="toc-advanced-features" class="nav-link" data-scroll-target="#advanced-features">Advanced Features</a>
+  <ul class="collapse">
+  <li><a href="#multiple-optimizers-and-schedulers" id="toc-multiple-optimizers-and-schedulers" class="nav-link" data-scroll-target="#multiple-optimizers-and-schedulers">1. Multiple Optimizers and Schedulers</a></li>
+  <li><a href="#custom-callbacks" id="toc-custom-callbacks" class="nav-link" data-scroll-target="#custom-callbacks">2. Custom Callbacks</a></li>
+  <li><a href="#manual-optimization" id="toc-manual-optimization" class="nav-link" data-scroll-target="#manual-optimization">3. Manual Optimization</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#hyperparameter-management" id="toc-hyperparameter-management" class="nav-link" data-scroll-target="#hyperparameter-management">1. Hyperparameter Management</a></li>
+  <li><a href="#proper-logging" id="toc-proper-logging" class="nav-link" data-scroll-target="#proper-logging">2. Proper Logging</a></li>
+  <li><a href="#model-organization" id="toc-model-organization" class="nav-link" data-scroll-target="#model-organization">3. Model Organization</a></li>
+  <li><a href="#testing-and-validation" id="toc-testing-and-validation" class="nav-link" data-scroll-target="#testing-and-validation">4. Testing and Validation</a></li>
+  </ul></li>
+  <li><a href="#common-pitfalls" id="toc-common-pitfalls" class="nav-link" data-scroll-target="#common-pitfalls">Common Pitfalls</a>
+  <ul class="collapse">
+  <li><a href="#device-management" id="toc-device-management" class="nav-link" data-scroll-target="#device-management">1. Device Management</a></li>
+  <li><a href="#gradient-accumulation" id="toc-gradient-accumulation" class="nav-link" data-scroll-target="#gradient-accumulation">2. Gradient Accumulation</a></li>
+  <li><a href="#metric-computation" id="toc-metric-computation" class="nav-link" data-scroll-target="#metric-computation">3. Metric Computation</a></li>
+  <li><a href="#dataloader-in-model" id="toc-dataloader-in-model" class="nav-link" data-scroll-target="#dataloader-in-model">4. DataLoader in Model</a></li>
+  </ul></li>
+  <li><a href="#migration-checklist" id="toc-migration-checklist" class="nav-link" data-scroll-target="#migration-checklist">Migration Checklist</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

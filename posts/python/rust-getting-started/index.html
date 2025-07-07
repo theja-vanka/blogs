@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Getting Started with Rust: A Complete Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -177,12 +177,77 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#getting-started-with-rust-a-complete-guide" id="toc-getting-started-with-rust-a-complete-guide" class="nav-link active" data-scroll-target="#getting-started-with-rust-a-complete-guide">Getting Started with Rust: A Complete Guide</a>
+  <ul class="collapse">
+  <li><a href="#what-is-rust" id="toc-what-is-rust" class="nav-link" data-scroll-target="#what-is-rust">What is Rust?</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a>
+  <ul class="collapse">
+  <li><a href="#installing-rust-via-rustup" id="toc-installing-rust-via-rustup" class="nav-link" data-scroll-target="#installing-rust-via-rustup">Installing Rust via Rustup</a></li>
+  <li><a href="#what-gets-installed" id="toc-what-gets-installed" class="nav-link" data-scroll-target="#what-gets-installed">What Gets Installed</a></li>
+  </ul></li>
+  <li><a href="#your-first-rust-program" id="toc-your-first-rust-program" class="nav-link" data-scroll-target="#your-first-rust-program">Your First Rust Program</a>
+  <ul class="collapse">
+  <li><a href="#hello-world" id="toc-hello-world" class="nav-link" data-scroll-target="#hello-world">Hello World</a></li>
+  <li><a href="#using-cargo-recommended" id="toc-using-cargo-recommended" class="nav-link" data-scroll-target="#using-cargo-recommended">Using Cargo (Recommended)</a></li>
+  </ul></li>
+  <li><a href="#core-concepts" id="toc-core-concepts" class="nav-link" data-scroll-target="#core-concepts">Core Concepts</a>
+  <ul class="collapse">
+  <li><a href="#variables-and-mutability" id="toc-variables-and-mutability" class="nav-link" data-scroll-target="#variables-and-mutability">Variables and Mutability</a></li>
+  <li><a href="#data-types" id="toc-data-types" class="nav-link" data-scroll-target="#data-types">Data Types</a></li>
+  <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
+  <li><a href="#control-flow" id="toc-control-flow" class="nav-link" data-scroll-target="#control-flow">Control Flow</a></li>
+  </ul></li>
+  <li><a href="#ownership-system" id="toc-ownership-system" class="nav-link" data-scroll-target="#ownership-system">Ownership System</a>
+  <ul class="collapse">
+  <li><a href="#basic-ownership-rules" id="toc-basic-ownership-rules" class="nav-link" data-scroll-target="#basic-ownership-rules">Basic Ownership Rules</a></li>
+  <li><a href="#borrowing-and-references" id="toc-borrowing-and-references" class="nav-link" data-scroll-target="#borrowing-and-references">Borrowing and References</a></li>
+  </ul></li>
+  <li><a href="#error-handling" id="toc-error-handling" class="nav-link" data-scroll-target="#error-handling">Error Handling</a></li>
+  <li><a href="#working-with-collections" id="toc-working-with-collections" class="nav-link" data-scroll-target="#working-with-collections">Working with Collections</a>
+  <ul class="collapse">
+  <li><a href="#vectors" id="toc-vectors" class="nav-link" data-scroll-target="#vectors">Vectors</a></li>
+  <li><a href="#hashmaps" id="toc-hashmaps" class="nav-link" data-scroll-target="#hashmaps">HashMaps</a></li>
+  </ul></li>
+  <li><a href="#structs-and-enums" id="toc-structs-and-enums" class="nav-link" data-scroll-target="#structs-and-enums">Structs and Enums</a>
+  <ul class="collapse">
+  <li><a href="#structs" id="toc-structs" class="nav-link" data-scroll-target="#structs">Structs</a></li>
+  <li><a href="#enums" id="toc-enums" class="nav-link" data-scroll-target="#enums">Enums</a></li>
+  </ul></li>
+  <li><a href="#package-management-with-cargo" id="toc-package-management-with-cargo" class="nav-link" data-scroll-target="#package-management-with-cargo">Package Management with Cargo</a>
+  <ul class="collapse">
+  <li><a href="#adding-dependencies" id="toc-adding-dependencies" class="nav-link" data-scroll-target="#adding-dependencies">Adding Dependencies</a></li>
+  <li><a href="#common-cargo-commands" id="toc-common-cargo-commands" class="nav-link" data-scroll-target="#common-cargo-commands">Common Cargo Commands</a></li>
+  </ul></li>
+  <li><a href="#development-tools" id="toc-development-tools" class="nav-link" data-scroll-target="#development-tools">Development Tools</a>
+  <ul class="collapse">
+  <li><a href="#formatting" id="toc-formatting" class="nav-link" data-scroll-target="#formatting">Formatting</a></li>
+  <li><a href="#linting" id="toc-linting" class="nav-link" data-scroll-target="#linting">Linting</a></li>
+  <li><a href="#testing" id="toc-testing" class="nav-link" data-scroll-target="#testing">Testing</a></li>
+  </ul></li>
+  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next Steps</a>
+  <ul class="collapse">
+  <li><a href="#learning-resources" id="toc-learning-resources" class="nav-link" data-scroll-target="#learning-resources">Learning Resources</a></li>
+  <li><a href="#practice-projects" id="toc-practice-projects" class="nav-link" data-scroll-target="#practice-projects">Practice Projects</a></li>
+  <li><a href="#join-the-community" id="toc-join-the-community" class="nav-link" data-scroll-target="#join-the-community">Join the Community</a></li>
+  </ul></li>
+  <li><a href="#tips-for-success" id="toc-tips-for-success" class="nav-link" data-scroll-target="#tips-for-success">Tips for Success</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 

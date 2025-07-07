@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -144,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
+    <div class="quarto-title column-page-right">
       <h1 class="title">Distributed Training with PyTorch - Complete Code Guide</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-right">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -177,12 +177,65 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#distributed-training-with-pytorch---complete-code-guide" id="toc-distributed-training-with-pytorch---complete-code-guide" class="nav-link active" data-scroll-target="#distributed-training-with-pytorch---complete-code-guide">Distributed Training with PyTorch - Complete Code Guide</a>
+  <ul class="collapse">
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#core-concepts" id="toc-core-concepts" class="nav-link" data-scroll-target="#core-concepts">Core Concepts</a>
+  <ul class="collapse">
+  <li><a href="#key-terminology" id="toc-key-terminology" class="nav-link" data-scroll-target="#key-terminology">Key Terminology</a></li>
+  <li><a href="#communication-patterns" id="toc-communication-patterns" class="nav-link" data-scroll-target="#communication-patterns">Communication Patterns</a></li>
+  </ul></li>
+  <li><a href="#setup-and-initialization" id="toc-setup-and-initialization" class="nav-link" data-scroll-target="#setup-and-initialization">Setup and Initialization</a>
+  <ul class="collapse">
+  <li><a href="#basic-environment-setup" id="toc-basic-environment-setup" class="nav-link" data-scroll-target="#basic-environment-setup">Basic Environment Setup</a></li>
+  <li><a href="#multi-node-setup" id="toc-multi-node-setup" class="nav-link" data-scroll-target="#multi-node-setup">Multi-Node Setup</a></li>
+  </ul></li>
+  <li><a href="#data-parallel-training" id="toc-data-parallel-training" class="nav-link" data-scroll-target="#data-parallel-training">Data Parallel Training</a>
+  <ul class="collapse">
+  <li><a href="#simple-dataparallel-single-node" id="toc-simple-dataparallel-single-node" class="nav-link" data-scroll-target="#simple-dataparallel-single-node">Simple DataParallel (Single Node)</a></li>
+  </ul></li>
+  <li><a href="#distributed-data-parallel-ddp" id="toc-distributed-data-parallel-ddp" class="nav-link" data-scroll-target="#distributed-data-parallel-ddp">Distributed Data Parallel (DDP)</a>
+  <ul class="collapse">
+  <li><a href="#basic-ddp-implementation" id="toc-basic-ddp-implementation" class="nav-link" data-scroll-target="#basic-ddp-implementation">Basic DDP Implementation</a></li>
+  <li><a href="#complete-training-script-with-validation" id="toc-complete-training-script-with-validation" class="nav-link" data-scroll-target="#complete-training-script-with-validation">Complete Training Script with Validation</a></li>
+  </ul></li>
+  <li><a href="#advanced-patterns" id="toc-advanced-patterns" class="nav-link" data-scroll-target="#advanced-patterns">Advanced Patterns</a>
+  <ul class="collapse">
+  <li><a href="#mixed-precision-training" id="toc-mixed-precision-training" class="nav-link" data-scroll-target="#mixed-precision-training">Mixed Precision Training</a></li>
+  <li><a href="#model-sharding-with-fsdp" id="toc-model-sharding-with-fsdp" class="nav-link" data-scroll-target="#model-sharding-with-fsdp">Model Sharding with FSDP</a></li>
+  <li><a href="#pipeline-parallelism" id="toc-pipeline-parallelism" class="nav-link" data-scroll-target="#pipeline-parallelism">Pipeline Parallelism</a></li>
+  </ul></li>
+  <li><a href="#monitoring-and-debugging" id="toc-monitoring-and-debugging" class="nav-link" data-scroll-target="#monitoring-and-debugging">Monitoring and Debugging</a>
+  <ul class="collapse">
+  <li><a href="#performance-profiling" id="toc-performance-profiling" class="nav-link" data-scroll-target="#performance-profiling">Performance Profiling</a></li>
+  <li><a href="#communication-debugging" id="toc-communication-debugging" class="nav-link" data-scroll-target="#communication-debugging">Communication Debugging</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#data-loading-optimization" id="toc-data-loading-optimization" class="nav-link" data-scroll-target="#data-loading-optimization">1. Data Loading Optimization</a></li>
+  <li><a href="#gradient-synchronization" id="toc-gradient-synchronization" class="nav-link" data-scroll-target="#gradient-synchronization">2. Gradient Synchronization</a></li>
+  <li><a href="#dynamic-loss-scaling" id="toc-dynamic-loss-scaling" class="nav-link" data-scroll-target="#dynamic-loss-scaling">3. Dynamic Loss Scaling</a></li>
+  <li><a href="#launch-script-example" id="toc-launch-script-example" class="nav-link" data-scroll-target="#launch-script-example">4. Launch Script Example</a></li>
+  <li><a href="#error-handling-and-recovery" id="toc-error-handling-and-recovery" class="nav-link" data-scroll-target="#error-handling-and-recovery">5. Error Handling and Recovery</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
 
 
 
