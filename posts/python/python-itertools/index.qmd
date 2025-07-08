@@ -1,0 +1,935 @@
+---
+title: "Complete Guide to Python's itertools Module"
+author: "Krishnatheja Vanka"
+date: "2025-07-06"
+categories: [code, tutorial, beginner]
+format:
+  html:
+    code-fold: false
+execute:
+  echo: true
+  timing: true
+jupyter: python3
+---
+
+# Complete Guide to Python's itertools Module
+![](iter.png)
+
+## Introduction
+
+The `itertools` module is one of Python's most powerful standard library modules for creating iterators and performing functional programming operations. It provides a collection of tools for creating iterators that are building blocks for efficient loops and data processing pipelines.
+
+The `itertools` module provides three categories of iterators:
+
+- **Infinite iterators**: Generate infinite sequences
+- **Finite iterators**: Work with finite sequences
+- **Combinatorial iterators**: Generate combinations and permutations
+
+```{python}
+import itertools
+```
+
+### Other necessary imports
+
+```{python}
+import math
+```
+
+## Why Use itertools?
+
+- **Memory Efficient**: Creates iterators that generate values on-demand
+- **Functional Programming**: Enables elegant functional programming patterns
+- **Performance**: Many operations are implemented in C for speed
+- **Composability**: Functions can be easily combined to create complex iterations
+
+## Categories of itertools Functions
+
+The itertools module is organized into three main categories:
+
+1. **Infinite Iterators**: Generate infinite sequences
+2. **Finite Iterators**: Terminate based on input sequences
+3. **Combinatorial Iterators**: Generate combinations and permutations
+
+---
+
+## 1. Infinite Iterators
+
+### count(start=0, step=1)
+
+Creates an infinite arithmetic sequence starting from `start` with increments of `step`.
+
+```{python}
+import itertools
+
+# Basic counting
+counter = itertools.count(1)
+print(list(itertools.islice(counter, 5)))  # [1, 2, 3, 4, 5]
+
+# Counting with step
+counter = itertools.count(0, 2)
+print(list(itertools.islice(counter, 5)))  # [0, 2, 4, 6, 8]
+
+# Counting with floats
+counter = itertools.count(0.5, 0.1)
+print(list(itertools.islice(counter, 3)))  # [0.5, 0.6, 0.7]
+```
+
+**Use Case**: Generating IDs, pagination, or any sequence that needs infinite counting.
+
+### cycle(iterable)
+
+Infinitely repeats the elements of an iterable.
+
+```{python}
+colors = itertools.cycle(['red', 'green', 'blue'])
+print(list(itertools.islice(colors, 8)))
+# ['red', 'green', 'blue', 'red', 'green', 'blue', 'red', 'green']
+
+# Practical example: Round-robin assignment
+tasks = ['task1', 'task2', 'task3', 'task4']
+workers = itertools.cycle(['Alice', 'Bob', 'Charlie'])
+
+assignments = list(zip(tasks, workers))
+print(assignments)
+# [('task1', 'Alice'), ('task2', 'Bob'), ('task3', 'Charlie'), ('task4', 'Alice')]
+```
+
+### repeat(object, times=None)
+
+Repeats an object either infinitely or a specified number of times.
+
+```{python}
+# Infinite repeat
+ones = itertools.repeat(1)
+print(list(itertools.islice(ones, 5)))  # [1, 1, 1, 1, 1]
+
+# Finite repeat
+zeros = itertools.repeat(0, 3)
+print(list(zeros))  # [0, 0, 0]
+
+# Practical example: Creating default values
+default_config = {'debug': False, 'timeout': 30}
+configs = list(itertools.repeat(default_config, 5))
+print(len(configs))  # 5
+```
+
+---
+
+## 2. Finite Iterators
+
+### accumulate(iterable, func=operator.add, initial=None)
+
+Returns running totals or results of binary functions.
+
+```{python}
+import operator
+
+# Running sum (default)
+numbers = [1, 2, 3, 4, 5]
+print(list(itertools.accumulate(numbers)))  # [1, 3, 6, 10, 15]
+
+# Running product
+print(list(itertools.accumulate(numbers, operator.mul)))  # [1, 2, 6, 24, 120]
+
+# Running maximum
+print(list(itertools.accumulate([3, 1, 4, 1, 5], max)))  # [3, 3, 4, 4, 5]
+
+# With initial value (Python 3.8+)
+print(list(itertools.accumulate([1, 2, 3], initial=100)))  # [100, 101, 103, 106]
+```
+
+### chain(*iterables)
+
+Flattens multiple iterables into a single sequence.
+
+```{python}
+# Basic chaining
+list1 = [1, 2, 3]
+list2 = [4, 5, 6]
+list3 = [7, 8, 9]
+
+chained = itertools.chain(list1, list2, list3)
+print(list(chained))  # [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+# Chain from iterable
+nested_lists = [[1, 2], [3, 4], [5, 6]]
+flattened = itertools.chain.from_iterable(nested_lists)
+print(list(flattened))  # [1, 2, 3, 4, 5, 6]
+```
+
+### compress(data, selectors)
+
+Filters data based on corresponding boolean values in selectors.
+
+```{python}
+data = ['A', 'B', 'C', 'D', 'E']
+selectors = [1, 0, 1, 0, 1]
+
+filtered = itertools.compress(data, selectors)
+print(list(filtered))  # ['A', 'C', 'E']
+
+# Practical example: Filtering based on conditions
+names = ['Alice', 'Bob', 'Charlie', 'David']
+ages = [25, 17, 30, 16]
+adults = [age >= 18 for age in ages]
+
+adult_names = itertools.compress(names, adults)
+print(list(adult_names))  # ['Alice', 'Charlie']
+```
+
+### dropwhile(predicate, iterable)
+
+Drops elements from the beginning while predicate is true.
+
+```{python}
+numbers = [1, 3, 5, 8, 9, 10, 12]
+result = itertools.dropwhile(lambda x: x < 8, numbers)
+print(list(result))  # [8, 9, 10, 12]
+
+# Practical example: Skip header lines
+lines = ['# Comment', '# Another comment', 'data1', 'data2', '# inline comment']
+data_lines = itertools.dropwhile(lambda line: line.startswith('#'), lines)
+print(list(data_lines))  # ['data1', 'data2', '# inline comment']
+
+# Practical example: Processing log entries
+log_entries = [
+    "INFO: Starting application",
+    "DEBUG: Loading config",
+    "ERROR: Database connection failed",
+    "INFO: Retrying connection",
+    "INFO: Connection successful"
+]
+
+# Skip INFO messages at the beginning
+important_logs = itertools.dropwhile(
+    lambda x: x.startswith("INFO"), log_entries
+)
+print(list(important_logs))
+```
+
+### takewhile(predicate, iterable)
+
+Returns elements from the beginning while predicate is true.
+
+```{python}
+numbers = [1, 3, 5, 8, 9, 10, 12]
+result = itertools.takewhile(lambda x: x < 8, numbers)
+print(list(result))  # [1, 3, 5]
+
+# Practical example: Read until delimiter
+data = ['apple', 'banana', 'STOP', 'cherry', 'date']
+before_stop = itertools.takewhile(lambda x: x != 'STOP', data)
+print(list(before_stop))  # ['apple', 'banana']
+```
+
+### filterfalse(predicate, iterable)
+
+Returns elements where predicate is false (opposite of filter).
+
+```{python}
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+odds = itertools.filterfalse(lambda x: x % 2 == 0, numbers)
+print(list(odds))  # [1, 3, 5, 7, 9]
+
+# Compare with regular filter
+evens = filter(lambda x: x % 2 == 0, numbers)
+print(list(evens))  # [2, 4, 6, 8, 10]
+```
+
+### groupby(iterable, key=None)
+
+Groups consecutive elements by a key function.
+
+```{python}
+# Basic grouping
+data = [1, 1, 2, 2, 2, 3, 1, 1]
+grouped = itertools.groupby(data)
+
+for key, group in grouped:
+    print(f"{key}: {list(group)}")
+# 1: [1, 1]
+# 2: [2, 2, 2]
+# 3: [3]
+# 1: [1, 1]
+
+# Grouping with key function
+words = ['apple', 'banana', 'apricot', 'blueberry', 'cherry']
+# First sort by first letter, then group
+sorted_words = sorted(words, key=lambda x: x[0])
+grouped_words = itertools.groupby(sorted_words, key=lambda x: x[0])
+
+for letter, group in grouped_words:
+    print(f"{letter}: {list(group)}")
+# a: ['apple', 'apricot']
+# b: ['banana', 'blueberry']
+# c: ['cherry']
+
+# Grouping sorted data
+students = [
+    ('Alice', 'A'),
+    ('Bob', 'B'),
+    ('Charlie', 'A'),
+    ('David', 'B'),
+    ('Eve', 'A')
+]
+# Sort first, then group
+students_sorted = sorted(students, key=lambda x: x[1])
+by_grade = itertools.groupby(students_sorted, key=lambda x: x[1])
+for grade, group in by_grade:
+    names = [student[0] for student in group]
+    print(f"Grade {grade}: {names}")
+```
+
+### islice(iterable, start, stop, step)
+
+Returns selected elements from the iterable (like list slicing but for iterators).
+
+```{python}
+numbers = range(20)
+
+# islice(iterable, stop)
+print(list(itertools.islice(numbers, 5)))  # [0, 1, 2, 3, 4]
+
+# islice(iterable, start, stop)
+print(list(itertools.islice(numbers, 5, 10)))  # [5, 6, 7, 8, 9]
+
+# islice(iterable, start, stop, step)
+print(list(itertools.islice(numbers, 0, 10, 2)))  # [0, 2, 4, 6, 8]
+
+# Practical example: Pagination
+def paginate(iterable, page_size):
+    iterator = iter(iterable)
+    while True:
+        page = list(itertools.islice(iterator, page_size))
+        if not page:
+            break
+        yield page
+
+data = range(25)
+for page_num, page in enumerate(paginate(data, 10), 1):
+    print(f"Page {page_num}: {page}")
+```
+
+### starmap(function, iterable)
+
+Applies function to arguments unpacked from each item in iterable.
+
+```{python}
+# Basic usage
+points = [(1, 2), (3, 4), (5, 6)]
+distances = itertools.starmap(lambda x, y: (x**2 + y**2)**0.5, points)
+print(list(distances))  # [2.236..., 5.0, 7.810...]
+
+# Practical example: Multiple argument functions
+import operator
+pairs = [(2, 3), (4, 5), (6, 7)]
+products = itertools.starmap(operator.mul, pairs)
+print(list(products))  # [6, 20, 42]
+
+# Compare with map
+regular_map = map(operator.mul, [2, 4, 6], [3, 5, 7])
+print(list(regular_map))  # [6, 20, 42]
+
+# Compare with map
+# map passes each tuple as a single argument
+# starmap unpacks each tuple as separate arguments
+def add(x, y):
+    return x + y
+
+pairs = [(1, 2), (3, 4), (5, 6)]
+result = list(itertools.starmap(add, pairs))
+print(result)  # [3, 7, 11]
+
+# Practical example: Applying operations to coordinate pairs
+coordinates = [(1, 2), (3, 4), (5, 6)]
+distances_from_origin = list(itertools.starmap(
+    lambda x, y: math.sqrt(x**2 + y**2), coordinates
+))
+print(distances_from_origin)
+```
+
+### tee(iterable, n=2)
+
+Splits an iterable into n independent iterators.
+
+```{python}
+data = [1, 2, 3, 4, 5]
+iter1, iter2 = itertools.tee(data)
+
+print(list(iter1))  # [1, 2, 3, 4, 5]
+print(list(iter2))  # [1, 2, 3, 4, 5]
+
+# Practical example: Processing data in multiple ways
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+evens_iter, odds_iter = itertools.tee(numbers)
+
+evens = filter(lambda x: x % 2 == 0, evens_iter)
+odds = filter(lambda x: x % 2 == 1, odds_iter)
+
+print(f"Evens: {list(evens)}")  # [2, 4, 6, 8, 10]
+print(f"Odds: {list(odds)}")    # [1, 3, 5, 7, 9]
+```
+
+### zip_longest(*iterables, fillvalue=None)
+
+Zips iterables but continues until the longest is exhausted.
+
+```{python}
+list1 = [1, 2, 3]
+list2 = ['a', 'b', 'c', 'd', 'e']
+
+# Regular zip stops at shortest
+print(list(zip(list1, list2)))  # [(1, 'a'), (2, 'b'), (3, 'c')]
+
+# zip_longest continues to longest
+print(list(itertools.zip_longest(list1, list2)))
+# [(1, 'a'), (2, 'b'), (3, 'c'), (None, 'd'), (None, 'e')]
+
+# With custom fillvalue
+print(list(itertools.zip_longest(list1, list2, fillvalue='X')))
+# [(1, 'a'), (2, 'b'), (3, 'c'), ('X', 'd'), ('X', 'e')]
+```
+
+---
+
+## 3. Combinatorial Iterators
+
+### product(*iterables, repeat=1)
+
+Cartesian product of input iterables.
+
+```{python}
+# Basic product
+colors = ['red', 'blue']
+sizes = ['S', 'M', 'L']
+
+combinations = itertools.product(colors, sizes)
+print(list(combinations))
+# [('red', 'S'), ('red', 'M'), ('red', 'L'), ('blue', 'S'), ('blue', 'M'), ('blue', 'L')]
+
+# With repeat
+dice_rolls = itertools.product(range(1, 7), repeat=2)
+print(list(itertools.islice(dice_rolls, 10)))
+# [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (2, 1), (2, 2), (2, 3), (2, 4)]
+
+# Practical example: Grid coordinates
+grid = itertools.product(range(3), range(3))
+print(list(grid))
+# [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
+```
+
+### permutations(iterable, r=None)
+
+Returns r-length permutations of elements.
+
+```{python}
+# All permutations
+letters = ['A', 'B', 'C']
+perms = itertools.permutations(letters)
+print(list(perms))
+# [('A', 'B', 'C'), ('A', 'C', 'B'), ('B', 'A', 'C'), ('B', 'C', 'A'), ('C', 'A', 'B'), ('C', 'B', 'A')]
+
+# r-length permutations
+perms_2 = itertools.permutations(letters, 2)
+print(list(perms_2))
+# [('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B')]
+
+# Practical example: Anagrams
+def find_anagrams(word, length=None):
+    if length is None:
+        length = len(word)
+    return [''.join(p) for p in itertools.permutations(word, length)]
+
+print(find_anagrams('CAT', 2))  # ['CA', 'CT', 'AC', 'AT', 'TC', 'TA']
+```
+
+### combinations(iterable, r)
+
+Returns r-length combinations without replacement.
+
+```{python}
+# Basic combinations
+numbers = [1, 2, 3, 4]
+combos = itertools.combinations(numbers, 2)
+print(list(combos))
+# [(1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)]
+
+# Practical example: Team selection
+players = ['Alice', 'Bob', 'Charlie', 'David', 'Eve']
+teams = itertools.combinations(players, 3)
+print(list(itertools.islice(teams, 5)))
+# [('Alice', 'Bob', 'Charlie'), ('Alice', 'Bob', 'David'), ('Alice', 'Bob', 'Eve'), ('Alice', 'Charlie', 'David'), ('Alice', 'Charlie', 'Eve')]
+```
+
+### combinations_with_replacement(iterable, r)
+
+Returns r-length combinations with replacement allowed.
+
+```{python}
+# Basic combinations with replacement
+numbers = [1, 2, 3]
+combos = itertools.combinations_with_replacement(numbers, 2)
+print(list(combos))
+# [(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)]
+
+# Practical example: Coin flips allowing same outcome
+outcomes = ['H', 'T']
+two_flips = itertools.combinations_with_replacement(outcomes, 2)
+print(list(two_flips))
+# [('H', 'H'), ('H', 'T'), ('T', 'T')]
+```
+
+---
+## Grouping and Filtering
+
+### Advanced groupby() Examples
+
+```{python}
+# Group by multiple criteria
+data = [
+    {'name': 'Alice', 'age': 25, 'city': 'New York'},
+    {'name': 'Bob', 'age': 25, 'city': 'New York'},
+    {'name': 'Charlie', 'age': 30, 'city': 'Boston'},
+    {'name': 'David', 'age': 30, 'city': 'Boston'},
+    {'name': 'Eve', 'age': 25, 'city': 'Boston'}
+]
+
+# Group by age and city
+key_func = lambda x: (x['age'], x['city'])
+sorted_data = sorted(data, key=key_func)
+for key, group in itertools.groupby(sorted_data, key=key_func):
+    age, city = key
+    names = [person['name'] for person in group]
+    print(f"Age {age}, City {city}: {names}")
+```
+
+### Custom Filtering Patterns
+
+```{python}
+# Filter consecutive duplicates
+def remove_consecutive_duplicates(iterable):
+    return [key for key, _ in itertools.groupby(iterable)]
+
+data = [1, 1, 2, 2, 2, 3, 1, 1, 1, 4]
+result = remove_consecutive_duplicates(data)
+print(result)  # [1, 2, 3, 1, 4]
+
+# Filter with multiple conditions
+numbers = range(1, 21)
+# Even numbers not divisible by 4
+filtered = itertools.filterfalse(
+    lambda x: x % 2 != 0 or x % 4 == 0, numbers
+)
+print(list(filtered))  # [2, 6, 10, 14, 18]
+```
+
+## Advanced Patterns and Recipes
+
+### Recipe: Flatten Nested Iterables
+
+```{python}
+def flatten(nested_iterable):
+    """Flatten one level of nesting."""
+    return itertools.chain.from_iterable(nested_iterable)
+
+# Usage
+nested = [[1, 2], [3, 4], [5, 6]]
+flat = list(flatten(nested))
+print(flat)  # [1, 2, 3, 4, 5, 6]
+
+def deep_flatten(nested_iterable):
+    """Recursively flatten deeply nested iterables."""
+    for item in nested_iterable:
+        if hasattr(item, '__iter__') and not isinstance(item, (str, bytes)):
+            yield from deep_flatten(item)
+        else:
+            yield item
+
+# Usage
+deeply_nested = [1, [2, [3, 4]], 5, [6, [7, [8, 9]]]]
+flat = list(deep_flatten(deeply_nested))
+print(flat)  # [1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+### Recipe: Sliding Window
+
+```{python}
+def sliding_window(iterable, n):
+    """Create a sliding window of size n."""
+    iterators = itertools.tee(iterable, n)
+    for i, it in enumerate(iterators):
+        # Advance each iterator by i positions
+        for _ in range(i):
+            next(it, None)
+    return zip(*iterators)
+
+# Usage
+data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+windows = list(sliding_window(data, 3))
+print(windows)  # [(1, 2, 3), (2, 3, 4), (3, 4, 5), (4, 5, 6), (5, 6, 7), (6, 7, 8), (7, 8, 9), (8, 9, 10)]
+```
+
+### Recipe: Roundrobin
+
+```{python}
+def roundrobin(*iterables):
+    """Take elements from iterables in round-robin fashion."""
+    iterators = [iter(it) for it in iterables]
+    while iterators:
+        for it in iterators[:]:
+            try:
+                yield next(it)
+            except StopIteration:
+                iterators.remove(it)
+
+# Usage
+result = list(roundrobin('ABC', '12345', 'xyz'))
+print(result)  # ['A', '1', 'x', 'B', '2', 'y', 'C', '3', 'z', '4', '5']
+```
+
+### Recipe: Unique Elements (Preserving Order)
+
+```{python}
+def unique_everseen(iterable, key=None):
+    """List unique elements, preserving order."""
+    seen = set()
+    seen_add = seen.add
+    if key is None:
+        for element in itertools.filterfalse(seen.__contains__, iterable):
+            seen_add(element)
+            yield element
+    else:
+        for element in iterable:
+            k = key(element)
+            if k not in seen:
+                seen_add(k)
+                yield element
+
+# Usage
+data = [1, 2, 3, 2, 4, 1, 5, 3, 6]
+unique = list(unique_everseen(data))
+print(unique)  # [1, 2, 3, 4, 5, 6]
+
+# With key function
+words = ['apple', 'Banana', 'cherry', 'Apple', 'banana']
+unique_words = list(unique_everseen(words, key=str.lower))
+print(unique_words)  # ['apple', 'Banana', 'cherry']
+```
+
+---
+
+## Practical Examples and Use Cases
+
+### 1. Data Processing Pipeline
+
+```{python}
+import itertools
+import operator
+
+# Sample data
+sales_data = [
+    ('Q1', 'Product A', 100),
+    ('Q1', 'Product B', 150),
+    ('Q2', 'Product A', 120),
+    ('Q2', 'Product B', 180),
+    ('Q3', 'Product A', 110),
+    ('Q3', 'Product B', 160),
+]
+
+# Group by quarter and calculate totals
+sales_by_quarter = itertools.groupby(sales_data, key=lambda x: x[0])
+
+for quarter, sales in sales_by_quarter:
+    total = sum(sale[2] for sale in sales)
+    print(f"{quarter}: {total}")
+```
+
+### 2. Batch Processing
+
+```{python}
+def batch_process(iterable, batch_size):
+    """Process items in batches"""
+    iterator = iter(iterable)
+    while True:
+        batch = list(itertools.islice(iterator, batch_size))
+        if not batch:
+            break
+        yield batch
+
+# Example usage
+data = range(25)
+for batch in batch_process(data, 10):
+    print(f"Processing batch: {batch}")
+```
+
+### 3. Round-Robin Scheduler
+
+```{python}
+def round_robin_scheduler(tasks, workers):
+    """Distribute tasks among workers in round-robin fashion"""
+    worker_cycle = itertools.cycle(workers)
+    return list(zip(tasks, worker_cycle))
+
+tasks = ['task1', 'task2', 'task3', 'task4', 'task5']
+workers = ['Alice', 'Bob', 'Charlie']
+
+schedule = round_robin_scheduler(tasks, workers)
+for task, worker in schedule:
+    print(f"{task} -> {worker}")
+```
+
+### 4. Sliding Window
+
+```{python}
+def sliding_window(iterable, window_size):
+    """Create sliding window of specified size"""
+    iterators = itertools.tee(iterable, window_size)
+    iterators = [itertools.islice(iterator, i, None) 
+                for i, iterator in enumerate(iterators)]
+    return zip(*iterators)
+
+# Example usage
+data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+windows = sliding_window(data, 3)
+for window in windows:
+    print(window)
+# (1, 2, 3)
+# (2, 3, 4)
+# (3, 4, 5)
+# ...
+```
+
+### 5. Pairwise Iteration
+
+```{python}
+def pairwise(iterable):
+    """Return successive overlapping pairs"""
+    a, b = itertools.tee(iterable)
+    next(b, None)
+    return zip(a, b)
+
+# Example usage
+numbers = [1, 2, 3, 4, 5]
+pairs = pairwise(numbers)
+for pair in pairs:
+    print(pair)
+# (1, 2)
+# (2, 3)
+# (3, 4)
+# (4, 5)
+```
+
+---
+
+## Performance Tips
+
+### 1. Memory Efficiency
+
+```{python}
+# Bad: Creates entire list in memory
+large_range = list(range(1000000))
+squared = [x**2 for x in large_range]
+
+# Good: Uses iterators
+large_range = range(1000000)
+squared = map(lambda x: x**2, large_range)
+```
+
+### 2. Lazy Evaluation
+
+```{python}
+# Itertools functions are lazy - they don't compute until needed
+data = range(1000000)
+filtered = itertools.filterfalse(lambda x: x % 2 == 0, data)
+# No computation happens here yet
+
+# Only compute what you need
+first_10_odds = list(itertools.islice(filtered, 10))
+```
+
+### 3. Chaining Operations
+
+```{python}
+# Chain multiple itertools operations for complex processing
+data = range(100)
+result = itertools.takewhile(
+    lambda x: x < 50,
+    itertools.filterfalse(
+        lambda x: x % 3 == 0,
+        itertools.accumulate(data)
+    )
+)
+```
+
+---
+
+## Common Patterns and Recipes
+
+### 1. Flatten Nested Iterables
+
+```{python}
+def flatten(nested_iterable):
+    """Completely flatten a nested iterable"""
+    for item in nested_iterable:
+        if hasattr(item, '__iter__') and not isinstance(item, (str, bytes)):
+            yield from flatten(item)
+        else:
+            yield item
+
+# Example
+nested = [1, [2, 3], [4, [5, 6]], 7]
+print(list(flatten(nested)))  # [1, 2, 3, 4, 5, 6, 7]
+```
+
+### 2. Unique Elements (Preserving Order)
+
+```{python}
+def unique_everseen(iterable, key=None):
+    """List unique elements, preserving order"""
+    seen = set()
+    seen_add = seen.add
+    if key is None:
+        for element in itertools.filterfalse(seen.__contains__, iterable):
+            seen_add(element)
+            yield element
+    else:
+        for element in iterable:
+            k = key(element)
+            if k not in seen:
+                seen_add(k)
+                yield element
+
+# Example
+data = [1, 2, 3, 2, 1, 4, 3, 5]
+print(list(unique_everseen(data)))  # [1, 2, 3, 4, 5]
+```
+
+### 3. Consume Iterator
+
+```{python}
+def consume(iterator, n=None):
+    """Advance the iterator n-steps ahead. If n is None, consume entirely."""
+    if n is None:
+        # feed the entire iterator into a zero-length deque
+        collections.deque(iterator, maxlen=0)
+    else:
+        # advance to the empty slice starting at position n
+        next(itertools.islice(iterator, n, n), None)
+```
+
+---
+
+## Real-World Examples
+
+### Example 1: Data Processing Pipeline
+
+```python
+# Processing CSV-like data
+def process_sales_data(data):
+    """Process sales data with itertools."""
+    # Filter out header and empty lines
+    clean_data = itertools.filterfalse(
+        lambda x: x.startswith('Date') or not x.strip(), 
+        data
+    )
+    
+    # Parse each line
+    parsed = (line.split(',') for line in clean_data)
+    
+    # Group by month
+    by_month = itertools.groupby(
+        sorted(parsed, key=lambda x: x[0][:7]),  # Sort by year-month
+        key=lambda x: x[0][:7]
+    )
+    
+    # Calculate monthly totals
+    monthly_totals = {}
+    for month, sales in by_month:
+        total = sum(float(sale[2]) for sale in sales)
+        monthly_totals[month] = total
+    
+    return monthly_totals
+
+# Sample data
+sales_data = [
+    "Date,Product,Amount",
+    "2023-01-15,Widget,100.50",
+    "2023-01-20,Gadget,75.25",
+    "2023-02-10,Widget,120.00",
+    "2023-02-15,Gadget,85.75",
+    "",
+    "2023-01-25,Widget,95.00"
+]
+
+result = process_sales_data(sales_data)
+print(result)
+```
+
+### Example 2: Configuration Generator
+
+```python
+# Generate all possible configurations
+def generate_configurations(options):
+    """Generate all possible configuration combinations."""
+    keys = list(options.keys())
+    values = list(options.values())
+    
+    for combo in itertools.product(*values):
+        yield dict(zip(keys, combo))
+
+# Usage
+server_options = {
+    'cpu': ['2-core', '4-core', '8-core'],
+    'memory': ['4GB', '8GB', '16GB'],
+    'storage': ['SSD', 'HDD'],
+    'os': ['Linux', 'Windows']
+}
+
+configs = list(generate_configurations(server_options))
+print(f"Total configurations: {len(configs)}")
+for config in configs[:3]:  # Show first 3
+    print(config)
+```
+
+### Example 3: Batch Processing
+
+```python
+def batch_process(items, batch_size, process_func):
+    """Process items in batches."""
+    iterator = iter(items)
+    while True:
+        batch = list(itertools.islice(iterator, batch_size))
+        if not batch:
+            break
+        yield process_func(batch)
+
+def sum_batch(batch):
+    return sum(batch)
+
+# Usage
+large_numbers = range(1000)
+batch_sums = list(batch_process(large_numbers, 100, sum_batch))
+print(f"Batch sums: {batch_sums[:5]}...")  # Show first 5 batch sums
+```
+
+---
+
+## Best Practices
+
+1. **Use itertools for memory-efficient processing**: When working with large datasets, itertools can help avoid loading everything into memory.
+2. **Combine with other functional programming tools**: itertools works well with `map()`, `filter()`, and `functools.reduce()`.
+3. **Remember lazy evaluation**: Most itertools functions return iterators, not lists. Use `list()` when you need to materialize the results.
+4. **Profile your code**: While itertools is generally efficient, measure performance for your specific use case.
+5. **Consider readability**: Sometimes a simple loop is clearer than a complex itertools chain.
+6. **Use type hints**: When writing functions that use itertools, consider adding type hints for better code documentation.
+7. **Sort before grouping**: `groupby()` only groups consecutive identical elements, so sort your data first if needed.
+8. **Use `tee()` carefully**: Each iterator from `tee()` maintains its own internal buffer, which can consume significant memory if iterators advance at different rates.
+9. **Profile your code**: For performance-critical applications, measure whether itertools or other approaches (like NumPy) are faster for your specific use case.
+
+---
+
+## Conclusion
+
+The itertools module provides powerful tools for creating efficient, memory-friendly iterators. By mastering these functions, you can write more elegant and performant Python code, especially when dealing with large datasets or complex iteration patterns. The key is understanding when and how to use each function effectively in your specific use cases.
+
+Remember that itertools excels at functional programming patterns and can often replace complex loops with more readable and efficient iterator chains. Practice with these examples and experiment with combining different itertools functions to solve your specific problems.
