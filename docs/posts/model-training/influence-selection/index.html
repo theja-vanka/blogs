@@ -187,7 +187,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#active-learning-influence-selection-a-comprehensive-guide" id="toc-active-learning-influence-selection-a-comprehensive-guide" class="nav-link active" data-scroll-target="#active-learning-influence-selection-a-comprehensive-guide">Active Learning Influence Selection: A Comprehensive Guide</a>
   <ul class="collapse">
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
   <li><a href="#fundamentals-of-active-learning" id="toc-fundamentals-of-active-learning" class="nav-link" data-scroll-target="#fundamentals-of-active-learning">Fundamentals of Active Learning</a>
   <ul class="collapse">
   <li><a href="#the-active-learning-loop" id="toc-the-active-learning-loop" class="nav-link" data-scroll-target="#the-active-learning-loop">The Active Learning Loop</a></li>
@@ -258,23 +257,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>Active learning is a machine learning paradigm where the algorithm can interactively query an oracle (typically a human annotator) to label new data points. The key idea is to select the most informative samples to be labeled, reducing the overall labeling effort while maintaining or improving model performance. This guide focuses on influence selection methods used in active learning strategies.</p>
 </section>
-<section id="table-of-contents" class="level2">
-<h2 class="anchored" data-anchor-id="table-of-contents">Table of Contents</h2>
-<ol type="1">
-<li><a href="#fundamentals-of-active-learning">Fundamentals of Active Learning</a></li>
-<li><a href="#influence-selection-strategies">Influence Selection Strategies</a></li>
-<li><a href="#uncertainty-based-methods">Uncertainty-Based Methods</a></li>
-<li><a href="#diversity-based-methods">Diversity-Based Methods</a></li>
-<li><a href="#expected-model-change">Expected Model Change</a></li>
-<li><a href="#expected-error-reduction">Expected Error Reduction</a></li>
-<li><a href="#influence-functions">Influence Functions</a></li>
-<li><a href="#query-by-committee">Query-by-Committee</a></li>
-<li><a href="#implementation-considerations">Implementation Considerations</a></li>
-<li><a href="#evaluation-metrics">Evaluation Metrics</a></li>
-<li><a href="#practical-examples">Practical Examples</a></li>
-<li><a href="#advanced-topics">Advanced Topics</a></li>
-</ol>
-</section>
 <section id="fundamentals-of-active-learning" class="level2">
 <h2 class="anchored" data-anchor-id="fundamentals-of-active-learning">Fundamentals of Active Learning</h2>
 <section id="the-active-learning-loop" class="level3">
@@ -306,7 +288,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>These methods select samples that the model is most uncertain about.</p>
 <section id="least-confidence" class="level3">
 <h3 class="anchored" data-anchor-id="least-confidence">Least Confidence</h3>
-<div id="18c45f50" class="cell" data-execution_count="1">
+<div id="d489ace5" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> least_confidence(model, unlabeled_pool, k):</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Predict probabilities for each sample in the unlabeled pool</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    probabilities <span class="op">=</span> model.predict_proba(unlabeled_pool)</span>
@@ -323,7 +305,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="margin-sampling" class="level3">
 <h3 class="anchored" data-anchor-id="margin-sampling">Margin Sampling</h3>
 <p>Selects samples with the smallest margin between the two most likely classes:</p>
-<div id="49259a6b" class="cell" data-execution_count="2">
+<div id="3a3c1602" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> margin_sampling(model, unlabeled_pool, k):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Predict probabilities for each sample in the unlabeled pool</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    probabilities <span class="op">=</span> model.predict_proba(unlabeled_pool)</span>
@@ -343,7 +325,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="entropy-based-sampling" class="level3">
 <h3 class="anchored" data-anchor-id="entropy-based-sampling">Entropy-Based Sampling</h3>
 <p>Selects samples with the highest predictive entropy:</p>
-<div id="f2f0cc96" class="cell" data-execution_count="3">
+<div id="d974f44b" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> entropy_sampling(model, unlabeled_pool, k):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Predict probabilities for each sample in the unlabeled pool</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    probabilities <span class="op">=</span> model.predict_proba(unlabeled_pool)</span>
@@ -360,7 +342,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="bayesian-active-learning-by-disagreement-bald" class="level3">
 <h3 class="anchored" data-anchor-id="bayesian-active-learning-by-disagreement-bald">Bayesian Active Learning by Disagreement (BALD)</h3>
 <p>For Bayesian models, BALD selects samples that maximize the mutual information between predictions and model parameters:</p>
-<div id="0d2ed53f" class="cell" data-execution_count="4">
+<div id="1f32ac03" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bald_sampling(bayesian_model, unlabeled_pool, k, n_samples<span class="op">=</span><span class="dv">100</span>):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get multiple predictions by sampling from the model's posterior</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    probs_samples <span class="op">=</span> []</span>
@@ -396,7 +378,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>These methods aim to select a diverse set of examples to ensure broad coverage of the input space.</p>
 <section id="clustering-based-sampling" class="level3">
 <h3 class="anchored" data-anchor-id="clustering-based-sampling">Clustering-Based Sampling</h3>
-<div id="4248ccbf" class="cell" data-execution_count="5">
+<div id="adf54941" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clustering_based_sampling(unlabeled_pool, k, n_clusters<span class="op">=</span><span class="va">None</span>):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> n_clusters <span class="kw">is</span> <span class="va">None</span>:</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        n_clusters <span class="op">=</span> k</span>
@@ -430,7 +412,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="core-set-approach" class="level3">
 <h3 class="anchored" data-anchor-id="core-set-approach">Core-Set Approach</h3>
 <p>The core-set approach aims to select a subset of data that best represents the whole dataset:</p>
-<div id="bf51f60e" class="cell" data-execution_count="6">
+<div id="13d82a79" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> core_set_sampling(labeled_pool, unlabeled_pool, k):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Combine labeled and unlabeled data for distance calculations</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    all_data <span class="op">=</span> np.vstack((labeled_pool, unlabeled_pool))</span>
@@ -455,7 +437,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="expected-model-change" class="level2">
 <h2 class="anchored" data-anchor-id="expected-model-change">Expected Model Change</h2>
 <p>The Expected Model Change (EMC) method selects samples that would cause the greatest change in the model if they were labeled:</p>
-<div id="477b658a" class="cell" data-execution_count="7">
+<div id="93096100" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> expected_model_change(model, unlabeled_pool, k):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Predict probabilities for each sample in the unlabeled pool</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    probabilities <span class="op">=</span> model.predict_proba(unlabeled_pool)</span>
@@ -489,7 +471,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="expected-error-reduction" class="level2">
 <h2 class="anchored" data-anchor-id="expected-error-reduction">Expected Error Reduction</h2>
 <p>The Expected Error Reduction method selects samples that, when labeled, would minimally reduce the model’s expected error:</p>
-<div id="86d341a2" class="cell" data-execution_count="8">
+<div id="59ca6f04" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> expected_error_reduction(model, unlabeled_pool, unlabeled_pool_remaining, k):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Predict probabilities for all remaining unlabeled data</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    current_probs <span class="op">=</span> model.predict_proba(unlabeled_pool_remaining)</span>
@@ -531,7 +513,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="influence-functions" class="level2">
 <h2 class="anchored" data-anchor-id="influence-functions">Influence Functions</h2>
 <p>Influence functions approximate the effect of adding or removing a training example without retraining the model:</p>
-<div id="346e8092" class="cell" data-execution_count="9">
+<div id="a814acdd" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> influence_function_sampling(model, unlabeled_pool, labeled_pool, k, labels):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    influences <span class="op">=</span> []</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -551,7 +533,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="query-by-committee" class="level2">
 <h2 class="anchored" data-anchor-id="query-by-committee">Query-by-Committee</h2>
 <p>Query-by-Committee (QBC) methods train multiple models (a committee) and select samples where they disagree:</p>
-<div id="9597bd48" class="cell" data-execution_count="10">
+<div id="212baacb" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> query_by_committee(committee_models, unlabeled_pool, k):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get predictions from all committee members</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    all_predictions <span class="op">=</span> []</span>
@@ -587,7 +569,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol type="1">
 <li><strong>Greedy Selection with Diversity</strong>: Select one sample at a time, then update the diversity metrics to avoid selecting similar samples.</li>
 </ol>
-<div id="c1d1a685" class="cell" data-execution_count="11">
+<div id="91bbb986" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> batch_selection_with_diversity(model, unlabeled_pool, k, lambda_diversity<span class="op">=</span><span class="fl">0.5</span>):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    selected_indices <span class="op">=</span> []</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    remaining_indices <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="bu">len</span>(unlabeled_pool)))</span>
@@ -661,7 +643,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="learning-curves" class="level3">
 <h3 class="anchored" data-anchor-id="learning-curves">Learning Curves</h3>
 <p>Plot model performance vs.&nbsp;number of labeled samples:</p>
-<div id="5d037211" class="cell" data-execution_count="12">
+<div id="e130d656" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_learning_curve(model_factory, X_train, y_train, X_test, y_test, </span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                        active_learning_strategy, initial_size<span class="op">=</span><span class="dv">10</span>, </span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                        batch_size<span class="op">=</span><span class="dv">10</span>, n_iterations<span class="op">=</span><span class="dv">20</span>):</span>
@@ -721,7 +703,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="practical-examples">Practical Examples</h2>
 <section id="image-classification-with-uncertainty-sampling" class="level3">
 <h3 class="anchored" data-anchor-id="image-classification-with-uncertainty-sampling">Image Classification with Uncertainty Sampling</h3>
-<div id="99de6460" class="cell" data-execution_count="13">
+<div id="45cdc468" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> fetch_openml</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
@@ -788,16 +770,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
 <span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Iteration 1: 100 labeled samples, accuracy: 0.6410
-Iteration 2: 200 labeled samples, accuracy: 0.6991
-Iteration 3: 300 labeled samples, accuracy: 0.7400
-Iteration 4: 400 labeled samples, accuracy: 0.7814
-Iteration 5: 500 labeled samples, accuracy: 0.8070
-Iteration 6: 600 labeled samples, accuracy: 0.8319
-Iteration 7: 700 labeled samples, accuracy: 0.8449
-Iteration 8: 800 labeled samples, accuracy: 0.8444
-Iteration 9: 900 labeled samples, accuracy: 0.8779
-Iteration 10: 1000 labeled samples, accuracy: 0.8772</code></pre>
+<pre><code>Iteration 1: 100 labeled samples, accuracy: 0.6744
+Iteration 2: 200 labeled samples, accuracy: 0.7504
+Iteration 3: 300 labeled samples, accuracy: 0.7818
+Iteration 4: 400 labeled samples, accuracy: 0.8004
+Iteration 5: 500 labeled samples, accuracy: 0.8098
+Iteration 6: 600 labeled samples, accuracy: 0.8342
+Iteration 7: 700 labeled samples, accuracy: 0.8592
+Iteration 8: 800 labeled samples, accuracy: 0.8588
+Iteration 9: 900 labeled samples, accuracy: 0.8562
+Iteration 10: 1000 labeled samples, accuracy: 0.8725</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
@@ -810,7 +792,7 @@ Iteration 10: 1000 labeled samples, accuracy: 0.8772</code></pre>
 </section>
 <section id="text-classification-with-query-by-committee" class="level3">
 <h3 class="anchored" data-anchor-id="text-classification-with-query-by-committee">Text Classification with Query-by-Committee</h3>
-<div id="71f7d412" class="cell" data-execution_count="14">
+<div id="2e732712" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> TfidfVectorizer</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> MultinomialNB</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
@@ -885,16 +867,16 @@ Iteration 10: 1000 labeled samples, accuracy: 0.8772</code></pre>
 <span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>        labeled_indices <span class="op">=</span> np.append(labeled_indices, selected_indices)</span>
 <span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a>        unlabeled_indices <span class="op">=</span> np.setdiff1d(unlabeled_indices, selected_indices)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Iteration 1: 20 labeled samples, accuracy: 0.2124
-Iteration 2: 30 labeled samples, accuracy: 0.2690
-Iteration 3: 40 labeled samples, accuracy: 0.3662
-Iteration 4: 50 labeled samples, accuracy: 0.5346
-Iteration 5: 60 labeled samples, accuracy: 0.5067
-Iteration 6: 70 labeled samples, accuracy: 0.5486
-Iteration 7: 80 labeled samples, accuracy: 0.6079
-Iteration 8: 90 labeled samples, accuracy: 0.5859
-Iteration 9: 100 labeled samples, accuracy: 0.7450
-Iteration 10: 110 labeled samples, accuracy: 0.7450</code></pre>
+<pre><code>Iteration 1: 20 labeled samples, accuracy: 0.2603
+Iteration 2: 30 labeled samples, accuracy: 0.4820
+Iteration 3: 40 labeled samples, accuracy: 0.3182
+Iteration 4: 50 labeled samples, accuracy: 0.5333
+Iteration 5: 60 labeled samples, accuracy: 0.4654
+Iteration 6: 70 labeled samples, accuracy: 0.5985
+Iteration 7: 80 labeled samples, accuracy: 0.7137
+Iteration 8: 90 labeled samples, accuracy: 0.7317
+Iteration 9: 100 labeled samples, accuracy: 0.7643
+Iteration 10: 110 labeled samples, accuracy: 0.7830</code></pre>
 </div>
 </div>
 </section>
@@ -918,7 +900,7 @@ Iteration 10: 110 labeled samples, accuracy: 0.7450</code></pre>
 <li><strong>Batch Normalization</strong>: Be careful with batch normalization layers when retraining.</li>
 <li><strong>Data Augmentation</strong>: Apply data augmentation to increase the effective size of the labeled pool.</li>
 </ol>
-<div id="fc973641" class="cell" data-execution_count="15">
+<div id="3f6b7476" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span>
@@ -989,7 +971,7 @@ Iteration 10: 110 labeled samples, accuracy: 0.7450</code></pre>
 <li><strong>Co-Training</strong>: Train multiple models and use their predictions to teach each other.</li>
 <li><strong>Consistency Regularization</strong>: Enforce consistent predictions across different perturbations.</li>
 </ol>
-<div id="249a72c7" class="cell" data-execution_count="16">
+<div id="9a80797f" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> semi_supervised_active_learning(labeled_X, labeled_y, unlabeled_X, model, confidence_threshold<span class="op">=</span><span class="fl">0.95</span>):</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Train model on labeled data</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    model.fit(labeled_X, labeled_y)</span>
