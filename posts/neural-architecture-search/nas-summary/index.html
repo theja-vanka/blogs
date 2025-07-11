@@ -507,20 +507,51 @@ ul.task-list li input[type="checkbox"] {
 <section id="cell-based-search-spaces" class="level3">
 <h3 class="anchored" data-anchor-id="cell-based-search-spaces">Cell-Based Search Spaces</h3>
 <p>Cell-based search spaces focus on finding optimal computational cells that can be stacked to form complete architectures. This approach reduces the search space size while maintaining architectural diversity.</p>
-<p>A typical cell contains: - <strong>Input Nodes</strong>: Receive inputs from previous cells or external sources - <strong>Intermediate Nodes</strong>: Apply operations to transform inputs - <strong>Output Nodes</strong>: Combine intermediate results to produce cell outputs</p>
-<p>The cell structure is defined by: - <strong>Operations</strong>: Convolutions, pooling, skip connections, etc. - <strong>Connections</strong>: How nodes are connected within the cell - <strong>Combination Functions</strong>: How multiple inputs to a node are combined</p>
-<p>Popular cell-based search spaces include: - <strong>NASNet Search Space</strong>: Used in the original NAS paper - <strong>DARTS Search Space</strong>: Simplified version focusing on common operations - <strong>PC-DARTS Search Space</strong>: Extends DARTS with partial channel connections</p>
+<p>A typical cell contains:</p>
+<ul>
+<li><strong>Input Nodes</strong>: Receive inputs from previous cells or external sources</li>
+<li><strong>Intermediate Nodes</strong>: Apply operations to transform inputs</li>
+<li><strong>Output Nodes</strong>: Combine intermediate results to produce cell outputs</li>
+</ul>
+<p>The cell structure is defined by:</p>
+<ul>
+<li><strong>Operations</strong>: Convolutions, pooling, skip connections, etc.</li>
+<li><strong>Connections</strong>: How nodes are connected within the cell</li>
+<li><strong>Combination Functions</strong>: How multiple inputs to a node are combined</li>
+</ul>
+<p>Popular cell-based search spaces include:</p>
+<ul>
+<li><strong>NASNet Search Space</strong>: Used in the original NAS paper</li>
+<li><strong>DARTS Search Space</strong>: Simplified version focusing on common operations</li>
+<li><strong>PC-DARTS Search Space</strong>: Extends DARTS with partial channel connections</li>
+</ul>
 </section>
 <section id="macro-search-spaces" class="level3">
 <h3 class="anchored" data-anchor-id="macro-search-spaces">Macro Search Spaces</h3>
-<p>Macro search spaces consider the overall network structure, including decisions about: - <strong>Network Depth</strong>: Total number of layers - <strong>Layer Types</strong>: Convolution, pooling, normalization, activation - <strong>Channel Dimensions</strong>: Number of filters in each layer - <strong>Skip Connections</strong>: Long-range connections between layers</p>
-<p>Macro search is more challenging than cell-based search because: - The search space is typically much larger - Architectural decisions are more interdependent - Performance evaluation is more expensive</p>
+<p>Macro search spaces consider the overall network structure, including decisions about:</p>
+<ul>
+<li><strong>Network Depth</strong>: Total number of layers</li>
+<li><strong>Layer Types</strong>: Convolution, pooling, normalization, activation</li>
+<li><strong>Channel Dimensions</strong>: Number of filters in each layer</li>
+<li><strong>Skip Connections</strong>: Long-range connections between layers</li>
+</ul>
+<p>Macro search is more challenging than cell-based search because:</p>
+<ul>
+<li>The search space is typically much larger</li>
+<li>Architectural decisions are more interdependent</li>
+<li>Performance evaluation is more expensive</li>
+</ul>
 </section>
 <section id="hierarchical-search-spaces" class="level3">
 <h3 class="anchored" data-anchor-id="hierarchical-search-spaces">Hierarchical Search Spaces</h3>
 <p>Hierarchical approaches decompose architecture search into multiple levels:</p>
 <p><strong>Level 1</strong>: Micro-architecture search (within cells) <strong>Level 2</strong>: Macro-architecture search (cell arrangement) <strong>Level 3</strong>: Network-level search (overall structure)</p>
-<p>This decomposition allows for: - More efficient search by reducing complexity at each level - Better generalization across different tasks - Modular design that can be adapted to various domains</p>
+<p>This decomposition allows for:</p>
+<ul>
+<li>More efficient search by reducing complexity at each level</li>
+<li>Better generalization across different tasks</li>
+<li>Modular design that can be adapted to various domains</li>
+</ul>
 </section>
 </section>
 <section id="performance-estimation-strategies" class="level2">
@@ -529,33 +560,59 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="proxy-tasks">Proxy Tasks</h3>
 <p>Proxy tasks reduce evaluation cost by training on simplified versions of the target problem:</p>
 <p><strong>Reduced Epochs</strong>: Training for fewer iterations to get approximate performance <strong>Smaller Datasets</strong>: Using subsets of the training data <strong>Lower Resolution</strong>: Reducing image size or sequence length <strong>Fewer Channels</strong>: Using narrower networks during search</p>
-<p>The effectiveness of proxy tasks depends on: - <strong>Rank Correlation</strong>: How well proxy performance predicts full performance - <strong>Computational Savings</strong>: The reduction in training time - <strong>Task Similarity</strong>: How closely the proxy resembles the target task</p>
+<p>The effectiveness of proxy tasks depends on:</p>
+<ul>
+<li><strong>Rank Correlation</strong>: How well proxy performance predicts full performance</li>
+<li><strong>Computational Savings</strong>: The reduction in training time</li>
+<li><strong>Task Similarity</strong>: How closely the proxy resembles the target task</li>
+</ul>
 </section>
 <section id="weight-sharing" class="level3">
 <h3 class="anchored" data-anchor-id="weight-sharing">Weight Sharing</h3>
 <p>Weight sharing reduces training time by reusing parameters across similar architectural components:</p>
 <p><strong>Parameter Inheritance</strong>: New architectures inherit weights from previously trained models <strong>Shared Backbones</strong>: Common layers share parameters across different architectures <strong>Progressive Training</strong>: Gradually building up architectures while sharing lower-level weights</p>
-<p>Challenges with weight sharing include: - <strong>Interference</strong>: Different architectures may require conflicting parameter values - <strong>Bias</strong>: Shared weights may favor certain architectural patterns - <strong>Optimization</strong>: Balancing individual architecture performance with shared efficiency</p>
+<p>Challenges with weight sharing include:</p>
+<ul>
+<li><strong>Interference</strong>: Different architectures may require conflicting parameter values</li>
+<li><strong>Bias</strong>: Shared weights may favor certain architectural patterns</li>
+<li><strong>Optimization</strong>: Balancing individual architecture performance with shared efficiency</li>
+</ul>
 </section>
 <section id="performance-prediction" class="level3">
 <h3 class="anchored" data-anchor-id="performance-prediction">Performance Prediction</h3>
 <p>Machine learning models can predict architecture performance without full training:</p>
 <p><strong>Feature Engineering</strong>: Extracting architectural features (depth, width, connectivity) <strong>Graph Neural Networks</strong>: Using GNNs to encode architectural structure <strong>Surrogate Models</strong>: Training regression models on architecture-performance pairs</p>
-<p>Key considerations: - <strong>Training Data</strong>: Sufficient architecture-performance pairs for training - <strong>Generalization</strong>: Ability to predict performance on unseen architectures - <strong>Computational Cost</strong>: Prediction should be much faster than full training</p>
+<p>Key considerations:</p>
+<ul>
+<li><strong>Training Data</strong>: Sufficient architecture-performance pairs for training</li>
+<li><strong>Generalization</strong>: Ability to predict performance on unseen architectures</li>
+<li><strong>Computational Cost</strong>: Prediction should be much faster than full training</li>
+</ul>
 </section>
 </section>
 <section id="hardware-aware-nas" class="level2">
 <h2 class="anchored" data-anchor-id="hardware-aware-nas">Hardware-Aware NAS</h2>
 <section id="motivation" class="level3">
 <h3 class="anchored" data-anchor-id="motivation">Motivation</h3>
-<p>Modern deployment scenarios require architectures that are not only accurate but also efficient in terms of: - <strong>Latency</strong>: Inference time on target hardware - <strong>Energy Consumption</strong>: Power usage during operation - <strong>Memory Usage</strong>: RAM and storage requirements - <strong>Throughput</strong>: Number of samples processed per second</p>
+<p>Modern deployment scenarios require architectures that are not only accurate but also efficient in terms of:</p>
+<ul>
+<li><strong>Latency</strong>: Inference time on target hardware</li>
+<li><strong>Energy Consumption</strong>: Power usage during operation</li>
+<li><strong>Memory Usage</strong>: RAM and storage requirements</li>
+<li><strong>Throughput</strong>: Number of samples processed per second</li>
+</ul>
 <p>Traditional NAS methods optimize primarily for accuracy, often producing architectures that are impractical for deployment. Hardware-aware NAS addresses this by incorporating efficiency metrics into the search process.</p>
 </section>
 <section id="multi-objective-optimization" class="level3">
 <h3 class="anchored" data-anchor-id="multi-objective-optimization">Multi-Objective Optimization</h3>
 <p>Hardware-aware NAS typically involves multiple, often conflicting objectives:</p>
 <p><strong>Accuracy</strong>: Model performance on the target task <strong>Efficiency</strong>: Hardware-specific metrics (latency, energy, memory) <strong>Size</strong>: Model parameter count and storage requirements</p>
-<p>Common approaches include: - <strong>Pareto-optimal Search</strong>: Finding architectures that represent optimal trade-offs - <strong>Weighted Objectives</strong>: Combining multiple metrics into a single score - <strong>Constraint-based Search</strong>: Searching within efficiency constraints</p>
+<p>Common approaches include:</p>
+<ul>
+<li><strong>Pareto-optimal Search</strong>: Finding architectures that represent optimal trade-offs</li>
+<li><strong>Weighted Objectives</strong>: Combining multiple metrics into a single score</li>
+<li><strong>Constraint-based Search</strong>: Searching within efficiency constraints</li>
+</ul>
 </section>
 <section id="platform-specific-considerations" class="level3">
 <h3 class="anchored" data-anchor-id="platform-specific-considerations">Platform-Specific Considerations</h3>
@@ -566,7 +623,12 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="latency-prediction">Latency Prediction</h3>
 <p>Accurate latency prediction is crucial for hardware-aware NAS:</p>
 <p><strong>Direct Measurement</strong>: Running architectures on target hardware <strong>Analytical Models</strong>: Using theoretical models based on operation counts <strong>Learned Predictors</strong>: Training models to predict latency from architectural features</p>
-<p>Challenges include: - <strong>Hardware Variability</strong>: Different devices have different performance characteristics - <strong>Optimization Effects</strong>: Compiler optimizations can significantly affect performance - <strong>Batch Size Dependencies</strong>: Latency often varies with batch size</p>
+<p>Challenges include:</p>
+<ul>
+<li><strong>Hardware Variability</strong>: Different devices have different performance characteristics</li>
+<li><strong>Optimization Effects</strong>: Compiler optimizations can significantly affect performance</li>
+<li><strong>Batch Size Dependencies</strong>: Latency often varies with batch size</li>
+</ul>
 </section>
 </section>
 <section id="applications-across-domains" class="level2">
@@ -575,25 +637,45 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="computer-vision">Computer Vision</h3>
 <p>NAS has achieved remarkable success in computer vision tasks:</p>
 <p><strong>Image Classification</strong>: Discovering architectures that outperform ResNet and other human-designed networks <strong>Object Detection</strong>: Finding efficient architectures for real-time detection systems <strong>Semantic Segmentation</strong>: Optimizing architectures for dense prediction tasks <strong>Image Generation</strong>: Searching for GAN architectures with improved stability and quality</p>
-<p>Notable achievements: - <strong>EfficientNet</strong>: Achieved state-of-the-art ImageNet accuracy with fewer parameters - <strong>NAS-FPN</strong>: Improved object detection performance through architecture search - <strong>Auto-DeepLab</strong>: Automated architecture search for semantic segmentation</p>
+<p>Notable achievements:</p>
+<ul>
+<li><strong>EfficientNet</strong>: Achieved state-of-the-art ImageNet accuracy with fewer parameters</li>
+<li><strong>NAS-FPN</strong>: Improved object detection performance through architecture search</li>
+<li><strong>Auto-DeepLab</strong>: Automated architecture search for semantic segmentation</li>
+</ul>
 </section>
 <section id="natural-language-processing" class="level3">
 <h3 class="anchored" data-anchor-id="natural-language-processing">Natural Language Processing</h3>
 <p>NAS applications in NLP have focused on:</p>
 <p><strong>Language Modeling</strong>: Finding efficient architectures for sequence modeling <strong>Machine Translation</strong>: Optimizing encoder-decoder architectures <strong>Text Classification</strong>: Discovering architectures for various NLP tasks <strong>Question Answering</strong>: Searching for architectures that can effectively reason over text</p>
-<p>Key developments: - <strong>Evolved Transformer</strong>: Used evolutionary search to improve Transformer architectures - <strong>NASH</strong>: Applied NAS to find efficient architectures for language understanding - <strong>AutoML for NLP</strong>: Automated architecture search for various NLP tasks</p>
+<p>Key developments:</p>
+<ul>
+<li><strong>Evolved Transformer</strong>: Used evolutionary search to improve Transformer architectures</li>
+<li><strong>NASH</strong>: Applied NAS to find efficient architectures for language understanding</li>
+<li><strong>AutoML for NLP</strong>: Automated architecture search for various NLP tasks</li>
+</ul>
 </section>
 <section id="speech-recognition" class="level3">
 <h3 class="anchored" data-anchor-id="speech-recognition">Speech Recognition</h3>
 <p>Speech recognition presents unique challenges for NAS:</p>
 <p><strong>Temporal Modeling</strong>: Architectures must effectively capture temporal dependencies <strong>Computational Constraints</strong>: Real-time processing requirements <strong>Robustness</strong>: Handling various acoustic conditions and speaking styles</p>
-<p>Applications include: - <strong>Automatic Speech Recognition</strong>: Finding efficient architectures for speech-to-text - <strong>Speaker Recognition</strong>: Optimizing architectures for speaker identification - <strong>Speech Enhancement</strong>: Searching for architectures that can improve audio quality</p>
+<p>Applications include:</p>
+<ul>
+<li><strong>Automatic Speech Recognition</strong>: Finding efficient architectures for speech-to-text</li>
+<li><strong>Speaker Recognition</strong>: Optimizing architectures for speaker identification</li>
+<li><strong>Speech Enhancement</strong>: Searching for architectures that can improve audio quality</li>
+</ul>
 </section>
 <section id="recommendation-systems" class="level3">
 <h3 class="anchored" data-anchor-id="recommendation-systems">Recommendation Systems</h3>
 <p>NAS has been applied to recommendation systems for:</p>
 <p><strong>Feature Interaction</strong>: Finding optimal ways to combine user and item features <strong>Embedding Architectures</strong>: Optimizing embedding dimensions and structures <strong>Multi-Task Learning</strong>: Balancing multiple recommendation objectives</p>
-<p>Challenges specific to recommendation systems: - <strong>Large-Scale Data</strong>: Handling massive user-item interaction datasets - <strong>Cold Start</strong>: Dealing with new users and items - <strong>Interpretability</strong>: Maintaining explainable recommendation decisions</p>
+<p>Challenges specific to recommendation systems:</p>
+<ul>
+<li><strong>Large-Scale Data</strong>: Handling massive user-item interaction datasets</li>
+<li><strong>Cold Start</strong>: Dealing with new users and items</li>
+<li><strong>Interpretability</strong>: Maintaining explainable recommendation decisions</li>
+</ul>
 </section>
 </section>
 <section id="challenges-and-limitations" class="level2">
@@ -602,7 +684,12 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="computational-cost">Computational Cost</h3>
 <p>Despite significant progress, NAS remains computationally expensive:</p>
 <p><strong>Search Time</strong>: Finding optimal architectures can take days or weeks <strong>Hardware Requirements</strong>: Requiring substantial computational resources <strong>Energy Consumption</strong>: High carbon footprint of extensive architecture search</p>
-<p>Mitigation strategies include: - <strong>Efficient Search Methods</strong>: Developing faster search algorithms - <strong>Better Performance Estimation</strong>: Reducing evaluation cost - <strong>Transfer Learning</strong>: Reusing search results across similar tasks</p>
+<p>Mitigation strategies include:</p>
+<ul>
+<li><strong>Efficient Search Methods</strong>: Developing faster search algorithms</li>
+<li><strong>Better Performance Estimation</strong>: Reducing evaluation cost</li>
+<li><strong>Transfer Learning</strong>: Reusing search results across similar tasks</li>
+</ul>
 </section>
 <section id="search-space-bias" class="level3">
 <h3 class="anchored" data-anchor-id="search-space-bias">Search Space Bias</h3>
