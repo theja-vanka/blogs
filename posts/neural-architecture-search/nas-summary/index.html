@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Krishnatheja Vanka">
+<meta name="dcterms.date" content="2025-07-11">
+
+<title>Neural Architecture Search: A Comprehensive Guide – Krishnatheja Vanka’s Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../favicon.ico" rel="icon">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-5a86c4bd0c1f9981a70f893fdae069f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../../styles/styles.css">
+</head>
+
+<body class="floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Krishnatheja Vanka’s Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/theja-vanka"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-page-right">
+      <h1 class="title">Neural Architecture Search: A Comprehensive Guide</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">research</div>
+                <div class="quarto-category">advanced</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-page-right">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Krishnatheja Vanka </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 11, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#neural-architecture-search-a-comprehensive-guide" id="toc-neural-architecture-search-a-comprehensive-guide" class="nav-link active" data-scroll-target="#neural-architecture-search-a-comprehensive-guide">Neural Architecture Search: A Comprehensive Guide</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-architecture-design-challenge" id="toc-the-architecture-design-challenge" class="nav-link" data-scroll-target="#the-architecture-design-challenge">The Architecture Design Challenge</a></li>
+  <li><a href="#core-concepts-and-definitions" id="toc-core-concepts-and-definitions" class="nav-link" data-scroll-target="#core-concepts-and-definitions">Core Concepts and Definitions</a>
+  <ul class="collapse">
+  <li><a href="#search-space" id="toc-search-space" class="nav-link" data-scroll-target="#search-space">Search Space</a></li>
+  <li><a href="#performance-estimation" id="toc-performance-estimation" class="nav-link" data-scroll-target="#performance-estimation">Performance Estimation</a></li>
+  <li><a href="#search-strategy" id="toc-search-strategy" class="nav-link" data-scroll-target="#search-strategy">Search Strategy</a></li>
+  </ul></li>
+  <li><a href="#historical-development" id="toc-historical-development" class="nav-link" data-scroll-target="#historical-development">Historical Development</a></li>
+  <li><a href="#major-nas-methodologies" id="toc-major-nas-methodologies" class="nav-link" data-scroll-target="#major-nas-methodologies">Major NAS Methodologies</a>
+  <ul class="collapse">
+  <li><a href="#reinforcement-learning-based-nas" id="toc-reinforcement-learning-based-nas" class="nav-link" data-scroll-target="#reinforcement-learning-based-nas">Reinforcement Learning-Based NAS</a></li>
+  <li><a href="#evolutionary-approaches" id="toc-evolutionary-approaches" class="nav-link" data-scroll-target="#evolutionary-approaches">Evolutionary Approaches</a></li>
+  <li><a href="#differentiable-architecture-search-darts" id="toc-differentiable-architecture-search-darts" class="nav-link" data-scroll-target="#differentiable-architecture-search-darts">Differentiable Architecture Search (DARTS)</a></li>
+  <li><a href="#one-shot-architecture-search" id="toc-one-shot-architecture-search" class="nav-link" data-scroll-target="#one-shot-architecture-search">One-Shot Architecture Search</a></li>
+  </ul></li>
+  <li><a href="#search-space-design" id="toc-search-space-design" class="nav-link" data-scroll-target="#search-space-design">Search Space Design</a>
+  <ul class="collapse">
+  <li><a href="#cell-based-search-spaces" id="toc-cell-based-search-spaces" class="nav-link" data-scroll-target="#cell-based-search-spaces">Cell-Based Search Spaces</a></li>
+  <li><a href="#macro-search-spaces" id="toc-macro-search-spaces" class="nav-link" data-scroll-target="#macro-search-spaces">Macro Search Spaces</a></li>
+  <li><a href="#hierarchical-search-spaces" id="toc-hierarchical-search-spaces" class="nav-link" data-scroll-target="#hierarchical-search-spaces">Hierarchical Search Spaces</a></li>
+  </ul></li>
+  <li><a href="#performance-estimation-strategies" id="toc-performance-estimation-strategies" class="nav-link" data-scroll-target="#performance-estimation-strategies">Performance Estimation Strategies</a>
+  <ul class="collapse">
+  <li><a href="#proxy-tasks" id="toc-proxy-tasks" class="nav-link" data-scroll-target="#proxy-tasks">Proxy Tasks</a></li>
+  <li><a href="#weight-sharing" id="toc-weight-sharing" class="nav-link" data-scroll-target="#weight-sharing">Weight Sharing</a></li>
+  <li><a href="#performance-prediction" id="toc-performance-prediction" class="nav-link" data-scroll-target="#performance-prediction">Performance Prediction</a></li>
+  </ul></li>
+  <li><a href="#hardware-aware-nas" id="toc-hardware-aware-nas" class="nav-link" data-scroll-target="#hardware-aware-nas">Hardware-Aware NAS</a>
+  <ul class="collapse">
+  <li><a href="#motivation" id="toc-motivation" class="nav-link" data-scroll-target="#motivation">Motivation</a></li>
+  <li><a href="#multi-objective-optimization" id="toc-multi-objective-optimization" class="nav-link" data-scroll-target="#multi-objective-optimization">Multi-Objective Optimization</a></li>
+  <li><a href="#platform-specific-considerations" id="toc-platform-specific-considerations" class="nav-link" data-scroll-target="#platform-specific-considerations">Platform-Specific Considerations</a></li>
+  <li><a href="#latency-prediction" id="toc-latency-prediction" class="nav-link" data-scroll-target="#latency-prediction">Latency Prediction</a></li>
+  </ul></li>
+  <li><a href="#applications-across-domains" id="toc-applications-across-domains" class="nav-link" data-scroll-target="#applications-across-domains">Applications Across Domains</a>
+  <ul class="collapse">
+  <li><a href="#computer-vision" id="toc-computer-vision" class="nav-link" data-scroll-target="#computer-vision">Computer Vision</a></li>
+  <li><a href="#natural-language-processing" id="toc-natural-language-processing" class="nav-link" data-scroll-target="#natural-language-processing">Natural Language Processing</a></li>
+  <li><a href="#speech-recognition" id="toc-speech-recognition" class="nav-link" data-scroll-target="#speech-recognition">Speech Recognition</a></li>
+  <li><a href="#recommendation-systems" id="toc-recommendation-systems" class="nav-link" data-scroll-target="#recommendation-systems">Recommendation Systems</a></li>
+  </ul></li>
+  <li><a href="#challenges-and-limitations" id="toc-challenges-and-limitations" class="nav-link" data-scroll-target="#challenges-and-limitations">Challenges and Limitations</a>
+  <ul class="collapse">
+  <li><a href="#computational-cost" id="toc-computational-cost" class="nav-link" data-scroll-target="#computational-cost">Computational Cost</a></li>
+  <li><a href="#search-space-bias" id="toc-search-space-bias" class="nav-link" data-scroll-target="#search-space-bias">Search Space Bias</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#generalization" id="toc-generalization" class="nav-link" data-scroll-target="#generalization">Generalization</a></li>
+  </ul></li>
+  <li><a href="#recent-advances-and-future-directions" id="toc-recent-advances-and-future-directions" class="nav-link" data-scroll-target="#recent-advances-and-future-directions">Recent Advances and Future Directions</a>
+  <ul class="collapse">
+  <li><a href="#zero-shot-nas" id="toc-zero-shot-nas" class="nav-link" data-scroll-target="#zero-shot-nas">Zero-Shot NAS</a></li>
+  <li><a href="#automated-machine-learning-automl" id="toc-automated-machine-learning-automl" class="nav-link" data-scroll-target="#automated-machine-learning-automl">Automated Machine Learning (AutoML)</a></li>
+  <li><a href="#federated-nas" id="toc-federated-nas" class="nav-link" data-scroll-target="#federated-nas">Federated NAS</a></li>
+  <li><a href="#transformer-architecture-search" id="toc-transformer-architecture-search" class="nav-link" data-scroll-target="#transformer-architecture-search">Transformer Architecture Search</a></li>
+  <li><a href="#multi-modal-nas" id="toc-multi-modal-nas" class="nav-link" data-scroll-target="#multi-modal-nas">Multi-Modal NAS</a></li>
+  </ul></li>
+  <li><a href="#best-practices-and-recommendations" id="toc-best-practices-and-recommendations" class="nav-link" data-scroll-target="#best-practices-and-recommendations">Best Practices and Recommendations</a>
+  <ul class="collapse">
+  <li><a href="#search-space-design-1" id="toc-search-space-design-1" class="nav-link" data-scroll-target="#search-space-design-1">Search Space Design</a></li>
+  <li><a href="#performance-estimation-1" id="toc-performance-estimation-1" class="nav-link" data-scroll-target="#performance-estimation-1">Performance Estimation</a></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
+  <li><a href="#evaluation" id="toc-evaluation" class="nav-link" data-scroll-target="#evaluation">Evaluation</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
+
+
+
+
+
+
+<section id="neural-architecture-search-a-comprehensive-guide" class="level1">
+<h1>Neural Architecture Search: A Comprehensive Guide</h1>
+<p><img src="nas.png" class="img-fluid"></p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Neural Architecture Search (NAS) represents a paradigm shift in deep learning, moving from manual architecture design to automated discovery of optimal neural network structures. This field has emerged as one of the most promising areas in machine learning, addressing the fundamental challenge of designing neural networks that are both effective and efficient for specific tasks.</p>
+<p>The traditional approach to neural network design relies heavily on human expertise, intuition, and extensive trial-and-error experimentation. Researchers and practitioners spend considerable time crafting architectures, tuning hyperparameters, and adapting existing designs to new domains. NAS automates this process, using computational methods to explore the vast space of possible architectures and identify designs that achieve superior performance with minimal human intervention.</p>
+</section>
+<section id="the-architecture-design-challenge" class="level2">
+<h2 class="anchored" data-anchor-id="the-architecture-design-challenge">The Architecture Design Challenge</h2>
+<p>Neural network architecture design involves making numerous interconnected decisions about layer types, connectivity patterns, activation functions, and structural components. The complexity of these decisions grows exponentially with network depth and the variety of available operations. Consider that even a simple decision tree for a 10-layer network with 5 possible layer types per position yields 5^10 possible architectures—nearly 10 million configurations.</p>
+<p>The manual design process typically follows established patterns and heuristics. Researchers begin with proven architectures like ResNet or VGG, then modify them based on domain knowledge and empirical results. This approach has limitations: it’s time-consuming, potentially biased toward human preconceptions, and may miss novel architectural innovations that could significantly improve performance.</p>
+</section>
+<section id="core-concepts-and-definitions" class="level2">
+<h2 class="anchored" data-anchor-id="core-concepts-and-definitions">Core Concepts and Definitions</h2>
+<section id="search-space" class="level3">
+<h3 class="anchored" data-anchor-id="search-space">Search Space</h3>
+<p>The search space defines the set of all possible architectures that the NAS algorithm can explore. A well-designed search space balances expressiveness with computational tractability. Common search space formulations include:</p>
+<p><strong>Cell-based Search Spaces</strong>: These define repeatable computational cells that are stacked to form complete architectures. Each cell contains a directed acyclic graph of operations, with the final architecture determined by the cell structure and stacking pattern.</p>
+<p><strong>Macro Search Spaces</strong>: These consider the overall network structure, including the number of layers, layer types, and connectivity patterns across the entire network.</p>
+<p><strong>Hierarchical Search Spaces</strong>: These decompose the architecture search into multiple levels, such as searching for optimal cells at one level and optimal cell arrangements at another.</p>
+</section>
+<section id="performance-estimation" class="level3">
+<h3 class="anchored" data-anchor-id="performance-estimation">Performance Estimation</h3>
+<p>Evaluating architecture performance is computationally expensive, as it typically requires training each candidate architecture to convergence. NAS methods employ various strategies to reduce this computational burden:</p>
+<p><strong>Proxy Tasks</strong>: Training on simplified versions of the target task, such as using fewer epochs, smaller datasets, or reduced model sizes.</p>
+<p><strong>Performance Prediction</strong>: Using machine learning models to predict architecture performance based on structural features without full training.</p>
+<p><strong>Weight Sharing</strong>: Sharing weights among similar architectural components to reduce training time.</p>
+</section>
+<section id="search-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="search-strategy">Search Strategy</h3>
+<p>The search strategy determines how the NAS algorithm navigates the search space to find optimal architectures. Different strategies make different trade-offs between exploration and exploitation:</p>
+<p><strong>Random Search</strong>: Samples architectures uniformly from the search space. While simple, it can be surprisingly effective for well-designed search spaces.</p>
+<p><strong>Evolutionary Algorithms</strong>: Use principles of natural selection to evolve populations of architectures over generations.</p>
+<p><strong>Reinforcement Learning</strong>: Treats architecture search as a sequential decision-making problem, using RL agents to generate architectures.</p>
+<p><strong>Gradient-based Methods</strong>: Relax the discrete search space into a continuous one, enabling gradient-based optimization.</p>
+</section>
+</section>
+<section id="historical-development" class="level2">
+<h2 class="anchored" data-anchor-id="historical-development">Historical Development</h2>
+<p>Neural Architecture Search emerged from the broader field of evolutionary computation and neural evolution. Early work in the 1990s explored evolving neural network topologies using genetic algorithms, but computational limitations prevented widespread adoption.</p>
+<p>The modern NAS era began with the 2017 paper “Neural Architecture Search with Reinforcement Learning” by Zoph and Le. This work demonstrated that reinforcement learning could automatically design architectures that matched or exceeded human-designed networks on image classification tasks. The success of this approach sparked intense research interest and rapid development in the field.</p>
+<p>Key milestones in NAS development include:</p>
+<ul>
+<li><strong>2017</strong>: Introduction of reinforcement learning-based NAS</li>
+<li><strong>2018</strong>: Development of Efficient Neural Architecture Search (ENAS) with weight sharing</li>
+<li><strong>2019</strong>: Introduction of differentiable architecture search (DARTS)</li>
+<li><strong>2020</strong>: Hardware-aware NAS and multi-objective optimization</li>
+<li><strong>2021</strong>: Zero-shot NAS and training-free performance estimation</li>
+<li><strong>2022</strong>: Transformer architecture search and large-scale NAS</li>
+</ul>
+</section>
+<section id="major-nas-methodologies" class="level2">
+<h2 class="anchored" data-anchor-id="major-nas-methodologies">Major NAS Methodologies</h2>
+<section id="reinforcement-learning-based-nas" class="level3">
+<h3 class="anchored" data-anchor-id="reinforcement-learning-based-nas">Reinforcement Learning-Based NAS</h3>
+<p>Reinforcement learning approaches model architecture search as a sequential decision-making problem. A controller (typically an RNN) generates architecture descriptions by making a sequence of decisions about layer types, connections, and hyperparameters. The controller is trained using reinforcement learning, with the validation accuracy of generated architectures serving as the reward signal.</p>
+<p>The original NAS formulation used the REINFORCE algorithm to train the controller. The process involves:</p>
+<ol type="1">
+<li>The controller samples an architecture from the search space</li>
+<li>The architecture is trained on the target task</li>
+<li>The validation accuracy provides a reward signal</li>
+<li>The controller parameters are updated using policy gradients</li>
+</ol>
+<p>This approach achieved remarkable results, discovering architectures that outperformed human-designed networks on ImageNet classification. However, the computational cost was enormous—the original paper required 22,400 GPU-days to find optimal architectures.</p>
+</section>
+<section id="evolutionary-approaches" class="level3">
+<h3 class="anchored" data-anchor-id="evolutionary-approaches">Evolutionary Approaches</h3>
+<p>Evolutionary methods maintain a population of candidate architectures and evolve them over generations using genetic operators like mutation and crossover. These methods are naturally suited to architecture search because they can handle discrete search spaces and don’t require gradient information.</p>
+<p>The evolutionary process typically follows these steps:</p>
+<ol type="1">
+<li>Initialize a population of random architectures</li>
+<li>Evaluate each architecture’s fitness (usually validation accuracy)</li>
+<li>Select parents based on fitness scores</li>
+<li>Generate offspring using crossover and mutation</li>
+<li>Replace the least fit individuals with offspring</li>
+<li>Repeat until convergence</li>
+</ol>
+<p>Evolutionary approaches offer several advantages: they’re robust to noisy fitness evaluations, can handle multi-objective optimization naturally, and are less likely to get stuck in local optima compared to gradient-based methods.</p>
+</section>
+<section id="differentiable-architecture-search-darts" class="level3">
+<h3 class="anchored" data-anchor-id="differentiable-architecture-search-darts">Differentiable Architecture Search (DARTS)</h3>
+<p>DARTS revolutionized NAS by making the search process differentiable, enabling gradient-based optimization. The key insight is to relax the discrete architecture search into a continuous optimization problem.</p>
+<p>In DARTS, instead of selecting a single operation for each edge in the architecture graph, all possible operations are initially included with learnable weights. The architecture is represented as a weighted combination of all operations, with the weights learned through gradient descent.</p>
+<p>The DARTS formulation involves:</p>
+<ol type="1">
+<li><strong>Architecture Parameters</strong>: Weights that determine the importance of each operation</li>
+<li><strong>Network Weights</strong>: Standard neural network parameters</li>
+<li><strong>Bilevel Optimization</strong>: Alternating between optimizing network weights and architecture parameters</li>
+</ol>
+<p>After training, the final architecture is obtained by selecting the operation with the highest weight for each edge. This approach reduces search time from thousands of GPU-days to a few GPU-days.</p>
+</section>
+<section id="one-shot-architecture-search" class="level3">
+<h3 class="anchored" data-anchor-id="one-shot-architecture-search">One-Shot Architecture Search</h3>
+<p>One-shot methods train a single “supernet” that contains all possible architectures in the search space as subnetworks. Once trained, different architectures can be evaluated by sampling subnetworks without additional training.</p>
+<p>The supernet approach works by:</p>
+<ol type="1">
+<li><strong>Supernet Training</strong>: Training a large network that encompasses all candidate architectures</li>
+<li><strong>Architecture Sampling</strong>: Evaluating specific architectures by activating corresponding subnetworks</li>
+<li><strong>Performance Estimation</strong>: Using the sampled subnetwork’s performance as a proxy for the full architecture’s performance</li>
+</ol>
+<p>This method dramatically reduces computational cost since it requires training only once. However, it introduces challenges related to weight sharing and potential interference between different architectural paths.</p>
+</section>
+</section>
+<section id="search-space-design" class="level2">
+<h2 class="anchored" data-anchor-id="search-space-design">Search Space Design</h2>
+<section id="cell-based-search-spaces" class="level3">
+<h3 class="anchored" data-anchor-id="cell-based-search-spaces">Cell-Based Search Spaces</h3>
+<p>Cell-based search spaces focus on finding optimal computational cells that can be stacked to form complete architectures. This approach reduces the search space size while maintaining architectural diversity.</p>
+<p>A typical cell contains: - <strong>Input Nodes</strong>: Receive inputs from previous cells or external sources - <strong>Intermediate Nodes</strong>: Apply operations to transform inputs - <strong>Output Nodes</strong>: Combine intermediate results to produce cell outputs</p>
+<p>The cell structure is defined by: - <strong>Operations</strong>: Convolutions, pooling, skip connections, etc. - <strong>Connections</strong>: How nodes are connected within the cell - <strong>Combination Functions</strong>: How multiple inputs to a node are combined</p>
+<p>Popular cell-based search spaces include: - <strong>NASNet Search Space</strong>: Used in the original NAS paper - <strong>DARTS Search Space</strong>: Simplified version focusing on common operations - <strong>PC-DARTS Search Space</strong>: Extends DARTS with partial channel connections</p>
+</section>
+<section id="macro-search-spaces" class="level3">
+<h3 class="anchored" data-anchor-id="macro-search-spaces">Macro Search Spaces</h3>
+<p>Macro search spaces consider the overall network structure, including decisions about: - <strong>Network Depth</strong>: Total number of layers - <strong>Layer Types</strong>: Convolution, pooling, normalization, activation - <strong>Channel Dimensions</strong>: Number of filters in each layer - <strong>Skip Connections</strong>: Long-range connections between layers</p>
+<p>Macro search is more challenging than cell-based search because: - The search space is typically much larger - Architectural decisions are more interdependent - Performance evaluation is more expensive</p>
+</section>
+<section id="hierarchical-search-spaces" class="level3">
+<h3 class="anchored" data-anchor-id="hierarchical-search-spaces">Hierarchical Search Spaces</h3>
+<p>Hierarchical approaches decompose architecture search into multiple levels:</p>
+<p><strong>Level 1</strong>: Micro-architecture search (within cells) <strong>Level 2</strong>: Macro-architecture search (cell arrangement) <strong>Level 3</strong>: Network-level search (overall structure)</p>
+<p>This decomposition allows for: - More efficient search by reducing complexity at each level - Better generalization across different tasks - Modular design that can be adapted to various domains</p>
+</section>
+</section>
+<section id="performance-estimation-strategies" class="level2">
+<h2 class="anchored" data-anchor-id="performance-estimation-strategies">Performance Estimation Strategies</h2>
+<section id="proxy-tasks" class="level3">
+<h3 class="anchored" data-anchor-id="proxy-tasks">Proxy Tasks</h3>
+<p>Proxy tasks reduce evaluation cost by training on simplified versions of the target problem:</p>
+<p><strong>Reduced Epochs</strong>: Training for fewer iterations to get approximate performance <strong>Smaller Datasets</strong>: Using subsets of the training data <strong>Lower Resolution</strong>: Reducing image size or sequence length <strong>Fewer Channels</strong>: Using narrower networks during search</p>
+<p>The effectiveness of proxy tasks depends on: - <strong>Rank Correlation</strong>: How well proxy performance predicts full performance - <strong>Computational Savings</strong>: The reduction in training time - <strong>Task Similarity</strong>: How closely the proxy resembles the target task</p>
+</section>
+<section id="weight-sharing" class="level3">
+<h3 class="anchored" data-anchor-id="weight-sharing">Weight Sharing</h3>
+<p>Weight sharing reduces training time by reusing parameters across similar architectural components:</p>
+<p><strong>Parameter Inheritance</strong>: New architectures inherit weights from previously trained models <strong>Shared Backbones</strong>: Common layers share parameters across different architectures <strong>Progressive Training</strong>: Gradually building up architectures while sharing lower-level weights</p>
+<p>Challenges with weight sharing include: - <strong>Interference</strong>: Different architectures may require conflicting parameter values - <strong>Bias</strong>: Shared weights may favor certain architectural patterns - <strong>Optimization</strong>: Balancing individual architecture performance with shared efficiency</p>
+</section>
+<section id="performance-prediction" class="level3">
+<h3 class="anchored" data-anchor-id="performance-prediction">Performance Prediction</h3>
+<p>Machine learning models can predict architecture performance without full training:</p>
+<p><strong>Feature Engineering</strong>: Extracting architectural features (depth, width, connectivity) <strong>Graph Neural Networks</strong>: Using GNNs to encode architectural structure <strong>Surrogate Models</strong>: Training regression models on architecture-performance pairs</p>
+<p>Key considerations: - <strong>Training Data</strong>: Sufficient architecture-performance pairs for training - <strong>Generalization</strong>: Ability to predict performance on unseen architectures - <strong>Computational Cost</strong>: Prediction should be much faster than full training</p>
+</section>
+</section>
+<section id="hardware-aware-nas" class="level2">
+<h2 class="anchored" data-anchor-id="hardware-aware-nas">Hardware-Aware NAS</h2>
+<section id="motivation" class="level3">
+<h3 class="anchored" data-anchor-id="motivation">Motivation</h3>
+<p>Modern deployment scenarios require architectures that are not only accurate but also efficient in terms of: - <strong>Latency</strong>: Inference time on target hardware - <strong>Energy Consumption</strong>: Power usage during operation - <strong>Memory Usage</strong>: RAM and storage requirements - <strong>Throughput</strong>: Number of samples processed per second</p>
+<p>Traditional NAS methods optimize primarily for accuracy, often producing architectures that are impractical for deployment. Hardware-aware NAS addresses this by incorporating efficiency metrics into the search process.</p>
+</section>
+<section id="multi-objective-optimization" class="level3">
+<h3 class="anchored" data-anchor-id="multi-objective-optimization">Multi-Objective Optimization</h3>
+<p>Hardware-aware NAS typically involves multiple, often conflicting objectives:</p>
+<p><strong>Accuracy</strong>: Model performance on the target task <strong>Efficiency</strong>: Hardware-specific metrics (latency, energy, memory) <strong>Size</strong>: Model parameter count and storage requirements</p>
+<p>Common approaches include: - <strong>Pareto-optimal Search</strong>: Finding architectures that represent optimal trade-offs - <strong>Weighted Objectives</strong>: Combining multiple metrics into a single score - <strong>Constraint-based Search</strong>: Searching within efficiency constraints</p>
+</section>
+<section id="platform-specific-considerations" class="level3">
+<h3 class="anchored" data-anchor-id="platform-specific-considerations">Platform-Specific Considerations</h3>
+<p>Different hardware platforms have unique characteristics that affect architecture performance:</p>
+<p><strong>Mobile Devices</strong>: Limited memory and battery life prioritize efficiency <strong>Edge Devices</strong>: Extreme resource constraints and real-time requirements <strong>Cloud GPUs</strong>: High throughput and parallel processing capabilities <strong>Specialized Hardware</strong>: TPUs, FPGAs, and custom accelerators</p>
+</section>
+<section id="latency-prediction" class="level3">
+<h3 class="anchored" data-anchor-id="latency-prediction">Latency Prediction</h3>
+<p>Accurate latency prediction is crucial for hardware-aware NAS:</p>
+<p><strong>Direct Measurement</strong>: Running architectures on target hardware <strong>Analytical Models</strong>: Using theoretical models based on operation counts <strong>Learned Predictors</strong>: Training models to predict latency from architectural features</p>
+<p>Challenges include: - <strong>Hardware Variability</strong>: Different devices have different performance characteristics - <strong>Optimization Effects</strong>: Compiler optimizations can significantly affect performance - <strong>Batch Size Dependencies</strong>: Latency often varies with batch size</p>
+</section>
+</section>
+<section id="applications-across-domains" class="level2">
+<h2 class="anchored" data-anchor-id="applications-across-domains">Applications Across Domains</h2>
+<section id="computer-vision" class="level3">
+<h3 class="anchored" data-anchor-id="computer-vision">Computer Vision</h3>
+<p>NAS has achieved remarkable success in computer vision tasks:</p>
+<p><strong>Image Classification</strong>: Discovering architectures that outperform ResNet and other human-designed networks <strong>Object Detection</strong>: Finding efficient architectures for real-time detection systems <strong>Semantic Segmentation</strong>: Optimizing architectures for dense prediction tasks <strong>Image Generation</strong>: Searching for GAN architectures with improved stability and quality</p>
+<p>Notable achievements: - <strong>EfficientNet</strong>: Achieved state-of-the-art ImageNet accuracy with fewer parameters - <strong>NAS-FPN</strong>: Improved object detection performance through architecture search - <strong>Auto-DeepLab</strong>: Automated architecture search for semantic segmentation</p>
+</section>
+<section id="natural-language-processing" class="level3">
+<h3 class="anchored" data-anchor-id="natural-language-processing">Natural Language Processing</h3>
+<p>NAS applications in NLP have focused on:</p>
+<p><strong>Language Modeling</strong>: Finding efficient architectures for sequence modeling <strong>Machine Translation</strong>: Optimizing encoder-decoder architectures <strong>Text Classification</strong>: Discovering architectures for various NLP tasks <strong>Question Answering</strong>: Searching for architectures that can effectively reason over text</p>
+<p>Key developments: - <strong>Evolved Transformer</strong>: Used evolutionary search to improve Transformer architectures - <strong>NASH</strong>: Applied NAS to find efficient architectures for language understanding - <strong>AutoML for NLP</strong>: Automated architecture search for various NLP tasks</p>
+</section>
+<section id="speech-recognition" class="level3">
+<h3 class="anchored" data-anchor-id="speech-recognition">Speech Recognition</h3>
+<p>Speech recognition presents unique challenges for NAS:</p>
+<p><strong>Temporal Modeling</strong>: Architectures must effectively capture temporal dependencies <strong>Computational Constraints</strong>: Real-time processing requirements <strong>Robustness</strong>: Handling various acoustic conditions and speaking styles</p>
+<p>Applications include: - <strong>Automatic Speech Recognition</strong>: Finding efficient architectures for speech-to-text - <strong>Speaker Recognition</strong>: Optimizing architectures for speaker identification - <strong>Speech Enhancement</strong>: Searching for architectures that can improve audio quality</p>
+</section>
+<section id="recommendation-systems" class="level3">
+<h3 class="anchored" data-anchor-id="recommendation-systems">Recommendation Systems</h3>
+<p>NAS has been applied to recommendation systems for:</p>
+<p><strong>Feature Interaction</strong>: Finding optimal ways to combine user and item features <strong>Embedding Architectures</strong>: Optimizing embedding dimensions and structures <strong>Multi-Task Learning</strong>: Balancing multiple recommendation objectives</p>
+<p>Challenges specific to recommendation systems: - <strong>Large-Scale Data</strong>: Handling massive user-item interaction datasets - <strong>Cold Start</strong>: Dealing with new users and items - <strong>Interpretability</strong>: Maintaining explainable recommendation decisions</p>
+</section>
+</section>
+<section id="challenges-and-limitations" class="level2">
+<h2 class="anchored" data-anchor-id="challenges-and-limitations">Challenges and Limitations</h2>
+<section id="computational-cost" class="level3">
+<h3 class="anchored" data-anchor-id="computational-cost">Computational Cost</h3>
+<p>Despite significant progress, NAS remains computationally expensive:</p>
+<p><strong>Search Time</strong>: Finding optimal architectures can take days or weeks <strong>Hardware Requirements</strong>: Requiring substantial computational resources <strong>Energy Consumption</strong>: High carbon footprint of extensive architecture search</p>
+<p>Mitigation strategies include: - <strong>Efficient Search Methods</strong>: Developing faster search algorithms - <strong>Better Performance Estimation</strong>: Reducing evaluation cost - <strong>Transfer Learning</strong>: Reusing search results across similar tasks</p>
+</section>
+<section id="search-space-bias" class="level3">
+<h3 class="anchored" data-anchor-id="search-space-bias">Search Space Bias</h3>
+<p>The design of search spaces introduces inherent biases:</p>
+<p><strong>Human Bias</strong>: Search spaces reflect human assumptions about good architectures <strong>Limited Diversity</strong>: Constrained search spaces may miss innovative designs <strong>Task Specificity</strong>: Search spaces designed for one task may not generalize</p>
+</section>
+<section id="reproducibility" class="level3">
+<h3 class="anchored" data-anchor-id="reproducibility">Reproducibility</h3>
+<p>NAS research faces significant reproducibility challenges:</p>
+<p><strong>Computational Requirements</strong>: Not all researchers have access to required resources <strong>Implementation Details</strong>: Many important details are often omitted from papers <strong>Evaluation Protocols</strong>: Inconsistent evaluation methods across studies</p>
+</section>
+<section id="generalization" class="level3">
+<h3 class="anchored" data-anchor-id="generalization">Generalization</h3>
+<p>Architectures found by NAS may not generalize well:</p>
+<p><strong>Task Transfer</strong>: Architectures optimized for one task may not work well on others <strong>Dataset Dependence</strong>: Performance may not transfer to different datasets <strong>Scale Sensitivity</strong>: Architectures may not scale to different problem sizes</p>
+</section>
+</section>
+<section id="recent-advances-and-future-directions" class="level2">
+<h2 class="anchored" data-anchor-id="recent-advances-and-future-directions">Recent Advances and Future Directions</h2>
+<section id="zero-shot-nas" class="level3">
+<h3 class="anchored" data-anchor-id="zero-shot-nas">Zero-Shot NAS</h3>
+<p>Zero-shot NAS aims to evaluate architectures without training:</p>
+<p><strong>Architecture Encoders</strong>: Using graph neural networks to encode architectural structure <strong>Performance Predictors</strong>: Training models to predict performance from structure alone <strong>Gradient-Based Metrics</strong>: Using gradient information to assess architecture quality</p>
+<p>This approach promises to eliminate the training bottleneck entirely, making NAS accessible to researchers with limited computational resources.</p>
+</section>
+<section id="automated-machine-learning-automl" class="level3">
+<h3 class="anchored" data-anchor-id="automated-machine-learning-automl">Automated Machine Learning (AutoML)</h3>
+<p>NAS is increasingly integrated into broader AutoML systems:</p>
+<p><strong>End-to-End Automation</strong>: Combining architecture search with hyperparameter optimization <strong>Data Preprocessing</strong>: Jointly optimizing data augmentation and architecture <strong>Model Selection</strong>: Automatically choosing between different model families</p>
+</section>
+<section id="federated-nas" class="level3">
+<h3 class="anchored" data-anchor-id="federated-nas">Federated NAS</h3>
+<p>Federated learning scenarios present new challenges for NAS:</p>
+<p><strong>Heterogeneous Data</strong>: Different clients may have different data distributions <strong>Communication Constraints</strong>: Limited bandwidth for sharing architectural information <strong>Privacy Concerns</strong>: Protecting client data during architecture search</p>
+</section>
+<section id="transformer-architecture-search" class="level3">
+<h3 class="anchored" data-anchor-id="transformer-architecture-search">Transformer Architecture Search</h3>
+<p>The success of Transformers has sparked interest in automated Transformer design:</p>
+<p><strong>Attention Mechanisms</strong>: Searching for optimal attention patterns <strong>Positional Encodings</strong>: Finding better ways to encode positional information <strong>Architecture Scaling</strong>: Optimizing Transformer architectures for different scales</p>
+</section>
+<section id="multi-modal-nas" class="level3">
+<h3 class="anchored" data-anchor-id="multi-modal-nas">Multi-Modal NAS</h3>
+<p>As AI systems become more multi-modal, NAS must handle:</p>
+<p><strong>Cross-Modal Interactions</strong>: Optimizing architectures for multiple input modalities <strong>Fusion Strategies</strong>: Finding optimal ways to combine different types of information <strong>Unified Architectures</strong>: Searching for architectures that can handle multiple tasks</p>
+</section>
+</section>
+<section id="best-practices-and-recommendations" class="level2">
+<h2 class="anchored" data-anchor-id="best-practices-and-recommendations">Best Practices and Recommendations</h2>
+<section id="search-space-design-1" class="level3">
+<h3 class="anchored" data-anchor-id="search-space-design-1">Search Space Design</h3>
+<p><strong>Start Simple</strong>: Begin with well-understood search spaces before exploring novel designs <strong>Validate Assumptions</strong>: Ensure that the search space can express effective architectures <strong>Consider Constraints</strong>: Incorporate deployment constraints into the search space design <strong>Enable Diversity</strong>: Allow for architectural diversity to avoid local optima</p>
+</section>
+<section id="performance-estimation-1" class="level3">
+<h3 class="anchored" data-anchor-id="performance-estimation-1">Performance Estimation</h3>
+<p><strong>Validate Proxies</strong>: Ensure that proxy tasks correlate well with full performance <strong>Use Multiple Metrics</strong>: Consider multiple performance indicators beyond accuracy <strong>Account for Variance</strong>: Properly handle performance variability across runs <strong>Benchmark Carefully</strong>: Compare against appropriate baselines</p>
+</section>
+<section id="implementation" class="level3">
+<h3 class="anchored" data-anchor-id="implementation">Implementation</h3>
+<p><strong>Modular Code</strong>: Design systems that can easily incorporate new search methods <strong>Efficient Implementation</strong>: Optimize code for the specific computational constraints <strong>Careful Logging</strong>: Track all experiments and intermediate results <strong>Reproducible Setup</strong>: Document all implementation details and hyperparameters</p>
+</section>
+<section id="evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="evaluation">Evaluation</h3>
+<p><strong>Multiple Runs</strong>: Average results over multiple independent runs <strong>Statistical Significance</strong>: Use appropriate statistical tests for comparing methods <strong>Comprehensive Baselines</strong>: Compare against relevant human-designed architectures <strong>Transfer Evaluation</strong>: Test architectures on multiple tasks and datasets</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Neural Architecture Search represents a fundamental shift in how we approach neural network design, moving from manual crafting to automated discovery. The field has made remarkable progress in reducing computational costs, improving search efficiency, and expanding to new domains and applications.</p>
+<p>Key achievements include the development of efficient search methods like DARTS, the integration of hardware constraints into the search process, and the successful application of NAS to diverse domains beyond computer vision. These advances have democratized access to high-quality architectures and enabled the discovery of designs that outperform human-crafted networks.</p>
+<p>However, significant challenges remain. Computational costs, while reduced, are still substantial. Search space design continues to introduce biases that may limit architectural diversity. Reproducibility issues persist due to the computational requirements and implementation complexity. Generalization across tasks and datasets remains an active area of research.</p>
+<p>The future of NAS looks promising, with emerging directions including zero-shot evaluation, federated learning integration, and multi-modal architecture search. As the field matures, we can expect to see more efficient methods, better theoretical understanding, and broader adoption in practical applications.</p>
+<p>For practitioners looking to apply NAS, the key is to start with established methods and well-designed search spaces, carefully validate performance estimation strategies, and consider the specific constraints and requirements of their deployment scenarios. As the field continues to evolve, NAS will likely become an increasingly important tool for developing efficient and effective neural network architectures across a wide range of applications.</p>
+<p>The ultimate goal of NAS is not just to automate architecture design, but to discover fundamental principles of neural network structure that can inform future research and development. By understanding what makes architectures effective across different tasks and constraints, we can build more intelligent, efficient, and capable AI systems.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© 2025 Krishnatheja Vanka</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
