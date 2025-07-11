@@ -394,6 +394,7 @@ window.Quarto = {
   <li><a href="#search-space-design" id="toc-search-space-design" class="nav-link" data-scroll-target="#search-space-design">Search Space Design</a></li>
   </ul></li>
   <li><a href="#future-directions" id="toc-future-directions" class="nav-link" data-scroll-target="#future-directions">Future Directions</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -416,152 +417,114 @@ window.Quarto = {
 <p>Neural Architecture Search (NAS) represents one of the most sophisticated applications of automated machine learning, where algorithms autonomously design neural network architectures. This field combines optimization theory, probability, and deep learning to solve the fundamental question: what is the optimal neural network architecture for a given task?</p>
 <section id="problem-formulation" class="level2">
 <h2 class="anchored" data-anchor-id="problem-formulation">Problem Formulation</h2>
-<p>The core mathematical challenge in NAS can be formulated as a bilevel optimization problem.<br>
-Given a dataset ( = {(x_i, y_i)}_{i=1}^N ), we seek to find the optimal architecture ( ^* ) that minimizes the validation loss:</p>
-<p><span class="math display">\[
-\alpha^* = \arg\min_\alpha \; \mathcal{L}_{\text{val}}(w^*(\alpha), \alpha)
-\]</span></p>
-<p>where ( w^*() ) is the optimal set of weights for architecture ( ), obtained by solving:</p>
-<p><span class="math display">\[
-w^*(\alpha) = \arg\min_w \; \mathcal{L}_{\text{train}}(w, \alpha)
-\]</span></p>
-<p>This bilevel structure creates significant computational challenges, as evaluating each architecture requires full training to obtain w*(α).</p>
+<p>The core mathematical challenge in NAS can be formulated as a bilevel optimization problem. Given a dataset <span class="math inline">\(D = \{(x_i, y_i)\}_{i=1}^N\)</span>, we seek to find the optimal architecture <span class="math inline">\(\alpha^*\)</span> that minimizes the validation loss:</p>
+<p><span class="math display">\[\alpha^* = \arg \min_\alpha L_{\text{val}}(w^*(\alpha), \alpha)\]</span></p>
+<p>where <span class="math inline">\(w^*(\alpha)\)</span> is the optimal set of weights for architecture <span class="math inline">\(\alpha\)</span>, obtained by solving:</p>
+<p><span class="math display">\[w^*(\alpha) = \arg \min_w L_{\text{train}}(w, \alpha)\]</span></p>
+<p>This bilevel structure creates significant computational challenges, as evaluating each architecture requires full training to obtain <span class="math inline">\(w^*(\alpha)\)</span>.</p>
 </section>
 <section id="search-space-representation" class="level2">
 <h2 class="anchored" data-anchor-id="search-space-representation">Search Space Representation</h2>
 <section id="continuous-relaxation" class="level3">
 <h3 class="anchored" data-anchor-id="continuous-relaxation">Continuous Relaxation</h3>
-<p>One of the key mathematical innovations in NAS is the <strong>continuous relaxation</strong> of the discrete architecture search space.<br>
-Instead of searching over discrete architectural choices, we represent the search space as a continuous optimization problem.</p>
-<p>Consider a search space where each edge in the network can be one of ( ) operations from a set ( = { o^1, o^2, , o^{||} } ).<br>
-The continuous relaxation introduces architecture parameters ( = { <em>{i,j} }</em>{i,j} ), where ( _{i,j} ^{||} ).</p>
-<p>The <strong>mixed operation</strong> at edge ( (i, j) ) is defined as:</p>
-<p><span class="math display">\[
-o^{\text{mixed}}_{i,j}(x) = \sum_{k=1}^{|\mathcal{O}|} \frac{\exp(\alpha_{i,j}^{(k)})}{\sum_{l=1}^{|\mathcal{O}|} \exp(\alpha_{i,j}^{(l)})} \cdot o^{(k)}(x)
-\]</span></p>
-<p>This softmax-based weighting enables <strong>gradient-based optimization</strong> while ensuring the weights over operations at each edge sum to 1.</p>
+<p>One of the key mathematical innovations in NAS is the continuous relaxation of the discrete architecture search space. Instead of searching over discrete architectural choices, we can represent the search space as a continuous optimization problem.</p>
+<p>Consider a search space where each edge in the network can be one of <span class="math inline">\(O\)</span> operations from a set <span class="math inline">\(\mathcal{O} = \{o^1, o^2, \ldots, o^{|\mathcal{O}|}\}\)</span>. The continuous relaxation introduces architecture parameters <span class="math inline">\(\alpha = \{\alpha_{i,j}\}_{i,j}\)</span> where <span class="math inline">\(\alpha_{i,j} \in \mathbb{R}^{|\mathcal{O}|}\)</span>.</p>
+<p>The mixed operation at edge <span class="math inline">\((i,j)\)</span> becomes:</p>
+<p><span class="math display">\[o^{\text{mixed}}_{i,j}(x) = \sum_{k=1}^{|\mathcal{O}|} \frac{\exp(\alpha_{i,j}^{(k)})}{\sum_{l=1}^{|\mathcal{O}|} \exp(\alpha_{i,j}^{(l)})} \cdot o^{(k)}(x)\]</span></p>
+<p>This softmax weighting allows gradient-based optimization while maintaining the constraint that weights sum to 1.</p>
 </section>
 <section id="graph-based-representations" class="level3">
 <h3 class="anchored" data-anchor-id="graph-based-representations">Graph-Based Representations</h3>
-<p>Neural architectures can be represented as <strong>directed acyclic graphs (DAGs)</strong><br>
-( G = (V, E) ), where: - ( V ) represents computational nodes (e.g., layers or operations) - ( E ) represents data flow connections</p>
-<p>The <strong>adjacency matrix</strong> ( A {0,1}^{|V| |V|} ) encodes the connectivity,<br>
-where ( A_{i,j} = 1 ) indicates a connection from node ( i ) to node ( j ).</p>
-<p>For a node ( j ) with incoming edges from nodes ( i_1, i_2, , i_k ), the output is:</p>
-<p><span class="math display">\[
-h_j = f_j\left( \sum_{i \in \text{pred}(j)} A_{i,j} \cdot h_i \right)
-\]</span></p>
-<p>where ( f_j ) is the operation at node ( j ) and ( (j) ) denotes the set of its predecessor nodes.</p>
+<p>Neural architectures can be represented as directed acyclic graphs (DAGs) <span class="math inline">\(G = (V, E)\)</span> where:</p>
+<ul>
+<li><span class="math inline">\(V\)</span> represents computational nodes (layers, operations)</li>
+<li><span class="math inline">\(E\)</span> represents data flow connections</li>
+</ul>
+<p>The adjacency matrix <span class="math inline">\(A \in \{0,1\}^{|V|\times|V|}\)</span> encodes the connectivity, where <span class="math inline">\(A_{i,j} = 1\)</span> indicates a connection from node <span class="math inline">\(i\)</span> to node <span class="math inline">\(j\)</span>.</p>
+<p>For a node <span class="math inline">\(j\)</span> with incoming edges from nodes <span class="math inline">\(i_1, i_2, \ldots, i_k\)</span>, the output is:</p>
+<p><span class="math display">\[h_j = f_j\left(\sum_{i \in \text{pred}(j)} A_{i,j} \cdot h_i\right)\]</span></p>
+<p>where <span class="math inline">\(f_j\)</span> is the operation at node <span class="math inline">\(j\)</span> and <span class="math inline">\(\text{pred}(j)\)</span> denotes the predecessor nodes.</p>
 </section>
 </section>
 <section id="optimization-strategies" class="level2">
 <h2 class="anchored" data-anchor-id="optimization-strategies">Optimization Strategies</h2>
 <section id="gradient-based-methods-darts" class="level3">
 <h3 class="anchored" data-anchor-id="gradient-based-methods-darts">Gradient-Based Methods (DARTS)</h3>
-<p><strong>Differentiable Architecture Search (DARTS)</strong> transforms the discrete search into a continuous optimization problem. The architecture parameters ( ) and network weights ( w ) are optimized alternately:</p>
-<p><span class="math display">\[
-\alpha_{t+1} = \alpha_t - \xi_\alpha \nabla_\alpha \mathcal{L}_{\text{val}}(w_t, \alpha_t)
-\]</span></p>
-<p><span class="math display">\[
-w_{t+1} = w_t - \xi_w \nabla_w \mathcal{L}_{\text{train}}(w_t, \alpha_t)
-\]</span></p>
+<p>Differentiable Architecture Search (DARTS) transforms the discrete search into a continuous optimization problem. The architecture parameters <span class="math inline">\(\alpha\)</span> and network weights <span class="math inline">\(w\)</span> are optimized alternately:</p>
+<p><span class="math display">\[\alpha_{t+1} = \alpha_t - \xi_\alpha \nabla_\alpha L_{\text{val}}(w_t, \alpha_t)\]</span> <span class="math display">\[w_{t+1} = w_t - \xi_w \nabla_w L_{\text{train}}(w_t, \alpha_t)\]</span></p>
 <p>The gradient with respect to architecture parameters is:</p>
-<p><span class="math display">\[
-\nabla_\alpha \mathcal{L}_{\text{val}} = \sum_{i,j} \nabla_\alpha o^{\text{mixed}}_{i,j} \cdot \nabla_{o^{\text{mixed}}_{i,j}} \mathcal{L}_{\text{val}}
-\]</span></p>
+<p><span class="math display">\[\nabla_\alpha L_{\text{val}} = \sum_{i,j} \nabla_\alpha o^{\text{mixed}}_{i,j} \cdot \nabla_{o^{\text{mixed}}_{i,j}} L_{\text{val}}\]</span></p>
 <p>The chain rule application requires careful handling of the softmax operation:</p>
-<p><span class="math display">\[
-\nabla_{\alpha_{i,j}^{(k)}} o^{\text{mixed}}_{i,j} = \left( \delta_{k,l} - p_{i,j}^{(k)} \right) p_{i,j}^{(l)} \cdot o^{(l)}
-\]</span></p>
-<p>where<br>
-( p_{i,j}^{(k)} = ) and ( _{k,l} ) is the <strong>Kronecker delta</strong>.</p>
+<p><span class="math display">\[\nabla_{\alpha_{i,j}^{(k)}} o^{\text{mixed}}_{i,j} = (\delta_{k,l} - p_{i,j}^{(k)}) p_{i,j}^{(l)} \cdot o^{(l)}\]</span></p>
+<p>where <span class="math inline">\(p_{i,j}^{(k)} = \frac{\exp(\alpha_{i,j}^{(k)})}{\sum_l \exp(\alpha_{i,j}^{(l)})}\)</span> and <span class="math inline">\(\delta_{k,l}\)</span> is the Kronecker delta.</p>
 </section>
 <section id="evolutionary-approaches" class="level3">
 <h3 class="anchored" data-anchor-id="evolutionary-approaches">Evolutionary Approaches</h3>
-<p>Evolutionary algorithms treat architecture search as a population-based optimization problem. Each architecture is represented as a genome g, and the fitness function is typically the validation accuracy.</p>
-<p>The mutation operator M: <span class="math inline">\(\mathcal{G} \rightarrow \mathcal{G}\)</span> modifies architectures: - <strong>Node mutations</strong>: Add/remove computational nodes - <strong>Edge mutations</strong>: Add/remove connections<br>
-- <strong>Operation mutations</strong>: Change operation types</p>
-<p>The <strong>crossover operator</strong> ( C: ) combines two parent architectures:</p>
-<p><span class="math display">\[
-g_{\text{child}} = C(g_{\text{parent1}},\ g_{\text{parent2}})
-\]</span></p>
-<p>Common crossover strategies include: - <strong>Uniform crossover</strong>: Each gene inherited from parent1 with probability p - <strong>Graph crossover</strong>: Combine subgraphs from both parents</p>
+<p>Evolutionary algorithms treat architecture search as a population-based optimization problem. Each architecture is represented as a genome <span class="math inline">\(g\)</span>, and the fitness function is typically the validation accuracy.</p>
+<p>The mutation operator <span class="math inline">\(M: \mathcal{G} \to \mathcal{G}\)</span> modifies architectures:</p>
+<ul>
+<li><strong>Node mutations</strong>: Add/remove computational nodes</li>
+<li><strong>Edge mutations</strong>: Add/remove connections<br>
+</li>
+<li><strong>Operation mutations</strong>: Change operation types</li>
+</ul>
+<p>The crossover operator <span class="math inline">\(C: \mathcal{G} \times \mathcal{G} \to \mathcal{G}\)</span> combines two parent architectures:</p>
+<p><span class="math display">\[g_{\text{child}} = C(g_{\text{parent1}}, g_{\text{parent2}})\]</span></p>
+<p>Common crossover strategies include:</p>
+<ul>
+<li><strong>Uniform crossover</strong>: Each gene inherited from parent1 with probability <span class="math inline">\(p\)</span></li>
+<li><strong>Graph crossover</strong>: Combine subgraphs from both parents</li>
+</ul>
 </section>
 <section id="reinforcement-learning-formulation" class="level3">
 <h3 class="anchored" data-anchor-id="reinforcement-learning-formulation">Reinforcement Learning Formulation</h3>
-<p>Neural Architecture Search (NAS) can be formulated as a <strong>sequential decision problem</strong>, where an agent (controller) generates architectures step by step.</p>
-<ul>
-<li>The <strong>state space</strong> ( ) represents partial architectures.</li>
-<li>The <strong>action space</strong> ( ) consists of architectural choices (e.g., layer types, connections).</li>
-<li>The <strong>reward</strong> ( ) corresponds to validation performance (e.g., accuracy or loss).</li>
-</ul>
-<p>The policy ( _(a s) ) gives the probability of selecting action ( a ) in state ( s ), parameterized by ( ). The objective is to maximize the expected reward:</p>
-<p><span class="math display">\[
-J(\theta) = \mathbb{E}_{\pi_\theta} \left[ R(\tau) \right]
-\]</span></p>
-<p>where ( ) is a trajectory (i.e., a sequence of architectural decisions) and ( ) are the controller parameters.</p>
-<p>Using the <strong>REINFORCE</strong> algorithm, the policy gradient is given by:</p>
-<p><span class="math display">\[
-\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta} \left[ \nabla_\theta \log \pi_\theta(a \mid s) \cdot \left( R(\tau) - b \right) \right]
-\]</span></p>
-<p>where ( b ) is a baseline (e.g., moving average of rewards) used to reduce variance in the gradient estimate.</p>
+<p>NAS can be formulated as a sequential decision problem where an agent (controller) generates architectures. The state space <span class="math inline">\(\mathcal{S}\)</span> represents partial architectures, actions <span class="math inline">\(\mathcal{A}\)</span> represent architectural choices, and rewards <span class="math inline">\(\mathcal{R}\)</span> correspond to validation performance.</p>
+<p>The policy <span class="math inline">\(\pi(a|s)\)</span> gives the probability of selecting action <span class="math inline">\(a\)</span> in state <span class="math inline">\(s\)</span>. The objective is to maximize expected reward:</p>
+<p><span class="math display">\[J(\theta) = \mathbb{E}_{\pi_\theta}[R(\tau)]\]</span></p>
+<p>where <span class="math inline">\(\tau\)</span> is a trajectory (sequence of architectural decisions) and <span class="math inline">\(\theta\)</span> are the controller parameters.</p>
+<p>Using the REINFORCE algorithm, the gradient is:</p>
+<p><span class="math display">\[\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}[\nabla_\theta \log \pi_\theta(a|s) \cdot (R(\tau) - b)]\]</span></p>
+<p>where <span class="math inline">\(b\)</span> is a baseline to reduce variance.</p>
 </section>
 </section>
 <section id="probability-and-sampling" class="level2">
 <h2 class="anchored" data-anchor-id="probability-and-sampling">Probability and Sampling</h2>
 <section id="architecture-sampling" class="level3">
 <h3 class="anchored" data-anchor-id="architecture-sampling">Architecture Sampling</h3>
-<p>When using continuous relaxation, the final discrete architecture must be sampled. The <strong>Gumbel-Softmax trick</strong> provides a differentiable sampling mechanism:</p>
-<p><span class="math display">\[
-\alpha_{\text{sampled}} = \text{softmax}\left( \frac{\log(\alpha) + g}{\tau} \right)
-\]</span></p>
-<p>where ( g (0,1) ) and ( ) is a temperature parameter controlling the sampling sharpness.</p>
+<p>When using continuous relaxation, the final discrete architecture must be sampled. The Gumbel-Softmax trick provides a differentiable sampling mechanism:</p>
+<p><span class="math display">\[\alpha_{\text{sampled}} = \text{softmax}\left(\frac{\log(\alpha) + g}{\tau}\right)\]</span></p>
+<p>where <span class="math inline">\(g \sim \text{Gumbel}(0,1)\)</span> and <span class="math inline">\(\tau\)</span> is a temperature parameter controlling the sampling sharpness.</p>
 </section>
 <section id="bayesian-optimization" class="level3">
 <h3 class="anchored" data-anchor-id="bayesian-optimization">Bayesian Optimization</h3>
-<p>Some NAS methods model the architecture performance as a <strong>Gaussian Process (GP)</strong>. Given observed architectures and performances ( {(<em>i, y_i)}</em>{i=1}^n ), we model:</p>
-<p><span class="math display">\[
-f(\alpha) \sim \mathcal{GP}(\mu(\alpha),\ k(\alpha, \alpha'))
-\]</span></p>
-<p>The <strong>acquisition function</strong> guides the search by selecting the next architecture:</p>
-<p><span class="math display">\[
-\alpha_{\text{next}} = \arg\max_\alpha\ a\left(\alpha \mid \{(\alpha_i, y_i)\}_{i=1}^n \right)
-\]</span></p>
+<p>Some NAS methods model the architecture performance as a Gaussian process. Given observed architectures and performances <span class="math inline">\(\{(\alpha_i, y_i)\}_{i=1}^n\)</span>, we model:</p>
+<p><span class="math display">\[f(\alpha) \sim \mathcal{GP}(\mu(\alpha), k(\alpha, \alpha'))\]</span></p>
+<p>The acquisition function guides the search:</p>
+<p><span class="math display">\[\alpha_{\text{next}} = \arg \max_\alpha a(\alpha|\{(\alpha_i, y_i)\}_{i=1}^n)\]</span></p>
 <p>Common acquisition functions include:</p>
 <ul>
-<li><p><strong>Expected Improvement (EI)</strong>: [ () = ]</p></li>
-<li><p><strong>Upper Confidence Bound (UCB)</strong>: [ () = () + () ]</p></li>
+<li><strong>Expected Improvement</strong>: <span class="math inline">\(\text{EI}(\alpha) = \mathbb{E}[\max(0, f(\alpha) - f(\alpha_{\text{best}}))]\)</span></li>
+<li><strong>Upper Confidence Bound</strong>: <span class="math inline">\(\text{UCB}(\alpha) = \mu(\alpha) + \beta \cdot \sigma(\alpha)\)</span></li>
 </ul>
-<p>where ( () ) and ( () ) are the predicted mean and standard deviation from the GP model, and ( ) controls the exploration-exploitation trade-off.</p>
 </section>
 </section>
 <section id="weight-sharing-and-supernets" class="level2">
 <h2 class="anchored" data-anchor-id="weight-sharing-and-supernets">Weight Sharing and Supernets</h2>
 <section id="one-shot-architecture-search" class="level3">
 <h3 class="anchored" data-anchor-id="one-shot-architecture-search">One-Shot Architecture Search</h3>
-<p>Weight sharing reduces computational cost by training a single “supernet” containing all possible architectures. The supernet weight tensor W has dimensions accommodating all operations.</p>
-<p>For a <strong>mixed operation</strong> with architecture weights ( ), the effective computation is:</p>
-<p><span class="math display">\[
-\text{output} = \sum_k \alpha_k \cdot \text{op}_k(\text{input},\ W_k)
-\]</span></p>
-<p>where: - ( _k ) is the weight assigned to operation ( _k ) - ( W_k ) are the learnable parameters of operation ( _k )</p>
-<p>The challenge lies in ensuring that the <strong>shared weights</strong> ( W_k ) can generalize across different architectural contexts, since they are updated under multiple competing configurations during training.</p>
+<p>Weight sharing reduces computational cost by training a single “supernet” containing all possible architectures. The supernet weight tensor <span class="math inline">\(W\)</span> has dimensions accommodating all operations.</p>
+<p>For a mixed operation with architecture weights <span class="math inline">\(\alpha\)</span>, the effective computation is:</p>
+<p><span class="math display">\[\text{output} = \sum_k \alpha_k \cdot \text{op}_k(\text{input}, W_k)\]</span></p>
+<p>The challenge is ensuring that shared weights <span class="math inline">\(W_k\)</span> generalize across different architectural contexts.</p>
 </section>
 <section id="progressive-shrinking" class="level3">
 <h3 class="anchored" data-anchor-id="progressive-shrinking">Progressive Shrinking</h3>
-<p><strong>Progressive shrinking</strong> gradually reduces the search space by removing poorly performing operations.<br>
-The pruning criterion at iteration ( t ) is:</p>
-<p><span class="math display">\[
-\text{keep}_k =
-\begin{cases}
+<p>Progressive shrinking gradually reduces the search space by removing poorly-performing operations. The pruning criterion at iteration <span class="math inline">\(t\)</span> is:</p>
+<p><span class="math display">\[\text{keep}_k = \begin{cases}
 1 &amp; \text{if } \alpha_k^{(t)} &gt; \text{threshold}_t \\
 0 &amp; \text{otherwise}
-\end{cases}
-\]</span></p>
-<p>This creates a sequence of <strong>nested search spaces</strong>:</p>
-<p><span class="math display">\[
-\mathcal{S}_0 \supset \mathcal{S}_1 \supset \cdots \supset \mathcal{S}_T
-\]</span></p>
+\end{cases}\]</span></p>
+<p>This creates a sequence of nested search spaces: <span class="math inline">\(\mathcal{S}_0 \supset \mathcal{S}_1 \supset \ldots \supset \mathcal{S}_T\)</span>.</p>
 </section>
 </section>
 <section id="performance-prediction" class="level2">
@@ -569,45 +532,37 @@ The pruning criterion at iteration ( t ) is:</p>
 <section id="learning-curves-and-extrapolation" class="level3">
 <h3 class="anchored" data-anchor-id="learning-curves-and-extrapolation">Learning Curves and Extrapolation</h3>
 <p>Early stopping strategies predict final performance from partial training curves. Common models include:</p>
-<ul>
-<li><p><strong>Power Law</strong>:<br>
-[ f(x) = a x^b + c ]</p></li>
-<li><p><strong>Exponential</strong>:<br>
-[ f(x) = a e^{-bx} + c ]</p></li>
-<li><p><strong>Logarithmic</strong>:<br>
-[ f(x) = a (x) + b ]</p></li>
-</ul>
+<p><strong>Power Law</strong>: <span class="math inline">\(f(x) = a \cdot x^b + c\)</span> <strong>Exponential</strong>: <span class="math inline">\(f(x) = a \cdot e^{-bx} + c\)</span> <strong>Logarithmic</strong>: <span class="math inline">\(f(x) = a \cdot \log(x) + b\)</span></p>
 <p>The parameters are fitted using least squares on early training data, then extrapolated to predict full training performance.</p>
 </section>
 <section id="neural-predictors" class="level3">
 <h3 class="anchored" data-anchor-id="neural-predictors">Neural Predictors</h3>
-<p>Neural networks can be trained to <strong>predict architecture performance</strong> based on structural features.<br>
-Given an architecture encoding ( () ), a predictor network estimates the performance:</p>
-<p><span class="math display">\[
-\hat{y} = f_\theta\left( \phi(\alpha) \right)
-\]</span></p>
-<p>where ( () ) might include: - Graph neural network embeddings - Handcrafted features (depth, width, parameter count) - Learned representations</p>
+<p>Neural networks can predict architecture performance from structural features. Given an architecture encoding <span class="math inline">\(\phi(\alpha)\)</span>, a predictor network estimates:</p>
+<p><span class="math display">\[\hat{y} = f_\theta(\phi(\alpha))\]</span></p>
+<p>where <span class="math inline">\(\phi(\alpha)\)</span> might include:</p>
+<ul>
+<li>Graph neural network embeddings</li>
+<li>Handcrafted features (depth, width, parameter count)</li>
+<li>Learned representations</li>
+</ul>
 </section>
 </section>
 <section id="multi-objective-optimization" class="level2">
 <h2 class="anchored" data-anchor-id="multi-objective-optimization">Multi-Objective Optimization</h2>
 <p>Real-world NAS often involves multiple objectives: accuracy, latency, energy consumption, and memory usage. This creates a multi-objective optimization problem:</p>
-<p><span class="math display">\[
-\min F(\alpha) = \left( f_1(\alpha),\ f_2(\alpha),\ \dots,\ f_m(\alpha) \right)
-\]</span></p>
+<p><span class="math display">\[\min F(\alpha) = (f_1(\alpha), f_2(\alpha), \ldots, f_m(\alpha))\]</span></p>
 <section id="pareto-optimality" class="level3">
 <h3 class="anchored" data-anchor-id="pareto-optimality">Pareto Optimality</h3>
-<p>An architecture ( ^* ) is <strong>Pareto optimal</strong> if there does <strong>not</strong> exist any<br>
-( ) such that:</p>
+<p>An architecture <span class="math inline">\(\alpha^*\)</span> is Pareto optimal if there exists no <span class="math inline">\(\alpha\)</span> such that:</p>
 <ul>
-<li>( f_i() f_i(^*) i )</li>
-<li>( f_j() &lt; f_j(^*) j )</li>
+<li><span class="math inline">\(f_i(\alpha) \leq f_i(\alpha^*)\)</span> for all <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(f_j(\alpha) &lt; f_j(\alpha^*)\)</span> for at least one <span class="math inline">\(j\)</span></li>
 </ul>
 <p>The Pareto front represents the set of all Pareto optimal solutions.</p>
 </section>
 <section id="scalarization-methods" class="level3">
 <h3 class="anchored" data-anchor-id="scalarization-methods">Scalarization Methods</h3>
-<p><strong>Weighted Sum</strong>: <span class="math inline">\(\min_\alpha \sum_i w_i \cdot f_i(\alpha)\)</span> <strong>ε-Constraint</strong>: <span class="math inline">\(\min_\alpha f_1(\alpha)\)</span> subject to <span class="math inline">\(f_i(\alpha) \leq \varepsilon_i\)</span> for <span class="math inline">\(i &gt; 1\)</span> <strong>Chebyshev</strong>: <span class="math inline">\(\min_\alpha \max_i \; w_i \cdot |f_i(\alpha) - z_i^*|\)</span></p>
+<p><strong>Weighted Sum</strong>: <span class="math inline">\(\min_\alpha \sum_i w_i \cdot f_i(\alpha)\)</span> <strong>ε-Constraint</strong>: <span class="math inline">\(\min_\alpha f_1(\alpha)\)</span> subject to <span class="math inline">\(f_i(\alpha) \leq \varepsilon_i\)</span> for <span class="math inline">\(i &gt; 1\)</span> <strong>Chebyshev</strong>: <span class="math inline">\(\min_\alpha \max_i w_i \cdot |f_i(\alpha) - z_i^*|\)</span></p>
 <p>where <span class="math inline">\(z_i^*\)</span> is the ideal value for objective <span class="math inline">\(i\)</span>.</p>
 </section>
 </section>
@@ -615,14 +570,19 @@ Given an architecture encoding ( () ), a predictor network estimates the perform
 <h2 class="anchored" data-anchor-id="complexity-analysis">Complexity Analysis</h2>
 <section id="search-space-size" class="level3">
 <h3 class="anchored" data-anchor-id="search-space-size">Search Space Size</h3>
-<p>The size of the discrete search space grows exponentially with the number of choices. For a search space with: - L layers - O operations per layer<br>
-- C connections per layer</p>
+<p>The size of the discrete search space grows exponentially with the number of choices. For a search space with:</p>
+<ul>
+<li><span class="math inline">\(L\)</span> layers</li>
+<li><span class="math inline">\(O\)</span> operations per layer<br>
+</li>
+<li><span class="math inline">\(C\)</span> connections per layer</li>
+</ul>
 <p>The total number of architectures is approximately <span class="math inline">\(O^L \cdot 2^{LC}\)</span>, making exhaustive search intractable for realistic problem sizes.</p>
 </section>
 <section id="computational-complexity" class="level3">
 <h3 class="anchored" data-anchor-id="computational-complexity">Computational Complexity</h3>
 <p>Different NAS methods have varying computational requirements:</p>
-<p><strong>Exhaustive Search</strong>: <span class="math inline">\(O(|S| \cdot T)\)</span> where <span class="math inline">\(|S|\)</span> is search space size and T is training time <strong>Gradient-Based</strong>: <span class="math inline">\(O(K \cdot T)\)</span> where <span class="math inline">\(K\)</span> is number of gradient steps <strong>Evolutionary</strong>: <span class="math inline">\(O(P \cdot G \cdot T)\)</span> where <span class="math inline">\(P\)</span> is population size and <span class="math inline">\(G\)</span> is number of generations <strong>One-Shot</strong>: <span class="math inline">\(O(T_{\text{supernet}} + |S| \cdot T_{\text{eval}})\)</span> where <span class="math inline">\(T_{\text{eval}}\)</span> &lt;&lt; <span class="math inline">\(T\)</span></p>
+<p><strong>Exhaustive Search</strong>: <span class="math inline">\(\mathcal{O}(|\mathcal{S}| \cdot T)\)</span> where <span class="math inline">\(|\mathcal{S}|\)</span> is search space size and <span class="math inline">\(T\)</span> is training time <strong>Gradient-Based</strong>: <span class="math inline">\(\mathcal{O}(K \cdot T)\)</span> where <span class="math inline">\(K\)</span> is number of gradient steps <strong>Evolutionary</strong>: <span class="math inline">\(\mathcal{O}(P \cdot G \cdot T)\)</span> where <span class="math inline">\(P\)</span> is population size and <span class="math inline">\(G\)</span> is number of generations <strong>One-Shot</strong>: <span class="math inline">\(\mathcal{O}(T_{\text{supernet}} + |\mathcal{S}| \cdot T_{\text{eval}})\)</span> where <span class="math inline">\(T_{\text{eval}} \ll T\)</span></p>
 </section>
 </section>
 <section id="convergence-analysis" class="level2">
@@ -630,17 +590,17 @@ Given an architecture encoding ( () ), a predictor network estimates the perform
 <section id="darts-convergence" class="level3">
 <h3 class="anchored" data-anchor-id="darts-convergence">DARTS Convergence</h3>
 <p>For DARTS, convergence depends on the interplay between architecture and weight optimization. The coupled dynamics can be analyzed using:</p>
-<p><span class="math display">\[
-\alpha_{t+1} = \alpha_t - \xi_\alpha \nabla_\alpha \mathcal{L}_{\text{val}}(w^*(\alpha_t), \alpha_t)
-\]</span></p>
-<p><span class="math display">\[
-w_{t+1} = w_t - \xi_w \nabla_w \mathcal{L}_{\text{train}}(w_t, \alpha_t)
-\]</span></p>
+<p><span class="math display">\[\alpha_{t+1} = \alpha_t - \xi_\alpha \nabla_\alpha L_{\text{val}}(w^*(\alpha_t), \alpha_t)\]</span> <span class="math display">\[w_{t+1} = w_t - \xi_w \nabla_w L_{\text{train}}(w_t, \alpha_t)\]</span></p>
 <p>Under certain conditions (convexity, smoothness), this alternating optimization converges to a stationary point. However, the bilevel nature and non-convexity of neural networks make theoretical guarantees challenging.</p>
 </section>
 <section id="evolutionary-algorithm-convergence" class="level3">
 <h3 class="anchored" data-anchor-id="evolutionary-algorithm-convergence">Evolutionary Algorithm Convergence</h3>
-<p>For evolutionary NAS, convergence analysis involves studying the transition probabilities between population states. The probability of finding the optimal architecture depends on: - Selection pressure - Mutation rates - Population diversity</p>
+<p>For evolutionary NAS, convergence analysis involves studying the transition probabilities between population states. The probability of finding the optimal architecture depends on:</p>
+<ul>
+<li>Selection pressure</li>
+<li>Mutation rates</li>
+<li>Population diversity</li>
+</ul>
 <p>The expected hitting time to the optimum can be bounded using Markov chain analysis.</p>
 </section>
 </section>
@@ -649,7 +609,9 @@ w_{t+1} = w_t - \xi_w \nabla_w \mathcal{L}_{\text{train}}(w_t, \alpha_t)
 <section id="regularization" class="level3">
 <h3 class="anchored" data-anchor-id="regularization">Regularization</h3>
 <p>Architecture search often requires regularization to prevent overfitting:</p>
-<p><strong>Dropout on Architecture Parameters</strong>: Randomly zero some α values during training <strong>Weight Decay</strong>: Add L2 penalty λ||α||² to the loss <strong>Early Stopping</strong>: Stop search when validation performance plateaus</p>
+<p><strong>Dropout on Architecture Parameters</strong>: Randomly zero some <span class="math inline">\(\alpha\)</span> values during training</p>
+<p><strong>Weight Decay</strong>: Add L2 penalty <span class="math inline">\(\lambda ||\alpha||^2\)</span> to the loss</p>
+<p><strong>Early Stopping</strong>: Stop search when validation performance plateaus</p>
 </section>
 <section id="search-space-design" class="level3">
 <h3 class="anchored" data-anchor-id="search-space-design">Search Space Design</h3>
@@ -669,6 +631,9 @@ w_{t+1} = w_t - \xi_w \nabla_w \mathcal{L}_{\text{train}}(w_t, \alpha_t)
 <li><strong>Interpretability</strong>: Understanding why certain architectures perform well</li>
 </ul>
 <p>The mathematical sophistication of NAS continues to grow, drawing from diverse fields including optimization theory, probability, graph theory, and control theory. As the field matures, we expect to see more principled approaches that combine theoretical rigor with practical effectiveness.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>The intersection of discrete optimization, continuous relaxation, and deep learning in NAS represents one of the most mathematically rich areas in modern machine learning, with applications extending far beyond neural network design to general automated algorithm design and meta-learning.</p>
 
 
