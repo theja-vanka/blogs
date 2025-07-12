@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Krishnatheja Vanka">
-<meta name="dcterms.date" content="2025-07-05">
+<meta name="dcterms.date" content="2025-07-12">
 
-<title>The Mathematics Behind Convolutional Kolmogorov-Arnold Networks – Krishnatheja Vanka’s Blog</title>
+<title>The Mathematics Behind YOLO: A Deep Dive into Object Detection – Krishnatheja Vanka’s Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,28 +25,28 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../../">
-<link href="../../../favicon.ico" rel="icon">
-<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../site_libs/bootstrap/bootstrap-dark-5a86c4bd0c1f9981a70f893fdae069f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<link href="../../../../favicon.ico" rel="icon">
+<script src="../../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-5a86c4bd0c1f9981a70f893fdae069f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -105,7 +105,7 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="../../../styles/styles.css">
+<link rel="stylesheet" href="../../../../styles/styles.css">
 </head>
 
 <body class="floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -277,7 +277,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../../../index.html">
+    <a class="navbar-brand" href="../../../../index.html">
     <span class="navbar-title">Krishnatheja Vanka’s Blog</span>
     </a>
   </div>
@@ -288,7 +288,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../../about.html"> 
+    <a class="nav-link" href="../../../../about.html"> 
 <span class="menu-text">About me</span></a>
   </li>  
   <li class="nav-item compact">
@@ -308,10 +308,10 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-right">
-      <h1 class="title">The Mathematics Behind Convolutional Kolmogorov-Arnold Networks</h1>
+      <h1 class="title">The Mathematics Behind YOLO: A Deep Dive into Object Detection</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
-                <div class="quarto-category">advanced</div>
+                <div class="quarto-category">beginner</div>
               </div>
                   </div>
   </div>
@@ -329,7 +329,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">July 5, 2025</p>
+        <p class="date">July 12, 2025</p>
       </div>
     </div>
     
@@ -344,66 +344,47 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#the-mathematics-behind-convolutional-kolmogorov-arnold-networks" id="toc-the-mathematics-behind-convolutional-kolmogorov-arnold-networks" class="nav-link active" data-scroll-target="#the-mathematics-behind-convolutional-kolmogorov-arnold-networks">The Mathematics Behind Convolutional Kolmogorov-Arnold Networks</a>
+  <li><a href="#the-mathematics-behind-yolo-a-deep-dive-into-object-detection" id="toc-the-mathematics-behind-yolo-a-deep-dive-into-object-detection" class="nav-link active" data-scroll-target="#the-mathematics-behind-yolo-a-deep-dive-into-object-detection">The Mathematics Behind YOLO: A Deep Dive into Object Detection</a>
   <ul class="collapse">
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#the-kolmogorov-arnold-representation-theorem" id="toc-the-kolmogorov-arnold-representation-theorem" class="nav-link" data-scroll-target="#the-kolmogorov-arnold-representation-theorem">The Kolmogorov-Arnold Representation Theorem</a>
+  <li><a href="#core-mathematical-framework" id="toc-core-mathematical-framework" class="nav-link" data-scroll-target="#core-mathematical-framework">Core Mathematical Framework</a>
   <ul class="collapse">
-  <li><a href="#theoretical-foundation" id="toc-theoretical-foundation" class="nav-link" data-scroll-target="#theoretical-foundation">Theoretical Foundation</a></li>
-  <li><a href="#implications-for-neural-networks" id="toc-implications-for-neural-networks" class="nav-link" data-scroll-target="#implications-for-neural-networks">Implications for Neural Networks</a></li>
+  <li><a href="#grid-based-detection-paradigm" id="toc-grid-based-detection-paradigm" class="nav-link" data-scroll-target="#grid-based-detection-paradigm">Grid-Based Detection Paradigm</a></li>
+  <li><a href="#output-tensor-structure" id="toc-output-tensor-structure" class="nav-link" data-scroll-target="#output-tensor-structure">Output Tensor Structure</a></li>
   </ul></li>
-  <li><a href="#from-kans-to-convolutional-kans" id="toc-from-kans-to-convolutional-kans" class="nav-link" data-scroll-target="#from-kans-to-convolutional-kans">From KANs to Convolutional KANs</a>
+  <li><a href="#bounding-box-parameterizatioz" id="toc-bounding-box-parameterizatioz" class="nav-link" data-scroll-target="#bounding-box-parameterizatioz">Bounding Box Parameterizatioz</a>
   <ul class="collapse">
-  <li><a href="#standard-kan-architecture" id="toc-standard-kan-architecture" class="nav-link" data-scroll-target="#standard-kan-architecture">Standard KAN Architecture</a></li>
-  <li><a href="#convolutional-extension" id="toc-convolutional-extension" class="nav-link" data-scroll-target="#convolutional-extension">Convolutional Extension</a></li>
+  <li><a href="#coordinate-encoding" id="toc-coordinate-encoding" class="nav-link" data-scroll-target="#coordinate-encoding">Coordinate Encoding</a></li>
+  <li><a href="#confidence-score-mathematics" id="toc-confidence-score-mathematics" class="nav-link" data-scroll-target="#confidence-score-mathematics">Confidence Score Mathematics</a></li>
   </ul></li>
-  <li><a href="#mathematical-formulation-of-ckans" id="toc-mathematical-formulation-of-ckans" class="nav-link" data-scroll-target="#mathematical-formulation-of-ckans">Mathematical Formulation of CKANs</a>
+  <li><a href="#loss-function-architecture" id="toc-loss-function-architecture" class="nav-link" data-scroll-target="#loss-function-architecture">Loss Function Architecture</a>
   <ul class="collapse">
-  <li><a href="#convolutional-kan-layer" id="toc-convolutional-kan-layer" class="nav-link" data-scroll-target="#convolutional-kan-layer">1. Convolutional KAN Layer</a></li>
-  <li><a href="#univariate-function-parameterization" id="toc-univariate-function-parameterization" class="nav-link" data-scroll-target="#univariate-function-parameterization">2. Univariate Function Parameterization</a></li>
-  <li><a href="#shared-function-approach" id="toc-shared-function-approach" class="nav-link" data-scroll-target="#shared-function-approach">3. Shared Function Approach</a></li>
+  <li><a href="#complete-loss-function" id="toc-complete-loss-function" class="nav-link" data-scroll-target="#complete-loss-function">Complete Loss Function</a></li>
+  <li><a href="#localization-loss" id="toc-localization-loss" class="nav-link" data-scroll-target="#localization-loss">Localization Loss</a></li>
+  <li><a href="#confidence-loss" id="toc-confidence-loss" class="nav-link" data-scroll-target="#confidence-loss">Confidence Loss</a></li>
+  <li><a href="#classification-loss" id="toc-classification-loss" class="nav-link" data-scroll-target="#classification-loss">Classification Loss</a></li>
   </ul></li>
-  <li><a href="#activation-functions-in-ckans" id="toc-activation-functions-in-ckans" class="nav-link" data-scroll-target="#activation-functions-in-ckans">Activation Functions in CKANs</a>
+  <li><a href="#intersection-over-union-iou-calculations" id="toc-intersection-over-union-iou-calculations" class="nav-link" data-scroll-target="#intersection-over-union-iou-calculations">Intersection over Union (IoU) Calculations</a></li>
+  <li><a href="#non-maximum-suppression-nms" id="toc-non-maximum-suppression-nms" class="nav-link" data-scroll-target="#non-maximum-suppression-nms">Non-Maximum Suppression (NMS)</a></li>
+  <li><a href="#anchor-box-mathematics-yolov2" id="toc-anchor-box-mathematics-yolov2" class="nav-link" data-scroll-target="#anchor-box-mathematics-yolov2">Anchor Box Mathematics (YOLOv2+)</a>
   <ul class="collapse">
-  <li><a href="#learnable-activation-functions" id="toc-learnable-activation-functions" class="nav-link" data-scroll-target="#learnable-activation-functions">Learnable Activation Functions</a></li>
+  <li><a href="#anchor-box-selection" id="toc-anchor-box-selection" class="nav-link" data-scroll-target="#anchor-box-selection">Anchor Box Selection</a></li>
+  <li><a href="#prediction-with-anchors" id="toc-prediction-with-anchors" class="nav-link" data-scroll-target="#prediction-with-anchors">Prediction with Anchors</a></li>
   </ul></li>
-  <li><a href="#training-dynamics-and-optimization" id="toc-training-dynamics-and-optimization" class="nav-link" data-scroll-target="#training-dynamics-and-optimization">Training Dynamics and Optimization</a>
+  <li><a href="#mathematical-optimizations" id="toc-mathematical-optimizations" class="nav-link" data-scroll-target="#mathematical-optimizations">Mathematical Optimizations</a>
   <ul class="collapse">
-  <li><a href="#gradient-computation" id="toc-gradient-computation" class="nav-link" data-scroll-target="#gradient-computation">Gradient Computation</a></li>
-  <li><a href="#regularization-techniques" id="toc-regularization-techniques" class="nav-link" data-scroll-target="#regularization-techniques">Regularization Techniques</a></li>
+  <li><a href="#gradient-flow-analysis" id="toc-gradient-flow-analysis" class="nav-link" data-scroll-target="#gradient-flow-analysis">Gradient Flow Analysis</a></li>
+  <li><a href="#multi-scale-training-mathematics" id="toc-multi-scale-training-mathematics" class="nav-link" data-scroll-target="#multi-scale-training-mathematics">Multi-Scale Training Mathematics</a></li>
   </ul></li>
   <li><a href="#computational-complexity-analysis" id="toc-computational-complexity-analysis" class="nav-link" data-scroll-target="#computational-complexity-analysis">Computational Complexity Analysis</a>
   <ul class="collapse">
-  <li><a href="#parameter-count" id="toc-parameter-count" class="nav-link" data-scroll-target="#parameter-count">Parameter Count</a></li>
-  <li><a href="#computational-complexity" id="toc-computational-complexity" class="nav-link" data-scroll-target="#computational-complexity">Computational Complexity</a></li>
+  <li><a href="#forward-pass-complexity" id="toc-forward-pass-complexity" class="nav-link" data-scroll-target="#forward-pass-complexity">Forward Pass Complexity</a></li>
+  <li><a href="#inference-speed-mathematics" id="toc-inference-speed-mathematics" class="nav-link" data-scroll-target="#inference-speed-mathematics">Inference Speed Mathematics</a></li>
   </ul></li>
-  <li><a href="#architectural-variations" id="toc-architectural-variations" class="nav-link" data-scroll-target="#architectural-variations">Architectural Variations</a>
+  <li><a href="#advanced-mathematical-concepts" id="toc-advanced-mathematical-concepts" class="nav-link" data-scroll-target="#advanced-mathematical-concepts">Advanced Mathematical Concepts</a>
   <ul class="collapse">
-  <li><a href="#depthwise-separable-ckans" id="toc-depthwise-separable-ckans" class="nav-link" data-scroll-target="#depthwise-separable-ckans">1. Depthwise Separable CKANs</a></li>
-  <li><a href="#dilated-ckans" id="toc-dilated-ckans" class="nav-link" data-scroll-target="#dilated-ckans">2. Dilated CKANs</a></li>
-  <li><a href="#residual-ckans" id="toc-residual-ckans" class="nav-link" data-scroll-target="#residual-ckans">3. Residual CKANs</a></li>
-  </ul></li>
-  <li><a href="#approximation-properties" id="toc-approximation-properties" class="nav-link" data-scroll-target="#approximation-properties">Approximation Properties</a>
-  <ul class="collapse">
-  <li><a href="#universal-approximation" id="toc-universal-approximation" class="nav-link" data-scroll-target="#universal-approximation">Universal Approximation</a></li>
-  <li><a href="#convergence-analysis" id="toc-convergence-analysis" class="nav-link" data-scroll-target="#convergence-analysis">Convergence Analysis</a></li>
-  </ul></li>
-  <li><a href="#practical-implementation-considerations" id="toc-practical-implementation-considerations" class="nav-link" data-scroll-target="#practical-implementation-considerations">Practical Implementation Considerations</a>
-  <ul class="collapse">
-  <li><a href="#numerical-stability" id="toc-numerical-stability" class="nav-link" data-scroll-target="#numerical-stability">Numerical Stability</a></li>
-  <li><a href="#memory-optimization" id="toc-memory-optimization" class="nav-link" data-scroll-target="#memory-optimization">Memory Optimization</a></li>
-  </ul></li>
-  <li><a href="#comparison-with-traditional-cnns" id="toc-comparison-with-traditional-cnns" class="nav-link" data-scroll-target="#comparison-with-traditional-cnns">Comparison with Traditional CNNs</a>
-  <ul class="collapse">
-  <li><a href="#expressivity" id="toc-expressivity" class="nav-link" data-scroll-target="#expressivity">Expressivity</a></li>
-  <li><a href="#interpretability" id="toc-interpretability" class="nav-link" data-scroll-target="#interpretability">Interpretability</a></li>
-  <li><a href="#computational-trade-offs" id="toc-computational-trade-offs" class="nav-link" data-scroll-target="#computational-trade-offs">Computational Trade-offs</a></li>
-  </ul></li>
-  <li><a href="#future-directions-and-extensions" id="toc-future-directions-and-extensions" class="nav-link" data-scroll-target="#future-directions-and-extensions">Future Directions and Extensions</a>
-  <ul class="collapse">
-  <li><a href="#theoretical-advances" id="toc-theoretical-advances" class="nav-link" data-scroll-target="#theoretical-advances">Theoretical Advances</a></li>
-  <li><a href="#practical-improvements" id="toc-practical-improvements" class="nav-link" data-scroll-target="#practical-improvements">Practical Improvements</a></li>
-  <li><a href="#applications" id="toc-applications" class="nav-link" data-scroll-target="#applications">Applications</a></li>
+  <li><a href="#focal-loss-integration-yolov3" id="toc-focal-loss-integration-yolov3" class="nav-link" data-scroll-target="#focal-loss-integration-yolov3">Focal Loss Integration (YOLOv3+)</a></li>
+  <li><a href="#feature-pyramid-networks-mathematics" id="toc-feature-pyramid-networks-mathematics" class="nav-link" data-scroll-target="#feature-pyramid-networks-mathematics">Feature Pyramid Networks Mathematics</a></li>
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul></li>
@@ -422,310 +403,295 @@ window.Quarto = {
 
 
 
-<section id="the-mathematics-behind-convolutional-kolmogorov-arnold-networks" class="level1">
-<h1>The Mathematics Behind Convolutional Kolmogorov-Arnold Networks</h1>
-<p><img src="ckan-math.png" class="img-fluid"></p>
+<section id="the-mathematics-behind-yolo-a-deep-dive-into-object-detection" class="level1">
+<h1>The Mathematics Behind YOLO: A Deep Dive into Object Detection</h1>
+<p><img src="yolomath.png" class="img-fluid"></p>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>Convolutional Kolmogorov-Arnold Networks (CKANs) represent a revolutionary approach to neural network architecture that combines the theoretical foundations of the Kolmogorov-Arnold representation theorem with the practical advantages of convolutional operations. Unlike traditional Convolutional Neural Networks (CNNs) that rely on fixed linear transformations followed by nonlinear activations, CKANs replace these components with learnable univariate functions, offering a more flexible and theoretically grounded approach to function approximation.</p>
+<p>You Only Look Once (YOLO) revolutionized object detection by treating it as a single regression problem, directly predicting bounding boxes and class probabilities from full images in one evaluation. Unlike traditional approaches that apply classifiers to different parts of an image, YOLO’s unified architecture enables real-time detection while maintaining high accuracy.</p>
 </section>
-<section id="the-kolmogorov-arnold-representation-theorem" class="level2">
-<h2 class="anchored" data-anchor-id="the-kolmogorov-arnold-representation-theorem">The Kolmogorov-Arnold Representation Theorem</h2>
-<section id="theoretical-foundation" class="level3">
-<h3 class="anchored" data-anchor-id="theoretical-foundation">Theoretical Foundation</h3>
-<p>The Kolmogorov-Arnold representation theorem, proved by Andrey Kolmogorov in 1957 and later refined by Vladimir Arnold, states that any multivariate continuous function can be represented as a superposition of continuous functions of a single variable.</p>
-<p><strong>Theorem (Kolmogorov-Arnold)</strong>: For any continuous function <span class="math inline">\(f: [0,1]^n \to \mathbb{R}\)</span>, there exist continuous functions <span class="math inline">\(\phi_{q,p}: [0,1] \to \mathbb{R}\)</span> and <span class="math inline">\(\Phi_q: \mathbb{R} \to \mathbb{R}\)</span> such that:</p>
+<section id="core-mathematical-framework" class="level2">
+<h2 class="anchored" data-anchor-id="core-mathematical-framework">Core Mathematical Framework</h2>
+<section id="grid-based-detection-paradigm" class="level3">
+<h3 class="anchored" data-anchor-id="grid-based-detection-paradigm">Grid-Based Detection Paradigm</h3>
+<p>YOLO divides an input image into an <span class="math inline">\(S \times S\)</span> grid. Each grid cell is responsible for detecting objects whose centers fall within that cell. This spatial decomposition transforms the object detection problem into a structured prediction task.</p>
+<p>For an input image of dimensions <span class="math inline">\(W \times H\)</span>, each grid cell covers a region of size <span class="math inline">\((W/S) \times (H/S)\)</span>. The mathematical mapping from image coordinates to grid coordinates is:</p>
 <p><span class="math display">\[
-f(x_1, x_2, \ldots, x_n) = \sum_{q=0}^{2n} \Phi_q\left(\sum_{p=1}^{n} \phi_{q,p}(x_p)\right)
+\begin{align}
+\text{grid}_x &amp;= \lfloor x_{\text{center}} / (W/S) \rfloor \\
+\text{grid}_y &amp;= \lfloor y_{\text{center}} / (H/S) \rfloor
+\end{align}
+\]</span></p>
+<p>where <span class="math inline">\((x_{\text{center}}, y_{\text{center}})\)</span> represents the center coordinates of an object’s bounding box.</p>
+</section>
+<section id="output-tensor-structure" class="level3">
+<h3 class="anchored" data-anchor-id="output-tensor-structure">Output Tensor Structure</h3>
+<p>The network outputs a tensor of shape <span class="math inline">\(S \times S \times (B \times 5 + C)\)</span>, where:</p>
+<ul>
+<li><span class="math inline">\(S\)</span> is the grid size</li>
+<li><span class="math inline">\(B\)</span> is the number of bounding boxes per grid cell<br>
+</li>
+<li><span class="math inline">\(C\)</span> is the number of classes</li>
+</ul>
+<p>Each bounding box prediction contains 5 values: <span class="math inline">\((x, y, w, h, \text{confidence})\)</span>, and each grid cell predicts <span class="math inline">\(C\)</span> class probabilities.</p>
+</section>
+</section>
+<section id="bounding-box-parameterizatioz" class="level2">
+<h2 class="anchored" data-anchor-id="bounding-box-parameterizatioz">Bounding Box Parameterizatioz</h2>
+<section id="coordinate-encoding" class="level3">
+<h3 class="anchored" data-anchor-id="coordinate-encoding">Coordinate Encoding</h3>
+<p>YOLO uses a sophisticated coordinate encoding scheme that ensures predictions are bounded and interpretable:</p>
+<p><strong>Center Coordinates:</strong> <span class="math display">\[
+\begin{align}
+x &amp;= \sigma(t_x) + c_x \\
+y &amp;= \sigma(t_y) + c_y
+\end{align}
 \]</span></p>
 <p>where:</p>
 <ul>
-<li><span class="math inline">\(q\)</span> ranges from <span class="math inline">\(0\)</span> to <span class="math inline">\(2n\)</span></li>
-<li><span class="math inline">\(p\)</span> ranges from <span class="math inline">\(1\)</span> to <span class="math inline">\(n\)</span></li>
-<li>The functions <span class="math inline">\(\phi_{q,p}\)</span> are universal (independent of <span class="math inline">\(f\)</span>)</li>
-<li>Only the outer functions <span class="math inline">\(\Phi_q\)</span> depend on the specific function <span class="math inline">\(f\)</span></li>
+<li><span class="math inline">\(t_x, t_y\)</span> are the raw network outputs</li>
+<li><span class="math inline">\(\sigma\)</span> is the sigmoid function</li>
+<li><span class="math inline">\(c_x, c_y\)</span> are the grid cell offsets <span class="math inline">\((0 \leq c_x, c_y &lt; S)\)</span></li>
 </ul>
-</section>
-<section id="implications-for-neural-networks" class="level3">
-<h3 class="anchored" data-anchor-id="implications-for-neural-networks">Implications for Neural Networks</h3>
-<p>This theorem suggests that instead of using traditional linear combinations followed by fixed activation functions, we can construct networks using compositions of univariate functions. This forms the theoretical backbone of Kolmogorov-Arnold Networks (KANs).</p>
-</section>
-</section>
-<section id="from-kans-to-convolutional-kans" class="level2">
-<h2 class="anchored" data-anchor-id="from-kans-to-convolutional-kans">From KANs to Convolutional KANs</h2>
-<section id="standard-kan-architecture" class="level3">
-<h3 class="anchored" data-anchor-id="standard-kan-architecture">Standard KAN Architecture</h3>
-<p>A standard KAN layer transforms input <span class="math inline">\(\mathbf{x} \in \mathbb{R}^{n_{in}}\)</span> to output <span class="math inline">\(\mathbf{y} \in \mathbb{R}^{n_{out}}\)</span> using:</p>
-<p><span class="math display">\[
-y_j = \sum_{i=1}^{n_{in}} \phi_{i,j}(x_i)
-\]</span></p>
-<p>where <span class="math inline">\(\phi_{i,j}: \mathbb{R} \to \mathbb{R}\)</span> are learnable univariate functions, typically parameterized using splines or other basis functions.</p>
-</section>
-<section id="convolutional-extension" class="level3">
-<h3 class="anchored" data-anchor-id="convolutional-extension">Convolutional Extension</h3>
-<p>The challenge in extending KANs to convolutional architectures lies in maintaining the univariate nature of the learnable functions while incorporating spatial locality and translation invariance. CKANs achieve this through several key innovations:</p>
-</section>
-</section>
-<section id="mathematical-formulation-of-ckans" class="level2">
-<h2 class="anchored" data-anchor-id="mathematical-formulation-of-ckans">Mathematical Formulation of CKANs</h2>
-<section id="convolutional-kan-layer" class="level3">
-<h3 class="anchored" data-anchor-id="convolutional-kan-layer">1. Convolutional KAN Layer</h3>
-<p>For a CKAN layer with input feature map <span class="math inline">\(\mathbf{X} \in \mathbb{R}^{H \times W \times C_{in}}\)</span> and output <span class="math inline">\(\mathbf{Y} \in \mathbb{R}^{H' \times W' \times C_{out}}\)</span>, the convolution operation is defined as:</p>
-<p><span class="math display">\[
-Y_{i,j,k} = \sum_{c=1}^{C_{in}} \sum_{u=0}^{K-1} \sum_{v=0}^{K-1} \phi_{c,k,u,v}(X_{i+u,j+v,c})
+<p>This formulation ensures that predicted centers lie within the responsible grid cell, as <span class="math inline">\(\sigma(t_x) \in [0,1]\)</span>.</p>
+<p><strong>Dimensions:</strong> <span class="math display">\[
+\begin{align}
+w &amp;= p_w \times \exp(t_w) \\
+h &amp;= p_h \times \exp(t_h)
+\end{align}
 \]</span></p>
 <p>where:</p>
 <ul>
-<li><span class="math inline">\((i,j)\)</span> are spatial coordinates in the output feature map</li>
-<li><span class="math inline">\(k\)</span> is the output channel index</li>
-<li><span class="math inline">\(c\)</span> is the input channel index</li>
-<li><span class="math inline">\(K\)</span> is the kernel size</li>
-<li><span class="math inline">\(\phi_{c,k,u,v}\)</span> are learnable univariate functions specific to input channel <span class="math inline">\(c\)</span>, output channel <span class="math inline">\(k\)</span>, and kernel position <span class="math inline">\((u,v)\)</span></li>
+<li><span class="math inline">\(t_w, t_h\)</span> are the raw network outputs</li>
+<li><span class="math inline">\(p_w, p_h\)</span> are anchor box dimensions (in YOLOv2+)</li>
+</ul>
+<p>The exponential ensures positive dimensions, while anchor boxes provide reasonable priors.</p>
+</section>
+<section id="confidence-score-mathematics" class="level3">
+<h3 class="anchored" data-anchor-id="confidence-score-mathematics">Confidence Score Mathematics</h3>
+<p>The confidence score represents the intersection over union (IoU) between the predicted box and the ground truth box:</p>
+<p><span class="math display">\[
+\text{Confidence} = \Pr(\text{Object}) \times \text{IoU}(\text{pred}, \text{truth})
+\]</span></p>
+<p>During inference, this becomes: <span class="math display">\[
+\text{Confidence} = \Pr(\text{Object}) \times \text{IoU}(\text{pred}, \text{truth}) \times \Pr(\text{Class}_i|\text{Object})
+\]</span></p>
+<p>The confidence score effectively captures both the likelihood of an object being present and the accuracy of the bounding box prediction.</p>
+</section>
+</section>
+<section id="loss-function-architecture" class="level2">
+<h2 class="anchored" data-anchor-id="loss-function-architecture">Loss Function Architecture</h2>
+<p>YOLO’s loss function is a carefully designed multi-part objective that balances localization accuracy, confidence prediction, and classification performance.</p>
+<section id="complete-loss-function" class="level3">
+<h3 class="anchored" data-anchor-id="complete-loss-function">Complete Loss Function</h3>
+<p><span class="math display">\[
+\mathcal{L} = \lambda_{\text{coord}} \times \mathcal{L}_{\text{loc}} + \mathcal{L}_{\text{conf}} + \mathcal{L}_{\text{class}}
+\]</span></p>
+</section>
+<section id="localization-loss" class="level3">
+<h3 class="anchored" data-anchor-id="localization-loss">Localization Loss</h3>
+<p><span class="math display">\[
+\begin{align}
+\mathcal{L}_{\text{loc}} &amp;= \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{1}_{ij}^{\text{obj}} [(x_i - \hat{x}_i)^2 + (y_i - \hat{y}_i)^2] \\
+&amp;\quad + \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{1}_{ij}^{\text{obj}} [(\sqrt{w_i} - \sqrt{\hat{w}_i})^2 + (\sqrt{h_i} - \sqrt{\hat{h}_i})^2]
+\end{align}
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(\mathbb{1}_{ij}^{\text{obj}}\)</span> indicates if object appears in cell <span class="math inline">\(i\)</span> and predictor <span class="math inline">\(j\)</span> is responsible</li>
+<li><span class="math inline">\((x_i, y_i, w_i, h_i)\)</span> are ground truth coordinates</li>
+<li><span class="math inline">\((\hat{x}_i, \hat{y}_i, \hat{w}_i, \hat{h}_i)\)</span> are predicted coordinates</li>
+</ul>
+<p>The square root transformation for width and height ensures that errors in large boxes are weighted less heavily than errors in small boxes, addressing the scale sensitivity problem.</p>
+</section>
+<section id="confidence-loss" class="level3">
+<h3 class="anchored" data-anchor-id="confidence-loss">Confidence Loss</h3>
+<p><span class="math display">\[
+\begin{align}
+\mathcal{L}_{\text{conf}} &amp;= \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{1}_{ij}^{\text{obj}} (C_i - \hat{C}_i)^2 \\
+&amp;\quad + \lambda_{\text{noobj}} \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{1}_{ij}^{\text{noobj}} (C_i - \hat{C}_i)^2
+\end{align}
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(C_i\)</span> is the confidence score (IoU between predicted and ground truth boxes)</li>
+<li><span class="math inline">\(\hat{C}_i\)</span> is the predicted confidence</li>
+<li><span class="math inline">\(\mathbb{1}_{ij}^{\text{noobj}}\)</span> indicates when no object is present</li>
+<li><span class="math inline">\(\lambda_{\text{noobj}}\)</span> (typically 0.5) weights down the loss from confidence predictions for boxes that don’t contain objects</li>
 </ul>
 </section>
-<section id="univariate-function-parameterization" class="level3">
-<h3 class="anchored" data-anchor-id="univariate-function-parameterization">2. Univariate Function Parameterization</h3>
-<p>The univariate functions <span class="math inline">\(\phi\)</span> are typically parameterized using B-splines or other basis functions. For B-splines of degree <span class="math inline">\(d\)</span> with <span class="math inline">\(n\)</span> control points:</p>
+<section id="classification-loss" class="level3">
+<h3 class="anchored" data-anchor-id="classification-loss">Classification Loss</h3>
 <p><span class="math display">\[
-\phi(x) = \sum_{i=0}^{n-1} c_i B_i^d(x)
+\mathcal{L}_{\text{class}} = \sum_{i=0}^{S^2} \mathbb{1}_{i}^{\text{obj}} \sum_{c \in \text{classes}} (p_i(c) - \hat{p}_i(c))^2
 \]</span></p>
-<p>where <span class="math inline">\(c_i\)</span> are learnable coefficients and <span class="math inline">\(B_i^d(x)\)</span> are B-spline basis functions defined recursively:</p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(p_i(c)\)</span> is the conditional class probability for class <span class="math inline">\(c\)</span></li>
+<li><span class="math inline">\(\hat{p}_i(c)\)</span> is the predicted class probability</li>
+<li><span class="math inline">\(\mathbb{1}_{i}^{\text{obj}}\)</span> indicates if an object appears in cell <span class="math inline">\(i\)</span></li>
+</ul>
+</section>
+</section>
+<section id="intersection-over-union-iou-calculations" class="level2">
+<h2 class="anchored" data-anchor-id="intersection-over-union-iou-calculations">Intersection over Union (IoU) Calculations</h2>
+<p>IoU is fundamental to YOLO’s operation, used in both training and inference:</p>
 <p><span class="math display">\[
-B_i^0(x) = \begin{cases} 1 &amp; \text{if } t_i \leq x &lt; t_{i+1} \\ 0 &amp; \text{otherwise} \end{cases}
+\text{IoU} = \frac{\text{Area}(\text{Intersection})}{\text{Area}(\text{Union})}
 \]</span></p>
+<p>For two boxes with corners <span class="math inline">\((x_1,y_1,x_2,y_2)\)</span> and <span class="math inline">\((x_1',y_1',x_2',y_2')\)</span>:</p>
 <p><span class="math display">\[
-B_i^d(x) = \frac{x - t_i}{t_{i+d} - t_i} B_i^{d-1}(x) + \frac{t_{i+d+1} - x}{t_{i+d+1} - t_{i+1}} B_{i+1}^{d-1}(x)
+\begin{align}
+\text{Intersection Area} &amp;= \max(0, \min(x_2,x_2') - \max(x_1,x_1')) \\
+&amp;\quad \times \max(0, \min(y_2,y_2') - \max(y_1,y_1')) \\
+\text{Union Area} &amp;= (x_2-x_1)(y_2-y_1) + (x_2'-x_1')(y_2'-y_1') \\
+&amp;\quad - \text{Intersection Area}
+\end{align}
 \]</span></p>
 </section>
-<section id="shared-function-approach" class="level3">
-<h3 class="anchored" data-anchor-id="shared-function-approach">3. Shared Function Approach</h3>
-<p>To reduce the number of parameters, CKANs often employ parameter sharing strategies:</p>
-<section id="spatial-sharing" class="level4">
-<h4 class="anchored" data-anchor-id="spatial-sharing">Spatial Sharing</h4>
-<p>Functions are shared across spatial locations: <span class="math display">\[
-\phi_{c,k}(x) \text{ for all positions } (u,v)
+<section id="non-maximum-suppression-nms" class="level2">
+<h2 class="anchored" data-anchor-id="non-maximum-suppression-nms">Non-Maximum Suppression (NMS)</h2>
+<p>NMS eliminates redundant detections using IoU-based suppression:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+NMS Algorithm
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Sort detections by confidence score (descending)</li>
+<li>While detections remain:
+<ol type="a">
+<li>Select highest confidence detection</li>
+<li>Remove all detections with IoU &gt; threshold with selected detection</li>
+<li>Add selected detection to final output</li>
+</ol></li>
+</ol>
+</div>
+</div>
+<p>The mathematical condition for suppression: <span class="math display">\[
+\text{Suppress if } \text{IoU}(\text{box}_i, \text{box}_j) &gt; \tau_{\text{NMS}} \text{ AND } \text{conf}(\text{box}_i) &lt; \text{conf}(\text{box}_j)
 \]</span></p>
+<p>where <span class="math inline">\(\tau_{\text{NMS}}\)</span> is the NMS threshold.</p>
 </section>
-<section id="channel-grouping" class="level4">
-<h4 class="anchored" data-anchor-id="channel-grouping">Channel Grouping</h4>
-<p>Functions are shared within channel groups: <span class="math display">\[
-\phi_{g,k}(x) \text{ where } g = \lfloor c/G \rfloor \text{ for group size } G
-\]</span></p>
-</section>
-</section>
-</section>
-<section id="activation-functions-in-ckans" class="level2">
-<h2 class="anchored" data-anchor-id="activation-functions-in-ckans">Activation Functions in CKANs</h2>
-<section id="learnable-activation-functions" class="level3">
-<h3 class="anchored" data-anchor-id="learnable-activation-functions">Learnable Activation Functions</h3>
-<p>Unlike traditional CNNs with fixed activation functions (ReLU, sigmoid, etc.), CKANs use learnable activation functions. These can be viewed as univariate functions applied element-wise:</p>
+<section id="anchor-box-mathematics-yolov2" class="level2">
+<h2 class="anchored" data-anchor-id="anchor-box-mathematics-yolov2">Anchor Box Mathematics (YOLOv2+)</h2>
+<p>YOLOv2 introduced anchor boxes to improve small object detection:</p>
+<section id="anchor-box-selection" class="level3">
+<h3 class="anchored" data-anchor-id="anchor-box-selection">Anchor Box Selection</h3>
+<p>Anchor boxes are selected using K-means clustering on training set bounding boxes, with a custom distance metric:</p>
 <p><span class="math display">\[
-\text{Activation}(x) = \psi(x)
+d(\text{box}, \text{centroid}) = 1 - \text{IoU}(\text{box}, \text{centroid})
 \]</span></p>
-<p>where <span class="math inline">\(\psi\)</span> is a learnable univariate function, often parameterized as:</p>
+<p>This ensures that anchor boxes are chosen to maximize IoU with ground truth boxes rather than Euclidean distance.</p>
+</section>
+<section id="prediction-with-anchors" class="level3">
+<h3 class="anchored" data-anchor-id="prediction-with-anchors">Prediction with Anchors</h3>
+<p>With anchor boxes, the prediction formulation becomes:</p>
 <p><span class="math display">\[
-\psi(x) = \text{SiLU}(x) + \sum_{i=0}^{n-1} a_i B_i^d(x)
+\begin{align}
+x &amp;= \sigma(t_x) + c_x \\
+y &amp;= \sigma(t_y) + c_y \\
+w &amp;= p_w \times \exp(t_w) \\
+h &amp;= p_h \times \exp(t_h)
+\end{align}
 \]</span></p>
-<p>The SiLU (Sigmoid Linear Unit) provides a smooth base function, while the spline terms allow for fine-tuning.</p>
+<p>where <span class="math inline">\(p_w\)</span> and <span class="math inline">\(p_h\)</span> are the anchor box dimensions.</p>
 </section>
 </section>
-<section id="training-dynamics-and-optimization" class="level2">
-<h2 class="anchored" data-anchor-id="training-dynamics-and-optimization">Training Dynamics and Optimization</h2>
-<section id="gradient-computation" class="level3">
-<h3 class="anchored" data-anchor-id="gradient-computation">Gradient Computation</h3>
-<p>The gradient of the loss function with respect to the spline coefficients involves the derivative of B-spline basis functions:</p>
+<section id="mathematical-optimizations" class="level2">
+<h2 class="anchored" data-anchor-id="mathematical-optimizations">Mathematical Optimizations</h2>
+<section id="gradient-flow-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="gradient-flow-analysis">Gradient Flow Analysis</h3>
+<p>The sigmoid activation in coordinate prediction ensures bounded gradients:</p>
 <p><span class="math display">\[
-\frac{\partial L}{\partial c_i} = \frac{\partial L}{\partial \phi} \cdot B_i^d(x)
+\frac{\partial \mathcal{L}}{\partial t_x} = \frac{\partial \mathcal{L}}{\partial x} \times \frac{\partial x}{\partial t_x} = \frac{\partial \mathcal{L}}{\partial x} \times \sigma(t_x)(1-\sigma(t_x))
 \]</span></p>
-<p>For the derivative of the function itself: <span class="math display">\[
-\frac{\partial L}{\partial x} = \frac{\partial L}{\partial \phi} \cdot \sum_{i=0}^{n-1} c_i \frac{dB_i^d(x)}{dx}
-\]</span></p>
+<p>This prevents exploding gradients while maintaining sensitivity to coordinate adjustments.</p>
 </section>
-<section id="regularization-techniques" class="level3">
-<h3 class="anchored" data-anchor-id="regularization-techniques">Regularization Techniques</h3>
-<p>CKANs typically employ several regularization techniques:</p>
-<section id="smoothness-regularization" class="level4">
-<h4 class="anchored" data-anchor-id="smoothness-regularization">Smoothness Regularization</h4>
+<section id="multi-scale-training-mathematics" class="level3">
+<h3 class="anchored" data-anchor-id="multi-scale-training-mathematics">Multi-Scale Training Mathematics</h3>
+<p>YOLOv2 employs multi-scale training by randomly resizing images during training:</p>
 <p><span class="math display">\[
-R_{\text{smooth}} = \sum_{i,j} \int \left(\frac{d^2\phi_{i,j}(x)}{dx^2}\right)^2 dx
+\text{Scale factor} = \frac{\text{random choice}([320, 352, 384, 416, 448, 480, 512, 544, 576, 608])}{416}
 \]</span></p>
-</section>
-<section id="sparsity-regularization" class="level4">
-<h4 class="anchored" data-anchor-id="sparsity-regularization">Sparsity Regularization</h4>
-<p><span class="math display">\[
-R_{\text{sparse}} = \sum_{i,j} \int |\phi_{i,j}(x)| dx
-\]</span></p>
-</section>
-<section id="total-variation-regularization" class="level4">
-<h4 class="anchored" data-anchor-id="total-variation-regularization">Total Variation Regularization</h4>
-<p><span class="math display">\[
-R_{\text{TV}} = \sum_{i,j} \int \left|\frac{d\phi_{i,j}(x)}{dx}\right| dx
-\]</span></p>
-</section>
+<p>This mathematical approach improves robustness across different input resolutions.</p>
 </section>
 </section>
 <section id="computational-complexity-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="computational-complexity-analysis">Computational Complexity Analysis</h2>
-<section id="parameter-count" class="level3">
-<h3 class="anchored" data-anchor-id="parameter-count">Parameter Count</h3>
-<p>For a CKAN layer with:</p>
+<section id="forward-pass-complexity" class="level3">
+<h3 class="anchored" data-anchor-id="forward-pass-complexity">Forward Pass Complexity</h3>
+<p>For a network with <span class="math inline">\(L\)</span> layers and an input of size <span class="math inline">\(W \times H \times C\)</span>:</p>
 <ul>
-<li>Input channels: <span class="math inline">\(C_{in}\)</span></li>
-<li>Output channels: <span class="math inline">\(C_{out}\)</span></li>
-<li>Kernel size: <span class="math inline">\(K \times K\)</span></li>
-<li>Spline degree: <span class="math inline">\(d\)</span></li>
-<li>Control points per spline: <span class="math inline">\(n\)</span></li>
-</ul>
-<p>The parameter count is: <span class="math display">\[
-\text{Parameters} = C_{in} \times C_{out} \times K^2 \times n
-\]</span></p>
-<p>Compare this to traditional CNN: <span class="math display">\[
-\text{Parameters}_{\text{CNN}} = C_{in} \times C_{out} \times K^2
-\]</span></p>
-</section>
-<section id="computational-complexity" class="level3">
-<h3 class="anchored" data-anchor-id="computational-complexity">Computational Complexity</h3>
-<p>The forward pass complexity for a single CKAN layer is: <span class="math display">\[
-O(H \times W \times C_{out} \times C_{in} \times K^2 \times n)
-\]</span></p>
-<p>where <span class="math inline">\(H \times W\)</span> is the spatial dimension of the output feature map.</p>
-</section>
-</section>
-<section id="architectural-variations" class="level2">
-<h2 class="anchored" data-anchor-id="architectural-variations">Architectural Variations</h2>
-<section id="depthwise-separable-ckans" class="level3">
-<h3 class="anchored" data-anchor-id="depthwise-separable-ckans">1. Depthwise Separable CKANs</h3>
-<p>Inspired by depthwise separable convolutions, this variant separates the operation into:</p>
-<p><strong>Depthwise Convolution</strong>: <span class="math display">\[
-Y_{i,j,c} = \sum_{u=0}^{K-1} \sum_{v=0}^{K-1} \phi_{c,u,v}(X_{i+u,j+v,c})
-\]</span></p>
-<p><strong>Pointwise Convolution</strong>: <span class="math display">\[
-Z_{i,j,k} = \sum_{c=1}^{C_{in}} \psi_{c,k}(Y_{i,j,c})
-\]</span></p>
-</section>
-<section id="dilated-ckans" class="level3">
-<h3 class="anchored" data-anchor-id="dilated-ckans">2. Dilated CKANs</h3>
-<p>Incorporating dilation for larger receptive fields: <span class="math display">\[
-Y_{i,j,k} = \sum_{c=1}^{C_{in}} \sum_{u=0}^{K-1} \sum_{v=0}^{K-1} \phi_{c,k,u,v}(X_{i+d \cdot u,j+d \cdot v,c})
-\]</span></p>
-<p>where <span class="math inline">\(d\)</span> is the dilation factor.</p>
-</section>
-<section id="residual-ckans" class="level3">
-<h3 class="anchored" data-anchor-id="residual-ckans">3. Residual CKANs</h3>
-<p>Combining residual connections with CKAN layers: <span class="math display">\[
-Y = \text{CKAN}(X) + \alpha \cdot X
-\]</span></p>
-<p>where <span class="math inline">\(\alpha\)</span> is a learnable scaling factor.</p>
-</section>
-</section>
-<section id="approximation-properties" class="level2">
-<h2 class="anchored" data-anchor-id="approximation-properties">Approximation Properties</h2>
-<section id="universal-approximation" class="level3">
-<h3 class="anchored" data-anchor-id="universal-approximation">Universal Approximation</h3>
-<p>CKANs inherit the universal approximation properties of KANs. For any continuous function <span class="math inline">\(f: \mathbb{R}^n \to \mathbb{R}\)</span> and any <span class="math inline">\(\epsilon &gt; 0\)</span>, there exists a CKAN that approximates <span class="math inline">\(f\)</span> within <span class="math inline">\(\epsilon\)</span> accuracy.</p>
-</section>
-<section id="convergence-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="convergence-analysis">Convergence Analysis</h3>
-<p>The convergence rate of CKANs depends on several factors:</p>
-<ol type="1">
-<li><strong>Smoothness of target function</strong>: Smoother functions converge faster</li>
-<li><strong>Spline degree</strong>: Higher degree splines provide better approximation but may overfit</li>
-<li><strong>Number of control points</strong>: More control points increase expressivity but computational cost</li>
-</ol>
-<p>The approximation error for a function <span class="math inline">\(f\)</span> with <span class="math inline">\(s\)</span>-th order smoothness is bounded by: <span class="math display">\[
-\|f - \text{CKAN}(f)\|_\infty \leq C \cdot h^s
-\]</span></p>
-<p>where <span class="math inline">\(h\)</span> is the spacing between spline knots and <span class="math inline">\(C\)</span> is a constant depending on <span class="math inline">\(f\)</span>.</p>
-</section>
-</section>
-<section id="practical-implementation-considerations" class="level2">
-<h2 class="anchored" data-anchor-id="practical-implementation-considerations">Practical Implementation Considerations</h2>
-<section id="numerical-stability" class="level3">
-<h3 class="anchored" data-anchor-id="numerical-stability">Numerical Stability</h3>
-<p>CKANs require careful attention to numerical stability:</p>
-<ol type="1">
-<li><strong>Spline knot placement</strong>: Uniform or adaptive knot placement strategies</li>
-<li><strong>Coefficient initialization</strong>: Proper initialization of spline coefficients</li>
-<li><strong>Gradient clipping</strong>: Preventing gradient explosion during backpropagation</li>
-</ol>
-</section>
-<section id="memory-optimization" class="level3">
-<h3 class="anchored" data-anchor-id="memory-optimization">Memory Optimization</h3>
-<p>Several techniques can reduce memory usage:</p>
-<ol type="1">
-<li><strong>Lazy evaluation</strong>: Computing spline values on-demand</li>
-<li><strong>Coefficient sharing</strong>: Sharing coefficients across similar functions</li>
-<li><strong>Quantization</strong>: Using lower precision for spline coefficients</li>
-</ol>
-</section>
-</section>
-<section id="comparison-with-traditional-cnns" class="level2">
-<h2 class="anchored" data-anchor-id="comparison-with-traditional-cnns">Comparison with Traditional CNNs</h2>
-<section id="expressivity" class="level3">
-<h3 class="anchored" data-anchor-id="expressivity">Expressivity</h3>
-<p>CKANs offer superior expressivity due to:</p>
-<ul>
-<li>Learnable activation functions</li>
-<li>Non-linear transformations in each connection</li>
-<li>Adaptive function shapes based on data</li>
+<li>Convolutional layers: <span class="math inline">\(O(W \times H \times C_{\text{in}} \times C_{\text{out}} \times K^2)\)</span> per layer</li>
+<li>Total complexity: <span class="math inline">\(O(W \times H \times \sum(C_{\text{in}} \times C_{\text{out}} \times K^2))\)</span></li>
 </ul>
 </section>
-<section id="interpretability" class="level3">
-<h3 class="anchored" data-anchor-id="interpretability">Interpretability</h3>
-<p>The univariate nature of CKAN functions provides better interpretability:</p>
+<section id="inference-speed-mathematics" class="level3">
+<h3 class="anchored" data-anchor-id="inference-speed-mathematics">Inference Speed Mathematics</h3>
+<p>YOLO’s single forward pass eliminates the need for region proposal networks:</p>
 <ul>
-<li>Each function can be visualized as a 1D curve</li>
-<li>Function shapes reveal learned patterns</li>
-<li>Easier to understand feature transformations</li>
+<li>Traditional methods: <span class="math inline">\(O(N \times \text{Forward pass})\)</span> where <span class="math inline">\(N\)</span> is number of proposals</li>
+<li>YOLO: <span class="math inline">\(O(1 \times \text{Forward pass})\)</span></li>
+</ul>
+<p>This represents a significant computational advantage.</p>
+</section>
+</section>
+<section id="advanced-mathematical-concepts" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-mathematical-concepts">Advanced Mathematical Concepts</h2>
+<section id="focal-loss-integration-yolov3" class="level3">
+<h3 class="anchored" data-anchor-id="focal-loss-integration-yolov3">Focal Loss Integration (YOLOv3+)</h3>
+<p>Some YOLO variants incorporate focal loss to address class imbalance:</p>
+<p><span class="math display">\[
+\text{Focal Loss} = -\alpha(1-p_t)^\gamma \log(p_t)
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(p_t\)</span> is the predicted probability for the true class</li>
+<li><span class="math inline">\(\alpha\)</span> is a weighting factor</li>
+<li><span class="math inline">\(\gamma\)</span> is the focusing parameter</li>
 </ul>
 </section>
-<section id="computational-trade-offs" class="level3">
-<h3 class="anchored" data-anchor-id="computational-trade-offs">Computational Trade-offs</h3>
-<p><strong>Advantages</strong>:</p>
-<ul>
-<li>Better function approximation with fewer layers</li>
-<li>Interpretable learned functions</li>
-<li>Theoretical guarantees</li>
-</ul>
-<p><strong>Disadvantages</strong>:</p>
-<ul>
-<li>Higher computational cost per layer</li>
-<li>More parameters to optimize</li>
-<li>Longer training times</li>
-</ul>
-</section>
-</section>
-<section id="future-directions-and-extensions" class="level2">
-<h2 class="anchored" data-anchor-id="future-directions-and-extensions">Future Directions and Extensions</h2>
-<section id="theoretical-advances" class="level3">
-<h3 class="anchored" data-anchor-id="theoretical-advances">Theoretical Advances</h3>
-<ol type="1">
-<li><strong>Convergence guarantees</strong>: Developing stronger theoretical guarantees for CKAN convergence</li>
-<li><strong>Optimal architectures</strong>: Finding optimal CKAN architectures for specific tasks</li>
-<li><strong>Generalization bounds</strong>: Establishing generalization bounds for CKANs</li>
-</ol>
-</section>
-<section id="practical-improvements" class="level3">
-<h3 class="anchored" data-anchor-id="practical-improvements">Practical Improvements</h3>
-<ol type="1">
-<li><strong>Efficient implementations</strong>: Developing more efficient CUDA kernels for CKAN operations</li>
-<li><strong>Automated architecture search</strong>: Using neural architecture search for CKAN design</li>
-<li><strong>Hardware acceleration</strong>: Designing specialized hardware for CKAN computations</li>
-</ol>
-</section>
-<section id="applications" class="level3">
-<h3 class="anchored" data-anchor-id="applications">Applications</h3>
-<ol type="1">
-<li><strong>Computer vision</strong>: Image classification, object detection, segmentation</li>
-<li><strong>Scientific computing</strong>: Solving partial differential equations</li>
-<li><strong>Signal processing</strong>: Audio and video processing applications</li>
-</ol>
+<section id="feature-pyramid-networks-mathematics" class="level3">
+<h3 class="anchored" data-anchor-id="feature-pyramid-networks-mathematics">Feature Pyramid Networks Mathematics</h3>
+<p>YOLOv3 uses feature pyramids with mathematical upsampling:</p>
+<p><span class="math display">\[
+\begin{align}
+\text{Upsampled feature} &amp;= \text{Interpolate}(\text{Lower resolution feature}, \text{scale factor}=2) \\
+\text{Combined feature} &amp;= \text{Concat}(\text{Upsampled feature}, \text{Higher resolution feature})
+\end{align}
+\]</span></p>
 </section>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>Convolutional Kolmogorov-Arnold Networks represent a significant advancement in neural network architectures, combining solid theoretical foundations with practical convolutional operations. While computationally more expensive than traditional CNNs, CKANs offer superior expressivity, interpretability, and theoretical guarantees. As the field continues to evolve, we can expect further optimizations and novel applications of this powerful architecture.</p>
-<p>The mathematics behind CKANs reveals a rich interplay between approximation theory, spline functions, and deep learning, opening new avenues for both theoretical understanding and practical applications in machine learning.</p>
+<p>The mathematical foundation of YOLO demonstrates elegant solutions to complex computer vision problems. By formulating object detection as a single regression problem, YOLO achieves remarkable efficiency while maintaining accuracy. The careful design of the loss function, coordinate encoding, and architectural choices reflects deep mathematical insights into the nature of object detection.</p>
+<p>Understanding these mathematical principles is crucial for practitioners seeking to modify, improve, or adapt YOLO for specific applications. The balance between localization accuracy, confidence prediction, and classification performance showcases how mathematical rigor can lead to practical breakthroughs in computer vision.</p>
+<p>The evolution from YOLO to YOLOv8 and beyond continues to build upon these mathematical foundations, incorporating advances in deep learning theory while maintaining the core insight that object detection can be efficiently solved through direct prediction rather than complex multi-stage pipelines.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Takeaways
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>YOLO’s unified architecture treats object detection as a single regression problem</li>
+<li>The grid-based approach with mathematical coordinate encoding ensures bounded predictions</li>
+<li>The multi-part loss function balances localization, confidence, and classification objectives</li>
+<li>Mathematical optimizations like anchor boxes and multi-scale training improve performance</li>
+<li>Understanding the mathematical foundations enables effective adaptation and improvement</li>
+</ul>
+</div>
+</div>
 
 
 

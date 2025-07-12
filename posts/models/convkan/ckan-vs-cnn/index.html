@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Krishnatheja Vanka">
-<meta name="dcterms.date" content="2025-07-02">
+<meta name="dcterms.date" content="2025-07-05">
 
-<title>Kolmogorov-Arnold Networks: Revolutionizing Neural Architecture Design – Krishnatheja Vanka’s Blog</title>
+<title>Convolutional Kolmogorov-Arnold Networks vs Convolutional Neural Networks: A Comprehensive Analysis – Krishnatheja Vanka’s Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,28 +25,28 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../../">
-<link href="../../../favicon.ico" rel="icon">
-<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../site_libs/bootstrap/bootstrap-dark-5a86c4bd0c1f9981a70f893fdae069f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<link href="../../../../favicon.ico" rel="icon">
+<script src="../../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-5a86c4bd0c1f9981a70f893fdae069f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -105,7 +105,7 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="../../../styles/styles.css">
+<link rel="stylesheet" href="../../../../styles/styles.css">
 </head>
 
 <body class="floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -277,7 +277,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../../../index.html">
+    <a class="navbar-brand" href="../../../../index.html">
     <span class="navbar-title">Krishnatheja Vanka’s Blog</span>
     </a>
   </div>
@@ -288,7 +288,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../../about.html"> 
+    <a class="nav-link" href="../../../../about.html"> 
 <span class="menu-text">About me</span></a>
   </li>  
   <li class="nav-item compact">
@@ -308,7 +308,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-right">
-      <h1 class="title">Kolmogorov-Arnold Networks: Revolutionizing Neural Architecture Design</h1>
+      <h1 class="title">Convolutional Kolmogorov-Arnold Networks vs Convolutional Neural Networks: A Comprehensive Analysis</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
                 <div class="quarto-category">advanced</div>
@@ -329,7 +329,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">July 2, 2025</p>
+        <p class="date">July 5, 2025</p>
       </div>
     </div>
     
@@ -344,71 +344,49 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#kolmogorov-arnold-networks-revolutionizing-neural-architecture-design" id="toc-kolmogorov-arnold-networks-revolutionizing-neural-architecture-design" class="nav-link active" data-scroll-target="#kolmogorov-arnold-networks-revolutionizing-neural-architecture-design">Kolmogorov-Arnold Networks: Revolutionizing Neural Architecture Design</a>
+  <li><a href="#convolutional-kolmogorov-arnold-networks-vs-convolutional-neural-networks-a-comprehensive-analysis" id="toc-convolutional-kolmogorov-arnold-networks-vs-convolutional-neural-networks-a-comprehensive-analysis" class="nav-link active" data-scroll-target="#convolutional-kolmogorov-arnold-networks-vs-convolutional-neural-networks-a-comprehensive-analysis">Convolutional Kolmogorov-Arnold Networks vs Convolutional Neural Networks: A Comprehensive Analysis</a>
   <ul class="collapse">
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#mathematical-foundation-the-kolmogorov-arnold-theorem" id="toc-mathematical-foundation-the-kolmogorov-arnold-theorem" class="nav-link" data-scroll-target="#mathematical-foundation-the-kolmogorov-arnold-theorem">Mathematical Foundation: The Kolmogorov-Arnold Theorem</a></li>
-  <li><a href="#architecture-overview" id="toc-architecture-overview" class="nav-link" data-scroll-target="#architecture-overview">Architecture Overview</a>
+  <li><a href="#theoretical-foundation" id="toc-theoretical-foundation" class="nav-link" data-scroll-target="#theoretical-foundation">Theoretical Foundation</a>
   <ul class="collapse">
-  <li><a href="#traditional-mlps-vs-kans" id="toc-traditional-mlps-vs-kans" class="nav-link" data-scroll-target="#traditional-mlps-vs-kans">Traditional MLPs vs KANs</a></li>
-  <li><a href="#kan-layer-structure" id="toc-kan-layer-structure" class="nav-link" data-scroll-target="#kan-layer-structure">KAN Layer Structure</a></li>
+  <li><a href="#the-kolmogorov-arnold-representation-theorem" id="toc-the-kolmogorov-arnold-representation-theorem" class="nav-link" data-scroll-target="#the-kolmogorov-arnold-representation-theorem">The Kolmogorov-Arnold Representation Theorem</a></li>
+  <li><a href="#architectural-differences" id="toc-architectural-differences" class="nav-link" data-scroll-target="#architectural-differences">Architectural Differences</a></li>
   </ul></li>
-  <li><a href="#key-components-and-implementation" id="toc-key-components-and-implementation" class="nav-link" data-scroll-target="#key-components-and-implementation">Key Components and Implementation</a>
+  <li><a href="#convolutional-neural-networks-the-established-paradigm" id="toc-convolutional-neural-networks-the-established-paradigm" class="nav-link" data-scroll-target="#convolutional-neural-networks-the-established-paradigm">Convolutional Neural Networks: The Established Paradigm</a>
   <ul class="collapse">
-  <li><a href="#b-spline-parameterization" id="toc-b-spline-parameterization" class="nav-link" data-scroll-target="#b-spline-parameterization">B-Spline Parameterization</a></li>
-  <li><a href="#grid-structure" id="toc-grid-structure" class="nav-link" data-scroll-target="#grid-structure">Grid Structure</a></li>
-  <li><a href="#residual-connections" id="toc-residual-connections" class="nav-link" data-scroll-target="#residual-connections">Residual Connections</a></li>
+  <li><a href="#architecture-overview" id="toc-architecture-overview" class="nav-link" data-scroll-target="#architecture-overview">Architecture Overview</a></li>
+  <li><a href="#key-characteristics" id="toc-key-characteristics" class="nav-link" data-scroll-target="#key-characteristics">Key Characteristics</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
   </ul></li>
-  <li><a href="#training-process" id="toc-training-process" class="nav-link" data-scroll-target="#training-process">Training Process</a>
+  <li><a href="#convolutional-kolmogorov-arnold-networks-the-new-paradigm" id="toc-convolutional-kolmogorov-arnold-networks-the-new-paradigm" class="nav-link" data-scroll-target="#convolutional-kolmogorov-arnold-networks-the-new-paradigm">Convolutional Kolmogorov-Arnold Networks: The New Paradigm</a>
   <ul class="collapse">
-  <li><a href="#forward-pass" id="toc-forward-pass" class="nav-link" data-scroll-target="#forward-pass">Forward Pass</a></li>
-  <li><a href="#backward-pass" id="toc-backward-pass" class="nav-link" data-scroll-target="#backward-pass">Backward Pass</a></li>
-  <li><a href="#optimization-challenges" id="toc-optimization-challenges" class="nav-link" data-scroll-target="#optimization-challenges">Optimization Challenges</a></li>
+  <li><a href="#architecture-innovation" id="toc-architecture-innovation" class="nav-link" data-scroll-target="#architecture-innovation">Architecture Innovation</a></li>
+  <li><a href="#technical-implementation" id="toc-technical-implementation" class="nav-link" data-scroll-target="#technical-implementation">Technical Implementation</a></li>
+  <li><a href="#architectural-flexibility" id="toc-architectural-flexibility" class="nav-link" data-scroll-target="#architectural-flexibility">Architectural Flexibility</a></li>
   </ul></li>
-  <li><a href="#advantages-of-kans" id="toc-advantages-of-kans" class="nav-link" data-scroll-target="#advantages-of-kans">Advantages of KANs</a>
+  <li><a href="#comparative-analysis" id="toc-comparative-analysis" class="nav-link" data-scroll-target="#comparative-analysis">Comparative Analysis</a>
   <ul class="collapse">
-  <li><a href="#enhanced-interpretability" id="toc-enhanced-interpretability" class="nav-link" data-scroll-target="#enhanced-interpretability">Enhanced Interpretability</a></li>
   <li><a href="#parameter-efficiency" id="toc-parameter-efficiency" class="nav-link" data-scroll-target="#parameter-efficiency">Parameter Efficiency</a></li>
-  <li><a href="#better-generalization" id="toc-better-generalization" class="nav-link" data-scroll-target="#better-generalization">Better Generalization</a></li>
+  <li><a href="#expressive-power" id="toc-expressive-power" class="nav-link" data-scroll-target="#expressive-power">Expressive Power</a></li>
+  <li><a href="#interpretability" id="toc-interpretability" class="nav-link" data-scroll-target="#interpretability">Interpretability</a></li>
+  <li><a href="#performance-characteristics" id="toc-performance-characteristics" class="nav-link" data-scroll-target="#performance-characteristics">Performance Characteristics</a></li>
   </ul></li>
-  <li><a href="#applications-and-use-cases" id="toc-applications-and-use-cases" class="nav-link" data-scroll-target="#applications-and-use-cases">Applications and Use Cases</a>
+  <li><a href="#practical-applications-and-limitations" id="toc-practical-applications-and-limitations" class="nav-link" data-scroll-target="#practical-applications-and-limitations">Practical Applications and Limitations</a>
   <ul class="collapse">
-  <li><a href="#scientific-computing" id="toc-scientific-computing" class="nav-link" data-scroll-target="#scientific-computing">Scientific Computing</a></li>
-  <li><a href="#function-approximation" id="toc-function-approximation" class="nav-link" data-scroll-target="#function-approximation">Function Approximation</a></li>
-  <li><a href="#symbolic-regression" id="toc-symbolic-regression" class="nav-link" data-scroll-target="#symbolic-regression">Symbolic Regression</a></li>
+  <li><a href="#suitable-applications" id="toc-suitable-applications" class="nav-link" data-scroll-target="#suitable-applications">Suitable Applications</a></li>
+  <li><a href="#current-limitations" id="toc-current-limitations" class="nav-link" data-scroll-target="#current-limitations">Current Limitations</a></li>
   </ul></li>
   <li><a href="#implementation-considerations" id="toc-implementation-considerations" class="nav-link" data-scroll-target="#implementation-considerations">Implementation Considerations</a>
   <ul class="collapse">
-  <li><a href="#computational-complexity" id="toc-computational-complexity" class="nav-link" data-scroll-target="#computational-complexity">Computational Complexity</a></li>
+  <li><a href="#training-strategies" id="toc-training-strategies" class="nav-link" data-scroll-target="#training-strategies">Training Strategies</a></li>
   <li><a href="#hyperparameter-tuning" id="toc-hyperparameter-tuning" class="nav-link" data-scroll-target="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
-  <li><a href="#software-implementation" id="toc-software-implementation" class="nav-link" data-scroll-target="#software-implementation">Software Implementation</a></li>
   </ul></li>
-  <li><a href="#current-limitations-and-challenges" id="toc-current-limitations-and-challenges" class="nav-link" data-scroll-target="#current-limitations-and-challenges">Current Limitations and Challenges</a>
+  <li><a href="#future-directions-and-research-opportunities" id="toc-future-directions-and-research-opportunities" class="nav-link" data-scroll-target="#future-directions-and-research-opportunities">Future Directions and Research Opportunities</a>
   <ul class="collapse">
-  <li><a href="#scalability-issues" id="toc-scalability-issues" class="nav-link" data-scroll-target="#scalability-issues">Scalability Issues</a></li>
-  <li><a href="#theoretical-gaps" id="toc-theoretical-gaps" class="nav-link" data-scroll-target="#theoretical-gaps">Theoretical Gaps</a></li>
-  <li><a href="#practical-considerations" id="toc-practical-considerations" class="nav-link" data-scroll-target="#practical-considerations">Practical Considerations</a></li>
-  </ul></li>
-  <li><a href="#recent-developments-and-research-directions" id="toc-recent-developments-and-research-directions" class="nav-link" data-scroll-target="#recent-developments-and-research-directions">Recent Developments and Research Directions</a>
-  <ul class="collapse">
-  <li><a href="#architectural-innovations" id="toc-architectural-innovations" class="nav-link" data-scroll-target="#architectural-innovations">Architectural Innovations</a></li>
-  <li><a href="#optimization-improvements" id="toc-optimization-improvements" class="nav-link" data-scroll-target="#optimization-improvements">Optimization Improvements</a></li>
-  <li><a href="#application-expansions" id="toc-application-expansions" class="nav-link" data-scroll-target="#application-expansions">Application Expansions</a></li>
-  </ul></li>
-  <li><a href="#comparison-with-other-architectures" id="toc-comparison-with-other-architectures" class="nav-link" data-scroll-target="#comparison-with-other-architectures">Comparison with Other Architectures</a>
-  <ul class="collapse">
-  <li><a href="#kans-vs-mlps" id="toc-kans-vs-mlps" class="nav-link" data-scroll-target="#kans-vs-mlps">KANs vs MLPs</a></li>
-  <li><a href="#kans-vs-transformers" id="toc-kans-vs-transformers" class="nav-link" data-scroll-target="#kans-vs-transformers">KANs vs Transformers</a></li>
-  <li><a href="#kans-vs-decision-trees" id="toc-kans-vs-decision-trees" class="nav-link" data-scroll-target="#kans-vs-decision-trees">KANs vs Decision Trees</a></li>
-  </ul></li>
-  <li><a href="#future-outlook" id="toc-future-outlook" class="nav-link" data-scroll-target="#future-outlook">Future Outlook</a>
-  <ul class="collapse">
-  <li><a href="#emerging-trends" id="toc-emerging-trends" class="nav-link" data-scroll-target="#emerging-trends">Emerging Trends</a></li>
-  <li><a href="#research-opportunities" id="toc-research-opportunities" class="nav-link" data-scroll-target="#research-opportunities">Research Opportunities</a></li>
-  <li><a href="#industry-adoption" id="toc-industry-adoption" class="nav-link" data-scroll-target="#industry-adoption">Industry Adoption</a></li>
+  <li><a href="#emerging-research-areas" id="toc-emerging-research-areas" class="nav-link" data-scroll-target="#emerging-research-areas">Emerging Research Areas</a></li>
+  <li><a href="#potential-developments" id="toc-potential-developments" class="nav-link" data-scroll-target="#potential-developments">Potential Developments</a></li>
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
-  <li><a href="#references-and-further-reading" id="toc-references-and-further-reading" class="nav-link" data-scroll-target="#references-and-further-reading">References and Further Reading</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -425,312 +403,209 @@ window.Quarto = {
 
 
 
-<section id="kolmogorov-arnold-networks-revolutionizing-neural-architecture-design" class="level1">
-<h1>Kolmogorov-Arnold Networks: Revolutionizing Neural Architecture Design</h1>
-<p><img src="kan.png" class="img-fluid"></p>
+<section id="convolutional-kolmogorov-arnold-networks-vs-convolutional-neural-networks-a-comprehensive-analysis" class="level1">
+<h1>Convolutional Kolmogorov-Arnold Networks vs Convolutional Neural Networks: A Comprehensive Analysis</h1>
+<p><img src="ckan-vs-cnn.png" class="img-fluid"></p>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>Kolmogorov-Arnold Networks (KANs) represent a paradigm shift in neural network architecture design, moving away from the traditional Multi-Layer Perceptron (MLP) approach that has dominated machine learning for decades. Named after mathematicians Andrey Kolmogorov and Vladimir Arnold, these networks are based on the Kolmogorov-Arnold representation theorem, which provides a mathematical foundation for representing multivariate continuous functions.</p>
-<p>Unlike traditional neural networks that place fixed activation functions at nodes (neurons), KANs place learnable activation functions on edges (weights). This fundamental architectural change offers several advantages, including better interpretability, higher accuracy with fewer parameters, and improved generalization capabilities.</p>
+<p>The landscape of deep learning has been revolutionized by Convolutional Neural Networks (CNNs), which have dominated computer vision tasks for over a decade. However, a new paradigm has emerged that challenges the fundamental assumptions of traditional neural architectures: Convolutional Kolmogorov-Arnold Networks (Convolutional KANs). This innovative approach represents a significant departure from conventional neural network design, offering enhanced parameter efficiency, interpretability, and expressive power.</p>
 </section>
-<section id="mathematical-foundation-the-kolmogorov-arnold-theorem" class="level2">
-<h2 class="anchored" data-anchor-id="mathematical-foundation-the-kolmogorov-arnold-theorem">Mathematical Foundation: The Kolmogorov-Arnold Theorem</h2>
-<p>The Kolmogorov-Arnold representation theorem, proven in 1957, states that every multivariate continuous function can be represented as a composition and superposition of continuous functions of a single variable. Mathematically, for any continuous function <span class="math inline">\(f: [0,1]^n \rightarrow \mathbb{R}\)</span> , there exist continuous functions <span class="math inline">\(\phi_{q,p}: \mathbb{R} \rightarrow \mathbb{R}\)</span> such that:</p>
+<section id="theoretical-foundation" class="level2">
+<h2 class="anchored" data-anchor-id="theoretical-foundation">Theoretical Foundation</h2>
+<section id="the-kolmogorov-arnold-representation-theorem" class="level3">
+<h3 class="anchored" data-anchor-id="the-kolmogorov-arnold-representation-theorem">The Kolmogorov-Arnold Representation Theorem</h3>
+<p>The theoretical foundation of KANs lies in the Kolmogorov-Arnold representation theorem, which states that any multivariate continuous function on a bounded domain can be represented as a finite composition of continuous functions of a single variable and the binary operation of addition. This mathematical principle fundamentally challenges the traditional multi-layer perceptron (MLP) approach and provides the basis for a new class of neural networks.</p>
+<p>The theorem can be formally expressed as:</p>
 <p><span class="math display">\[
 f(x_1, x_2, \ldots, x_n) = \sum_{q=0}^{2n} \Phi_q\left( \sum_{p=1}^{n} \phi_{q,p}(x_p) \right)
 \]</span></p>
-<p>This theorem provides the theoretical foundation for KANs, suggesting that complex multivariate functions can be decomposed into simpler univariate functions arranged in a specific hierarchical structure.</p>
+<p>Where <span class="math inline">\(\phi_{i}\)</span> and <span class="math inline">\(\phi_{i,j}\)</span> are continuous univariate functions, and f is the multivariate function being approximated.</p>
 </section>
-<section id="architecture-overview" class="level2">
-<h2 class="anchored" data-anchor-id="architecture-overview">Architecture Overview</h2>
-<section id="traditional-mlps-vs-kans" class="level3">
-<h3 class="anchored" data-anchor-id="traditional-mlps-vs-kans">Traditional MLPs vs KANs</h3>
-<p><strong>Traditional MLPs:</strong> - Fixed activation functions (ReLU, sigmoid, tanh) at nodes - Linear transformations on edges (weights and biases) - Learning occurs through weight optimization - Limited interpretability due to distributed representations</p>
-<p><strong>Kolmogorov-Arnold Networks:</strong> - Learnable activation functions on edges - No traditional linear weights - Each edge contains a univariate function (typically B-splines) - Nodes perform simple summation operations - Enhanced interpretability through edge function visualization</p>
-</section>
-<section id="kan-layer-structure" class="level3">
-<h3 class="anchored" data-anchor-id="kan-layer-structure">KAN Layer Structure</h3>
-<p>A single KAN layer transforms an input vector of dimension <code>n_in</code> to an output vector of dimension <code>n_out</code>. Each connection between input and output nodes contains a learnable univariate function, typically parameterized using B-splines.</p>
-<p>The transformation can be expressed as: <span class="math display">\[
-y_j = \sum_{i=1}^{n_{\text{in}}} \phi_{i,j}(x_i)
-\]</span></p>
-<p>Where <span class="math inline">\(\phi_{i,j}\)</span> represents the learnable function on the edge connecting input i to output j.</p>
-</section>
-</section>
-<section id="key-components-and-implementation" class="level2">
-<h2 class="anchored" data-anchor-id="key-components-and-implementation">Key Components and Implementation</h2>
-<section id="b-spline-parameterization" class="level3">
-<h3 class="anchored" data-anchor-id="b-spline-parameterization">B-Spline Parameterization</h3>
-<p>KANs typically use B-splines to parameterize the learnable functions on edges. B-splines offer several advantages:</p>
+<section id="architectural-differences" class="level3">
+<h3 class="anchored" data-anchor-id="architectural-differences">Architectural Differences</h3>
+<p>The fundamental architectural difference between traditional neural networks and KANs lies in the placement and nature of activation functions:</p>
 <ul>
-<li><strong>Smoothness</strong>: Provide continuous derivatives up to a specified order</li>
-<li><strong>Local Support</strong>: Changes in one region don’t affect distant regions</li>
-<li><strong>Flexibility</strong>: Can approximate a wide variety of functions</li>
-<li><strong>Computational Efficiency</strong>: Enable efficient computation and differentiation</li>
+<li><strong>Traditional MLPs/CNNs</strong>: Fixed activation functions on nodes (neurons), with linear weights on edges</li>
+<li><strong>KANs</strong>: Learnable activation functions on edges (weights), with no linear weights at all</li>
 </ul>
 </section>
-<section id="grid-structure" class="level3">
-<h3 class="anchored" data-anchor-id="grid-structure">Grid Structure</h3>
-<p>The B-splines are defined over a grid of control points. Key parameters include:</p>
-<ul>
-<li><strong>Grid Size</strong>: Number of intervals in the spline grid</li>
-<li><strong>Spline Order</strong>: Determines smoothness (typically cubic, k=3)</li>
-<li><strong>Grid Range</strong>: Input domain coverage for the splines</li>
-</ul>
 </section>
-<section id="residual-connections" class="level3">
-<h3 class="anchored" data-anchor-id="residual-connections">Residual Connections</h3>
-<p>Modern KAN implementations often include residual connections to improve training stability and enable deeper networks. These connections add a linear component to each edge function:</p>
-<p><span class="math display">\[
-\phi_{i,j}(x) = \text{spline\_function}(x) + \text{linear\_function}(x)
-\]</span></p>
-</section>
-</section>
-<section id="training-process" class="level2">
-<h2 class="anchored" data-anchor-id="training-process">Training Process</h2>
-<section id="forward-pass" class="level3">
-<h3 class="anchored" data-anchor-id="forward-pass">Forward Pass</h3>
+<section id="convolutional-neural-networks-the-established-paradigm" class="level2">
+<h2 class="anchored" data-anchor-id="convolutional-neural-networks-the-established-paradigm">Convolutional Neural Networks: The Established Paradigm</h2>
+<section id="architecture-overview" class="level3">
+<h3 class="anchored" data-anchor-id="architecture-overview">Architecture Overview</h3>
+<p>CNNs have been the backbone of computer vision applications since their breakthrough in the early 2010s. The typical CNN architecture consists of:</p>
 <ol type="1">
-<li><strong>Input Processing</strong>: Input features are fed to the first layer</li>
-<li><strong>Edge Function Evaluation</strong>: Each edge computes its learnable function</li>
-<li><strong>Node Summation</strong>: Output nodes sum contributions from all incoming edges</li>
-<li><strong>Layer Propagation</strong>: Process repeats through subsequent layers</li>
+<li><strong>Convolutional Layers</strong>: Apply fixed-weight kernels with linear transformations</li>
+<li><strong>Activation Functions</strong>: Non-linear functions (ReLU, sigmoid, tanh) applied to neurons</li>
+<li><strong>Pooling Layers</strong>: Downsample feature maps to reduce computational complexity</li>
+<li><strong>Fully Connected Layers</strong>: Dense layers for final classification or regression</li>
 </ol>
 </section>
-<section id="backward-pass" class="level3">
-<h3 class="anchored" data-anchor-id="backward-pass">Backward Pass</h3>
-<p>Training KANs requires computing gradients with respect to: - <strong>Spline Coefficients</strong>: Control points of B-spline functions - <strong>Grid Points</strong>: Locations of spline knots (in adaptive variants) - <strong>Scaling Parameters</strong>: Normalization factors for inputs/outputs</p>
-</section>
-<section id="optimization-challenges" class="level3">
-<h3 class="anchored" data-anchor-id="optimization-challenges">Optimization Challenges</h3>
+<section id="key-characteristics" class="level3">
+<h3 class="anchored" data-anchor-id="key-characteristics">Key Characteristics</h3>
 <ul>
-<li><strong>Non-convexity</strong>: Multiple local minima in the loss landscape</li>
-<li><strong>Grid Adaptation</strong>: Dynamically adjusting spline grids during training</li>
-<li><strong>Regularization</strong>: Preventing overfitting in high-capacity edge functions</li>
+<li><strong>Parameter Sharing</strong>: Convolutional kernels share weights across spatial locations</li>
+<li><strong>Translation Invariance</strong>: Ability to detect features regardless of their position in the input</li>
+<li><strong>Hierarchical Feature Learning</strong>: Progressive abstraction from low-level to high-level features</li>
+<li><strong>Fixed Activation Functions</strong>: Predetermined non-linear functions that remain constant during training</li>
+</ul>
+</section>
+<section id="limitations" class="level3">
+<h3 class="anchored" data-anchor-id="limitations">Limitations</h3>
+<p>Despite their success, CNNs face several inherent limitations:</p>
+<ol type="1">
+<li><strong>Parameter Inefficiency</strong>: Large numbers of parameters required for complex tasks</li>
+<li><strong>Limited Interpretability</strong>: Black-box nature makes understanding difficult</li>
+<li><strong>Fixed Representational Capacity</strong>: Predetermined activation functions limit adaptability</li>
+<li><strong>Scaling Challenges</strong>: Performance improvements often require significantly larger models</li>
+</ol>
+</section>
+</section>
+<section id="convolutional-kolmogorov-arnold-networks-the-new-paradigm" class="level2">
+<h2 class="anchored" data-anchor-id="convolutional-kolmogorov-arnold-networks-the-new-paradigm">Convolutional Kolmogorov-Arnold Networks: The New Paradigm</h2>
+<section id="architecture-innovation" class="level3">
+<h3 class="anchored" data-anchor-id="architecture-innovation">Architecture Innovation</h3>
+<p>Convolutional KANs represent a revolutionary approach to neural network design by replacing traditional fixed-weight kernels with learnable non-linear functions. The key innovations include:</p>
+<ol type="1">
+<li><strong>Spline-Based Convolutional Layers</strong>: Replace fixed linear weights with learnable spline functions</li>
+<li><strong>Edge-Based Activation</strong>: Activation functions are learned on the connections between neurons</li>
+<li><strong>Adaptive Kernel Functions</strong>: Convolutional operations with learnable, non-linear transformations</li>
+<li><strong>Flexible Representational Power</strong>: Ability to adapt the network’s fundamental computational primitives</li>
+</ol>
+</section>
+<section id="technical-implementation" class="level3">
+<h3 class="anchored" data-anchor-id="technical-implementation">Technical Implementation</h3>
+<p>In Convolutional KANs, every weight parameter is replaced by a univariate function parametrized as a B-spline. The spline functions provide:</p>
+<ul>
+<li><strong>Continuous Differentiability</strong>: Smooth gradients for effective backpropagation</li>
+<li><strong>Local Control</strong>: Ability to modify function behavior in specific regions</li>
+<li><strong>Efficient Representation</strong>: Compact parametrization of complex functions</li>
+<li><strong>Numerical Stability</strong>: Well-conditioned optimization properties</li>
+</ul>
+</section>
+<section id="architectural-flexibility" class="level3">
+<h3 class="anchored" data-anchor-id="architectural-flexibility">Architectural Flexibility</h3>
+<p>The Convolutional KAN architecture allows for various configurations:</p>
+<ul>
+<li><strong>Hybrid Approaches</strong>: Combination of KAN convolutional layers with traditional MLPs</li>
+<li><strong>Full KAN Networks</strong>: Complete replacement of traditional layers with KAN equivalents</li>
+<li><strong>Scalable Design</strong>: Adaptable to different problem complexities and computational constraints</li>
 </ul>
 </section>
 </section>
-<section id="advantages-of-kans" class="level2">
-<h2 class="anchored" data-anchor-id="advantages-of-kans">Advantages of KANs</h2>
-<section id="enhanced-interpretability" class="level3">
-<h3 class="anchored" data-anchor-id="enhanced-interpretability">Enhanced Interpretability</h3>
-<p>KANs offer superior interpretability compared to traditional MLPs:</p>
-<ul>
-<li><strong>Function Visualization</strong>: Edge functions can be plotted and analyzed</li>
-<li><strong>Feature Attribution</strong>: Direct observation of how inputs transform through the network</li>
-<li><strong>Symbolic Regression</strong>: Potential for discovering analytical expressions</li>
-</ul>
-</section>
+<section id="comparative-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="comparative-analysis">Comparative Analysis</h2>
 <section id="parameter-efficiency" class="level3">
 <h3 class="anchored" data-anchor-id="parameter-efficiency">Parameter Efficiency</h3>
-<p>Despite their flexibility, KANs often achieve better performance with fewer parameters:</p>
+<p>One of the most significant advantages of Convolutional KANs is their parameter efficiency. Research has demonstrated that Convolutional KANs require significantly fewer parameters compared to traditional CNNs while maintaining or improving performance. This efficiency stems from:</p>
+<ol type="1">
+<li><strong>Learnable Function Approximation</strong>: Spline-based functions can represent complex transformations with fewer parameters</li>
+<li><strong>Adaptive Representation</strong>: Network can learn optimal activation functions for specific tasks</li>
+<li><strong>Reduced Redundancy</strong>: Elimination of fixed linear weights reduces parameter overhead</li>
+</ol>
+</section>
+<section id="expressive-power" class="level3">
+<h3 class="anchored" data-anchor-id="expressive-power">Expressive Power</h3>
+<p>Convolutional KANs offer superior expressive power through:</p>
+<ol type="1">
+<li><strong>Adaptive Activation Functions</strong>: Ability to learn task-specific non-linearities</li>
+<li><strong>Enhanced Function Approximation</strong>: Theoretical foundation in universal approximation</li>
+<li><strong>Flexible Computational Primitives</strong>: Learnable spline functions provide greater representational capacity</li>
+</ol>
+</section>
+<section id="interpretability" class="level3">
+<h3 class="anchored" data-anchor-id="interpretability">Interpretability</h3>
+<p>KANs provide enhanced interpretability compared to traditional CNNs:</p>
+<ol type="1">
+<li><strong>Visualizable Functions</strong>: Learned spline functions can be directly visualized and analyzed</li>
+<li><strong>Human Interaction</strong>: Easier to understand and modify network behavior</li>
+<li><strong>Mathematical Transparency</strong>: Clear mathematical foundation enables better analysis</li>
+</ol>
+</section>
+<section id="performance-characteristics" class="level3">
+<h3 class="anchored" data-anchor-id="performance-characteristics">Performance Characteristics</h3>
+<p>Empirical evaluations have shown that Convolutional KANs can achieve:</p>
 <ul>
-<li><strong>Targeted Learning</strong>: Functions are learned where needed (on edges)</li>
-<li><strong>Shared Complexity</strong>: Similar transformations can be learned across different edges</li>
-<li><strong>Adaptive Complexity</strong>: Grid refinement allows dynamic complexity adjustment</li>
+<li><strong>Comparable or Superior Accuracy</strong>: Match or exceed CNN performance on various tasks</li>
+<li><strong>Faster Neural Scaling Laws</strong>: More efficient scaling with increased model complexity</li>
+<li><strong>Better Generalization</strong>: Improved performance on unseen data</li>
 </ul>
 </section>
-<section id="better-generalization" class="level3">
-<h3 class="anchored" data-anchor-id="better-generalization">Better Generalization</h3>
-<p>KANs demonstrate improved generalization capabilities:</p>
-<ul>
-<li><strong>Inductive Bias</strong>: Architecture naturally incorporates smooth function assumptions</li>
-<li><strong>Regularization</strong>: B-spline smoothness acts as implicit regularization</li>
-<li><strong>Feature Learning</strong>: Automatic discovery of relevant transformations</li>
-</ul>
 </section>
+<section id="practical-applications-and-limitations" class="level2">
+<h2 class="anchored" data-anchor-id="practical-applications-and-limitations">Practical Applications and Limitations</h2>
+<section id="suitable-applications" class="level3">
+<h3 class="anchored" data-anchor-id="suitable-applications">Suitable Applications</h3>
+<p>Convolutional KANs are particularly well-suited for:</p>
+<ol type="1">
+<li><strong>Computer Vision Tasks</strong>: Image classification, object detection, segmentation</li>
+<li><strong>Pattern Recognition</strong>: Complex pattern matching with adaptive feature extraction</li>
+<li><strong>Scientific Computing</strong>: Problems requiring interpretable and efficient models</li>
+<li><strong>Resource-Constrained Environments</strong>: Applications with limited computational resources</li>
+</ol>
 </section>
-<section id="applications-and-use-cases" class="level2">
-<h2 class="anchored" data-anchor-id="applications-and-use-cases">Applications and Use Cases</h2>
-<section id="scientific-computing" class="level3">
-<h3 class="anchored" data-anchor-id="scientific-computing">Scientific Computing</h3>
-<p>KANs excel in scientific applications where interpretability is crucial:</p>
-<ul>
-<li><strong>Physics Modeling</strong>: Discovering governing equations from data</li>
-<li><strong>Material Science</strong>: Property prediction with interpretable relationships</li>
-<li><strong>Climate Modeling</strong>: Understanding complex environmental interactions</li>
-</ul>
-</section>
-<section id="function-approximation" class="level3">
-<h3 class="anchored" data-anchor-id="function-approximation">Function Approximation</h3>
-<p>Natural fit for problems requiring accurate function approximation:</p>
-<ul>
-<li><strong>Regression Tasks</strong>: Continuous function learning with high accuracy</li>
-<li><strong>Time Series</strong>: Modeling temporal dependencies with interpretable components</li>
-<li><strong>Control Systems</strong>: Learning control policies with explainable behavior</li>
-</ul>
-</section>
-<section id="symbolic-regression" class="level3">
-<h3 class="anchored" data-anchor-id="symbolic-regression">Symbolic Regression</h3>
-<p>KANs can facilitate symbolic regression tasks:</p>
-<ul>
-<li><strong>Equation Discovery</strong>: Finding analytical expressions for data relationships</li>
-<li><strong>Scientific Discovery</strong>: Uncovering natural laws from experimental data</li>
-<li><strong>Feature Engineering</strong>: Automatic discovery of useful feature transformations</li>
-</ul>
+<section id="current-limitations" class="level3">
+<h3 class="anchored" data-anchor-id="current-limitations">Current Limitations</h3>
+<p>Despite their advantages, Convolutional KANs face certain challenges:</p>
+<ol type="1">
+<li><strong>Computational Complexity</strong>: Spline function evaluation may increase computational overhead</li>
+<li><strong>Training Complexity</strong>: More complex optimization landscape due to learnable activation functions</li>
+<li><strong>Limited Ecosystem</strong>: Fewer available tools and implementations compared to CNNs</li>
+<li><strong>Scaling Challenges</strong>: Performance on very large-scale problems remains to be fully validated</li>
+</ol>
 </section>
 </section>
 <section id="implementation-considerations" class="level2">
 <h2 class="anchored" data-anchor-id="implementation-considerations">Implementation Considerations</h2>
-<section id="computational-complexity" class="level3">
-<h3 class="anchored" data-anchor-id="computational-complexity">Computational Complexity</h3>
-<p><strong>Memory Requirements:</strong> - B-spline coefficients storage - Grid point management - Intermediate activation storage</p>
-<p><strong>Computational Cost:</strong> - Spline evaluation overhead - Grid adaptation algorithms - Gradient computation complexity</p>
+<section id="training-strategies" class="level3">
+<h3 class="anchored" data-anchor-id="training-strategies">Training Strategies</h3>
+<p>Effective training of Convolutional KANs requires:</p>
+<ol type="1">
+<li><strong>Careful Initialization</strong>: Proper initialization of spline parameters</li>
+<li><strong>Adaptive Learning Rates</strong>: Different learning rates for different parameter types</li>
+<li><strong>Regularization Techniques</strong>: Preventing overfitting in the learnable activation functions</li>
+<li><strong>Numerical Stability</strong>: Ensuring stable spline function evaluation</li>
+</ol>
 </section>
 <section id="hyperparameter-tuning" class="level3">
 <h3 class="anchored" data-anchor-id="hyperparameter-tuning">Hyperparameter Tuning</h3>
-<p>Critical hyperparameters for KANs:</p>
+<p>Key hyperparameters include:</p>
 <ul>
-<li><strong>Grid Size</strong>: Balance between expressiveness and computational cost</li>
-<li><strong>Spline Order</strong>: Trade-off between smoothness and flexibility</li>
-<li><strong>Network Depth</strong>: Number of KAN layers</li>
-<li><strong>Width</strong>: Number of nodes per layer</li>
-</ul>
-</section>
-<section id="software-implementation" class="level3">
-<h3 class="anchored" data-anchor-id="software-implementation">Software Implementation</h3>
-<p>Popular KAN implementations:</p>
-<ul>
-<li><strong>PyKAN</strong>: Official implementation with comprehensive features</li>
-<li><strong>TensorFlow/PyTorch</strong>: Custom implementations and third-party libraries</li>
-<li><strong>JAX</strong>: High-performance implementations for research</li>
+<li><strong>Spline Order</strong>: Degree of the B-spline basis functions</li>
+<li><strong>Grid Size</strong>: Number of control points for spline functions</li>
+<li><strong>Regularization Strength</strong>: Balance between fitting and smoothness</li>
+<li><strong>Learning Rate Schedules</strong>: Optimization strategy for different parameter types</li>
 </ul>
 </section>
 </section>
-<section id="current-limitations-and-challenges" class="level2">
-<h2 class="anchored" data-anchor-id="current-limitations-and-challenges">Current Limitations and Challenges</h2>
-<section id="scalability-issues" class="level3">
-<h3 class="anchored" data-anchor-id="scalability-issues">Scalability Issues</h3>
-<ul>
-<li><strong>Memory Overhead</strong>: Higher memory requirements compared to MLPs</li>
-<li><strong>Training Time</strong>: Longer training due to complex function optimization</li>
-<li><strong>Large-Scale Applications</strong>: Challenges in scaling to very large datasets</li>
-</ul>
+<section id="future-directions-and-research-opportunities" class="level2">
+<h2 class="anchored" data-anchor-id="future-directions-and-research-opportunities">Future Directions and Research Opportunities</h2>
+<section id="emerging-research-areas" class="level3">
+<h3 class="anchored" data-anchor-id="emerging-research-areas">Emerging Research Areas</h3>
+<ol type="1">
+<li><strong>Hybrid Architectures</strong>: Combining KANs with other neural network paradigms</li>
+<li><strong>Specialized Applications</strong>: Domain-specific adaptations of Convolutional KANs</li>
+<li><strong>Optimization Techniques</strong>: Novel training methods for improved efficiency</li>
+<li><strong>Theoretical Analysis</strong>: Deeper understanding of KAN properties and capabilities</li>
+</ol>
 </section>
-<section id="theoretical-gaps" class="level3">
-<h3 class="anchored" data-anchor-id="theoretical-gaps">Theoretical Gaps</h3>
-<ul>
-<li><strong>Approximation Theory</strong>: Limited theoretical understanding of approximation capabilities</li>
-<li><strong>Optimization Landscape</strong>: Incomplete analysis of loss surface properties</li>
-<li><strong>Generalization Bounds</strong>: Lack of theoretical generalization guarantees</li>
-</ul>
-</section>
-<section id="practical-considerations" class="level3">
-<h3 class="anchored" data-anchor-id="practical-considerations">Practical Considerations</h3>
-<ul>
-<li><strong>Implementation Complexity</strong>: More complex to implement than standard MLPs</li>
-<li><strong>Debugging Difficulty</strong>: Harder to diagnose training issues</li>
-<li><strong>Limited Tooling</strong>: Fewer established best practices and tools</li>
-</ul>
-</section>
-</section>
-<section id="recent-developments-and-research-directions" class="level2">
-<h2 class="anchored" data-anchor-id="recent-developments-and-research-directions">Recent Developments and Research Directions</h2>
-<section id="architectural-innovations" class="level3">
-<h3 class="anchored" data-anchor-id="architectural-innovations">Architectural Innovations</h3>
-<p><strong>Multi-dimensional KANs</strong>: Extensions to handle tensor inputs directly <strong>Convolutional KANs</strong>: Integration with convolutional architectures <strong>Recurrent KANs</strong>: Application to sequential data processing</p>
-</section>
-<section id="optimization-improvements" class="level3">
-<h3 class="anchored" data-anchor-id="optimization-improvements">Optimization Improvements</h3>
-<p><strong>Adaptive Grids</strong>: Dynamic grid refinement during training <strong>Regularization Techniques</strong>: Novel approaches to prevent overfitting <strong>Training Algorithms</strong>: Specialized optimizers for KAN training</p>
-</section>
-<section id="application-expansions" class="level3">
-<h3 class="anchored" data-anchor-id="application-expansions">Application Expansions</h3>
-<p><strong>Computer Vision</strong>: Exploring KANs for image processing tasks <strong>Natural Language Processing</strong>: Investigating applications in text analysis <strong>Reinforcement Learning</strong>: Using KANs for policy and value function approximation</p>
-</section>
-</section>
-<section id="comparison-with-other-architectures" class="level2">
-<h2 class="anchored" data-anchor-id="comparison-with-other-architectures">Comparison with Other Architectures</h2>
-<section id="kans-vs-mlps" class="level3">
-<h3 class="anchored" data-anchor-id="kans-vs-mlps">KANs vs MLPs</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Aspect</th>
-<th>KANs</th>
-<th>MLPs</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Activation Location</td>
-<td>Edges</td>
-<td>Nodes</td>
-</tr>
-<tr class="even">
-<td>Interpretability</td>
-<td>High</td>
-<td>Low</td>
-</tr>
-<tr class="odd">
-<td>Parameter Efficiency</td>
-<td>Often Better</td>
-<td>Standard</td>
-</tr>
-<tr class="even">
-<td>Training Complexity</td>
-<td>Higher</td>
-<td>Lower</td>
-</tr>
-<tr class="odd">
-<td>Computational Cost</td>
-<td>Higher</td>
-<td>Lower</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="kans-vs-transformers" class="level3">
-<h3 class="anchored" data-anchor-id="kans-vs-transformers">KANs vs Transformers</h3>
-<p>While Transformers excel in sequence modeling, KANs offer advantages in:</p>
-<ul>
-<li><strong>Interpretability</strong>: Clear function visualization</li>
-<li><strong>Scientific Applications</strong>: Natural fit for physics-based problems</li>
-<li><strong>Small Data Regimes</strong>: Better performance with limited training data</li>
-</ul>
-</section>
-<section id="kans-vs-decision-trees" class="level3">
-<h3 class="anchored" data-anchor-id="kans-vs-decision-trees">KANs vs Decision Trees</h3>
-<p>Both offer interpretability, but differ in:</p>
-<ul>
-<li><strong>Function Types</strong>: Continuous vs.&nbsp;piecewise constant</li>
-<li><strong>Expressiveness</strong>: Higher capacity in KANs</li>
-<li><strong>Training</strong>: Gradient-based vs.&nbsp;greedy splitting</li>
-</ul>
-</section>
-</section>
-<section id="future-outlook" class="level2">
-<h2 class="anchored" data-anchor-id="future-outlook">Future Outlook</h2>
-<section id="emerging-trends" class="level3">
-<h3 class="anchored" data-anchor-id="emerging-trends">Emerging Trends</h3>
-<p><strong>Hybrid Architectures</strong>: Combining KANs with other neural network types <strong>Automated Design</strong>: Using neural architecture search for KAN optimization <strong>Hardware Acceleration</strong>: Specialized hardware for efficient KAN computation</p>
-</section>
-<section id="research-opportunities" class="level3">
-<h3 class="anchored" data-anchor-id="research-opportunities">Research Opportunities</h3>
-<p><strong>Theoretical Foundations</strong>: Developing rigorous theoretical frameworks <strong>Scalability Solutions</strong>: Addressing computational and memory challenges <strong>Domain-Specific Variants</strong>: Tailoring KANs for specific application domains</p>
-</section>
-<section id="industry-adoption" class="level3">
-<h3 class="anchored" data-anchor-id="industry-adoption">Industry Adoption</h3>
-<p><strong>Scientific Software</strong>: Integration into computational science tools <strong>Interpretable AI</strong>: Applications requiring explainable machine learning <strong>Edge Computing</strong>: Optimized implementations for resource-constrained environments</p>
+<section id="potential-developments" class="level3">
+<h3 class="anchored" data-anchor-id="potential-developments">Potential Developments</h3>
+<ol type="1">
+<li><strong>Hardware Acceleration</strong>: Specialized hardware for efficient KAN computation</li>
+<li><strong>AutoML Integration</strong>: Automated design and optimization of KAN architectures</li>
+<li><strong>Large-Scale Applications</strong>: Scaling to very large datasets and complex problems</li>
+<li><strong>Transfer Learning</strong>: Adapting pre-trained KAN models to new tasks</li>
+</ol>
 </section>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>Kolmogorov-Arnold Networks represent a significant advancement in neural network architecture design, offering a compelling alternative to traditional MLPs. Their foundation in mathematical theory, combined with enhanced interpretability and parameter efficiency, makes them particularly valuable for scientific computing and applications requiring explainable AI.</p>
-<p>While challenges remain in terms of computational complexity and scalability, ongoing research continues to address these limitations. As the field matures, KANs are likely to find increased adoption in domains where interpretability and mathematical rigor are paramount.</p>
-<p>The future of KANs looks promising, with active research communities working on theoretical foundations, practical implementations, and novel applications. As our understanding of these networks deepens and computational tools improve, KANs may well become a standard tool in the machine learning practitioner’s toolkit.</p>
-</section>
-<section id="references-and-further-reading" class="level2">
-<h2 class="anchored" data-anchor-id="references-and-further-reading">References and Further Reading</h2>
-<ul>
-<li>Original KAN Paper: “KAN: Kolmogorov-Arnold Networks” (Liu et al., 2024)</li>
-<li>Kolmogorov-Arnold Representation Theorem: Original mathematical foundations</li>
-<li>B-Spline Theory: Mathematical background for function parameterization</li>
-<li>Scientific Computing Applications: Domain-specific KAN implementations</li>
-<li>Interpretable Machine Learning: Broader context for explainable AI methods</li>
-</ul>
-<hr>
-<p><em>This article provides a comprehensive introduction to Kolmogorov-Arnold Networks. For the latest developments and implementations, readers are encouraged to follow recent research publications and open-source projects in the field.</em></p>
+<p>Convolutional Kolmogorov-Arnold Networks represent a paradigm shift in neural network design, offering significant advantages in parameter efficiency, interpretability, and expressive power compared to traditional CNNs. While CNNs have proven their worth over the past decade, Convolutional KANs provide a compelling alternative that addresses many of the limitations of traditional approaches.</p>
+<p>The key advantages of Convolutional KANs include their theoretical foundation in the Kolmogorov-Arnold representation theorem, enhanced parameter efficiency, superior interpretability, and adaptive representational capacity. However, challenges remain in terms of computational complexity, training strategies, and large-scale validation.</p>
+<p>As research continues to advance, Convolutional KANs are poised to become increasingly important in the deep learning landscape, particularly for applications requiring efficient, interpretable, and high-performance neural networks. The choice between CNNs and Convolutional KANs will ultimately depend on specific application requirements, computational constraints, and the importance of interpretability in the given domain.</p>
+<p>The future of computer vision and deep learning may well be shaped by the continued development and adoption of Kolmogorov-Arnold Networks, marking a new chapter in the evolution of artificial intelligence architectures.</p>
 
 
 

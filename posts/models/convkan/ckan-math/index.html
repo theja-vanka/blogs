@@ -9,7 +9,7 @@
 <meta name="author" content="Krishnatheja Vanka">
 <meta name="dcterms.date" content="2025-07-05">
 
-<title>Convolutional Kolmogorov-Arnold Networks vs Convolutional Neural Networks: A Comprehensive Analysis – Krishnatheja Vanka’s Blog</title>
+<title>The Mathematics Behind Convolutional Kolmogorov-Arnold Networks – Krishnatheja Vanka’s Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,28 +25,28 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../../">
-<link href="../../../favicon.ico" rel="icon">
-<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../site_libs/bootstrap/bootstrap-dark-5a86c4bd0c1f9981a70f893fdae069f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<link href="../../../../favicon.ico" rel="icon">
+<script src="../../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-5a86c4bd0c1f9981a70f893fdae069f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -105,7 +105,7 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="../../../styles/styles.css">
+<link rel="stylesheet" href="../../../../styles/styles.css">
 </head>
 
 <body class="floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -277,7 +277,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../../../index.html">
+    <a class="navbar-brand" href="../../../../index.html">
     <span class="navbar-title">Krishnatheja Vanka’s Blog</span>
     </a>
   </div>
@@ -288,7 +288,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../../about.html"> 
+    <a class="nav-link" href="../../../../about.html"> 
 <span class="menu-text">About me</span></a>
   </li>  
   <li class="nav-item compact">
@@ -308,7 +308,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-right">
-      <h1 class="title">Convolutional Kolmogorov-Arnold Networks vs Convolutional Neural Networks: A Comprehensive Analysis</h1>
+      <h1 class="title">The Mathematics Behind Convolutional Kolmogorov-Arnold Networks</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">research</div>
                 <div class="quarto-category">advanced</div>
@@ -344,47 +344,66 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#convolutional-kolmogorov-arnold-networks-vs-convolutional-neural-networks-a-comprehensive-analysis" id="toc-convolutional-kolmogorov-arnold-networks-vs-convolutional-neural-networks-a-comprehensive-analysis" class="nav-link active" data-scroll-target="#convolutional-kolmogorov-arnold-networks-vs-convolutional-neural-networks-a-comprehensive-analysis">Convolutional Kolmogorov-Arnold Networks vs Convolutional Neural Networks: A Comprehensive Analysis</a>
+  <li><a href="#the-mathematics-behind-convolutional-kolmogorov-arnold-networks" id="toc-the-mathematics-behind-convolutional-kolmogorov-arnold-networks" class="nav-link active" data-scroll-target="#the-mathematics-behind-convolutional-kolmogorov-arnold-networks">The Mathematics Behind Convolutional Kolmogorov-Arnold Networks</a>
   <ul class="collapse">
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#theoretical-foundation" id="toc-theoretical-foundation" class="nav-link" data-scroll-target="#theoretical-foundation">Theoretical Foundation</a>
+  <li><a href="#the-kolmogorov-arnold-representation-theorem" id="toc-the-kolmogorov-arnold-representation-theorem" class="nav-link" data-scroll-target="#the-kolmogorov-arnold-representation-theorem">The Kolmogorov-Arnold Representation Theorem</a>
   <ul class="collapse">
-  <li><a href="#the-kolmogorov-arnold-representation-theorem" id="toc-the-kolmogorov-arnold-representation-theorem" class="nav-link" data-scroll-target="#the-kolmogorov-arnold-representation-theorem">The Kolmogorov-Arnold Representation Theorem</a></li>
-  <li><a href="#architectural-differences" id="toc-architectural-differences" class="nav-link" data-scroll-target="#architectural-differences">Architectural Differences</a></li>
+  <li><a href="#theoretical-foundation" id="toc-theoretical-foundation" class="nav-link" data-scroll-target="#theoretical-foundation">Theoretical Foundation</a></li>
+  <li><a href="#implications-for-neural-networks" id="toc-implications-for-neural-networks" class="nav-link" data-scroll-target="#implications-for-neural-networks">Implications for Neural Networks</a></li>
   </ul></li>
-  <li><a href="#convolutional-neural-networks-the-established-paradigm" id="toc-convolutional-neural-networks-the-established-paradigm" class="nav-link" data-scroll-target="#convolutional-neural-networks-the-established-paradigm">Convolutional Neural Networks: The Established Paradigm</a>
+  <li><a href="#from-kans-to-convolutional-kans" id="toc-from-kans-to-convolutional-kans" class="nav-link" data-scroll-target="#from-kans-to-convolutional-kans">From KANs to Convolutional KANs</a>
   <ul class="collapse">
-  <li><a href="#architecture-overview" id="toc-architecture-overview" class="nav-link" data-scroll-target="#architecture-overview">Architecture Overview</a></li>
-  <li><a href="#key-characteristics" id="toc-key-characteristics" class="nav-link" data-scroll-target="#key-characteristics">Key Characteristics</a></li>
-  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  <li><a href="#standard-kan-architecture" id="toc-standard-kan-architecture" class="nav-link" data-scroll-target="#standard-kan-architecture">Standard KAN Architecture</a></li>
+  <li><a href="#convolutional-extension" id="toc-convolutional-extension" class="nav-link" data-scroll-target="#convolutional-extension">Convolutional Extension</a></li>
   </ul></li>
-  <li><a href="#convolutional-kolmogorov-arnold-networks-the-new-paradigm" id="toc-convolutional-kolmogorov-arnold-networks-the-new-paradigm" class="nav-link" data-scroll-target="#convolutional-kolmogorov-arnold-networks-the-new-paradigm">Convolutional Kolmogorov-Arnold Networks: The New Paradigm</a>
+  <li><a href="#mathematical-formulation-of-ckans" id="toc-mathematical-formulation-of-ckans" class="nav-link" data-scroll-target="#mathematical-formulation-of-ckans">Mathematical Formulation of CKANs</a>
   <ul class="collapse">
-  <li><a href="#architecture-innovation" id="toc-architecture-innovation" class="nav-link" data-scroll-target="#architecture-innovation">Architecture Innovation</a></li>
-  <li><a href="#technical-implementation" id="toc-technical-implementation" class="nav-link" data-scroll-target="#technical-implementation">Technical Implementation</a></li>
-  <li><a href="#architectural-flexibility" id="toc-architectural-flexibility" class="nav-link" data-scroll-target="#architectural-flexibility">Architectural Flexibility</a></li>
+  <li><a href="#convolutional-kan-layer" id="toc-convolutional-kan-layer" class="nav-link" data-scroll-target="#convolutional-kan-layer">1. Convolutional KAN Layer</a></li>
+  <li><a href="#univariate-function-parameterization" id="toc-univariate-function-parameterization" class="nav-link" data-scroll-target="#univariate-function-parameterization">2. Univariate Function Parameterization</a></li>
+  <li><a href="#shared-function-approach" id="toc-shared-function-approach" class="nav-link" data-scroll-target="#shared-function-approach">3. Shared Function Approach</a></li>
   </ul></li>
-  <li><a href="#comparative-analysis" id="toc-comparative-analysis" class="nav-link" data-scroll-target="#comparative-analysis">Comparative Analysis</a>
+  <li><a href="#activation-functions-in-ckans" id="toc-activation-functions-in-ckans" class="nav-link" data-scroll-target="#activation-functions-in-ckans">Activation Functions in CKANs</a>
   <ul class="collapse">
-  <li><a href="#parameter-efficiency" id="toc-parameter-efficiency" class="nav-link" data-scroll-target="#parameter-efficiency">Parameter Efficiency</a></li>
-  <li><a href="#expressive-power" id="toc-expressive-power" class="nav-link" data-scroll-target="#expressive-power">Expressive Power</a></li>
+  <li><a href="#learnable-activation-functions" id="toc-learnable-activation-functions" class="nav-link" data-scroll-target="#learnable-activation-functions">Learnable Activation Functions</a></li>
+  </ul></li>
+  <li><a href="#training-dynamics-and-optimization" id="toc-training-dynamics-and-optimization" class="nav-link" data-scroll-target="#training-dynamics-and-optimization">Training Dynamics and Optimization</a>
+  <ul class="collapse">
+  <li><a href="#gradient-computation" id="toc-gradient-computation" class="nav-link" data-scroll-target="#gradient-computation">Gradient Computation</a></li>
+  <li><a href="#regularization-techniques" id="toc-regularization-techniques" class="nav-link" data-scroll-target="#regularization-techniques">Regularization Techniques</a></li>
+  </ul></li>
+  <li><a href="#computational-complexity-analysis" id="toc-computational-complexity-analysis" class="nav-link" data-scroll-target="#computational-complexity-analysis">Computational Complexity Analysis</a>
+  <ul class="collapse">
+  <li><a href="#parameter-count" id="toc-parameter-count" class="nav-link" data-scroll-target="#parameter-count">Parameter Count</a></li>
+  <li><a href="#computational-complexity" id="toc-computational-complexity" class="nav-link" data-scroll-target="#computational-complexity">Computational Complexity</a></li>
+  </ul></li>
+  <li><a href="#architectural-variations" id="toc-architectural-variations" class="nav-link" data-scroll-target="#architectural-variations">Architectural Variations</a>
+  <ul class="collapse">
+  <li><a href="#depthwise-separable-ckans" id="toc-depthwise-separable-ckans" class="nav-link" data-scroll-target="#depthwise-separable-ckans">1. Depthwise Separable CKANs</a></li>
+  <li><a href="#dilated-ckans" id="toc-dilated-ckans" class="nav-link" data-scroll-target="#dilated-ckans">2. Dilated CKANs</a></li>
+  <li><a href="#residual-ckans" id="toc-residual-ckans" class="nav-link" data-scroll-target="#residual-ckans">3. Residual CKANs</a></li>
+  </ul></li>
+  <li><a href="#approximation-properties" id="toc-approximation-properties" class="nav-link" data-scroll-target="#approximation-properties">Approximation Properties</a>
+  <ul class="collapse">
+  <li><a href="#universal-approximation" id="toc-universal-approximation" class="nav-link" data-scroll-target="#universal-approximation">Universal Approximation</a></li>
+  <li><a href="#convergence-analysis" id="toc-convergence-analysis" class="nav-link" data-scroll-target="#convergence-analysis">Convergence Analysis</a></li>
+  </ul></li>
+  <li><a href="#practical-implementation-considerations" id="toc-practical-implementation-considerations" class="nav-link" data-scroll-target="#practical-implementation-considerations">Practical Implementation Considerations</a>
+  <ul class="collapse">
+  <li><a href="#numerical-stability" id="toc-numerical-stability" class="nav-link" data-scroll-target="#numerical-stability">Numerical Stability</a></li>
+  <li><a href="#memory-optimization" id="toc-memory-optimization" class="nav-link" data-scroll-target="#memory-optimization">Memory Optimization</a></li>
+  </ul></li>
+  <li><a href="#comparison-with-traditional-cnns" id="toc-comparison-with-traditional-cnns" class="nav-link" data-scroll-target="#comparison-with-traditional-cnns">Comparison with Traditional CNNs</a>
+  <ul class="collapse">
+  <li><a href="#expressivity" id="toc-expressivity" class="nav-link" data-scroll-target="#expressivity">Expressivity</a></li>
   <li><a href="#interpretability" id="toc-interpretability" class="nav-link" data-scroll-target="#interpretability">Interpretability</a></li>
-  <li><a href="#performance-characteristics" id="toc-performance-characteristics" class="nav-link" data-scroll-target="#performance-characteristics">Performance Characteristics</a></li>
+  <li><a href="#computational-trade-offs" id="toc-computational-trade-offs" class="nav-link" data-scroll-target="#computational-trade-offs">Computational Trade-offs</a></li>
   </ul></li>
-  <li><a href="#practical-applications-and-limitations" id="toc-practical-applications-and-limitations" class="nav-link" data-scroll-target="#practical-applications-and-limitations">Practical Applications and Limitations</a>
+  <li><a href="#future-directions-and-extensions" id="toc-future-directions-and-extensions" class="nav-link" data-scroll-target="#future-directions-and-extensions">Future Directions and Extensions</a>
   <ul class="collapse">
-  <li><a href="#suitable-applications" id="toc-suitable-applications" class="nav-link" data-scroll-target="#suitable-applications">Suitable Applications</a></li>
-  <li><a href="#current-limitations" id="toc-current-limitations" class="nav-link" data-scroll-target="#current-limitations">Current Limitations</a></li>
-  </ul></li>
-  <li><a href="#implementation-considerations" id="toc-implementation-considerations" class="nav-link" data-scroll-target="#implementation-considerations">Implementation Considerations</a>
-  <ul class="collapse">
-  <li><a href="#training-strategies" id="toc-training-strategies" class="nav-link" data-scroll-target="#training-strategies">Training Strategies</a></li>
-  <li><a href="#hyperparameter-tuning" id="toc-hyperparameter-tuning" class="nav-link" data-scroll-target="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
-  </ul></li>
-  <li><a href="#future-directions-and-research-opportunities" id="toc-future-directions-and-research-opportunities" class="nav-link" data-scroll-target="#future-directions-and-research-opportunities">Future Directions and Research Opportunities</a>
-  <ul class="collapse">
-  <li><a href="#emerging-research-areas" id="toc-emerging-research-areas" class="nav-link" data-scroll-target="#emerging-research-areas">Emerging Research Areas</a></li>
-  <li><a href="#potential-developments" id="toc-potential-developments" class="nav-link" data-scroll-target="#potential-developments">Potential Developments</a></li>
+  <li><a href="#theoretical-advances" id="toc-theoretical-advances" class="nav-link" data-scroll-target="#theoretical-advances">Theoretical Advances</a></li>
+  <li><a href="#practical-improvements" id="toc-practical-improvements" class="nav-link" data-scroll-target="#practical-improvements">Practical Improvements</a></li>
+  <li><a href="#applications" id="toc-applications" class="nav-link" data-scroll-target="#applications">Applications</a></li>
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul></li>
@@ -403,209 +422,310 @@ window.Quarto = {
 
 
 
-<section id="convolutional-kolmogorov-arnold-networks-vs-convolutional-neural-networks-a-comprehensive-analysis" class="level1">
-<h1>Convolutional Kolmogorov-Arnold Networks vs Convolutional Neural Networks: A Comprehensive Analysis</h1>
-<p><img src="ckan-vs-cnn.png" class="img-fluid"></p>
+<section id="the-mathematics-behind-convolutional-kolmogorov-arnold-networks" class="level1">
+<h1>The Mathematics Behind Convolutional Kolmogorov-Arnold Networks</h1>
+<p><img src="ckan-math.png" class="img-fluid"></p>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>The landscape of deep learning has been revolutionized by Convolutional Neural Networks (CNNs), which have dominated computer vision tasks for over a decade. However, a new paradigm has emerged that challenges the fundamental assumptions of traditional neural architectures: Convolutional Kolmogorov-Arnold Networks (Convolutional KANs). This innovative approach represents a significant departure from conventional neural network design, offering enhanced parameter efficiency, interpretability, and expressive power.</p>
+<p>Convolutional Kolmogorov-Arnold Networks (CKANs) represent a revolutionary approach to neural network architecture that combines the theoretical foundations of the Kolmogorov-Arnold representation theorem with the practical advantages of convolutional operations. Unlike traditional Convolutional Neural Networks (CNNs) that rely on fixed linear transformations followed by nonlinear activations, CKANs replace these components with learnable univariate functions, offering a more flexible and theoretically grounded approach to function approximation.</p>
 </section>
-<section id="theoretical-foundation" class="level2">
-<h2 class="anchored" data-anchor-id="theoretical-foundation">Theoretical Foundation</h2>
-<section id="the-kolmogorov-arnold-representation-theorem" class="level3">
-<h3 class="anchored" data-anchor-id="the-kolmogorov-arnold-representation-theorem">The Kolmogorov-Arnold Representation Theorem</h3>
-<p>The theoretical foundation of KANs lies in the Kolmogorov-Arnold representation theorem, which states that any multivariate continuous function on a bounded domain can be represented as a finite composition of continuous functions of a single variable and the binary operation of addition. This mathematical principle fundamentally challenges the traditional multi-layer perceptron (MLP) approach and provides the basis for a new class of neural networks.</p>
-<p>The theorem can be formally expressed as:</p>
+<section id="the-kolmogorov-arnold-representation-theorem" class="level2">
+<h2 class="anchored" data-anchor-id="the-kolmogorov-arnold-representation-theorem">The Kolmogorov-Arnold Representation Theorem</h2>
+<section id="theoretical-foundation" class="level3">
+<h3 class="anchored" data-anchor-id="theoretical-foundation">Theoretical Foundation</h3>
+<p>The Kolmogorov-Arnold representation theorem, proved by Andrey Kolmogorov in 1957 and later refined by Vladimir Arnold, states that any multivariate continuous function can be represented as a superposition of continuous functions of a single variable.</p>
+<p><strong>Theorem (Kolmogorov-Arnold)</strong>: For any continuous function <span class="math inline">\(f: [0,1]^n \to \mathbb{R}\)</span>, there exist continuous functions <span class="math inline">\(\phi_{q,p}: [0,1] \to \mathbb{R}\)</span> and <span class="math inline">\(\Phi_q: \mathbb{R} \to \mathbb{R}\)</span> such that:</p>
 <p><span class="math display">\[
-f(x_1, x_2, \ldots, x_n) = \sum_{q=0}^{2n} \Phi_q\left( \sum_{p=1}^{n} \phi_{q,p}(x_p) \right)
+f(x_1, x_2, \ldots, x_n) = \sum_{q=0}^{2n} \Phi_q\left(\sum_{p=1}^{n} \phi_{q,p}(x_p)\right)
 \]</span></p>
-<p>Where <span class="math inline">\(\phi_{i}\)</span> and <span class="math inline">\(\phi_{i,j}\)</span> are continuous univariate functions, and f is the multivariate function being approximated.</p>
-</section>
-<section id="architectural-differences" class="level3">
-<h3 class="anchored" data-anchor-id="architectural-differences">Architectural Differences</h3>
-<p>The fundamental architectural difference between traditional neural networks and KANs lies in the placement and nature of activation functions:</p>
+<p>where:</p>
 <ul>
-<li><strong>Traditional MLPs/CNNs</strong>: Fixed activation functions on nodes (neurons), with linear weights on edges</li>
-<li><strong>KANs</strong>: Learnable activation functions on edges (weights), with no linear weights at all</li>
+<li><span class="math inline">\(q\)</span> ranges from <span class="math inline">\(0\)</span> to <span class="math inline">\(2n\)</span></li>
+<li><span class="math inline">\(p\)</span> ranges from <span class="math inline">\(1\)</span> to <span class="math inline">\(n\)</span></li>
+<li>The functions <span class="math inline">\(\phi_{q,p}\)</span> are universal (independent of <span class="math inline">\(f\)</span>)</li>
+<li>Only the outer functions <span class="math inline">\(\Phi_q\)</span> depend on the specific function <span class="math inline">\(f\)</span></li>
 </ul>
 </section>
+<section id="implications-for-neural-networks" class="level3">
+<h3 class="anchored" data-anchor-id="implications-for-neural-networks">Implications for Neural Networks</h3>
+<p>This theorem suggests that instead of using traditional linear combinations followed by fixed activation functions, we can construct networks using compositions of univariate functions. This forms the theoretical backbone of Kolmogorov-Arnold Networks (KANs).</p>
 </section>
-<section id="convolutional-neural-networks-the-established-paradigm" class="level2">
-<h2 class="anchored" data-anchor-id="convolutional-neural-networks-the-established-paradigm">Convolutional Neural Networks: The Established Paradigm</h2>
-<section id="architecture-overview" class="level3">
-<h3 class="anchored" data-anchor-id="architecture-overview">Architecture Overview</h3>
-<p>CNNs have been the backbone of computer vision applications since their breakthrough in the early 2010s. The typical CNN architecture consists of:</p>
-<ol type="1">
-<li><strong>Convolutional Layers</strong>: Apply fixed-weight kernels with linear transformations</li>
-<li><strong>Activation Functions</strong>: Non-linear functions (ReLU, sigmoid, tanh) applied to neurons</li>
-<li><strong>Pooling Layers</strong>: Downsample feature maps to reduce computational complexity</li>
-<li><strong>Fully Connected Layers</strong>: Dense layers for final classification or regression</li>
-</ol>
 </section>
-<section id="key-characteristics" class="level3">
-<h3 class="anchored" data-anchor-id="key-characteristics">Key Characteristics</h3>
+<section id="from-kans-to-convolutional-kans" class="level2">
+<h2 class="anchored" data-anchor-id="from-kans-to-convolutional-kans">From KANs to Convolutional KANs</h2>
+<section id="standard-kan-architecture" class="level3">
+<h3 class="anchored" data-anchor-id="standard-kan-architecture">Standard KAN Architecture</h3>
+<p>A standard KAN layer transforms input <span class="math inline">\(\mathbf{x} \in \mathbb{R}^{n_{in}}\)</span> to output <span class="math inline">\(\mathbf{y} \in \mathbb{R}^{n_{out}}\)</span> using:</p>
+<p><span class="math display">\[
+y_j = \sum_{i=1}^{n_{in}} \phi_{i,j}(x_i)
+\]</span></p>
+<p>where <span class="math inline">\(\phi_{i,j}: \mathbb{R} \to \mathbb{R}\)</span> are learnable univariate functions, typically parameterized using splines or other basis functions.</p>
+</section>
+<section id="convolutional-extension" class="level3">
+<h3 class="anchored" data-anchor-id="convolutional-extension">Convolutional Extension</h3>
+<p>The challenge in extending KANs to convolutional architectures lies in maintaining the univariate nature of the learnable functions while incorporating spatial locality and translation invariance. CKANs achieve this through several key innovations:</p>
+</section>
+</section>
+<section id="mathematical-formulation-of-ckans" class="level2">
+<h2 class="anchored" data-anchor-id="mathematical-formulation-of-ckans">Mathematical Formulation of CKANs</h2>
+<section id="convolutional-kan-layer" class="level3">
+<h3 class="anchored" data-anchor-id="convolutional-kan-layer">1. Convolutional KAN Layer</h3>
+<p>For a CKAN layer with input feature map <span class="math inline">\(\mathbf{X} \in \mathbb{R}^{H \times W \times C_{in}}\)</span> and output <span class="math inline">\(\mathbf{Y} \in \mathbb{R}^{H' \times W' \times C_{out}}\)</span>, the convolution operation is defined as:</p>
+<p><span class="math display">\[
+Y_{i,j,k} = \sum_{c=1}^{C_{in}} \sum_{u=0}^{K-1} \sum_{v=0}^{K-1} \phi_{c,k,u,v}(X_{i+u,j+v,c})
+\]</span></p>
+<p>where:</p>
 <ul>
-<li><strong>Parameter Sharing</strong>: Convolutional kernels share weights across spatial locations</li>
-<li><strong>Translation Invariance</strong>: Ability to detect features regardless of their position in the input</li>
-<li><strong>Hierarchical Feature Learning</strong>: Progressive abstraction from low-level to high-level features</li>
-<li><strong>Fixed Activation Functions</strong>: Predetermined non-linear functions that remain constant during training</li>
+<li><span class="math inline">\((i,j)\)</span> are spatial coordinates in the output feature map</li>
+<li><span class="math inline">\(k\)</span> is the output channel index</li>
+<li><span class="math inline">\(c\)</span> is the input channel index</li>
+<li><span class="math inline">\(K\)</span> is the kernel size</li>
+<li><span class="math inline">\(\phi_{c,k,u,v}\)</span> are learnable univariate functions specific to input channel <span class="math inline">\(c\)</span>, output channel <span class="math inline">\(k\)</span>, and kernel position <span class="math inline">\((u,v)\)</span></li>
 </ul>
 </section>
-<section id="limitations" class="level3">
-<h3 class="anchored" data-anchor-id="limitations">Limitations</h3>
-<p>Despite their success, CNNs face several inherent limitations:</p>
-<ol type="1">
-<li><strong>Parameter Inefficiency</strong>: Large numbers of parameters required for complex tasks</li>
-<li><strong>Limited Interpretability</strong>: Black-box nature makes understanding difficult</li>
-<li><strong>Fixed Representational Capacity</strong>: Predetermined activation functions limit adaptability</li>
-<li><strong>Scaling Challenges</strong>: Performance improvements often require significantly larger models</li>
-</ol>
+<section id="univariate-function-parameterization" class="level3">
+<h3 class="anchored" data-anchor-id="univariate-function-parameterization">2. Univariate Function Parameterization</h3>
+<p>The univariate functions <span class="math inline">\(\phi\)</span> are typically parameterized using B-splines or other basis functions. For B-splines of degree <span class="math inline">\(d\)</span> with <span class="math inline">\(n\)</span> control points:</p>
+<p><span class="math display">\[
+\phi(x) = \sum_{i=0}^{n-1} c_i B_i^d(x)
+\]</span></p>
+<p>where <span class="math inline">\(c_i\)</span> are learnable coefficients and <span class="math inline">\(B_i^d(x)\)</span> are B-spline basis functions defined recursively:</p>
+<p><span class="math display">\[
+B_i^0(x) = \begin{cases} 1 &amp; \text{if } t_i \leq x &lt; t_{i+1} \\ 0 &amp; \text{otherwise} \end{cases}
+\]</span></p>
+<p><span class="math display">\[
+B_i^d(x) = \frac{x - t_i}{t_{i+d} - t_i} B_i^{d-1}(x) + \frac{t_{i+d+1} - x}{t_{i+d+1} - t_{i+1}} B_{i+1}^{d-1}(x)
+\]</span></p>
+</section>
+<section id="shared-function-approach" class="level3">
+<h3 class="anchored" data-anchor-id="shared-function-approach">3. Shared Function Approach</h3>
+<p>To reduce the number of parameters, CKANs often employ parameter sharing strategies:</p>
+<section id="spatial-sharing" class="level4">
+<h4 class="anchored" data-anchor-id="spatial-sharing">Spatial Sharing</h4>
+<p>Functions are shared across spatial locations: <span class="math display">\[
+\phi_{c,k}(x) \text{ for all positions } (u,v)
+\]</span></p>
+</section>
+<section id="channel-grouping" class="level4">
+<h4 class="anchored" data-anchor-id="channel-grouping">Channel Grouping</h4>
+<p>Functions are shared within channel groups: <span class="math display">\[
+\phi_{g,k}(x) \text{ where } g = \lfloor c/G \rfloor \text{ for group size } G
+\]</span></p>
 </section>
 </section>
-<section id="convolutional-kolmogorov-arnold-networks-the-new-paradigm" class="level2">
-<h2 class="anchored" data-anchor-id="convolutional-kolmogorov-arnold-networks-the-new-paradigm">Convolutional Kolmogorov-Arnold Networks: The New Paradigm</h2>
-<section id="architecture-innovation" class="level3">
-<h3 class="anchored" data-anchor-id="architecture-innovation">Architecture Innovation</h3>
-<p>Convolutional KANs represent a revolutionary approach to neural network design by replacing traditional fixed-weight kernels with learnable non-linear functions. The key innovations include:</p>
-<ol type="1">
-<li><strong>Spline-Based Convolutional Layers</strong>: Replace fixed linear weights with learnable spline functions</li>
-<li><strong>Edge-Based Activation</strong>: Activation functions are learned on the connections between neurons</li>
-<li><strong>Adaptive Kernel Functions</strong>: Convolutional operations with learnable, non-linear transformations</li>
-<li><strong>Flexible Representational Power</strong>: Ability to adapt the network’s fundamental computational primitives</li>
-</ol>
 </section>
-<section id="technical-implementation" class="level3">
-<h3 class="anchored" data-anchor-id="technical-implementation">Technical Implementation</h3>
-<p>In Convolutional KANs, every weight parameter is replaced by a univariate function parametrized as a B-spline. The spline functions provide:</p>
+<section id="activation-functions-in-ckans" class="level2">
+<h2 class="anchored" data-anchor-id="activation-functions-in-ckans">Activation Functions in CKANs</h2>
+<section id="learnable-activation-functions" class="level3">
+<h3 class="anchored" data-anchor-id="learnable-activation-functions">Learnable Activation Functions</h3>
+<p>Unlike traditional CNNs with fixed activation functions (ReLU, sigmoid, etc.), CKANs use learnable activation functions. These can be viewed as univariate functions applied element-wise:</p>
+<p><span class="math display">\[
+\text{Activation}(x) = \psi(x)
+\]</span></p>
+<p>where <span class="math inline">\(\psi\)</span> is a learnable univariate function, often parameterized as:</p>
+<p><span class="math display">\[
+\psi(x) = \text{SiLU}(x) + \sum_{i=0}^{n-1} a_i B_i^d(x)
+\]</span></p>
+<p>The SiLU (Sigmoid Linear Unit) provides a smooth base function, while the spline terms allow for fine-tuning.</p>
+</section>
+</section>
+<section id="training-dynamics-and-optimization" class="level2">
+<h2 class="anchored" data-anchor-id="training-dynamics-and-optimization">Training Dynamics and Optimization</h2>
+<section id="gradient-computation" class="level3">
+<h3 class="anchored" data-anchor-id="gradient-computation">Gradient Computation</h3>
+<p>The gradient of the loss function with respect to the spline coefficients involves the derivative of B-spline basis functions:</p>
+<p><span class="math display">\[
+\frac{\partial L}{\partial c_i} = \frac{\partial L}{\partial \phi} \cdot B_i^d(x)
+\]</span></p>
+<p>For the derivative of the function itself: <span class="math display">\[
+\frac{\partial L}{\partial x} = \frac{\partial L}{\partial \phi} \cdot \sum_{i=0}^{n-1} c_i \frac{dB_i^d(x)}{dx}
+\]</span></p>
+</section>
+<section id="regularization-techniques" class="level3">
+<h3 class="anchored" data-anchor-id="regularization-techniques">Regularization Techniques</h3>
+<p>CKANs typically employ several regularization techniques:</p>
+<section id="smoothness-regularization" class="level4">
+<h4 class="anchored" data-anchor-id="smoothness-regularization">Smoothness Regularization</h4>
+<p><span class="math display">\[
+R_{\text{smooth}} = \sum_{i,j} \int \left(\frac{d^2\phi_{i,j}(x)}{dx^2}\right)^2 dx
+\]</span></p>
+</section>
+<section id="sparsity-regularization" class="level4">
+<h4 class="anchored" data-anchor-id="sparsity-regularization">Sparsity Regularization</h4>
+<p><span class="math display">\[
+R_{\text{sparse}} = \sum_{i,j} \int |\phi_{i,j}(x)| dx
+\]</span></p>
+</section>
+<section id="total-variation-regularization" class="level4">
+<h4 class="anchored" data-anchor-id="total-variation-regularization">Total Variation Regularization</h4>
+<p><span class="math display">\[
+R_{\text{TV}} = \sum_{i,j} \int \left|\frac{d\phi_{i,j}(x)}{dx}\right| dx
+\]</span></p>
+</section>
+</section>
+</section>
+<section id="computational-complexity-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="computational-complexity-analysis">Computational Complexity Analysis</h2>
+<section id="parameter-count" class="level3">
+<h3 class="anchored" data-anchor-id="parameter-count">Parameter Count</h3>
+<p>For a CKAN layer with:</p>
 <ul>
-<li><strong>Continuous Differentiability</strong>: Smooth gradients for effective backpropagation</li>
-<li><strong>Local Control</strong>: Ability to modify function behavior in specific regions</li>
-<li><strong>Efficient Representation</strong>: Compact parametrization of complex functions</li>
-<li><strong>Numerical Stability</strong>: Well-conditioned optimization properties</li>
+<li>Input channels: <span class="math inline">\(C_{in}\)</span></li>
+<li>Output channels: <span class="math inline">\(C_{out}\)</span></li>
+<li>Kernel size: <span class="math inline">\(K \times K\)</span></li>
+<li>Spline degree: <span class="math inline">\(d\)</span></li>
+<li>Control points per spline: <span class="math inline">\(n\)</span></li>
 </ul>
+<p>The parameter count is: <span class="math display">\[
+\text{Parameters} = C_{in} \times C_{out} \times K^2 \times n
+\]</span></p>
+<p>Compare this to traditional CNN: <span class="math display">\[
+\text{Parameters}_{\text{CNN}} = C_{in} \times C_{out} \times K^2
+\]</span></p>
 </section>
-<section id="architectural-flexibility" class="level3">
-<h3 class="anchored" data-anchor-id="architectural-flexibility">Architectural Flexibility</h3>
-<p>The Convolutional KAN architecture allows for various configurations:</p>
+<section id="computational-complexity" class="level3">
+<h3 class="anchored" data-anchor-id="computational-complexity">Computational Complexity</h3>
+<p>The forward pass complexity for a single CKAN layer is: <span class="math display">\[
+O(H \times W \times C_{out} \times C_{in} \times K^2 \times n)
+\]</span></p>
+<p>where <span class="math inline">\(H \times W\)</span> is the spatial dimension of the output feature map.</p>
+</section>
+</section>
+<section id="architectural-variations" class="level2">
+<h2 class="anchored" data-anchor-id="architectural-variations">Architectural Variations</h2>
+<section id="depthwise-separable-ckans" class="level3">
+<h3 class="anchored" data-anchor-id="depthwise-separable-ckans">1. Depthwise Separable CKANs</h3>
+<p>Inspired by depthwise separable convolutions, this variant separates the operation into:</p>
+<p><strong>Depthwise Convolution</strong>: <span class="math display">\[
+Y_{i,j,c} = \sum_{u=0}^{K-1} \sum_{v=0}^{K-1} \phi_{c,u,v}(X_{i+u,j+v,c})
+\]</span></p>
+<p><strong>Pointwise Convolution</strong>: <span class="math display">\[
+Z_{i,j,k} = \sum_{c=1}^{C_{in}} \psi_{c,k}(Y_{i,j,c})
+\]</span></p>
+</section>
+<section id="dilated-ckans" class="level3">
+<h3 class="anchored" data-anchor-id="dilated-ckans">2. Dilated CKANs</h3>
+<p>Incorporating dilation for larger receptive fields: <span class="math display">\[
+Y_{i,j,k} = \sum_{c=1}^{C_{in}} \sum_{u=0}^{K-1} \sum_{v=0}^{K-1} \phi_{c,k,u,v}(X_{i+d \cdot u,j+d \cdot v,c})
+\]</span></p>
+<p>where <span class="math inline">\(d\)</span> is the dilation factor.</p>
+</section>
+<section id="residual-ckans" class="level3">
+<h3 class="anchored" data-anchor-id="residual-ckans">3. Residual CKANs</h3>
+<p>Combining residual connections with CKAN layers: <span class="math display">\[
+Y = \text{CKAN}(X) + \alpha \cdot X
+\]</span></p>
+<p>where <span class="math inline">\(\alpha\)</span> is a learnable scaling factor.</p>
+</section>
+</section>
+<section id="approximation-properties" class="level2">
+<h2 class="anchored" data-anchor-id="approximation-properties">Approximation Properties</h2>
+<section id="universal-approximation" class="level3">
+<h3 class="anchored" data-anchor-id="universal-approximation">Universal Approximation</h3>
+<p>CKANs inherit the universal approximation properties of KANs. For any continuous function <span class="math inline">\(f: \mathbb{R}^n \to \mathbb{R}\)</span> and any <span class="math inline">\(\epsilon &gt; 0\)</span>, there exists a CKAN that approximates <span class="math inline">\(f\)</span> within <span class="math inline">\(\epsilon\)</span> accuracy.</p>
+</section>
+<section id="convergence-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="convergence-analysis">Convergence Analysis</h3>
+<p>The convergence rate of CKANs depends on several factors:</p>
+<ol type="1">
+<li><strong>Smoothness of target function</strong>: Smoother functions converge faster</li>
+<li><strong>Spline degree</strong>: Higher degree splines provide better approximation but may overfit</li>
+<li><strong>Number of control points</strong>: More control points increase expressivity but computational cost</li>
+</ol>
+<p>The approximation error for a function <span class="math inline">\(f\)</span> with <span class="math inline">\(s\)</span>-th order smoothness is bounded by: <span class="math display">\[
+\|f - \text{CKAN}(f)\|_\infty \leq C \cdot h^s
+\]</span></p>
+<p>where <span class="math inline">\(h\)</span> is the spacing between spline knots and <span class="math inline">\(C\)</span> is a constant depending on <span class="math inline">\(f\)</span>.</p>
+</section>
+</section>
+<section id="practical-implementation-considerations" class="level2">
+<h2 class="anchored" data-anchor-id="practical-implementation-considerations">Practical Implementation Considerations</h2>
+<section id="numerical-stability" class="level3">
+<h3 class="anchored" data-anchor-id="numerical-stability">Numerical Stability</h3>
+<p>CKANs require careful attention to numerical stability:</p>
+<ol type="1">
+<li><strong>Spline knot placement</strong>: Uniform or adaptive knot placement strategies</li>
+<li><strong>Coefficient initialization</strong>: Proper initialization of spline coefficients</li>
+<li><strong>Gradient clipping</strong>: Preventing gradient explosion during backpropagation</li>
+</ol>
+</section>
+<section id="memory-optimization" class="level3">
+<h3 class="anchored" data-anchor-id="memory-optimization">Memory Optimization</h3>
+<p>Several techniques can reduce memory usage:</p>
+<ol type="1">
+<li><strong>Lazy evaluation</strong>: Computing spline values on-demand</li>
+<li><strong>Coefficient sharing</strong>: Sharing coefficients across similar functions</li>
+<li><strong>Quantization</strong>: Using lower precision for spline coefficients</li>
+</ol>
+</section>
+</section>
+<section id="comparison-with-traditional-cnns" class="level2">
+<h2 class="anchored" data-anchor-id="comparison-with-traditional-cnns">Comparison with Traditional CNNs</h2>
+<section id="expressivity" class="level3">
+<h3 class="anchored" data-anchor-id="expressivity">Expressivity</h3>
+<p>CKANs offer superior expressivity due to:</p>
 <ul>
-<li><strong>Hybrid Approaches</strong>: Combination of KAN convolutional layers with traditional MLPs</li>
-<li><strong>Full KAN Networks</strong>: Complete replacement of traditional layers with KAN equivalents</li>
-<li><strong>Scalable Design</strong>: Adaptable to different problem complexities and computational constraints</li>
+<li>Learnable activation functions</li>
+<li>Non-linear transformations in each connection</li>
+<li>Adaptive function shapes based on data</li>
 </ul>
-</section>
-</section>
-<section id="comparative-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="comparative-analysis">Comparative Analysis</h2>
-<section id="parameter-efficiency" class="level3">
-<h3 class="anchored" data-anchor-id="parameter-efficiency">Parameter Efficiency</h3>
-<p>One of the most significant advantages of Convolutional KANs is their parameter efficiency. Research has demonstrated that Convolutional KANs require significantly fewer parameters compared to traditional CNNs while maintaining or improving performance. This efficiency stems from:</p>
-<ol type="1">
-<li><strong>Learnable Function Approximation</strong>: Spline-based functions can represent complex transformations with fewer parameters</li>
-<li><strong>Adaptive Representation</strong>: Network can learn optimal activation functions for specific tasks</li>
-<li><strong>Reduced Redundancy</strong>: Elimination of fixed linear weights reduces parameter overhead</li>
-</ol>
-</section>
-<section id="expressive-power" class="level3">
-<h3 class="anchored" data-anchor-id="expressive-power">Expressive Power</h3>
-<p>Convolutional KANs offer superior expressive power through:</p>
-<ol type="1">
-<li><strong>Adaptive Activation Functions</strong>: Ability to learn task-specific non-linearities</li>
-<li><strong>Enhanced Function Approximation</strong>: Theoretical foundation in universal approximation</li>
-<li><strong>Flexible Computational Primitives</strong>: Learnable spline functions provide greater representational capacity</li>
-</ol>
 </section>
 <section id="interpretability" class="level3">
 <h3 class="anchored" data-anchor-id="interpretability">Interpretability</h3>
-<p>KANs provide enhanced interpretability compared to traditional CNNs:</p>
-<ol type="1">
-<li><strong>Visualizable Functions</strong>: Learned spline functions can be directly visualized and analyzed</li>
-<li><strong>Human Interaction</strong>: Easier to understand and modify network behavior</li>
-<li><strong>Mathematical Transparency</strong>: Clear mathematical foundation enables better analysis</li>
-</ol>
-</section>
-<section id="performance-characteristics" class="level3">
-<h3 class="anchored" data-anchor-id="performance-characteristics">Performance Characteristics</h3>
-<p>Empirical evaluations have shown that Convolutional KANs can achieve:</p>
+<p>The univariate nature of CKAN functions provides better interpretability:</p>
 <ul>
-<li><strong>Comparable or Superior Accuracy</strong>: Match or exceed CNN performance on various tasks</li>
-<li><strong>Faster Neural Scaling Laws</strong>: More efficient scaling with increased model complexity</li>
-<li><strong>Better Generalization</strong>: Improved performance on unseen data</li>
+<li>Each function can be visualized as a 1D curve</li>
+<li>Function shapes reveal learned patterns</li>
+<li>Easier to understand feature transformations</li>
+</ul>
+</section>
+<section id="computational-trade-offs" class="level3">
+<h3 class="anchored" data-anchor-id="computational-trade-offs">Computational Trade-offs</h3>
+<p><strong>Advantages</strong>:</p>
+<ul>
+<li>Better function approximation with fewer layers</li>
+<li>Interpretable learned functions</li>
+<li>Theoretical guarantees</li>
+</ul>
+<p><strong>Disadvantages</strong>:</p>
+<ul>
+<li>Higher computational cost per layer</li>
+<li>More parameters to optimize</li>
+<li>Longer training times</li>
 </ul>
 </section>
 </section>
-<section id="practical-applications-and-limitations" class="level2">
-<h2 class="anchored" data-anchor-id="practical-applications-and-limitations">Practical Applications and Limitations</h2>
-<section id="suitable-applications" class="level3">
-<h3 class="anchored" data-anchor-id="suitable-applications">Suitable Applications</h3>
-<p>Convolutional KANs are particularly well-suited for:</p>
+<section id="future-directions-and-extensions" class="level2">
+<h2 class="anchored" data-anchor-id="future-directions-and-extensions">Future Directions and Extensions</h2>
+<section id="theoretical-advances" class="level3">
+<h3 class="anchored" data-anchor-id="theoretical-advances">Theoretical Advances</h3>
 <ol type="1">
-<li><strong>Computer Vision Tasks</strong>: Image classification, object detection, segmentation</li>
-<li><strong>Pattern Recognition</strong>: Complex pattern matching with adaptive feature extraction</li>
-<li><strong>Scientific Computing</strong>: Problems requiring interpretable and efficient models</li>
-<li><strong>Resource-Constrained Environments</strong>: Applications with limited computational resources</li>
+<li><strong>Convergence guarantees</strong>: Developing stronger theoretical guarantees for CKAN convergence</li>
+<li><strong>Optimal architectures</strong>: Finding optimal CKAN architectures for specific tasks</li>
+<li><strong>Generalization bounds</strong>: Establishing generalization bounds for CKANs</li>
 </ol>
 </section>
-<section id="current-limitations" class="level3">
-<h3 class="anchored" data-anchor-id="current-limitations">Current Limitations</h3>
-<p>Despite their advantages, Convolutional KANs face certain challenges:</p>
+<section id="practical-improvements" class="level3">
+<h3 class="anchored" data-anchor-id="practical-improvements">Practical Improvements</h3>
 <ol type="1">
-<li><strong>Computational Complexity</strong>: Spline function evaluation may increase computational overhead</li>
-<li><strong>Training Complexity</strong>: More complex optimization landscape due to learnable activation functions</li>
-<li><strong>Limited Ecosystem</strong>: Fewer available tools and implementations compared to CNNs</li>
-<li><strong>Scaling Challenges</strong>: Performance on very large-scale problems remains to be fully validated</li>
+<li><strong>Efficient implementations</strong>: Developing more efficient CUDA kernels for CKAN operations</li>
+<li><strong>Automated architecture search</strong>: Using neural architecture search for CKAN design</li>
+<li><strong>Hardware acceleration</strong>: Designing specialized hardware for CKAN computations</li>
 </ol>
 </section>
-</section>
-<section id="implementation-considerations" class="level2">
-<h2 class="anchored" data-anchor-id="implementation-considerations">Implementation Considerations</h2>
-<section id="training-strategies" class="level3">
-<h3 class="anchored" data-anchor-id="training-strategies">Training Strategies</h3>
-<p>Effective training of Convolutional KANs requires:</p>
+<section id="applications" class="level3">
+<h3 class="anchored" data-anchor-id="applications">Applications</h3>
 <ol type="1">
-<li><strong>Careful Initialization</strong>: Proper initialization of spline parameters</li>
-<li><strong>Adaptive Learning Rates</strong>: Different learning rates for different parameter types</li>
-<li><strong>Regularization Techniques</strong>: Preventing overfitting in the learnable activation functions</li>
-<li><strong>Numerical Stability</strong>: Ensuring stable spline function evaluation</li>
-</ol>
-</section>
-<section id="hyperparameter-tuning" class="level3">
-<h3 class="anchored" data-anchor-id="hyperparameter-tuning">Hyperparameter Tuning</h3>
-<p>Key hyperparameters include:</p>
-<ul>
-<li><strong>Spline Order</strong>: Degree of the B-spline basis functions</li>
-<li><strong>Grid Size</strong>: Number of control points for spline functions</li>
-<li><strong>Regularization Strength</strong>: Balance between fitting and smoothness</li>
-<li><strong>Learning Rate Schedules</strong>: Optimization strategy for different parameter types</li>
-</ul>
-</section>
-</section>
-<section id="future-directions-and-research-opportunities" class="level2">
-<h2 class="anchored" data-anchor-id="future-directions-and-research-opportunities">Future Directions and Research Opportunities</h2>
-<section id="emerging-research-areas" class="level3">
-<h3 class="anchored" data-anchor-id="emerging-research-areas">Emerging Research Areas</h3>
-<ol type="1">
-<li><strong>Hybrid Architectures</strong>: Combining KANs with other neural network paradigms</li>
-<li><strong>Specialized Applications</strong>: Domain-specific adaptations of Convolutional KANs</li>
-<li><strong>Optimization Techniques</strong>: Novel training methods for improved efficiency</li>
-<li><strong>Theoretical Analysis</strong>: Deeper understanding of KAN properties and capabilities</li>
-</ol>
-</section>
-<section id="potential-developments" class="level3">
-<h3 class="anchored" data-anchor-id="potential-developments">Potential Developments</h3>
-<ol type="1">
-<li><strong>Hardware Acceleration</strong>: Specialized hardware for efficient KAN computation</li>
-<li><strong>AutoML Integration</strong>: Automated design and optimization of KAN architectures</li>
-<li><strong>Large-Scale Applications</strong>: Scaling to very large datasets and complex problems</li>
-<li><strong>Transfer Learning</strong>: Adapting pre-trained KAN models to new tasks</li>
+<li><strong>Computer vision</strong>: Image classification, object detection, segmentation</li>
+<li><strong>Scientific computing</strong>: Solving partial differential equations</li>
+<li><strong>Signal processing</strong>: Audio and video processing applications</li>
 </ol>
 </section>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>Convolutional Kolmogorov-Arnold Networks represent a paradigm shift in neural network design, offering significant advantages in parameter efficiency, interpretability, and expressive power compared to traditional CNNs. While CNNs have proven their worth over the past decade, Convolutional KANs provide a compelling alternative that addresses many of the limitations of traditional approaches.</p>
-<p>The key advantages of Convolutional KANs include their theoretical foundation in the Kolmogorov-Arnold representation theorem, enhanced parameter efficiency, superior interpretability, and adaptive representational capacity. However, challenges remain in terms of computational complexity, training strategies, and large-scale validation.</p>
-<p>As research continues to advance, Convolutional KANs are poised to become increasingly important in the deep learning landscape, particularly for applications requiring efficient, interpretable, and high-performance neural networks. The choice between CNNs and Convolutional KANs will ultimately depend on specific application requirements, computational constraints, and the importance of interpretability in the given domain.</p>
-<p>The future of computer vision and deep learning may well be shaped by the continued development and adoption of Kolmogorov-Arnold Networks, marking a new chapter in the evolution of artificial intelligence architectures.</p>
+<p>Convolutional Kolmogorov-Arnold Networks represent a significant advancement in neural network architectures, combining solid theoretical foundations with practical convolutional operations. While computationally more expensive than traditional CNNs, CKANs offer superior expressivity, interpretability, and theoretical guarantees. As the field continues to evolve, we can expect further optimizations and novel applications of this powerful architecture.</p>
+<p>The mathematics behind CKANs reveals a rich interplay between approximation theory, spline functions, and deep learning, opening new avenues for both theoretical understanding and practical applications in machine learning.</p>
 
 
 
