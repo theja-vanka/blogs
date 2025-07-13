@@ -532,7 +532,11 @@ window.Quarto = {
 <section id="learning-curves-and-extrapolation" class="level3">
 <h3 class="anchored" data-anchor-id="learning-curves-and-extrapolation">Learning Curves and Extrapolation</h3>
 <p>Early stopping strategies predict final performance from partial training curves. Common models include:</p>
-<p><strong>Power Law</strong>: <span class="math inline">\(f(x) = a \cdot x^b + c\)</span> <strong>Exponential</strong>: <span class="math inline">\(f(x) = a \cdot e^{-bx} + c\)</span> <strong>Logarithmic</strong>: <span class="math inline">\(f(x) = a \cdot \log(x) + b\)</span></p>
+<ul>
+<li><strong>Power Law</strong>: <span class="math inline">\(f(x) = a \cdot x^b + c\)</span></li>
+<li><strong>Exponential</strong>: <span class="math inline">\(f(x) = a \cdot e^{-bx} + c\)</span></li>
+<li><strong>Logarithmic</strong>: <span class="math inline">\(f(x) = a \cdot \log(x) + b\)</span></li>
+</ul>
 <p>The parameters are fitted using least squares on early training data, then extrapolated to predict full training performance.</p>
 </section>
 <section id="neural-predictors" class="level3">
@@ -562,7 +566,11 @@ window.Quarto = {
 </section>
 <section id="scalarization-methods" class="level3">
 <h3 class="anchored" data-anchor-id="scalarization-methods">Scalarization Methods</h3>
-<p><strong>Weighted Sum</strong>: <span class="math inline">\(\min_\alpha \sum_i w_i \cdot f_i(\alpha)\)</span> <strong>ε-Constraint</strong>: <span class="math inline">\(\min_\alpha f_1(\alpha)\)</span> subject to <span class="math inline">\(f_i(\alpha) \leq \varepsilon_i\)</span> for <span class="math inline">\(i &gt; 1\)</span> <strong>Chebyshev</strong>: <span class="math inline">\(\min_\alpha \max_i w_i \cdot |f_i(\alpha) - z_i^*|\)</span></p>
+<ul>
+<li><strong>Weighted Sum</strong>: <span class="math inline">\(\min_\alpha \sum_i w_i \cdot f_i(\alpha)\)</span></li>
+<li><strong>ε-Constraint</strong>: <span class="math inline">\(\min_\alpha f_1(\alpha)\)</span> subject to <span class="math inline">\(f_i(\alpha) \leq \varepsilon_i\)</span> for <span class="math inline">\(i &gt; 1\)</span></li>
+<li><strong>Chebyshev</strong>: <span class="math inline">\(\min_\alpha \max_i w_i \cdot |f_i(\alpha) - z_i^*|\)</span></li>
+</ul>
 <p>where <span class="math inline">\(z_i^*\)</span> is the ideal value for objective <span class="math inline">\(i\)</span>.</p>
 </section>
 </section>
@@ -582,7 +590,12 @@ window.Quarto = {
 <section id="computational-complexity" class="level3">
 <h3 class="anchored" data-anchor-id="computational-complexity">Computational Complexity</h3>
 <p>Different NAS methods have varying computational requirements:</p>
-<p><strong>Exhaustive Search</strong>: <span class="math inline">\(\mathcal{O}(|\mathcal{S}| \cdot T)\)</span> where <span class="math inline">\(|\mathcal{S}|\)</span> is search space size and <span class="math inline">\(T\)</span> is training time <strong>Gradient-Based</strong>: <span class="math inline">\(\mathcal{O}(K \cdot T)\)</span> where <span class="math inline">\(K\)</span> is number of gradient steps <strong>Evolutionary</strong>: <span class="math inline">\(\mathcal{O}(P \cdot G \cdot T)\)</span> where <span class="math inline">\(P\)</span> is population size and <span class="math inline">\(G\)</span> is number of generations <strong>One-Shot</strong>: <span class="math inline">\(\mathcal{O}(T_{\text{supernet}} + |\mathcal{S}| \cdot T_{\text{eval}})\)</span> where <span class="math inline">\(T_{\text{eval}} \ll T\)</span></p>
+<ul>
+<li><strong>Exhaustive Search</strong>: <span class="math inline">\(\mathcal{O}(|\mathcal{S}| \cdot T)\)</span> where <span class="math inline">\(|\mathcal{S}|\)</span> is search space size and <span class="math inline">\(T\)</span> is training time</li>
+<li><strong>Gradient-Based</strong>: <span class="math inline">\(\mathcal{O}(K \cdot T)\)</span> where <span class="math inline">\(K\)</span> is number of gradient steps</li>
+<li><strong>Evolutionary</strong>: <span class="math inline">\(\mathcal{O}(P \cdot G \cdot T)\)</span> where <span class="math inline">\(P\)</span> is population size and <span class="math inline">\(G\)</span> is number of generations</li>
+<li><strong>One-Shot</strong>: <span class="math inline">\(\mathcal{O}(T_{\text{supernet}} + |\mathcal{S}| \cdot T_{\text{eval}})\)</span> where <span class="math inline">\(T_{\text{eval}} \ll T\)</span></li>
+</ul>
 </section>
 </section>
 <section id="convergence-analysis" class="level2">
@@ -609,14 +622,20 @@ window.Quarto = {
 <section id="regularization" class="level3">
 <h3 class="anchored" data-anchor-id="regularization">Regularization</h3>
 <p>Architecture search often requires regularization to prevent overfitting:</p>
-<p><strong>Dropout on Architecture Parameters</strong>: Randomly zero some <span class="math inline">\(\alpha\)</span> values during training</p>
-<p><strong>Weight Decay</strong>: Add L2 penalty <span class="math inline">\(\lambda ||\alpha||^2\)</span> to the loss</p>
-<p><strong>Early Stopping</strong>: Stop search when validation performance plateaus</p>
+<ul>
+<li><strong>Dropout on Architecture Parameters</strong>: Randomly zero some <span class="math inline">\(\alpha\)</span> values during training</li>
+<li><strong>Weight Decay</strong>: Add L2 penalty <span class="math inline">\(\lambda ||\alpha||^2\)</span> to the loss</li>
+<li><strong>Early Stopping</strong>: Stop search when validation performance plateaus</li>
+</ul>
 </section>
 <section id="search-space-design" class="level3">
 <h3 class="anchored" data-anchor-id="search-space-design">Search Space Design</h3>
 <p>The choice of search space significantly impacts results. Key considerations include:</p>
-<p><strong>Expressivity</strong>: Can the space represent effective architectures? <strong>Efficiency</strong>: Can the space be searched efficiently? <strong>Inductive Bias</strong>: Does the space encode useful architectural priors?</p>
+<ul>
+<li><strong>Expressivity</strong>: Can the space represent effective architectures?</li>
+<li><strong>Efficiency</strong>: Can the space be searched efficiently?</li>
+<li><strong>Inductive Bias</strong>: Does the space encode useful architectural priors?</li>
+</ul>
 <p>Mathematical analysis of search spaces involves studying their geometric properties, connectivity, and the distribution of high-performing architectures.</p>
 </section>
 </section>
@@ -727,7 +746,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -167,9 +167,9 @@ This creates a sequence of nested search spaces: $\mathcal{S}_0 \supset \mathcal
 
 Early stopping strategies predict final performance from partial training curves. Common models include:
 
-**Power Law**: $f(x) = a \cdot x^b + c$
-**Exponential**: $f(x) = a \cdot e^{-bx} + c$
-**Logarithmic**: $f(x) = a \cdot \log(x) + b$
+- **Power Law**: $f(x) = a \cdot x^b + c$
+- **Exponential**: $f(x) = a \cdot e^{-bx} + c$
+- **Logarithmic**: $f(x) = a \cdot \log(x) + b$
 
 The parameters are fitted using least squares on early training data, then extrapolated to predict full training performance.
 
@@ -202,9 +202,9 @@ The Pareto front represents the set of all Pareto optimal solutions.
 
 ### Scalarization Methods
 
-**Weighted Sum**: $\min_\alpha \sum_i w_i \cdot f_i(\alpha)$
-**ε-Constraint**: $\min_\alpha f_1(\alpha)$ subject to $f_i(\alpha) \leq \varepsilon_i$ for $i > 1$
-**Chebyshev**: $\min_\alpha \max_i w_i \cdot |f_i(\alpha) - z_i^*|$
+- **Weighted Sum**: $\min_\alpha \sum_i w_i \cdot f_i(\alpha)$
+- **ε-Constraint**: $\min_\alpha f_1(\alpha)$ subject to $f_i(\alpha) \leq \varepsilon_i$ for $i > 1$
+- **Chebyshev**: $\min_\alpha \max_i w_i \cdot |f_i(\alpha) - z_i^*|$
 
 where $z_i^*$ is the ideal value for objective $i$.
 
@@ -224,10 +224,10 @@ The total number of architectures is approximately $O^L \cdot 2^{LC}$, making ex
 
 Different NAS methods have varying computational requirements:
 
-**Exhaustive Search**: $\mathcal{O}(|\mathcal{S}| \cdot T)$ where $|\mathcal{S}|$ is search space size and $T$ is training time
-**Gradient-Based**: $\mathcal{O}(K \cdot T)$ where $K$ is number of gradient steps
-**Evolutionary**: $\mathcal{O}(P \cdot G \cdot T)$ where $P$ is population size and $G$ is number of generations
-**One-Shot**: $\mathcal{O}(T_{\text{supernet}} + |\mathcal{S}| \cdot T_{\text{eval}})$ where $T_{\text{eval}} \ll T$
+- **Exhaustive Search**: $\mathcal{O}(|\mathcal{S}| \cdot T)$ where $|\mathcal{S}|$ is search space size and $T$ is training time
+- **Gradient-Based**: $\mathcal{O}(K \cdot T)$ where $K$ is number of gradient steps
+- **Evolutionary**: $\mathcal{O}(P \cdot G \cdot T)$ where $P$ is population size and $G$ is number of generations
+- **One-Shot**: $\mathcal{O}(T_{\text{supernet}} + |\mathcal{S}| \cdot T_{\text{eval}})$ where $T_{\text{eval}} \ll T$
 
 ## Convergence Analysis
 
@@ -256,19 +256,17 @@ The expected hitting time to the optimum can be bounded using Markov chain analy
 
 Architecture search often requires regularization to prevent overfitting:
 
-**Dropout on Architecture Parameters**: Randomly zero some $\alpha$ values during training
-
-**Weight Decay**: Add L2 penalty $\lambda ||\alpha||^2$ to the loss
-
-**Early Stopping**: Stop search when validation performance plateaus
+- **Dropout on Architecture Parameters**: Randomly zero some $\alpha$ values during training
+- **Weight Decay**: Add L2 penalty $\lambda ||\alpha||^2$ to the loss
+- **Early Stopping**: Stop search when validation performance plateaus
 
 ### Search Space Design
 
 The choice of search space significantly impacts results. Key considerations include:
 
-**Expressivity**: Can the space represent effective architectures?
-**Efficiency**: Can the space be searched efficiently?
-**Inductive Bias**: Does the space encode useful architectural priors?
+- **Expressivity**: Can the space represent effective architectures?
+- **Efficiency**: Can the space be searched efficiently?
+- **Inductive Bias**: Does the space encode useful architectural priors?
 
 Mathematical analysis of search spaces involves studying their geometric properties, connectivity, and the distribution of high-performing architectures.
 

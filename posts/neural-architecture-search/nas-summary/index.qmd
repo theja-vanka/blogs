@@ -34,33 +34,26 @@ The manual design process typically follows established patterns and heuristics.
 
 The search space defines the set of all possible architectures that the NAS algorithm can explore. A well-designed search space balances expressiveness with computational tractability. Common search space formulations include:
 
-**Cell-based Search Spaces**: These define repeatable computational cells that are stacked to form complete architectures. Each cell contains a directed acyclic graph of operations, with the final architecture determined by the cell structure and stacking pattern.
-
-**Macro Search Spaces**: These consider the overall network structure, including the number of layers, layer types, and connectivity patterns across the entire network.
-
-**Hierarchical Search Spaces**: These decompose the architecture search into multiple levels, such as searching for optimal cells at one level and optimal cell arrangements at another.
+- **Cell-based Search Spaces**: These define repeatable computational cells that are stacked to form complete architectures. Each cell contains a directed acyclic graph of operations, with the final architecture determined by the cell structure and stacking pattern.
+- **Macro Search Spaces**: These consider the overall network structure, including the number of layers, layer types, and connectivity patterns across the entire network.
+- **Hierarchical Search Spaces**: These decompose the architecture search into multiple levels, such as searching for optimal cells at one level and optimal cell arrangements at another.
 
 ### Performance Estimation
 
 Evaluating architecture performance is computationally expensive, as it typically requires training each candidate architecture to convergence. NAS methods employ various strategies to reduce this computational burden:
 
-**Proxy Tasks**: Training on simplified versions of the target task, such as using fewer epochs, smaller datasets, or reduced model sizes.
-
-**Performance Prediction**: Using machine learning models to predict architecture performance based on structural features without full training.
-
-**Weight Sharing**: Sharing weights among similar architectural components to reduce training time.
+- **Proxy Tasks**: Training on simplified versions of the target task, such as using fewer epochs, smaller datasets, or reduced model sizes.
+- **Performance Prediction**: Using machine learning models to predict architecture performance based on structural features without full training.
+- **Weight Sharing**: Sharing weights among similar architectural components to reduce training time.
 
 ### Search Strategy
 
 The search strategy determines how the NAS algorithm navigates the search space to find optimal architectures. Different strategies make different trade-offs between exploration and exploitation:
 
-**Random Search**: Samples architectures uniformly from the search space. While simple, it can be surprisingly effective for well-designed search spaces.
-
-**Evolutionary Algorithms**: Use principles of natural selection to evolve populations of architectures over generations.
-
-**Reinforcement Learning**: Treats architecture search as a sequential decision-making problem, using RL agents to generate architectures.
-
-**Gradient-based Methods**: Relax the discrete search space into a continuous one, enabling gradient-based optimization.
+- **Random Search**: Samples architectures uniformly from the search space. While simple, it can be surprisingly effective for well-designed search spaces.
+- **Evolutionary Algorithms**: Use principles of natural selection to evolve populations of architectures over generations.
+- **Reinforcement Learning**: Treats architecture search as a sequential decision-making problem, using RL agents to generate architectures.
+- **Gradient-based Methods**: Relax the discrete search space into a continuous one, enabling gradient-based optimization.
 
 ## Historical Development
 
@@ -140,16 +133,19 @@ This method dramatically reduces computational cost since it requires training o
 Cell-based search spaces focus on finding optimal computational cells that can be stacked to form complete architectures. This approach reduces the search space size while maintaining architectural diversity.
 
 A typical cell contains:
+
 - **Input Nodes**: Receive inputs from previous cells or external sources
 - **Intermediate Nodes**: Apply operations to transform inputs
 - **Output Nodes**: Combine intermediate results to produce cell outputs
 
 The cell structure is defined by:
+
 - **Operations**: Convolutions, pooling, skip connections, etc.
 - **Connections**: How nodes are connected within the cell
 - **Combination Functions**: How multiple inputs to a node are combined
 
 Popular cell-based search spaces include:
+
 - **NASNet Search Space**: Used in the original NAS paper
 - **DARTS Search Space**: Simplified version focusing on common operations
 - **PC-DARTS Search Space**: Extends DARTS with partial channel connections
@@ -157,12 +153,14 @@ Popular cell-based search spaces include:
 ### Macro Search Spaces
 
 Macro search spaces consider the overall network structure, including decisions about:
+
 - **Network Depth**: Total number of layers
 - **Layer Types**: Convolution, pooling, normalization, activation
 - **Channel Dimensions**: Number of filters in each layer
 - **Skip Connections**: Long-range connections between layers
 
 Macro search is more challenging than cell-based search because:
+
 - The search space is typically much larger
 - Architectural decisions are more interdependent
 - Performance evaluation is more expensive
@@ -171,11 +169,12 @@ Macro search is more challenging than cell-based search because:
 
 Hierarchical approaches decompose architecture search into multiple levels:
 
-**Level 1**: Micro-architecture search (within cells)
-**Level 2**: Macro-architecture search (cell arrangement)
-**Level 3**: Network-level search (overall structure)
+- **Level 1**: Micro-architecture search (within cells)
+- **Level 2**: Macro-architecture search (cell arrangement)
+- **Level 3**: Network-level search (overall structure)
 
 This decomposition allows for:
+
 - More efficient search by reducing complexity at each level
 - Better generalization across different tasks
 - Modular design that can be adapted to various domains
@@ -186,12 +185,13 @@ This decomposition allows for:
 
 Proxy tasks reduce evaluation cost by training on simplified versions of the target problem:
 
-**Reduced Epochs**: Training for fewer iterations to get approximate performance
-**Smaller Datasets**: Using subsets of the training data
-**Lower Resolution**: Reducing image size or sequence length
-**Fewer Channels**: Using narrower networks during search
+- **Reduced Epochs**: Training for fewer iterations to get approximate performance
+- **Smaller Datasets**: Using subsets of the training data
+- **Lower Resolution**: Reducing image size or sequence length
+- **Fewer Channels**: Using narrower networks during search
 
 The effectiveness of proxy tasks depends on:
+
 - **Rank Correlation**: How well proxy performance predicts full performance
 - **Computational Savings**: The reduction in training time
 - **Task Similarity**: How closely the proxy resembles the target task
@@ -200,11 +200,12 @@ The effectiveness of proxy tasks depends on:
 
 Weight sharing reduces training time by reusing parameters across similar architectural components:
 
-**Parameter Inheritance**: New architectures inherit weights from previously trained models
-**Shared Backbones**: Common layers share parameters across different architectures
-**Progressive Training**: Gradually building up architectures while sharing lower-level weights
+- **Parameter Inheritance**: New architectures inherit weights from previously trained models
+- **Shared Backbones**: Common layers share parameters across different architectures
+- **Progressive Training**: Gradually building up architectures while sharing lower-level weights
 
 Challenges with weight sharing include:
+
 - **Interference**: Different architectures may require conflicting parameter values
 - **Bias**: Shared weights may favor certain architectural patterns
 - **Optimization**: Balancing individual architecture performance with shared efficiency
@@ -213,11 +214,12 @@ Challenges with weight sharing include:
 
 Machine learning models can predict architecture performance without full training:
 
-**Feature Engineering**: Extracting architectural features (depth, width, connectivity)
-**Graph Neural Networks**: Using GNNs to encode architectural structure
-**Surrogate Models**: Training regression models on architecture-performance pairs
+- **Feature Engineering**: Extracting architectural features (depth, width, connectivity)
+- **Graph Neural Networks**: Using GNNs to encode architectural structure
+- **Surrogate Models**: Training regression models on architecture-performance pairs
 
 Key considerations:
+
 - **Training Data**: Sufficient architecture-performance pairs for training
 - **Generalization**: Ability to predict performance on unseen architectures
 - **Computational Cost**: Prediction should be much faster than full training
@@ -227,6 +229,7 @@ Key considerations:
 ### Motivation
 
 Modern deployment scenarios require architectures that are not only accurate but also efficient in terms of:
+
 - **Latency**: Inference time on target hardware
 - **Energy Consumption**: Power usage during operation
 - **Memory Usage**: RAM and storage requirements
@@ -238,11 +241,12 @@ Traditional NAS methods optimize primarily for accuracy, often producing archite
 
 Hardware-aware NAS typically involves multiple, often conflicting objectives:
 
-**Accuracy**: Model performance on the target task
-**Efficiency**: Hardware-specific metrics (latency, energy, memory)
-**Size**: Model parameter count and storage requirements
+- **Accuracy**: Model performance on the target task
+- **Efficiency**: Hardware-specific metrics (latency, energy, memory)
+- **Size**: Model parameter count and storage requirements
 
 Common approaches include:
+
 - **Pareto-optimal Search**: Finding architectures that represent optimal trade-offs
 - **Weighted Objectives**: Combining multiple metrics into a single score
 - **Constraint-based Search**: Searching within efficiency constraints
@@ -251,20 +255,21 @@ Common approaches include:
 
 Different hardware platforms have unique characteristics that affect architecture performance:
 
-**Mobile Devices**: Limited memory and battery life prioritize efficiency
-**Edge Devices**: Extreme resource constraints and real-time requirements
-**Cloud GPUs**: High throughput and parallel processing capabilities
-**Specialized Hardware**: TPUs, FPGAs, and custom accelerators
+- **Mobile Devices**: Limited memory and battery life prioritize efficiency
+- **Edge Devices**: Extreme resource constraints and real-time requirements
+- **Cloud GPUs**: High throughput and parallel processing capabilities
+- **Specialized Hardware**: TPUs, FPGAs, and custom accelerators
 
 ### Latency Prediction
 
 Accurate latency prediction is crucial for hardware-aware NAS:
 
-**Direct Measurement**: Running architectures on target hardware
-**Analytical Models**: Using theoretical models based on operation counts
-**Learned Predictors**: Training models to predict latency from architectural features
+- **Direct Measurement**: Running architectures on target hardware
+- **Analytical Models**: Using theoretical models based on operation counts
+- **Learned Predictors**: Training models to predict latency from architectural features
 
 Challenges include:
+
 - **Hardware Variability**: Different devices have different performance characteristics
 - **Optimization Effects**: Compiler optimizations can significantly affect performance
 - **Batch Size Dependencies**: Latency often varies with batch size
@@ -275,12 +280,13 @@ Challenges include:
 
 NAS has achieved remarkable success in computer vision tasks:
 
-**Image Classification**: Discovering architectures that outperform ResNet and other human-designed networks
-**Object Detection**: Finding efficient architectures for real-time detection systems
-**Semantic Segmentation**: Optimizing architectures for dense prediction tasks
-**Image Generation**: Searching for GAN architectures with improved stability and quality
+- **Image Classification**: Discovering architectures that outperform ResNet and other human-designed networks
+- **Object Detection**: Finding efficient architectures for real-time detection systems
+- **Semantic Segmentation**: Optimizing architectures for dense prediction tasks
+- **Image Generation**: Searching for GAN architectures with improved stability and quality
 
 Notable achievements:
+
 - **EfficientNet**: Achieved state-of-the-art ImageNet accuracy with fewer parameters
 - **NAS-FPN**: Improved object detection performance through architecture search
 - **Auto-DeepLab**: Automated architecture search for semantic segmentation
@@ -289,12 +295,13 @@ Notable achievements:
 
 NAS applications in NLP have focused on:
 
-**Language Modeling**: Finding efficient architectures for sequence modeling
-**Machine Translation**: Optimizing encoder-decoder architectures
-**Text Classification**: Discovering architectures for various NLP tasks
-**Question Answering**: Searching for architectures that can effectively reason over text
+- **Language Modeling**: Finding efficient architectures for sequence modeling
+- **Machine Translation**: Optimizing encoder-decoder architectures
+- **Text Classification**: Discovering architectures for various NLP tasks
+- **Question Answering**: Searching for architectures that can effectively reason over text
 
 Key developments:
+
 - **Evolved Transformer**: Used evolutionary search to improve Transformer architectures
 - **NASH**: Applied NAS to find efficient architectures for language understanding
 - **AutoML for NLP**: Automated architecture search for various NLP tasks
@@ -303,11 +310,12 @@ Key developments:
 
 Speech recognition presents unique challenges for NAS:
 
-**Temporal Modeling**: Architectures must effectively capture temporal dependencies
-**Computational Constraints**: Real-time processing requirements
-**Robustness**: Handling various acoustic conditions and speaking styles
+- **Temporal Modeling**: Architectures must effectively capture temporal dependencies
+- **Computational Constraints**: Real-time processing requirements
+- **Robustness**: Handling various acoustic conditions and speaking styles
 
 Applications include:
+
 - **Automatic Speech Recognition**: Finding efficient architectures for speech-to-text
 - **Speaker Recognition**: Optimizing architectures for speaker identification
 - **Speech Enhancement**: Searching for architectures that can improve audio quality
@@ -316,11 +324,12 @@ Applications include:
 
 NAS has been applied to recommendation systems for:
 
-**Feature Interaction**: Finding optimal ways to combine user and item features
-**Embedding Architectures**: Optimizing embedding dimensions and structures
-**Multi-Task Learning**: Balancing multiple recommendation objectives
+- **Feature Interaction**: Finding optimal ways to combine user and item features
+- **Embedding Architectures**: Optimizing embedding dimensions and structures
+- **Multi-Task Learning**: Balancing multiple recommendation objectives
 
 Challenges specific to recommendation systems:
+
 - **Large-Scale Data**: Handling massive user-item interaction datasets
 - **Cold Start**: Dealing with new users and items
 - **Interpretability**: Maintaining explainable recommendation decisions
@@ -331,11 +340,12 @@ Challenges specific to recommendation systems:
 
 Despite significant progress, NAS remains computationally expensive:
 
-**Search Time**: Finding optimal architectures can take days or weeks
-**Hardware Requirements**: Requiring substantial computational resources
-**Energy Consumption**: High carbon footprint of extensive architecture search
+- **Search Time**: Finding optimal architectures can take days or weeks
+- **Hardware Requirements**: Requiring substantial computational resources
+- **Energy Consumption**: High carbon footprint of extensive architecture search
 
 Mitigation strategies include:
+
 - **Efficient Search Methods**: Developing faster search algorithms
 - **Better Performance Estimation**: Reducing evaluation cost
 - **Transfer Learning**: Reusing search results across similar tasks
@@ -344,25 +354,25 @@ Mitigation strategies include:
 
 The design of search spaces introduces inherent biases:
 
-**Human Bias**: Search spaces reflect human assumptions about good architectures
-**Limited Diversity**: Constrained search spaces may miss innovative designs
-**Task Specificity**: Search spaces designed for one task may not generalize
+- **Human Bias**: Search spaces reflect human assumptions about good architectures
+- **Limited Diversity**: Constrained search spaces may miss innovative designs
+- **Task Specificity**: Search spaces designed for one task may not generalize
 
 ### Reproducibility
 
 NAS research faces significant reproducibility challenges:
 
-**Computational Requirements**: Not all researchers have access to required resources
-**Implementation Details**: Many important details are often omitted from papers
-**Evaluation Protocols**: Inconsistent evaluation methods across studies
+- **Computational Requirements**: Not all researchers have access to required resources
+- **Implementation Details**: Many important details are often omitted from papers
+- **Evaluation Protocols**: Inconsistent evaluation methods across studies
 
 ### Generalization
 
 Architectures found by NAS may not generalize well:
 
-**Task Transfer**: Architectures optimized for one task may not work well on others
-**Dataset Dependence**: Performance may not transfer to different datasets
-**Scale Sensitivity**: Architectures may not scale to different problem sizes
+- **Task Transfer**: Architectures optimized for one task may not work well on others
+- **Dataset Dependence**: Performance may not transfer to different datasets
+- **Scale Sensitivity**: Architectures may not scale to different problem sizes
 
 ## Recent Advances and Future Directions
 
@@ -370,9 +380,9 @@ Architectures found by NAS may not generalize well:
 
 Zero-shot NAS aims to evaluate architectures without training:
 
-**Architecture Encoders**: Using graph neural networks to encode architectural structure
-**Performance Predictors**: Training models to predict performance from structure alone
-**Gradient-Based Metrics**: Using gradient information to assess architecture quality
+- **Architecture Encoders**: Using graph neural networks to encode architectural structure
+- **Performance Predictors**: Training models to predict performance from structure alone
+- **Gradient-Based Metrics**: Using gradient information to assess architecture quality
 
 This approach promises to eliminate the training bottleneck entirely, making NAS accessible to researchers with limited computational resources.
 
@@ -380,63 +390,63 @@ This approach promises to eliminate the training bottleneck entirely, making NAS
 
 NAS is increasingly integrated into broader AutoML systems:
 
-**End-to-End Automation**: Combining architecture search with hyperparameter optimization
-**Data Preprocessing**: Jointly optimizing data augmentation and architecture
-**Model Selection**: Automatically choosing between different model families
+- **End-to-End Automation**: Combining architecture search with hyperparameter optimization
+- **Data Preprocessing**: Jointly optimizing data augmentation and architecture
+- **Model Selection**: Automatically choosing between different model families
 
 ### Federated NAS
 
 Federated learning scenarios present new challenges for NAS:
 
-**Heterogeneous Data**: Different clients may have different data distributions
-**Communication Constraints**: Limited bandwidth for sharing architectural information
-**Privacy Concerns**: Protecting client data during architecture search
+- **Heterogeneous Data**: Different clients may have different data distributions
+- **Communication Constraints**: Limited bandwidth for sharing architectural information
+- **Privacy Concerns**: Protecting client data during architecture search
 
 ### Transformer Architecture Search
 
 The success of Transformers has sparked interest in automated Transformer design:
 
-**Attention Mechanisms**: Searching for optimal attention patterns
-**Positional Encodings**: Finding better ways to encode positional information
-**Architecture Scaling**: Optimizing Transformer architectures for different scales
+- **Attention Mechanisms**: Searching for optimal attention patterns
+- **Positional Encodings**: Finding better ways to encode positional information
+- **Architecture Scaling**: Optimizing Transformer architectures for different scales
 
 ### Multi-Modal NAS
 
 As AI systems become more multi-modal, NAS must handle:
 
-**Cross-Modal Interactions**: Optimizing architectures for multiple input modalities
-**Fusion Strategies**: Finding optimal ways to combine different types of information
-**Unified Architectures**: Searching for architectures that can handle multiple tasks
+- **Cross-Modal Interactions**: Optimizing architectures for multiple input modalities
+- **Fusion Strategies**: Finding optimal ways to combine different types of information
+- **Unified Architectures**: Searching for architectures that can handle multiple tasks
 
 ## Best Practices and Recommendations
 
 ### Search Space Design
 
-**Start Simple**: Begin with well-understood search spaces before exploring novel designs
-**Validate Assumptions**: Ensure that the search space can express effective architectures
-**Consider Constraints**: Incorporate deployment constraints into the search space design
-**Enable Diversity**: Allow for architectural diversity to avoid local optima
+- **Start Simple**: Begin with well-understood search spaces before exploring novel designs
+- **Validate Assumptions**: Ensure that the search space can express effective architectures
+- **Consider Constraints**: Incorporate deployment constraints into the search space design
+- **Enable Diversity**: Allow for architectural diversity to avoid local optima
 
 ### Performance Estimation
 
-**Validate Proxies**: Ensure that proxy tasks correlate well with full performance
-**Use Multiple Metrics**: Consider multiple performance indicators beyond accuracy
-**Account for Variance**: Properly handle performance variability across runs
-**Benchmark Carefully**: Compare against appropriate baselines
+- **Validate Proxies**: Ensure that proxy tasks correlate well with full performance
+- **Use Multiple Metrics**: Consider multiple performance indicators beyond accuracy
+- **Account for Variance**: Properly handle performance variability across runs
+- **Benchmark Carefully**: Compare against appropriate baselines
 
 ### Implementation
 
-**Modular Code**: Design systems that can easily incorporate new search methods
-**Efficient Implementation**: Optimize code for the specific computational constraints
-**Careful Logging**: Track all experiments and intermediate results
-**Reproducible Setup**: Document all implementation details and hyperparameters
+- **Modular Code**: Design systems that can easily incorporate new search methods
+- **Efficient Implementation**: Optimize code for the specific computational constraints
+- **Careful Logging**: Track all experiments and intermediate results
+- **Reproducible Setup**: Document all implementation details and hyperparameters
 
 ### Evaluation
 
-**Multiple Runs**: Average results over multiple independent runs
-**Statistical Significance**: Use appropriate statistical tests for comparing methods
-**Comprehensive Baselines**: Compare against relevant human-designed architectures
-**Transfer Evaluation**: Test architectures on multiple tasks and datasets
+- **Multiple Runs**: Average results over multiple independent runs
+- **Statistical Significance**: Use appropriate statistical tests for comparing methods
+- **Comprehensive Baselines**: Compare against relevant human-designed architectures
+- **Transfer Evaluation**: Test architectures on multiple tasks and datasets
 
 ## Conclusion
 
