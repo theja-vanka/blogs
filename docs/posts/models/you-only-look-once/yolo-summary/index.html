@@ -508,8 +508,18 @@ window.Quarto = {
 </section>
 <section id="bounding-box-prediction" class="level3">
 <h3 class="anchored" data-anchor-id="bounding-box-prediction">Bounding Box Prediction</h3>
-<p>For each grid cell, YOLO predicts: - <strong>B bounding boxes</strong> (typically 2 or 3 per cell) - <strong>Confidence scores</strong> for each bounding box - <strong>Class probabilities</strong> for each grid cell</p>
-<p>Each bounding box consists of five values: - <strong>x, y</strong>: Center coordinates of the box (relative to the grid cell) - <strong>width, height</strong>: Dimensions of the box (relative to the entire image) - <strong>Confidence score</strong>: Probability that the box contains an object</p>
+<p>For each grid cell, YOLO predicts:</p>
+<ul>
+<li><strong>B bounding boxes</strong> (typically 2 or 3 per cell)</li>
+<li><strong>Confidence scores</strong> for each bounding box</li>
+<li><strong>Class probabilities</strong> for each grid cell</li>
+</ul>
+<p>Each bounding box consists of five values:</p>
+<ul>
+<li><strong>x, y</strong>: Center coordinates of the box (relative to the grid cell)</li>
+<li><strong>width, height</strong>: Dimensions of the box (relative to the entire image)</li>
+<li><strong>Confidence score</strong>: Probability that the box contains an object</li>
+</ul>
 </section>
 <section id="class-prediction" class="level3">
 <h3 class="anchored" data-anchor-id="class-prediction">Class Prediction</h3>
@@ -518,7 +528,12 @@ window.Quarto = {
 <section id="network-architecture" class="level3">
 <h3 class="anchored" data-anchor-id="network-architecture">Network Architecture</h3>
 <p>The YOLO network is based on a convolutional neural network (CNN) architecture. The original YOLO used a modified version of the GoogLeNet architecture, but subsequent versions have evolved to use more efficient designs.</p>
-<p>The network consists of: - <strong>Convolutional layers</strong> for feature extraction - <strong>Fully connected layers</strong> for prediction - <strong>Output layer</strong> that produces the final detection results</p>
+<p>The network consists of:</p>
+<ul>
+<li><strong>Convolutional layers</strong> for feature extraction</li>
+<li><strong>Fully connected layers</strong> for prediction</li>
+<li><strong>Output layer</strong> that produces the final detection results</li>
+</ul>
 </section>
 </section>
 <section id="evolution-of-yolo-from-v1-to-v8" class="level2">
@@ -529,23 +544,53 @@ window.Quarto = {
 </section>
 <section id="yolov2-2016" class="level3">
 <h3 class="anchored" data-anchor-id="yolov2-2016">YOLOv2 (2016)</h3>
-<p>Also known as YOLO9000, this version introduced: - Batch normalization for improved training - Anchor boxes for better bounding box predictions - Higher resolution training - Multi-scale training for robustness</p>
+<p>Also known as YOLO9000, this version introduced:</p>
+<ul>
+<li>Batch normalization for improved training</li>
+<li>Anchor boxes for better bounding box predictions</li>
+<li>Higher resolution training</li>
+<li>Multi-scale training for robustness</li>
+</ul>
 </section>
 <section id="yolov3-2018" class="level3">
 <h3 class="anchored" data-anchor-id="yolov3-2018">YOLOv3 (2018)</h3>
-<p>Significant improvements included: - Feature Pyramid Networks (FPN) for better multi-scale detection - Logistic regression for object confidence - Multi-label classification capability - Darknet-53 backbone for improved feature extraction</p>
+<p>Significant improvements included:</p>
+<ul>
+<li>Feature Pyramid Networks (FPN) for better multi-scale detection</li>
+<li>Logistic regression for object confidence</li>
+<li>Multi-label classification capability</li>
+<li>Darknet-53 backbone for improved feature extraction</li>
+</ul>
 </section>
 <section id="yolov4-2020" class="level3">
 <h3 class="anchored" data-anchor-id="yolov4-2020">YOLOv4 (2020)</h3>
-<p>Focused on optimization and practical improvements: - CSPDarkNet53 backbone - SPP (Spatial Pyramid Pooling) block - PANet path aggregation - Extensive use of data augmentation techniques</p>
+<p>Focused on optimization and practical improvements:</p>
+<ul>
+<li>CSPDarkNet53 backbone</li>
+<li>SPP (Spatial Pyramid Pooling) block</li>
+<li>PANet path aggregation</li>
+<li>Extensive use of data augmentation techniques</li>
+</ul>
 </section>
 <section id="yolov5-2020" class="level3">
 <h3 class="anchored" data-anchor-id="yolov5-2020">YOLOv5 (2020)</h3>
-<p>Developed by Ultralytics, not the original authors: - PyTorch implementation for easier use - Improved training procedures - Better model scaling - Enhanced user experience and documentation</p>
+<p>Developed by Ultralytics, not the original authors:</p>
+<ul>
+<li>PyTorch implementation for easier use</li>
+<li>Improved training procedures</li>
+<li>Better model scaling</li>
+<li>Enhanced user experience and documentation</li>
+</ul>
 </section>
 <section id="yolov6-v8-2021-2023" class="level3">
 <h3 class="anchored" data-anchor-id="yolov6-v8-2021-2023">YOLOv6-v8 (2021-2023)</h3>
-<p>Continued refinements focusing on: - Improved accuracy-speed trade-offs - Better mobile and edge device support - Enhanced training techniques - More robust architectures</p>
+<p>Continued refinements focusing on:</p>
+<ul>
+<li>Improved accuracy-speed trade-offs</li>
+<li>Better mobile and edge device support</li>
+<li>Enhanced training techniques</li>
+<li>More robust architectures</li>
+</ul>
 </section>
 </section>
 <section id="key-advantages-of-yolo" class="level2">
@@ -860,7 +905,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

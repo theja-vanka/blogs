@@ -49,11 +49,13 @@ YOLO divides an input image into an S×S grid (commonly 7×7 or 13×13). Each gr
 ### Bounding Box Prediction
 
 For each grid cell, YOLO predicts:
+
 - **B bounding boxes** (typically 2 or 3 per cell)
 - **Confidence scores** for each bounding box
 - **Class probabilities** for each grid cell
 
 Each bounding box consists of five values:
+
 - **x, y**: Center coordinates of the box (relative to the grid cell)
 - **width, height**: Dimensions of the box (relative to the entire image)
 - **Confidence score**: Probability that the box contains an object
@@ -67,6 +69,7 @@ Each grid cell also predicts the probability of each object class (person, car, 
 The YOLO network is based on a convolutional neural network (CNN) architecture. The original YOLO used a modified version of the GoogLeNet architecture, but subsequent versions have evolved to use more efficient designs.
 
 The network consists of:
+
 - **Convolutional layers** for feature extraction
 - **Fully connected layers** for prediction
 - **Output layer** that produces the final detection results
@@ -78,6 +81,7 @@ The original YOLO introduced the revolutionary single-shot detection concept. Wh
 
 ### YOLOv2 (2016)
 Also known as YOLO9000, this version introduced:
+
 - Batch normalization for improved training
 - Anchor boxes for better bounding box predictions
 - Higher resolution training
@@ -85,6 +89,7 @@ Also known as YOLO9000, this version introduced:
 
 ### YOLOv3 (2018)
 Significant improvements included:
+
 - Feature Pyramid Networks (FPN) for better multi-scale detection
 - Logistic regression for object confidence
 - Multi-label classification capability
@@ -92,6 +97,7 @@ Significant improvements included:
 
 ### YOLOv4 (2020)
 Focused on optimization and practical improvements:
+
 - CSPDarkNet53 backbone
 - SPP (Spatial Pyramid Pooling) block
 - PANet path aggregation
@@ -99,6 +105,7 @@ Focused on optimization and practical improvements:
 
 ### YOLOv5 (2020)
 Developed by Ultralytics, not the original authors:
+
 - PyTorch implementation for easier use
 - Improved training procedures
 - Better model scaling
@@ -106,6 +113,7 @@ Developed by Ultralytics, not the original authors:
 
 ### YOLOv6-v8 (2021-2023)
 Continued refinements focusing on:
+
 - Improved accuracy-speed trade-offs
 - Better mobile and edge device support
 - Enhanced training techniques
