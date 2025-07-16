@@ -523,7 +523,7 @@ Previous MoE Challenges
 <section id="mathematical-foundation" class="level3">
 <h3 class="anchored" data-anchor-id="mathematical-foundation">Mathematical Foundation</h3>
 <p>The Switch Transformer routing can be expressed mathematically as:</p>
-<div id="86201fd9" class="cell" data-execution_count="1">
+<div id="31bba9c7" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Switch Transformer routing function</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> switch_routing(x, experts, gating_function):</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -580,7 +580,7 @@ Previous MoE Challenges
 <section id="capacity-factor" class="level4">
 <h4 class="anchored" data-anchor-id="capacity-factor">Capacity Factor</h4>
 <p>The model uses a capacity factor to determine how many tokens each expert can process. This is calculated as:</p>
-<div id="f09483fa" class="cell" data-execution_count="2">
+<div id="9ddd61fe" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_expert_capacity(tokens_per_batch, num_experts, capacity_factor):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Expert Capacity = (tokens_per_batch / num_experts) * capacity_factor</span></span>
@@ -591,7 +591,7 @@ Previous MoE Challenges
 <section id="auxiliary-loss" class="level4">
 <h4 class="anchored" data-anchor-id="auxiliary-loss">Auxiliary Loss</h4>
 <p>To encourage balanced routing, Switch Transformer employs an auxiliary loss function that penalizes uneven distribution of tokens across experts:</p>
-<div id="f2da992f" class="cell" data-execution_count="3">
+<div id="140facb3" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> auxiliary_loss(expert_frequencies, expert_probabilities, alpha<span class="op">=</span><span class="fl">0.01</span>):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    L_aux = α * Σ(i=1 to N) f_i * P_i</span></span>
@@ -677,7 +677,9 @@ Training Best Practices
 <section id="empirical-results" class="level3">
 <h3 class="anchored" data-anchor-id="empirical-results">Empirical Results</h3>
 <p>Switch Transformer has demonstrated impressive performance across various benchmarks:</p>
-<div id="4953df9b" class="cell" data-execution_count="4">
+<div id="87645018" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -702,6 +704,7 @@ Training Best Practices
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -850,7 +853,7 @@ Current Limitations
 <section id="framework-support" class="level3">
 <h3 class="anchored" data-anchor-id="framework-support">Framework Support</h3>
 <p>Switch Transformer implementations are available in several frameworks:</p>
-<div id="2768d901" class="cell" data-execution_count="5">
+<div id="79589915" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example implementation structure in PyTorch</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
