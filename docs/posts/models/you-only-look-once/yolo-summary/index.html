@@ -460,6 +460,11 @@ window.Quarto = {
   <li><a href="#self-supervised-learning" id="toc-self-supervised-learning" class="nav-link" data-scroll-target="#self-supervised-learning">Self-Supervised Learning</a></li>
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#appendix-additional-resources" id="toc-appendix-additional-resources" class="nav-link" data-scroll-target="#appendix-additional-resources">Appendix: Additional Resources</a>
+  <ul class="collapse">
+  <li><a href="#useful-links" id="toc-useful-links" class="nav-link" data-scroll-target="#useful-links">Useful Links</a></li>
+  <li><a href="#code-examples" id="toc-code-examples" class="nav-link" data-scroll-target="#code-examples">Code Examples</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -498,7 +503,19 @@ window.Quarto = {
 <li>Post-process the results to eliminate duplicates</li>
 </ol>
 <p>This approach, while accurate, was incredibly slow. Processing a single image could take several seconds, making real-time applications virtually impossible.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>YOLO revolutionized this by treating object detection as a single regression problem. Instead of looking at an image multiple times, YOLO divides the image into a grid and predicts bounding boxes and class probabilities for each grid cell simultaneously.</p>
+</div>
+</div>
 </section>
 <section id="how-yolo-works-the-core-concept" class="level2">
 <h2 class="anchored" data-anchor-id="how-yolo-works-the-core-concept">How YOLO Works: The Core Concept</h2>
@@ -595,6 +612,25 @@ window.Quarto = {
 </section>
 <section id="key-advantages-of-yolo" class="level2">
 <h2 class="anchored" data-anchor-id="key-advantages-of-yolo">Key Advantages of YOLO</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why Choose YOLO?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>YOLO’s main advantages make it ideal for real-time applications:</p>
+<ul>
+<li><strong>Speed</strong>: Single-pass approach enables real-time processing</li>
+<li><strong>Global Context</strong>: Sees entire image for better understanding</li>
+<li><strong>Simplicity</strong>: Unified architecture for easy implementation</li>
+<li><strong>End-to-End Training</strong>: Optimizes entire pipeline jointly</li>
+</ul>
+</div>
+</div>
 <section id="speed" class="level3">
 <h3 class="anchored" data-anchor-id="speed">Speed</h3>
 <p>YOLO’s single-pass approach makes it incredibly fast. Modern versions can process images at 30+ frames per second on standard hardware, enabling real-time applications.</p>
@@ -674,6 +710,25 @@ window.Quarto = {
 </section>
 <section id="training-on-custom-data" class="level3">
 <h3 class="anchored" data-anchor-id="training-on-custom-data">Training on Custom Data</h3>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Training Requirements
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Before training on custom data, ensure you have:</p>
+<ol type="1">
+<li><strong>Prepared dataset</strong> in YOLO format</li>
+<li><strong>Configuration file</strong> specifying classes and paths</li>
+<li><strong>Adequate computational resources</strong> for training</li>
+<li><strong>Validation strategy</strong> for model evaluation</li>
+</ol>
+</div>
+</div>
 <ol type="1">
 <li><strong>Prepare your dataset</strong> in YOLO format</li>
 <li><strong>Create a configuration file</strong> specifying classes and paths</li>
@@ -786,6 +841,25 @@ window.Quarto = {
 </section>
 <section id="future-trends-and-developments" class="level2">
 <h2 class="anchored" data-anchor-id="future-trends-and-developments">Future Trends and Developments</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Emerging Trends
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The future of YOLO and object detection includes:</p>
+<ul>
+<li><strong>Transformer-based architectures</strong> for improved attention mechanisms</li>
+<li><strong>Mobile optimization</strong> for edge deployment</li>
+<li><strong>Multi-modal detection</strong> combining visual and other data</li>
+<li><strong>Self-supervised learning</strong> to reduce labeling requirements</li>
+</ul>
+</div>
+</div>
 <section id="transformer-based-architectures" class="level3">
 <h3 class="anchored" data-anchor-id="transformer-based-architectures">Transformer-Based Architectures</h3>
 <p>Integration of transformer models for improved feature extraction and attention mechanisms.</p>
@@ -813,9 +887,24 @@ window.Quarto = {
 <p>Understanding YOLO opens doors to numerous applications across industries, from autonomous vehicles to retail analytics. The algorithm’s simplicity, combined with its powerful capabilities, makes it an essential tool in the modern AI toolkit.</p>
 <p>As you begin your journey with YOLO, remember that practical experience is invaluable. Start with pre-trained models, experiment with different versions, and gradually work toward training custom models for your specific use cases. The computer vision community continues to push the boundaries of what’s possible with object detection, and YOLO remains at the forefront of these exciting developments.</p>
 <p>Whether you’re building the next generation of smart cameras, developing autonomous systems, or simply exploring the fascinating world of computer vision, YOLO provides a solid foundation for understanding how machines can see and interpret the world around us.</p>
+</section>
+<section id="appendix-additional-resources" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-additional-resources">Appendix: Additional Resources</h2>
+<section id="useful-links" class="level3">
+<h3 class="anchored" data-anchor-id="useful-links">Useful Links</h3>
+<ul>
+<li><a href="https://docs.ultralytics.com/">Ultralytics YOLO Documentation</a></li>
+<li><a href="https://arxiv.org/abs/1506.02640">Original YOLO Paper</a></li>
+<li><a href="https://github.com/ultralytics/ultralytics">YOLOv8 GitHub Repository</a></li>
+</ul>
+</section>
+<section id="code-examples" class="level3">
+<h3 class="anchored" data-anchor-id="code-examples">Code Examples</h3>
+<p>Additional code examples and tutorials can be found in the project repository.</p>
 
 
 
+</section>
 </section>
 </section>
 

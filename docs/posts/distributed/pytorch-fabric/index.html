@@ -361,9 +361,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#core-components" id="toc-core-components" class="nav-link" data-scroll-target="#core-components">Core Components</a>
   <ul class="collapse">
-  <li><a href="#fabric-initialization" id="toc-fabric-initialization" class="nav-link" data-scroll-target="#fabric-initialization">1. Fabric Initialization</a></li>
-  <li><a href="#model-and-optimizer-setup" id="toc-model-and-optimizer-setup" class="nav-link" data-scroll-target="#model-and-optimizer-setup">2. Model and Optimizer Setup</a></li>
-  <li><a href="#dataloader-setup" id="toc-dataloader-setup" class="nav-link" data-scroll-target="#dataloader-setup">3. DataLoader Setup</a></li>
+  <li><a href="#fabric-initialization" id="toc-fabric-initialization" class="nav-link" data-scroll-target="#fabric-initialization">Fabric Initialization</a></li>
+  <li><a href="#model-and-optimizer-setup" id="toc-model-and-optimizer-setup" class="nav-link" data-scroll-target="#model-and-optimizer-setup">Model and Optimizer Setup</a></li>
+  <li><a href="#dataloader-setup" id="toc-dataloader-setup" class="nav-link" data-scroll-target="#dataloader-setup">DataLoader Setup</a></li>
   </ul></li>
   <li><a href="#training-loop" id="toc-training-loop" class="nav-link" data-scroll-target="#training-loop">Training Loop</a>
   <ul class="collapse">
@@ -393,12 +393,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
   <ul class="collapse">
-  <li><a href="#proper-fabric-launch" id="toc-proper-fabric-launch" class="nav-link" data-scroll-target="#proper-fabric-launch">1. Proper Fabric Launch</a></li>
-  <li><a href="#rank-specific-operations" id="toc-rank-specific-operations" class="nav-link" data-scroll-target="#rank-specific-operations">2. Rank-specific Operations</a></li>
-  <li><a href="#proper-device-management" id="toc-proper-device-management" class="nav-link" data-scroll-target="#proper-device-management">3. Proper Device Management</a></li>
-  <li><a href="#memory-efficient-training" id="toc-memory-efficient-training" class="nav-link" data-scroll-target="#memory-efficient-training">4. Memory Efficient Training</a></li>
-  <li><a href="#complete-training-script-template" id="toc-complete-training-script-template" class="nav-link" data-scroll-target="#complete-training-script-template">5. Complete Training Script Template</a></li>
+  <li><a href="#proper-fabric-launch" id="toc-proper-fabric-launch" class="nav-link" data-scroll-target="#proper-fabric-launch">Proper Fabric Launch</a></li>
+  <li><a href="#rank-specific-operations" id="toc-rank-specific-operations" class="nav-link" data-scroll-target="#rank-specific-operations">Rank-specific Operations</a></li>
+  <li><a href="#proper-device-management" id="toc-proper-device-management" class="nav-link" data-scroll-target="#proper-device-management">Proper Device Management</a></li>
+  <li><a href="#memory-efficient-training" id="toc-memory-efficient-training" class="nav-link" data-scroll-target="#memory-efficient-training">Memory Efficient Training</a></li>
+  <li><a href="#complete-training-script-template" id="toc-complete-training-script-template" class="nav-link" data-scroll-target="#complete-training-script-template">Complete Training Script Template</a></li>
   </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -433,7 +435,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="basic-setup">Basic Setup</h2>
 <section id="minimal-example" class="level3">
 <h3 class="anchored" data-anchor-id="minimal-example">Minimal Example</h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<div id="78273492" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lightning.fabric <span class="im">import</span> Fabric</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -453,13 +456,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> model(batch).mean()</span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    fabric.backward(loss)</span>
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    optimizer.step()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="core-components" class="level2">
 <h2 class="anchored" data-anchor-id="core-components">Core Components</h2>
 <section id="fabric-initialization" class="level3">
-<h3 class="anchored" data-anchor-id="fabric-initialization">1. Fabric Initialization</h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lightning.fabric <span class="im">import</span> Fabric</span>
+<h3 class="anchored" data-anchor-id="fabric-initialization">Fabric Initialization</h3>
+<div id="4511f565" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lightning.fabric <span class="im">import</span> Fabric</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic initialization</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>fabric <span class="op">=</span> Fabric()</span>
@@ -475,10 +480,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Launch the fabric</span></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>fabric.launch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="model-and-optimizer-setup" class="level3">
-<h3 class="anchored" data-anchor-id="model-and-optimizer-setup">2. Model and Optimizer Setup</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<h3 class="anchored" data-anchor-id="model-and-optimizer-setup">Model and Optimizer Setup</h3>
+<div id="e2e35e8b" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SimpleModel(nn.Module):</span>
@@ -502,10 +509,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup with Fabric</span></span>
 <span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>model, optimizer <span class="op">=</span> fabric.setup(model, optimizer)</span>
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>scheduler <span class="op">=</span> fabric.setup(scheduler)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="dataloader-setup" class="level3">
-<h3 class="anchored" data-anchor-id="dataloader-setup">3. DataLoader Setup</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader, TensorDataset</span>
+<h3 class="anchored" data-anchor-id="dataloader-setup">DataLoader Setup</h3>
+<div id="ba4ca4f5" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader, TensorDataset</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create your dataset</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> TensorDataset(torch.randn(<span class="dv">1000</span>, <span class="dv">784</span>), torch.randint(<span class="dv">0</span>, <span class="dv">10</span>, (<span class="dv">1000</span>,)))</span>
@@ -513,13 +522,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup with Fabric</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>dataloader <span class="op">=</span> fabric.setup_dataloaders(dataloader)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="training-loop" class="level2">
 <h2 class="anchored" data-anchor-id="training-loop">Training Loop</h2>
 <section id="basic-training-loop" class="level3">
 <h3 class="anchored" data-anchor-id="basic-training-loop">Basic Training Loop</h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_epoch(fabric, model, optimizer, dataloader, criterion):</span>
+<div id="e47ec426" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_epoch(fabric, model, optimizer, dataloader, criterion):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    model.train()</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    total_loss <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -553,10 +564,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    scheduler.step()</span>
 <span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    fabric.<span class="bu">print</span>(<span class="ss">f'Epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">: Average Loss = </span><span class="sc">{</span>avg_loss<span class="sc">:.4f}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="training-with-validation" class="level3">
 <h3 class="anchored" data-anchor-id="training-with-validation">Training with Validation</h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> validate(fabric, model, val_dataloader, criterion):</span>
+<div id="e0679cc4" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> validate(fabric, model, val_dataloader, criterion):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    model.<span class="bu">eval</span>()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    total_loss <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    correct <span class="op">=</span> <span class="dv">0</span></span>
@@ -594,13 +607,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    fabric.<span class="bu">print</span>(<span class="ss">f'  Val Acc: </span><span class="sc">{</span>val_acc<span class="sc">:.4f}</span><span class="ss">'</span>)</span>
 <span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    scheduler.step()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="multi-gpu-training" class="level2">
 <h2 class="anchored" data-anchor-id="multi-gpu-training">Multi-GPU Training</h2>
 <section id="distributed-data-parallel-ddp" class="level3">
 <h3 class="anchored" data-anchor-id="distributed-data-parallel-ddp">Distributed Data Parallel (DDP)</h3>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize Fabric for multi-GPU</span></span>
+<div id="1b5d95e3" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize Fabric for multi-GPU</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fabric <span class="op">=</span> Fabric(</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    accelerator<span class="op">=</span><span class="st">"gpu"</span>,</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    strategy<span class="op">=</span><span class="st">"ddp"</span>,</span>
@@ -636,10 +651,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    avg_loss <span class="op">=</span> all_reduce_mean(fabric, avg_loss)</span>
 <span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> avg_loss.item()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="fully-sharded-data-parallel-fsdp" class="level3">
 <h3 class="anchored" data-anchor-id="fully-sharded-data-parallel-fsdp">Fully Sharded Data Parallel (FSDP)</h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># For very large models</span></span>
+<div id="bbc9a9dc" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># For very large models</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>fabric <span class="op">=</span> Fabric(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    accelerator<span class="op">=</span><span class="st">"gpu"</span>,</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    strategy<span class="op">=</span><span class="st">"fsdp"</span>,</span>
@@ -650,13 +667,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># FSDP automatically shards model parameters</span></span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>model, optimizer <span class="op">=</span> fabric.setup(model, optimizer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="mixed-precision" class="level2">
 <h2 class="anchored" data-anchor-id="mixed-precision">Mixed Precision</h2>
 <section id="automatic-mixed-precision" class="level3">
 <h3 class="anchored" data-anchor-id="automatic-mixed-precision">Automatic Mixed Precision</h3>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable mixed precision</span></span>
+<div id="7c2e7f1e" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable mixed precision</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>fabric <span class="op">=</span> Fabric(precision<span class="op">=</span><span class="st">"16-mixed"</span>)  <span class="co"># or "bf16-mixed"</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>fabric.launch()</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -675,10 +694,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        fabric.backward(loss)</span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>        </span>
 <span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="manual-precision-control" class="level3">
 <h3 class="anchored" data-anchor-id="manual-precision-control">Manual Precision Control</h3>
-<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lightning.fabric.utilities <span class="im">import</span> rank_zero_only</span>
+<div id="ce075170" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lightning.fabric.utilities <span class="im">import</span> rank_zero_only</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="at">@rank_zero_only</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_model_precision(model):</span>
@@ -689,13 +710,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Check model precision after setup</span></span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>model, optimizer <span class="op">=</span> fabric.setup(model, optimizer)</span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>log_model_precision(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="logging-and-checkpointing" class="level2">
 <h2 class="anchored" data-anchor-id="logging-and-checkpointing">Logging and Checkpointing</h2>
 <section id="checkpointing" class="level3">
 <h3 class="anchored" data-anchor-id="checkpointing">Checkpointing</h3>
-<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<div id="8c96ca81" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> save_checkpoint(fabric, model, optimizer, epoch, loss, path):</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Save model checkpoint"""</span></span>
@@ -722,10 +745,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> checkpoint[<span class="st">"model"</span>]</span>
 <span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    optimizer <span class="op">=</span> checkpoint[<span class="st">"optimizer"</span>]</span>
 <span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    start_epoch <span class="op">=</span> checkpoint[<span class="st">"epoch"</span>] <span class="op">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="logging-with-external-loggers" class="level3">
 <h3 class="anchored" data-anchor-id="logging-with-external-loggers">Logging with External Loggers</h3>
-<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lightning.fabric.loggers <span class="im">import</span> TensorBoardLogger, CSVLogger</span>
+<div id="71b34485" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lightning.fabric.loggers <span class="im">import</span> TensorBoardLogger, CSVLogger</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize logger</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>logger <span class="op">=</span> TensorBoardLogger(<span class="st">"logs"</span>, name<span class="op">=</span><span class="st">"my_experiment"</span>)</span>
@@ -752,13 +777,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">"learning_rate"</span>: optimizer.param_groups[<span class="dv">0</span>][<span class="st">'lr'</span>]</span>
 <span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    log_metrics(fabric, metrics, epoch)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="advanced-features" class="level2">
 <h2 class="anchored" data-anchor-id="advanced-features">Advanced Features</h2>
 <section id="custom-precision-plugin" class="level3">
 <h3 class="anchored" data-anchor-id="custom-precision-plugin">Custom Precision Plugin</h3>
-<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lightning.fabric.plugins <span class="im">import</span> MixedPrecisionPlugin</span>
+<div id="7dc992b2" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lightning.fabric.plugins <span class="im">import</span> MixedPrecisionPlugin</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom precision configuration</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>precision_plugin <span class="op">=</span> MixedPrecisionPlugin(</span>
@@ -768,10 +795,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>fabric <span class="op">=</span> Fabric(plugins<span class="op">=</span>[precision_plugin])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="gradient-clipping" class="level3">
 <h3 class="anchored" data-anchor-id="gradient-clipping">Gradient Clipping</h3>
-<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_with_grad_clipping(fabric, model, optimizer, dataloader, criterion, max_norm<span class="op">=</span><span class="fl">1.0</span>):</span>
+<div id="ffe75cf2" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_with_grad_clipping(fabric, model, optimizer, dataloader, criterion, max_norm<span class="op">=</span><span class="fl">1.0</span>):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    model.train()</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> data, target <span class="kw">in</span> dataloader:</span>
@@ -785,10 +814,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        fabric.clip_gradients(model, optimizer, max_norm<span class="op">=</span>max_norm)</span>
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        </span>
 <span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="early-stopping" class="level3">
 <h3 class="anchored" data-anchor-id="early-stopping">Early Stopping</h3>
-<div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> EarlyStopping:</span>
+<div id="cb2aa828" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> EarlyStopping:</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, patience<span class="op">=</span><span class="dv">10</span>, min_delta<span class="op">=</span><span class="fl">0.001</span>):</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.patience <span class="op">=</span> patience</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.min_delta <span class="op">=</span> min_delta</span>
@@ -814,13 +845,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> early_stopping(val_loss):</span>
 <span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>        fabric.<span class="bu">print</span>(<span class="ss">f"Early stopping at epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="best-practices" class="level2">
 <h2 class="anchored" data-anchor-id="best-practices">Best Practices</h2>
 <section id="proper-fabric-launch" class="level3">
-<h3 class="anchored" data-anchor-id="proper-fabric-launch">1. Proper Fabric Launch</h3>
-<div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Always use fabric.launch() for proper initialization</span></span>
+<h3 class="anchored" data-anchor-id="proper-fabric-launch">Proper Fabric Launch</h3>
+<div id="c13ca63f" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Always use fabric.launch() for proper initialization</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main():</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    fabric <span class="op">=</span> Fabric(accelerator<span class="op">=</span><span class="st">"gpu"</span>, devices<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    fabric.launch()</span>
@@ -831,10 +864,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    main()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="rank-specific-operations" class="level3">
-<h3 class="anchored" data-anchor-id="rank-specific-operations">2. Rank-specific Operations</h3>
-<div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lightning.fabric.utilities <span class="im">import</span> rank_zero_only</span>
+<h3 class="anchored" data-anchor-id="rank-specific-operations">Rank-specific Operations</h3>
+<div id="4ab8bdd1" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lightning.fabric.utilities <span class="im">import</span> rank_zero_only</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="at">@rank_zero_only</span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> save_model_artifacts(model, path):</span>
@@ -845,10 +880,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> print_training_info(epoch, loss):</span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Only print on rank 0 to avoid duplicate outputs"""</span></span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">, Loss: </span><span class="sc">{</span>loss<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="proper-device-management" class="level3">
-<h3 class="anchored" data-anchor-id="proper-device-management">3. Proper Device Management</h3>
-<div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let Fabric handle device placement</span></span>
+<h3 class="anchored" data-anchor-id="proper-device-management">Proper Device Management</h3>
+<div id="e19d6a5e" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let Fabric handle device placement</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>fabric <span class="op">=</span> Fabric()</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>fabric.launch()</span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -858,10 +895,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>model, optimizer <span class="op">=</span> fabric.setup(model, optimizer)</span>
 <span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>dataloader <span class="op">=</span> fabric.setup_dataloaders(dataloader)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="memory-efficient-training" class="level3">
-<h3 class="anchored" data-anchor-id="memory-efficient-training">4. Memory Efficient Training</h3>
-<div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> memory_efficient_training(fabric, model, optimizer, dataloader, criterion):</span>
+<h3 class="anchored" data-anchor-id="memory-efficient-training">Memory Efficient Training</h3>
+<div id="d124e04a" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> memory_efficient_training(fabric, model, optimizer, dataloader, criterion):</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    model.train()</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> batch_idx, (data, target) <span class="kw">in</span> <span class="bu">enumerate</span>(dataloader):</span>
@@ -880,10 +919,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Clear cache periodically</span></span>
 <span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> batch_idx <span class="op">%</span> <span class="dv">100</span> <span class="op">==</span> <span class="dv">0</span>:</span>
 <span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>            torch.cuda.empty_cache()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="complete-training-script-template" class="level3">
-<h3 class="anchored" data-anchor-id="complete-training-script-template">5. Complete Training Script Template</h3>
-<div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<h3 class="anchored" data-anchor-id="complete-training-script-template">Complete Training Script Template</h3>
+<div id="886b62e8" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lightning.fabric <span class="im">import</span> Fabric</span>
@@ -939,10 +980,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb21-54"><a href="#cb21-54" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-55"><a href="#cb21-55" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
 <span id="cb21-56"><a href="#cb21-56" aria-hidden="true" tabindex="-1"></a>    main()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This guide covers the essential aspects of using Lightning Fabric for efficient PyTorch training. Fabric provides the perfect balance between control and convenience, making it ideal for researchers and practitioners who want distributed training capabilities without giving up flexibility in their training loops.</p>
-
-
+</div>
 </section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>This guide covers the essential aspects of using Lightning Fabric for efficient PyTorch training. Fabric provides the perfect balance between control and convenience, making it ideal for researchers and practitioners who want distributed training capabilities without giving up flexibility in their training loops.</p>
+</section>
+<section id="key-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h2>
+<ul>
+<li><strong>Lightweight</strong>: Fabric adds minimal overhead to your PyTorch code</li>
+<li><strong>Flexible</strong>: Maintain full control over your training loop</li>
+<li><strong>Scalable</strong>: Easy distributed training with DDP, FSDP, and other strategies</li>
+<li><strong>Efficient</strong>: Built-in mixed precision and optimization features</li>
+<li><strong>Compatible</strong>: Works with existing PyTorch code with minimal changes</li>
+</ul>
+<p>For more advanced use cases and the latest features, refer to the <a href="https://lightning.ai/docs/fabric/stable/">official Lightning Fabric documentation</a>.</p>
+
+
 </section>
 </section>
 

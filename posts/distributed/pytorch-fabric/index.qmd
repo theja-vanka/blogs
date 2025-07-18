@@ -23,7 +23,7 @@ Lightning Fabric is a lightweight PyTorch wrapper that provides essential traini
 
 ## Installation
 
-```bash
+```{.bash}
 pip install lightning
 # or
 pip install pytorch-lightning
@@ -33,7 +33,8 @@ pip install pytorch-lightning
 
 ### Minimal Example
 
-```python
+```{python}
+#| eval: false
 import torch
 import torch.nn as nn
 from lightning.fabric import Fabric
@@ -58,9 +59,10 @@ for batch in dataloader:
 
 ## Core Components
 
-### 1. Fabric Initialization
+### Fabric Initialization
 
-```python
+```{python}
+#| eval: false
 from lightning.fabric import Fabric
 
 # Basic initialization
@@ -79,9 +81,10 @@ fabric = Fabric(
 fabric.launch()
 ```
 
-### 2. Model and Optimizer Setup
+### Model and Optimizer Setup
 
-```python
+```{python}
+#| eval: false
 import torch
 import torch.nn as nn
 
@@ -108,9 +111,10 @@ model, optimizer = fabric.setup(model, optimizer)
 scheduler = fabric.setup(scheduler)
 ```
 
-### 3. DataLoader Setup
+### DataLoader Setup
 
-```python
+```{python}
+#| eval: false
 from torch.utils.data import DataLoader, TensorDataset
 
 # Create your dataset
@@ -125,7 +129,8 @@ dataloader = fabric.setup_dataloaders(dataloader)
 
 ### Basic Training Loop
 
-```python
+```{python}
+#| eval: false
 def train_epoch(fabric, model, optimizer, dataloader, criterion):
     model.train()
     total_loss = 0
@@ -164,7 +169,8 @@ for epoch in range(10):
 
 ### Training with Validation
 
-```python
+```{python}
+#| eval: false
 def validate(fabric, model, val_dataloader, criterion):
     model.eval()
     total_loss = 0
@@ -209,7 +215,8 @@ for epoch in range(num_epochs):
 
 ### Distributed Data Parallel (DDP)
 
-```python
+```{python}
+#| eval: false
 # Initialize Fabric for multi-GPU
 fabric = Fabric(
     accelerator="gpu",
@@ -250,7 +257,8 @@ def train_distributed(fabric, model, optimizer, dataloader, criterion):
 
 ### Fully Sharded Data Parallel (FSDP)
 
-```python
+```{python}
+#| eval: false
 # For very large models
 fabric = Fabric(
     accelerator="gpu",
@@ -268,7 +276,8 @@ model, optimizer = fabric.setup(model, optimizer)
 
 ### Automatic Mixed Precision
 
-```python
+```{python}
+#| eval: false
 # Enable mixed precision
 fabric = Fabric(precision="16-mixed")  # or "bf16-mixed"
 fabric.launch()
@@ -292,7 +301,8 @@ def train_with_amp(fabric, model, optimizer, dataloader, criterion):
 
 ### Manual Precision Control
 
-```python
+```{python}
+#| eval: false
 from lightning.fabric.utilities import rank_zero_only
 
 @rank_zero_only
@@ -310,7 +320,8 @@ log_model_precision(model)
 
 ### Checkpointing
 
-```python
+```{python}
+#| eval: false
 import os
 
 def save_checkpoint(fabric, model, optimizer, epoch, loss, path):
@@ -342,7 +353,8 @@ if os.path.exists("checkpoint_epoch_5.ckpt"):
 
 ### Logging with External Loggers
 
-```python
+```{python}
+#| eval: false
 from lightning.fabric.loggers import TensorBoardLogger, CSVLogger
 
 # Initialize logger
@@ -376,7 +388,8 @@ for epoch in range(num_epochs):
 
 ### Custom Precision Plugin
 
-```python
+```{python}
+#| eval: false
 from lightning.fabric.plugins import MixedPrecisionPlugin
 
 # Custom precision configuration
@@ -391,7 +404,8 @@ fabric = Fabric(plugins=[precision_plugin])
 
 ### Gradient Clipping
 
-```python
+```{python}
+#| eval: false
 def train_with_grad_clipping(fabric, model, optimizer, dataloader, criterion, max_norm=1.0):
     model.train()
     
@@ -410,7 +424,8 @@ def train_with_grad_clipping(fabric, model, optimizer, dataloader, criterion, ma
 
 ### Early Stopping
 
-```python
+```{python}
+#| eval: false
 class EarlyStopping:
     def __init__(self, patience=10, min_delta=0.001):
         self.patience = patience
@@ -441,9 +456,10 @@ for epoch in range(num_epochs):
 
 ## Best Practices
 
-### 1. Proper Fabric Launch
+### Proper Fabric Launch
 
-```python
+```{python}
+#| eval: false
 # Always use fabric.launch() for proper initialization
 def main():
     fabric = Fabric(accelerator="gpu", devices=2)
@@ -457,9 +473,10 @@ if __name__ == "__main__":
     main()
 ```
 
-### 2. Rank-specific Operations
+### Rank-specific Operations
 
-```python
+```{python}
+#| eval: false
 from lightning.fabric.utilities import rank_zero_only
 
 @rank_zero_only
@@ -473,9 +490,10 @@ def print_training_info(epoch, loss):
     print(f"Epoch {epoch}, Loss: {loss}")
 ```
 
-### 3. Proper Device Management
+### Proper Device Management
 
-```python
+```{python}
+#| eval: false
 # Let Fabric handle device placement
 fabric = Fabric()
 fabric.launch()
@@ -488,9 +506,10 @@ model, optimizer = fabric.setup(model, optimizer)
 dataloader = fabric.setup_dataloaders(dataloader)
 ```
 
-### 4. Memory Efficient Training
+### Memory Efficient Training
 
-```python
+```{python}
+#| eval: false
 def memory_efficient_training(fabric, model, optimizer, dataloader, criterion):
     model.train()
     
@@ -512,9 +531,10 @@ def memory_efficient_training(fabric, model, optimizer, dataloader, criterion):
             torch.cuda.empty_cache()
 ```
 
-### 5. Complete Training Script Template
+### Complete Training Script Template
 
-```python
+```{python}
+#| eval: false
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -573,4 +593,16 @@ if __name__ == "__main__":
     main()
 ```
 
+## Conclusion
+
 This guide covers the essential aspects of using Lightning Fabric for efficient PyTorch training. Fabric provides the perfect balance between control and convenience, making it ideal for researchers and practitioners who want distributed training capabilities without giving up flexibility in their training loops.
+
+## Key Takeaways
+
+- **Lightweight**: Fabric adds minimal overhead to your PyTorch code
+- **Flexible**: Maintain full control over your training loop
+- **Scalable**: Easy distributed training with DDP, FSDP, and other strategies
+- **Efficient**: Built-in mixed precision and optimization features
+- **Compatible**: Works with existing PyTorch code with minimal changes
+
+For more advanced use cases and the latest features, refer to the [official Lightning Fabric documentation](https://lightning.ai/docs/fabric/stable/).

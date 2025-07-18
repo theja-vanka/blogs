@@ -20,6 +20,7 @@ jupyter: python3
 DeepSpeed is a deep learning optimization library that makes distributed training easy, efficient, and effective. It provides system innovations like ZeRO (Zero Redundancy Optimizer) to enable training massive models with trillions of parameters.
 
 Key benefits:
+
 - **Memory Efficiency**: ZeRO reduces memory consumption by partitioning optimizer states, gradients, and model parameters
 - **Speed**: Achieves high training throughput through optimized kernels and communication
 - **Scale**: Enables training of models with billions/trillions of parameters
@@ -27,7 +28,8 @@ Key benefits:
 
 ## Installation
 
-```bash
+```{.bash}
+#| eval: false
 # Install DeepSpeed
 pip install deepspeed
 
@@ -44,7 +46,8 @@ ds_report
 
 ### Simple Model Training
 
-```python
+```{python}
+#| eval: false
 import torch
 import torch.nn as nn
 import deepspeed
@@ -112,7 +115,8 @@ for epoch in range(10):
 
 ### Configuration File Approach
 
-```python
+```{python}
+#| eval: false
 import deepspeed
 import argparse
 
@@ -149,9 +153,11 @@ if __name__ == '__main__':
 
 ## Configuration Files
 
-### Basic Configuration (`ds_config.json`)
+### Basic Configuration
 
-```json
+Create a file called `ds_config.json`:
+
+```{.json}
 {
   "train_batch_size": 64,
   "train_micro_batch_size_per_gpu": 16,
@@ -198,7 +204,7 @@ if __name__ == '__main__':
 
 ### Advanced Configuration with ZeRO Stage 3
 
-```json
+```{.json}
 {
   "train_batch_size": 64,
   "train_micro_batch_size_per_gpu": 4,
@@ -256,7 +262,8 @@ if __name__ == '__main__':
 
 ### ZeRO Stage 1: Optimizer State Partitioning
 
-```python
+```{python}
+#| eval: false
 # Configuration for ZeRO Stage 1
 zero_stage1_config = {
     "train_batch_size": 64,
@@ -280,7 +287,8 @@ model_engine, optimizer, _, _ = deepspeed.initialize(
 
 ### ZeRO Stage 2: Gradient + Optimizer State Partitioning
 
-```python
+```{python}
+#| eval: false
 # Configuration for ZeRO Stage 2
 zero_stage2_config = {
     "train_batch_size": 64,
@@ -303,7 +311,8 @@ zero_stage2_config = {
 
 ### ZeRO Stage 3: Full Parameter Partitioning
 
-```python
+```{python}
+#| eval: false
 # Configuration for ZeRO Stage 3
 zero_stage3_config = {
     "train_batch_size": 32,
@@ -340,7 +349,8 @@ model_engine, optimizer, _, _ = deepspeed.initialize(
 
 ### Pipeline Parallelism
 
-```python
+```{python}
+#| eval: false
 import deepspeed
 from deepspeed.pipe import PipelineModule
 
@@ -397,7 +407,8 @@ engine, _, _, _ = deepspeed.initialize(
 
 ### Tensor Parallelism (with Megatron)
 
-```python
+```{python}
+#| eval: false
 # Example using DeepSpeed with Megatron-style tensor parallelism
 import deepspeed
 from deepspeed.moe import MoE
@@ -426,7 +437,8 @@ class TensorParallelLinear(nn.Module):
 
 ### FP16 Configuration
 
-```python
+```{python}
+#| eval: false
 fp16_config = {
     "train_batch_size": 64,
     "optimizer": {
@@ -457,7 +469,8 @@ def train_with_custom_scaling(model_engine, dataloader):
 
 ### BF16 Configuration
 
-```python
+```{python}
+#| eval: false
 bf16_config = {
     "train_batch_size": 64,
     "optimizer": {
@@ -474,7 +487,8 @@ bf16_config = {
 
 ### Activation Checkpointing
 
-```python
+```{python}
+#| eval: false
 activation_checkpointing_config = {
     "train_batch_size": 64,
     "optimizer": {
@@ -495,7 +509,8 @@ activation_checkpointing_config = {
 
 ### CPU Offloading
 
-```python
+```{python}
+#| eval: false
 cpu_offload_config = {
     "train_batch_size": 32,
     "optimizer": {
@@ -519,7 +534,8 @@ cpu_offload_config = {
 
 ### Mixture of Experts (MoE)
 
-```python
+```{python}
+#| eval: false
 from deepspeed.moe import MoE
 
 class MoEModel(nn.Module):
@@ -558,7 +574,8 @@ moe_config = {
 
 ### Model Saving and Loading
 
-```python
+```{python}
+#| eval: false
 # Saving model
 def save_model(model_engine, checkpoint_dir):
     model_engine.save_checkpoint(checkpoint_dir)
@@ -580,7 +597,8 @@ client_states = load_model(model_engine, checkpoint_dir)
 
 ### Common Issues and Solutions
 
-```python
+```{python}
+#| eval: false
 # 1. Memory issues
 # Solution: Reduce batch size or enable CPU offloading
 
@@ -613,7 +631,8 @@ auto_loss_scale_config = {
 
 ### Debugging Tools
 
-```python
+```{python}
+#| eval: false
 # Enable profiling
 profiling_config = {
     "wall_clock_breakdown": True,
@@ -640,7 +659,8 @@ def profile_communication():
 
 ### 1. Batch Size Tuning
 
-```python
+```{python}
+#| eval: false
 # Find optimal batch size
 def find_optimal_batch_size(model, start_batch_size=16):
     batch_size = start_batch_size
@@ -677,7 +697,8 @@ def find_optimal_batch_size(model, start_batch_size=16):
 
 ### 2. Learning Rate Scaling
 
-```python
+```{python}
+#| eval: false
 # Scale learning rate with batch size
 def scale_learning_rate(base_lr, base_batch_size, actual_batch_size):
     return base_lr * (actual_batch_size / base_batch_size)
@@ -696,7 +717,8 @@ base_config = {
 
 ### 3. Efficient Data Loading
 
-```python
+```{python}
+#| eval: false
 class EfficientDataLoader:
     def __init__(self, dataset, batch_size, num_workers=4):
         self.dataloader = DataLoader(
@@ -717,7 +739,8 @@ class EfficientDataLoader:
 
 ### 4. Model Architecture Tips
 
-```python
+```{python}
+#| eval: false
 # Use activation checkpointing for large models
 class CheckpointedModel(nn.Module):
     def __init__(self):
@@ -742,7 +765,8 @@ class CheckpointedModel(nn.Module):
 
 ### 5. Multi-Node Training Script
 
-```python
+```{python}
+#| eval: false
 # launch_script.py
 import subprocess
 import sys
@@ -764,4 +788,25 @@ if __name__ == "__main__":
     launch_distributed_training()
 ```
 
+## Conclusion
+
 This guide covers the essential aspects of using DeepSpeed with PyTorch. Remember to experiment with different configurations based on your specific model architecture and hardware setup. Start with simpler configurations (ZeRO Stage 1-2) and gradually move to more advanced features (ZeRO Stage 3, CPU offloading) as needed.
+
+::: {.callout-tip}
+## Getting Started
+
+1. Start with ZeRO Stage 1 or 2 for your first DeepSpeed experiments
+2. Use FP16 mixed precision to reduce memory usage
+3. Tune batch sizes to maximize GPU utilization
+4. Monitor memory usage and communication overhead
+5. Scale learning rates appropriately with batch size changes
+:::
+
+::: {.callout-warning}
+## Common Pitfalls
+
+- Not setting `gradient_accumulation_steps` correctly
+- Using too large batch sizes leading to OOM errors
+- Not enabling communication overlap for better performance
+- Forgetting to scale learning rates when changing batch sizes
+:::

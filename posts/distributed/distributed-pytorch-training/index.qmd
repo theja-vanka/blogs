@@ -13,7 +13,6 @@ jupyter: python3
 ---
 
 # Distributed Training with PyTorch - Complete Code Guide
-
 ![](distributed.png)
 
 ## Introduction
@@ -23,6 +22,7 @@ Distributed training allows you to scale PyTorch models across multiple GPUs and
 ## Core Concepts
 
 ### Key Terminology
+
 - **World Size**: Total number of processes participating in training
 - **Rank**: Unique identifier for each process (0 to world_size-1)
 - **Local Rank**: Process identifier within a single node/machine
@@ -30,6 +30,7 @@ Distributed training allows you to scale PyTorch models across multiple GPUs and
 - **Backend**: Communication backend (NCCL for GPU, Gloo for CPU)
 
 ### Communication Patterns
+
 - **All-Reduce**: Combine values from all processes and distribute the result
 - **Broadcast**: Send data from one process to all others
 - **Gather**: Collect data from all processes to one process
@@ -39,7 +40,9 @@ Distributed training allows you to scale PyTorch models across multiple GPUs and
 
 ### Basic Environment Setup
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 import os
 import torch
 import torch.distributed as dist
@@ -69,7 +72,9 @@ def cleanup_distributed():
 
 ### Multi-Node Setup
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 def setup_multinode(rank, world_size, master_addr, master_port):
     """Setup for multi-node distributed training"""
     os.environ['MASTER_ADDR'] = master_addr
@@ -89,7 +94,10 @@ def setup_multinode(rank, world_size, master_addr, master_port):
 
 ### Simple DataParallel (Single Node)
 
-```python
+```{python}
+#| echo: true
+#| eval: false
+#| code-summary: "Simple DataParallel"
 import torch.nn as nn
 
 class SimpleModel(nn.Module):
@@ -135,7 +143,9 @@ def train_dataparallel():
 
 ### Basic DDP Implementation
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 def train_ddp(rank, world_size):
     """Distributed Data Parallel training function"""
     # Setup distributed environment
@@ -196,7 +206,9 @@ if __name__ == "__main__":
 
 ### Complete Training Script with Validation
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 import time
 from torch.utils.tensorboard import SummaryWriter
 
@@ -343,7 +355,9 @@ class DistributedTrainer:
 
 ### Mixed Precision Training
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 from torch.cuda.amp import GradScaler, autocast
 
 class MixedPrecisionTrainer(DistributedTrainer):
@@ -386,7 +400,9 @@ class MixedPrecisionTrainer(DistributedTrainer):
 
 ### Model Sharding with FSDP
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 from torch.distributed.fsdp.wrap import size_based_auto_wrap_policy
 
@@ -412,7 +428,9 @@ def create_fsdp_model(model, rank):
 
 ### Pipeline Parallelism
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 import torch.distributed.pipeline.sync as Pipe
 
 class PipelineModel(nn.Module):
@@ -445,7 +463,9 @@ class PipelineModel(nn.Module):
 
 ### Performance Profiling
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 import torch.profiler
 
 def profile_training(trainer, num_steps=100):
@@ -478,7 +498,9 @@ def profile_training(trainer, num_steps=100):
 
 ### Communication Debugging
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 def debug_communication():
     """Debug distributed communication"""
     rank = dist.get_rank()
@@ -503,9 +525,11 @@ def debug_communication():
 
 ## Best Practices
 
-### 1. Data Loading Optimization
+### Data Loading Optimization
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 def create_efficient_dataloader(dataset, batch_size, world_size, rank):
     """Create optimized distributed data loader"""
     sampler = DistributedSampler(
@@ -529,9 +553,11 @@ def create_efficient_dataloader(dataset, batch_size, world_size, rank):
     return loader
 ```
 
-### 2. Gradient Synchronization
+### Gradient Synchronization
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 def train_with_gradient_accumulation(model, optimizer, criterion, data_loader, 
                                    accumulation_steps=4):
     """Training with gradient accumulation"""
@@ -553,9 +579,11 @@ def train_with_gradient_accumulation(model, optimizer, criterion, data_loader,
             optimizer.zero_grad()
 ```
 
-### 3. Dynamic Loss Scaling
+### Dynamic Loss Scaling
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 class DynamicLossScaler:
     def __init__(self, init_scale=2.**16, scale_factor=2., scale_window=2000):
         self.scale = init_scale
@@ -574,9 +602,9 @@ class DynamicLossScaler:
                 self.counter = 0
 ```
 
-### 4. Launch Script Example
+### Launch Script Example
 
-```bash
+```{.bash filename="launch_distributed.sh"}
 #!/bin/bash
 # launch_distributed.sh
 
@@ -609,9 +637,11 @@ python -m torch.distributed.launch \
     train_distributed.py
 ```
 
-### 5. Error Handling and Recovery
+### Error Handling and Recovery
 
-```python
+```{python}
+#| echo: true
+#| eval: false
 def robust_train_loop(trainer, num_epochs, checkpoint_dir):
     """Training loop with error handling and recovery"""
     start_epoch = 0
@@ -644,4 +674,25 @@ def robust_train_loop(trainer, num_epochs, checkpoint_dir):
             raise e
 ```
 
+## Conclusion
+
 This guide provides a comprehensive foundation for implementing distributed training with PyTorch. Start with basic DDP for single-node multi-GPU setups, then progress to more advanced techniques like FSDP and pipeline parallelism as your models and datasets grow larger.
+
+::: {.callout-tip}
+## Key Takeaways
+
+1. **Start Simple**: Begin with DataParallel for single-node setups
+2. **Scale Gradually**: Move to DDP for multi-node distributed training
+3. **Monitor Performance**: Use profiling tools to identify bottlenecks
+4. **Handle Errors**: Implement robust error handling and checkpointing
+5. **Optimize Data Loading**: Use efficient data loaders and samplers
+:::
+
+::: {.callout-note}
+## Additional Resources
+
+For more advanced topics and latest updates, refer to:
+- [PyTorch Distributed Documentation](https://pytorch.org/docs/stable/distributed.html)
+- [FSDP Tutorial](https://pytorch.org/tutorials/intermediate/FSDP_tutorial.html)
+- [Pipeline Parallelism Guide](https://pytorch.org/docs/stable/pipeline.html)
+:::

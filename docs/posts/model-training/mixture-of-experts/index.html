@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Krishnatheja Vanka">
+<meta name="dcterms.date" content="2025-07-15">
+
+<title>Mixture of Experts: A Deep Overview – Krishnatheja Vanka’s Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../favicon.ico" rel="icon">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-5a86c4bd0c1f9981a70f893fdae069f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles/styles.css">
+</head>
+
+<body class="floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Krishnatheja Vanka’s Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/theja-vanka"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-page-right">
+      <h1 class="title">Mixture of Experts: A Deep Overview</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">research</div>
+                <div class="quarto-category">advanced</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-page-right">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Krishnatheja Vanka </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 15, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#mixture-of-experts-a-deep-overview" id="toc-mixture-of-experts-a-deep-overview" class="nav-link active" data-scroll-target="#mixture-of-experts-a-deep-overview">Mixture of Experts: A Deep Overview</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#historical-context-and-evolution" id="toc-historical-context-and-evolution" class="nav-link" data-scroll-target="#historical-context-and-evolution">Historical Context and Evolution</a>
+  <ul class="collapse">
+  <li><a href="#modern-resurgence" id="toc-modern-resurgence" class="nav-link" data-scroll-target="#modern-resurgence">Modern Resurgence</a></li>
+  </ul></li>
+  <li><a href="#fundamental-architecture" id="toc-fundamental-architecture" class="nav-link" data-scroll-target="#fundamental-architecture">Fundamental Architecture</a>
+  <ul class="collapse">
+  <li><a href="#core-components" id="toc-core-components" class="nav-link" data-scroll-target="#core-components">Core Components</a></li>
+  <li><a href="#mathematical-formulation" id="toc-mathematical-formulation" class="nav-link" data-scroll-target="#mathematical-formulation">Mathematical Formulation</a></li>
+  </ul></li>
+  <li><a href="#training-dynamics-and-optimization" id="toc-training-dynamics-and-optimization" class="nav-link" data-scroll-target="#training-dynamics-and-optimization">Training Dynamics and Optimization</a>
+  <ul class="collapse">
+  <li><a href="#gradient-flow-and-backpropagation" id="toc-gradient-flow-and-backpropagation" class="nav-link" data-scroll-target="#gradient-flow-and-backpropagation">Gradient Flow and Backpropagation</a></li>
+  <li><a href="#load-balancing-and-expert-utilization" id="toc-load-balancing-and-expert-utilization" class="nav-link" data-scroll-target="#load-balancing-and-expert-utilization">Load Balancing and Expert Utilization</a></li>
+  <li><a href="#sparsity-and-efficiency" id="toc-sparsity-and-efficiency" class="nav-link" data-scroll-target="#sparsity-and-efficiency">Sparsity and Efficiency</a></li>
+  </ul></li>
+  <li><a href="#applications-and-use-cases" id="toc-applications-and-use-cases" class="nav-link" data-scroll-target="#applications-and-use-cases">Applications and Use Cases</a>
+  <ul class="collapse">
+  <li><a href="#natural-language-processing" id="toc-natural-language-processing" class="nav-link" data-scroll-target="#natural-language-processing">Natural Language Processing</a></li>
+  <li><a href="#computer-vision" id="toc-computer-vision" class="nav-link" data-scroll-target="#computer-vision">Computer Vision</a></li>
+  <li><a href="#multimodal-learning" id="toc-multimodal-learning" class="nav-link" data-scroll-target="#multimodal-learning">Multimodal Learning</a></li>
+  </ul></li>
+  <li><a href="#advanced-techniques-and-variants" id="toc-advanced-techniques-and-variants" class="nav-link" data-scroll-target="#advanced-techniques-and-variants">Advanced Techniques and Variants</a>
+  <ul class="collapse">
+  <li><a href="#hierarchical-mixture-of-experts" id="toc-hierarchical-mixture-of-experts" class="nav-link" data-scroll-target="#hierarchical-mixture-of-experts">Hierarchical Mixture of Experts</a></li>
+  <li><a href="#sparse-mixture-of-experts" id="toc-sparse-mixture-of-experts" class="nav-link" data-scroll-target="#sparse-mixture-of-experts">Sparse Mixture of Experts</a></li>
+  <li><a href="#adaptive-mixture-of-experts" id="toc-adaptive-mixture-of-experts" class="nav-link" data-scroll-target="#adaptive-mixture-of-experts">Adaptive Mixture of Experts</a></li>
+  </ul></li>
+  <li><a href="#challenges-and-limitations" id="toc-challenges-and-limitations" class="nav-link" data-scroll-target="#challenges-and-limitations">Challenges and Limitations</a>
+  <ul class="collapse">
+  <li><a href="#training-stability" id="toc-training-stability" class="nav-link" data-scroll-target="#training-stability">Training Stability</a></li>
+  <li><a href="#computational-overhead" id="toc-computational-overhead" class="nav-link" data-scroll-target="#computational-overhead">Computational Overhead</a></li>
+  <li><a href="#expert-specialization-vs.-generalization" id="toc-expert-specialization-vs.-generalization" class="nav-link" data-scroll-target="#expert-specialization-vs.-generalization">Expert Specialization vs.&nbsp;Generalization</a></li>
+  </ul></li>
+  <li><a href="#recent-developments-and-state-of-the-art" id="toc-recent-developments-and-state-of-the-art" class="nav-link" data-scroll-target="#recent-developments-and-state-of-the-art">Recent Developments and State-of-the-Art</a>
+  <ul class="collapse">
+  <li><a href="#large-scale-language-models" id="toc-large-scale-language-models" class="nav-link" data-scroll-target="#large-scale-language-models">Large-Scale Language Models</a></li>
+  <li><a href="#efficient-training-methods" id="toc-efficient-training-methods" class="nav-link" data-scroll-target="#efficient-training-methods">Efficient Training Methods</a></li>
+  <li><a href="#integration-with-other-techniques" id="toc-integration-with-other-techniques" class="nav-link" data-scroll-target="#integration-with-other-techniques">Integration with Other Techniques</a></li>
+  </ul></li>
+  <li><a href="#future-directions-and-research-opportunities" id="toc-future-directions-and-research-opportunities" class="nav-link" data-scroll-target="#future-directions-and-research-opportunities">Future Directions and Research Opportunities</a>
+  <ul class="collapse">
+  <li><a href="#automated-expert-design" id="toc-automated-expert-design" class="nav-link" data-scroll-target="#automated-expert-design">Automated Expert Design</a></li>
+  <li><a href="#dynamic-expert-creation" id="toc-dynamic-expert-creation" class="nav-link" data-scroll-target="#dynamic-expert-creation">Dynamic Expert Creation</a></li>
+  <li><a href="#theoretical-understanding" id="toc-theoretical-understanding" class="nav-link" data-scroll-target="#theoretical-understanding">Theoretical Understanding</a></li>
+  <li><a href="#hardware-co-design" id="toc-hardware-co-design" class="nav-link" data-scroll-target="#hardware-co-design">Hardware Co-design</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
+
+
+
+
+
+
+<section id="mixture-of-experts-a-deep-overview" class="level1">
+<h1>Mixture of Experts: A Deep Overview</h1>
+<p><img src="moe.png" class="img-fluid"></p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Mixture of Experts (MoE) represents a fundamental paradigm shift in machine learning architecture design, offering a scalable approach to building models that can handle complex, heterogeneous tasks while maintaining computational efficiency. This architectural pattern has gained significant traction in recent years, particularly in the realm of large language models and neural networks, where the ability to scale model capacity without proportionally increasing computational costs has become paramount.</p>
+<p>The core insight behind MoE lies in the principle of specialization: rather than training a single monolithic model to handle all aspects of a task, we can train multiple specialized “expert” models, each focusing on different aspects or subdomains of the problem space. A gating mechanism then learns to route inputs to the most appropriate experts, creating a system that can be both highly specialized and broadly capable.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Insight
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The fundamental principle of MoE is <strong>specialization</strong>: multiple expert models focus on different aspects of a problem, coordinated by a learned gating mechanism.</p>
+</div>
+</div>
+</section>
+<section id="historical-context-and-evolution" class="level2">
+<h2 class="anchored" data-anchor-id="historical-context-and-evolution">Historical Context and Evolution</h2>
+<p>The concept of mixture models has deep roots in statistics and machine learning, dating back to the 1960s with early work on mixture distributions. However, the specific formulation of Mixture of Experts as we understand it today emerged in the 1990s through the pioneering work of researchers like Robert Jacobs, Steven Nowlan, and Geoffrey Hinton.</p>
+<p>The original MoE framework was motivated by the observation that many learning problems naturally decompose into subproblems that might be better solved by different models. For instance, in a classification task involving multiple classes, different regions of the input space might benefit from different decision boundaries or feature representations. This led to the development of the classical MoE architecture, which combined multiple expert networks with a gating network that learned to weight their contributions.</p>
+<section id="modern-resurgence" class="level3">
+<h3 class="anchored" data-anchor-id="modern-resurgence">Modern Resurgence</h3>
+<p>The resurgence of interest in MoE architectures in recent years can be attributed to several factors:</p>
+<ul>
+<li><strong>Model scaling challenges</strong>: The explosion in model sizes, particularly in NLP</li>
+<li><strong>Computational efficiency</strong>: Need for sublinear scaling methods</li>
+<li><strong>Hardware improvements</strong>: Better support for sparse computation</li>
+<li><strong>Theoretical advances</strong>: Better understanding of training dynamics</li>
+</ul>
+</section>
+</section>
+<section id="fundamental-architecture" class="level2">
+<h2 class="anchored" data-anchor-id="fundamental-architecture">Fundamental Architecture</h2>
+<section id="core-components" class="level3">
+<h3 class="anchored" data-anchor-id="core-components">Core Components</h3>
+<p>The MoE architecture consists of three fundamental components that work in concert to create a flexible and efficient learning system.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Expert Networks</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Gating Network</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Combination Mechanism</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p><strong>Expert Networks</strong> form the foundation of the MoE system. These are typically neural networks, though they can be any differentiable function approximator. Each expert is designed to become specialized in handling specific types of inputs or solving particular aspects of the overall task.</p>
+<p>Key characteristics:</p>
+<ul>
+<li>Can be identical in architecture but differ in parameters</li>
+<li>May have fundamentally different architectures</li>
+<li>Optimize for different input patterns or computational requirements</li>
+</ul>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p><strong>Gating Network</strong> serves as the routing mechanism that determines which experts should be activated for a given input. This network learns to predict the probability distribution over experts, effectively learning which expert or combination of experts is most likely to produce the best output.</p>
+<p>Objectives:</p>
+<ul>
+<li>Route inputs to appropriate experts</li>
+<li>Balance computational load across experts</li>
+<li>Maintain end-to-end trainability</li>
+</ul>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p><strong>Combination Mechanism</strong> determines how outputs from multiple experts are combined to produce the final prediction. The most common approach is a weighted combination, where the gating network’s output serves as the weights.</p>
+<p>Approaches:</p>
+<ul>
+<li>Weighted combination (most common)</li>
+<li>Attention-based mechanisms</li>
+<li>Learned combination functions</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="mathematical-formulation" class="level3">
+<h3 class="anchored" data-anchor-id="mathematical-formulation">Mathematical Formulation</h3>
+<p>The mathematical foundation of MoE can be expressed elegantly through probabilistic modeling. Given an input vector <span class="math inline">\(\mathbf{x}\)</span>, the MoE model computes its output as:</p>
+<p><span class="math display">\[\mathbf{y} = \sum_{i=1}^{N} g_i(\mathbf{x}) \cdot E_i(\mathbf{x})\]</span></p>
+<p>Where: - <span class="math inline">\(g_i(\mathbf{x})\)</span> represents the gating function’s output for expert <span class="math inline">\(i\)</span> - <span class="math inline">\(E_i(\mathbf{x})\)</span> represents the output of expert <span class="math inline">\(i\)</span></p>
+<p>The gating function typically uses a softmax activation:</p>
+<p><span class="math display">\[g_i(\mathbf{x}) = \frac{\exp(\mathbf{W}_g \mathbf{x} + \mathbf{b}_g)_i}{\sum_{j=1}^{N} \exp(\mathbf{W}_g \mathbf{x} + \mathbf{b}_g)_j}\]</span></p>
+<p>The training objective includes multiple components:</p>
+<p><span class="math display">\[\mathcal{L} = \mathcal{L}_{\text{prediction}} + \lambda \mathcal{L}_{\text{load balancing}} + \mu \mathcal{L}_{\text{expert regularization}}\]</span></p>
+<div id="95802cbf" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Example MoE Implementation</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MixtureOfExperts(nn.Module):</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, input_dim, hidden_dim, output_dim, num_experts, top_k<span class="op">=</span><span class="dv">2</span>):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.num_experts <span class="op">=</span> num_experts</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.top_k <span class="op">=</span> top_k</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Gating network</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.gate <span class="op">=</span> nn.Linear(input_dim, num_experts)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Expert networks</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.experts <span class="op">=</span> nn.ModuleList([</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>            nn.Sequential(</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                nn.Linear(input_dim, hidden_dim),</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                nn.ReLU(),</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                nn.Linear(hidden_dim, output_dim)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            ) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(num_experts)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        ])</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Gating scores</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        gate_scores <span class="op">=</span> <span class="va">self</span>.gate(x)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        gate_probs <span class="op">=</span> F.softmax(gate_scores, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Select top-k experts</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        top_k_probs, top_k_indices <span class="op">=</span> torch.topk(gate_probs, <span class="va">self</span>.top_k, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Normalize top-k probabilities</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        top_k_probs <span class="op">=</span> top_k_probs <span class="op">/</span> top_k_probs.<span class="bu">sum</span>(dim<span class="op">=-</span><span class="dv">1</span>, keepdim<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Compute expert outputs</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>        expert_outputs <span class="op">=</span> []</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i, expert <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="va">self</span>.experts):</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>            expert_outputs.append(expert(x))</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Combine outputs</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>        output <span class="op">=</span> torch.zeros_like(expert_outputs[<span class="dv">0</span>])</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.top_k):</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>            expert_idx <span class="op">=</span> top_k_indices[:, i]</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>            weight <span class="op">=</span> top_k_probs[:, i].unsqueeze(<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> j, expert_output <span class="kw">in</span> <span class="bu">enumerate</span>(expert_outputs):</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>                mask <span class="op">=</span> (expert_idx <span class="op">==</span> j).<span class="bu">float</span>().unsqueeze(<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>                output <span class="op">+=</span> weight <span class="op">*</span> mask <span class="op">*</span> expert_output</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="training-dynamics-and-optimization" class="level2">
+<h2 class="anchored" data-anchor-id="training-dynamics-and-optimization">Training Dynamics and Optimization</h2>
+<p>Training MoE systems presents unique challenges that distinguish it from traditional neural network training. The primary challenge lies in the discrete nature of expert selection combined with the need for end-to-end differentiable training.</p>
+<section id="gradient-flow-and-backpropagation" class="level3">
+<h3 class="anchored" data-anchor-id="gradient-flow-and-backpropagation">Gradient Flow and Backpropagation</h3>
+<p>The gating mechanism creates a complex gradient flow pattern. When the gating network routes an input primarily to a subset of experts, the gradients flow mainly through those active experts. This can lead to training instabilities where some experts receive very few training examples, potentially leading to underfitting, while others become overutilized.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Training Challenge
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The soft gating approach helps mitigate gradient flow issues but increases computational overhead as multiple experts must be evaluated for each input.</p>
+</div>
+</div>
+</section>
+<section id="load-balancing-and-expert-utilization" class="level3">
+<h3 class="anchored" data-anchor-id="load-balancing-and-expert-utilization">Load Balancing and Expert Utilization</h3>
+<p>One of the most critical challenges in MoE training is ensuring balanced utilization of experts. Without proper load balancing, the system may collapse to using only a few experts, essentially reducing the model to a smaller capacity system.</p>
+<p><strong>Solutions for load balancing:</strong></p>
+<ol type="1">
+<li><strong>Auxiliary losses</strong> that penalize uneven expert utilization</li>
+<li><strong>Noise injection</strong> in the gating network to encourage exploration</li>
+<li><strong>Curriculum learning</strong> approaches for gradual expert specialization</li>
+</ol>
+</section>
+<section id="sparsity-and-efficiency" class="level3">
+<h3 class="anchored" data-anchor-id="sparsity-and-efficiency">Sparsity and Efficiency</h3>
+<p>A key advantage of MoE systems is their ability to maintain sparsity during inference. By activating only a subset of experts for each input, computational cost can be kept relatively low even as the total number of parameters increases.</p>
+<p>The choice of <span class="math inline">\(k\)</span> in top-<span class="math inline">\(k\)</span> gating represents a fundamental trade-off:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Small <span class="math inline">\(k\)</span></th>
+<th>Large <span class="math inline">\(k\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>More efficient inference</td>
+<td>Higher computational cost</td>
+</tr>
+<tr class="even">
+<td>Limited expressiveness</td>
+<td>Greater model capacity</td>
+</tr>
+<tr class="odd">
+<td>Faster training</td>
+<td>More complex optimization</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="applications-and-use-cases" class="level2">
+<h2 class="anchored" data-anchor-id="applications-and-use-cases">Applications and Use Cases</h2>
+<section id="natural-language-processing" class="level3">
+<h3 class="anchored" data-anchor-id="natural-language-processing">Natural Language Processing</h3>
+<p>MoE has found particularly strong application in natural language processing, where the heterogeneous nature of language tasks makes expert specialization highly beneficial. Large language models like GPT-3 and subsequent models have incorporated MoE architectures to scale to trillions of parameters while maintaining reasonable computational costs.</p>
+<p><strong>Expert specialization in NLP:</strong></p>
+<ul>
+<li>Syntactic constructions</li>
+<li>Numerical information processing</li>
+<li>Domain-specific terminology</li>
+<li>Language-specific patterns (in multilingual models)</li>
+</ul>
+</section>
+<section id="computer-vision" class="level3">
+<h3 class="anchored" data-anchor-id="computer-vision">Computer Vision</h3>
+<p>In computer vision, MoE architectures have been applied to tasks ranging from image classification to object detection and segmentation. The visual domain’s inherent structure makes it well-suited for expert specialization.</p>
+<p><strong>Applications in vision:</strong></p>
+<ul>
+<li>Object detection with size/category-specific experts</li>
+<li>Image segmentation with boundary/texture specialists</li>
+<li>Vision transformers with spatial attention experts</li>
+</ul>
+</section>
+<section id="multimodal-learning" class="level3">
+<h3 class="anchored" data-anchor-id="multimodal-learning">Multimodal Learning</h3>
+<p>MoE architectures are particularly well-suited for multimodal learning tasks, where inputs might come from different modalities (text, images, audio, etc.). Different experts can specialize in processing different modalities or in handling the fusion of information across modalities.</p>
+</section>
+</section>
+<section id="advanced-techniques-and-variants" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-techniques-and-variants">Advanced Techniques and Variants</h2>
+<section id="hierarchical-mixture-of-experts" class="level3">
+<h3 class="anchored" data-anchor-id="hierarchical-mixture-of-experts">Hierarchical Mixture of Experts</h3>
+<p>Hierarchical MoE extends the basic MoE concept by organizing experts in a tree-like structure. This approach allows for more efficient routing and can capture hierarchical patterns in the data.</p>
+<div class="cell" data-layout-align="default">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>graph TD</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    A[Input] --&gt; B[Level 1 Gate]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    B --&gt; C[Expert Cluster 1]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    B --&gt; D[Expert Cluster 2]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    B --&gt; E[Expert Cluster 3]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    C --&gt; F[Expert 1.1]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    C --&gt; G[Expert 1.2]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    D --&gt; H[Expert 2.1]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    D --&gt; I[Expert 2.2]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    E --&gt; J[Expert 3.1]</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    E --&gt; K[Expert 3.2]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph TD
+    A[Input] --&gt; B[Level 1 Gate]
+    B --&gt; C[Expert Cluster 1]
+    B --&gt; D[Expert Cluster 2]
+    B --&gt; E[Expert Cluster 3]
+    C --&gt; F[Expert 1.1]
+    C --&gt; G[Expert 1.2]
+    D --&gt; H[Expert 2.1]
+    D --&gt; I[Expert 2.2]
+    E --&gt; J[Expert 3.1]
+    E --&gt; K[Expert 3.2]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="sparse-mixture-of-experts" class="level3">
+<h3 class="anchored" data-anchor-id="sparse-mixture-of-experts">Sparse Mixture of Experts</h3>
+<p>Sparse MoE focuses on maximizing the efficiency benefits of expert sparsity. These systems typically activate only a very small fraction of available experts for each input.</p>
+<p><strong>Example: Switch Transformer</strong></p>
+<ul>
+<li>Activates only one expert per input</li>
+<li>Enables very efficient scaling</li>
+<li>Requires careful design for single-expert effectiveness</li>
+</ul>
+</section>
+<section id="adaptive-mixture-of-experts" class="level3">
+<h3 class="anchored" data-anchor-id="adaptive-mixture-of-experts">Adaptive Mixture of Experts</h3>
+<p>Adaptive MoE systems dynamically adjust their architecture based on input or task requirements:</p>
+<ul>
+<li>Dynamic expert count adjustment</li>
+<li>Architecture modification based on context</li>
+<li>Computational resource adaptation</li>
+</ul>
+</section>
+</section>
+<section id="challenges-and-limitations" class="level2">
+<h2 class="anchored" data-anchor-id="challenges-and-limitations">Challenges and Limitations</h2>
+<section id="training-stability" class="level3">
+<h3 class="anchored" data-anchor-id="training-stability">Training Stability</h3>
+<p>Training MoE systems can be significantly more challenging than training traditional neural networks. The interaction between the gating network and expert networks creates a complex optimization landscape.</p>
+<p><strong>Common issues:</strong></p>
+<ul>
+<li>Mode collapse (using only subset of experts)</li>
+<li>Gradient flow problems</li>
+<li>Training instabilities</li>
+</ul>
+</section>
+<section id="computational-overhead" class="level3">
+<h3 class="anchored" data-anchor-id="computational-overhead">Computational Overhead</h3>
+<p>While MoE systems can achieve sublinear scaling in terms of computational cost per parameter, they often have higher absolute computational costs than smaller traditional models.</p>
+<p><strong>Overhead sources:</strong></p>
+<ul>
+<li>Gating network computation</li>
+<li>Multiple expert evaluation</li>
+<li>Memory requirements for all expert parameters</li>
+</ul>
+</section>
+<section id="expert-specialization-vs.-generalization" class="level3">
+<h3 class="anchored" data-anchor-id="expert-specialization-vs.-generalization">Expert Specialization vs.&nbsp;Generalization</h3>
+<p>The balance between expert specialization and generalization represents a fundamental challenge in MoE design. This is particularly acute in dynamic environments where the input distribution may shift over time.</p>
+</section>
+</section>
+<section id="recent-developments-and-state-of-the-art" class="level2">
+<h2 class="anchored" data-anchor-id="recent-developments-and-state-of-the-art">Recent Developments and State-of-the-Art</h2>
+<section id="large-scale-language-models" class="level3">
+<h3 class="anchored" data-anchor-id="large-scale-language-models">Large-Scale Language Models</h3>
+<p>The most prominent recent application of MoE has been in large-scale language models:</p>
+<ul>
+<li><strong>PaLM</strong>: Pathways Language Model with MoE scaling</li>
+<li><strong>GLaM</strong>: Generalist Language Model with efficient MoE</li>
+<li><strong>GPT variants</strong>: Various GPT models with MoE components</li>
+</ul>
+</section>
+<section id="efficient-training-methods" class="level3">
+<h3 class="anchored" data-anchor-id="efficient-training-methods">Efficient Training Methods</h3>
+<p>Recent research has focused on developing more efficient training methods:</p>
+<ul>
+<li>Better load balancing techniques</li>
+<li>More stable training procedures</li>
+<li>Reduced gating mechanism overhead</li>
+<li>Expert parallelism for distributed training</li>
+</ul>
+</section>
+<section id="integration-with-other-techniques" class="level3">
+<h3 class="anchored" data-anchor-id="integration-with-other-techniques">Integration with Other Techniques</h3>
+<p>MoE is increasingly being combined with other advanced techniques:</p>
+<ul>
+<li>Attention mechanisms</li>
+<li>Normalization methods</li>
+<li>Architectural innovations</li>
+<li>Transformer architectures</li>
+</ul>
+</section>
+</section>
+<section id="future-directions-and-research-opportunities" class="level2">
+<h2 class="anchored" data-anchor-id="future-directions-and-research-opportunities">Future Directions and Research Opportunities</h2>
+<section id="automated-expert-design" class="level3">
+<h3 class="anchored" data-anchor-id="automated-expert-design">Automated Expert Design</h3>
+<p>Current MoE systems typically use manually designed expert architectures. Future research directions include:</p>
+<ul>
+<li>Neural architecture search for MoE</li>
+<li>Task-specific expert design</li>
+<li>Automated capacity allocation</li>
+</ul>
+</section>
+<section id="dynamic-expert-creation" class="level3">
+<h3 class="anchored" data-anchor-id="dynamic-expert-creation">Dynamic Expert Creation</h3>
+<p>Rather than having a fixed set of experts, future systems might:</p>
+<ul>
+<li>Dynamically create and remove experts</li>
+<li>Adapt to evolving task requirements</li>
+<li>Respond to changing data distributions</li>
+</ul>
+</section>
+<section id="theoretical-understanding" class="level3">
+<h3 class="anchored" data-anchor-id="theoretical-understanding">Theoretical Understanding</h3>
+<p>Despite practical success, theoretical understanding remains limited:</p>
+<ul>
+<li>When and why MoE systems work well</li>
+<li>Optimal design principles</li>
+<li>Convergence guarantees</li>
+<li>Generalization bounds</li>
+</ul>
+</section>
+<section id="hardware-co-design" class="level3">
+<h3 class="anchored" data-anchor-id="hardware-co-design">Hardware Co-design</h3>
+<p>The unique computational patterns of MoE systems suggest opportunities for specialized hardware:</p>
+<ul>
+<li>MoE-optimized processors</li>
+<li>Efficient sparse computation</li>
+<li>Memory hierarchy optimization</li>
+<li>Distributed computing architectures</li>
+</ul>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Mixture of Experts represents a powerful paradigm for building scalable and efficient machine learning systems. By leveraging the principle of specialization, MoE systems can achieve remarkable performance while maintaining computational efficiency.</p>
+<p><strong>Key takeaways:</strong></p>
+<ol type="1">
+<li><strong>Scalability</strong>: MoE enables sublinear scaling of computational cost with model capacity</li>
+<li><strong>Specialization</strong>: Expert networks can focus on specific aspects of complex tasks</li>
+<li><strong>Efficiency</strong>: Sparse activation patterns reduce computational overhead</li>
+<li><strong>Challenges</strong>: Training stability and load balancing remain significant hurdles</li>
+<li><strong>Future potential</strong>: Continued innovation in architectures, training methods, and hardware</li>
+</ol>
+<p>The success of MoE in recent large-scale language models demonstrates its potential for enabling the next generation of AI systems. As our understanding deepens and techniques improve, MoE will likely play an increasingly important role in advanced AI system development across diverse domains.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Looking Forward
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The combination of MoE with other advanced techniques and the development of specialized hardware will likely drive continued innovation in this space, making AI systems both more capable and more efficient.</p>
+</div>
+</div>
+<hr>
+<p><em>This document provides a comprehensive overview of Mixture of Experts architectures, from theoretical foundations to practical applications and future directions. For the latest developments in this rapidly evolving field, readers are encouraged to consult recent research publications and conference proceedings.</em></p>
+
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© 2025 Krishnatheja Vanka</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

@@ -386,12 +386,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
   <ul class="collapse">
-  <li><a href="#data-loading-optimization" id="toc-data-loading-optimization" class="nav-link" data-scroll-target="#data-loading-optimization">1. Data Loading Optimization</a></li>
-  <li><a href="#gradient-synchronization" id="toc-gradient-synchronization" class="nav-link" data-scroll-target="#gradient-synchronization">2. Gradient Synchronization</a></li>
-  <li><a href="#dynamic-loss-scaling" id="toc-dynamic-loss-scaling" class="nav-link" data-scroll-target="#dynamic-loss-scaling">3. Dynamic Loss Scaling</a></li>
-  <li><a href="#launch-script-example" id="toc-launch-script-example" class="nav-link" data-scroll-target="#launch-script-example">4. Launch Script Example</a></li>
-  <li><a href="#error-handling-and-recovery" id="toc-error-handling-and-recovery" class="nav-link" data-scroll-target="#error-handling-and-recovery">5. Error Handling and Recovery</a></li>
+  <li><a href="#data-loading-optimization" id="toc-data-loading-optimization" class="nav-link" data-scroll-target="#data-loading-optimization">Data Loading Optimization</a></li>
+  <li><a href="#gradient-synchronization" id="toc-gradient-synchronization" class="nav-link" data-scroll-target="#gradient-synchronization">Gradient Synchronization</a></li>
+  <li><a href="#dynamic-loss-scaling" id="toc-dynamic-loss-scaling" class="nav-link" data-scroll-target="#dynamic-loss-scaling">Dynamic Loss Scaling</a></li>
+  <li><a href="#launch-script-example" id="toc-launch-script-example" class="nav-link" data-scroll-target="#launch-script-example">Launch Script Example</a></li>
+  <li><a href="#error-handling-and-recovery" id="toc-error-handling-and-recovery" class="nav-link" data-scroll-target="#error-handling-and-recovery">Error Handling and Recovery</a></li>
   </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -441,7 +442,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="setup-and-initialization">Setup and Initialization</h2>
 <section id="basic-environment-setup" class="level3">
 <h3 class="anchored" data-anchor-id="basic-environment-setup">Basic Environment Setup</h3>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<div id="06b7ab26" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.distributed <span class="im">as</span> dist</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.multiprocessing <span class="im">as</span> mp</span>
@@ -466,10 +468,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cleanup_distributed():</span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Clean up distributed training"""</span></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    dist.destroy_process_group()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="multi-node-setup" class="level3">
 <h3 class="anchored" data-anchor-id="multi-node-setup">Multi-Node Setup</h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> setup_multinode(rank, world_size, master_addr, master_port):</span>
+<div id="6e6f4fee" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> setup_multinode(rank, world_size, master_addr, master_port):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Setup for multi-node distributed training"""</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    os.environ[<span class="st">'MASTER_ADDR'</span>] <span class="op">=</span> master_addr</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    os.environ[<span class="st">'MASTER_PORT'</span>] <span class="op">=</span> <span class="bu">str</span>(master_port)</span>
@@ -482,13 +486,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        rank<span class="op">=</span>rank,</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        world_size<span class="op">=</span>world_size</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="data-parallel-training" class="level2">
 <h2 class="anchored" data-anchor-id="data-parallel-training">Data Parallel Training</h2>
 <section id="simple-dataparallel-single-node" class="level3">
 <h3 class="anchored" data-anchor-id="simple-dataparallel-single-node">Simple DataParallel (Single Node)</h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<div id="2bd6d1d8" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SimpleModel(nn.Module):</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, input_size, hidden_size, num_classes):</span>
@@ -527,13 +533,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>            loss <span class="op">=</span> criterion(output, target)</span>
 <span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>            loss.backward()</span>
 <span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>            optimizer.step()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="distributed-data-parallel-ddp" class="level2">
 <h2 class="anchored" data-anchor-id="distributed-data-parallel-ddp">Distributed Data Parallel (DDP)</h2>
 <section id="basic-ddp-implementation" class="level3">
 <h3 class="anchored" data-anchor-id="basic-ddp-implementation">Basic DDP Implementation</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_ddp(rank, world_size):</span>
+<div id="298ae1a6" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_ddp(rank, world_size):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Distributed Data Parallel training function"""</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Setup distributed environment</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    setup_distributed(rank, world_size)</span>
@@ -589,10 +597,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
 <span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    main()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="complete-training-script-with-validation" class="level3">
 <h3 class="anchored" data-anchor-id="complete-training-script-with-validation">Complete Training Script with Validation</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<div id="1bc3c20c" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.tensorboard <span class="im">import</span> SummaryWriter</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DistributedTrainer:</span>
@@ -732,13 +742,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Save checkpoint</span></span>
 <span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> epoch <span class="op">%</span> <span class="dv">10</span> <span class="op">==</span> <span class="dv">0</span>:</span>
 <span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>                    <span class="va">self</span>.save_checkpoint(epoch, train_loss)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="advanced-patterns" class="level2">
 <h2 class="anchored" data-anchor-id="advanced-patterns">Advanced Patterns</h2>
 <section id="mixed-precision-training" class="level3">
 <h3 class="anchored" data-anchor-id="mixed-precision-training">Mixed Precision Training</h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.cuda.amp <span class="im">import</span> GradScaler, autocast</span>
+<div id="ba181961" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.cuda.amp <span class="im">import</span> GradScaler, autocast</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MixedPrecisionTrainer(DistributedTrainer):</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, <span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
@@ -776,10 +788,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>            num_batches <span class="op">+=</span> <span class="dv">1</span></span>
 <span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>        </span>
 <span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> total_loss <span class="op">/</span> num_batches</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="model-sharding-with-fsdp" class="level3">
 <h3 class="anchored" data-anchor-id="model-sharding-with-fsdp">Model Sharding with FSDP</h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.distributed.fsdp <span class="im">import</span> FullyShardedDataParallel <span class="im">as</span> FSDP</span>
+<div id="82bb1345" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.distributed.fsdp <span class="im">import</span> FullyShardedDataParallel <span class="im">as</span> FSDP</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.distributed.fsdp.wrap <span class="im">import</span> size_based_auto_wrap_policy</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_fsdp_model(model, rank):</span>
@@ -800,10 +814,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fsdp_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="pipeline-parallelism" class="level3">
 <h3 class="anchored" data-anchor-id="pipeline-parallelism">Pipeline Parallelism</h3>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.distributed.pipeline.sync <span class="im">as</span> Pipe</span>
+<div id="eae3f417" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.distributed.pipeline.sync <span class="im">as</span> Pipe</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PipelineModel(nn.Module):</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, layers_per_partition<span class="op">=</span><span class="dv">2</span>):</span>
@@ -829,13 +845,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.pipe(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="monitoring-and-debugging" class="level2">
 <h2 class="anchored" data-anchor-id="monitoring-and-debugging">Monitoring and Debugging</h2>
 <section id="performance-profiling" class="level3">
 <h3 class="anchored" data-anchor-id="performance-profiling">Performance Profiling</h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.profiler</span>
+<div id="3300c895" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.profiler</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> profile_training(trainer, num_steps<span class="op">=</span><span class="dv">100</span>):</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Profile distributed training performance"""</span></span>
@@ -863,10 +881,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>            trainer.optimizer.step()</span>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>            </span>
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>            prof.step()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="communication-debugging" class="level3">
 <h3 class="anchored" data-anchor-id="communication-debugging">Communication Debugging</h3>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> debug_communication():</span>
+<div id="7e0b0347" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> debug_communication():</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Debug distributed communication"""</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    rank <span class="op">=</span> dist.get_rank()</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    world_size <span class="op">=</span> dist.get_world_size()</span>
@@ -886,13 +906,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    dist.broadcast(broadcast_tensor, src<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Rank </span><span class="sc">{</span>rank<span class="sc">}</span><span class="ss">: Broadcast result: </span><span class="sc">{</span>broadcast_tensor<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">.</span>item()<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="best-practices" class="level2">
 <h2 class="anchored" data-anchor-id="best-practices">Best Practices</h2>
 <section id="data-loading-optimization" class="level3">
-<h3 class="anchored" data-anchor-id="data-loading-optimization">1. Data Loading Optimization</h3>
-<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_efficient_dataloader(dataset, batch_size, world_size, rank):</span>
+<h3 class="anchored" data-anchor-id="data-loading-optimization">Data Loading Optimization</h3>
+<div id="ae810d87" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_efficient_dataloader(dataset, batch_size, world_size, rank):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create optimized distributed data loader"""</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    sampler <span class="op">=</span> DistributedSampler(</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        dataset,</span>
@@ -913,10 +935,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loader</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="gradient-synchronization" class="level3">
-<h3 class="anchored" data-anchor-id="gradient-synchronization">2. Gradient Synchronization</h3>
-<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_with_gradient_accumulation(model, optimizer, criterion, data_loader, </span>
+<h3 class="anchored" data-anchor-id="gradient-synchronization">Gradient Synchronization</h3>
+<div id="19e33665" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_with_gradient_accumulation(model, optimizer, criterion, data_loader, </span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                                   accumulation_steps<span class="op">=</span><span class="dv">4</span>):</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Training with gradient accumulation"""</span></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    model.train()</span>
@@ -935,10 +959,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (batch_idx <span class="op">+</span> <span class="dv">1</span>) <span class="op">%</span> accumulation_steps <span class="op">==</span> <span class="dv">0</span>:</span>
 <span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>            optimizer.step()</span>
 <span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="dynamic-loss-scaling" class="level3">
-<h3 class="anchored" data-anchor-id="dynamic-loss-scaling">3. Dynamic Loss Scaling</h3>
-<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DynamicLossScaler:</span>
+<h3 class="anchored" data-anchor-id="dynamic-loss-scaling">Dynamic Loss Scaling</h3>
+<div id="23e45ce5" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DynamicLossScaler:</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, init_scale<span class="op">=</span><span class="fl">2.</span><span class="op">**</span><span class="dv">16</span>, scale_factor<span class="op">=</span><span class="fl">2.</span>, scale_window<span class="op">=</span><span class="dv">2000</span>):</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scale <span class="op">=</span> init_scale</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scale_factor <span class="op">=</span> scale_factor</span>
@@ -954,10 +980,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="va">self</span>.counter <span class="op">&gt;=</span> <span class="va">self</span>.scale_window:</span>
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span>.scale <span class="op">*=</span> <span class="va">self</span>.scale_factor</span>
 <span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span>.counter <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="launch-script-example" class="level3">
-<h3 class="anchored" data-anchor-id="launch-script-example">4. Launch Script Example</h3>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<h3 class="anchored" data-anchor-id="launch-script-example">Launch Script Example</h3>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>launch_distributed.sh</strong></pre>
+</div>
+<div class="sourceCode" id="cb14" data-filename="launch_distributed.sh"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># launch_distributed.sh</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Single node, multiple GPUs</span></span>
@@ -987,10 +1018,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">--master_addr</span><span class="op">=</span><span class="st">"192.168.1.100"</span> <span class="dt">\</span></span>
 <span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">--master_port</span><span class="op">=</span>12345 <span class="dt">\</span></span>
 <span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>    train_distributed.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="error-handling-and-recovery" class="level3">
-<h3 class="anchored" data-anchor-id="error-handling-and-recovery">5. Error Handling and Recovery</h3>
-<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> robust_train_loop(trainer, num_epochs, checkpoint_dir):</span>
+<h3 class="anchored" data-anchor-id="error-handling-and-recovery">Error Handling and Recovery</h3>
+<div id="e84cf6db" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> robust_train_loop(trainer, num_epochs, checkpoint_dir):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Training loop with error handling and recovery"""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    start_epoch <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1020,10 +1053,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Save emergency checkpoint</span></span>
 <span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>            save_checkpoint(trainer, epoch, checkpoint_dir, emergency<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> e</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This guide provides a comprehensive foundation for implementing distributed training with PyTorch. Start with basic DDP for single-node multi-GPU setups, then progress to more advanced techniques like FSDP and pipeline parallelism as your models and datasets grow larger.</p>
-
-
+</div>
 </section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>This guide provides a comprehensive foundation for implementing distributed training with PyTorch. Start with basic DDP for single-node multi-GPU setups, then progress to more advanced techniques like FSDP and pipeline parallelism as your models and datasets grow larger.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Takeaways
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Start Simple</strong>: Begin with DataParallel for single-node setups</li>
+<li><strong>Scale Gradually</strong>: Move to DDP for multi-node distributed training</li>
+<li><strong>Monitor Performance</strong>: Use profiling tools to identify bottlenecks</li>
+<li><strong>Handle Errors</strong>: Implement robust error handling and checkpointing</li>
+<li><strong>Optimize Data Loading</strong>: Use efficient data loaders and samplers</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Additional Resources
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For more advanced topics and latest updates, refer to: - <a href="https://pytorch.org/docs/stable/distributed.html">PyTorch Distributed Documentation</a> - <a href="https://pytorch.org/tutorials/intermediate/FSDP_tutorial.html">FSDP Tutorial</a> - <a href="https://pytorch.org/docs/stable/pipeline.html">Pipeline Parallelism Guide</a></p>
+</div>
+</div>
+
+
 </section>
 </section>
 

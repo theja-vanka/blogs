@@ -353,6 +353,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#hugging-face-accelerate-code-guide" id="toc-hugging-face-accelerate-code-guide" class="nav-link active" data-scroll-target="#hugging-face-accelerate-code-guide">Hugging Face Accelerate Code Guide</a>
   <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
   <li><a href="#installation-and-setup" id="toc-installation-and-setup" class="nav-link" data-scroll-target="#installation-and-setup">Installation and Setup</a>
   <ul class="collapse">
   <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
@@ -401,6 +402,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#performance-tips" id="toc-performance-tips" class="nav-link" data-scroll-target="#performance-tips">Performance Tips</a></li>
   </ul></li>
   <li><a href="#complete-example-bert-fine-tuning" id="toc-complete-example-bert-fine-tuning" class="nav-link" data-scroll-target="#complete-example-bert-fine-tuning">Complete Example: BERT Fine-tuning</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -419,7 +421,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="hugging-face-accelerate-code-guide" class="level1">
 <h1>Hugging Face Accelerate Code Guide</h1>
-<p><img src="accelerate.png" class="img-fluid"> I’ve created a comprehensive code guide for Hugging Face Accelerate that covers everything from basic setup to advanced features like DeepSpeed integration.</p>
+<p><img src="accelerate.png" class="img-fluid"></p>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>This comprehensive code guide covers everything you need to know about Hugging Face Accelerate, from basic setup to advanced features like DeepSpeed integration. Accelerate simplifies distributed training and mixed precision training across multiple GPUs and nodes.</p>
+</section>
 <section id="installation-and-setup" class="level2">
 <h2 class="anchored" data-anchor-id="installation-and-setup">Installation and Setup</h2>
 <section id="installation" class="level3">
@@ -431,10 +437,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Run the configuration wizard to set up your training environment:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">accelerate</span> config</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Or create a config file programmatically:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
+<div id="a271a62a" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate.utils <span class="im">import</span> write_basic_config</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>write_basic_config(mixed_precision<span class="op">=</span><span class="st">"fp16"</span>)  <span class="co"># or "bf16", "no"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="basic-concepts" class="level2">
@@ -442,7 +450,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="the-accelerator-object" class="level3">
 <h3 class="anchored" data-anchor-id="the-accelerator-object">The Accelerator Object</h3>
 <p>The <code>Accelerator</code> is the main class that handles device placement, gradient synchronization, and other distributed training concerns.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
+<div id="27e8f2ac" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize accelerator</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>accelerator <span class="op">=</span> Accelerator()</span>
@@ -451,24 +460,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>device <span class="op">=</span> accelerator.device</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>is_main_process <span class="op">=</span> accelerator.is_main_process</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>num_processes <span class="op">=</span> accelerator.num_processes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="device-placement" class="level3">
 <h3 class="anchored" data-anchor-id="device-placement">Device Placement</h3>
 <p>Accelerate automatically handles device placement:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manual device placement (old way)</span></span>
+<div id="24e1bd68" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manual device placement (old way)</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model.to(device)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>batch <span class="op">=</span> {k: v.to(device) <span class="cf">for</span> k, v <span class="kw">in</span> batch.items()}</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Accelerate way (automatic)</span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>model, optimizer, dataloader <span class="op">=</span> accelerator.prepare(model, optimizer, dataloader)</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># No need to move batch to device - accelerate handles it</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Benefit
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>With Accelerate, you don’t need to manually handle device placement. The <code>prepare()</code> method takes care of moving your model, optimizer, and dataloader to the appropriate devices.</p>
+</div>
+</div>
 </section>
 </section>
 <section id="simple-training-loop" class="level2">
 <h2 class="anchored" data-anchor-id="simple-training-loop">Simple Training Loop</h2>
 <section id="basic-example" class="level3">
 <h3 class="anchored" data-anchor-id="basic-example">Basic Example</h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<div id="1bbdf928" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoModel, AutoTokenizer, AdamW</span>
@@ -511,6 +537,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
 <span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    train_model()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="running-the-training" class="level3">
 <h3 class="anchored" data-anchor-id="running-the-training">Running the Training</h3>
@@ -528,7 +555,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="advanced-features">Advanced Features</h2>
 <section id="logging-and-tracking" class="level3">
 <h3 class="anchored" data-anchor-id="logging-and-tracking">Logging and Tracking</h3>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
+<div id="6d4db596" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate.logging <span class="im">import</span> get_logger</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize with logging</span></span>
@@ -545,10 +573,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co"># End tracking</span></span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>accelerator.end_training()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="saving-and-loading-models" class="level3">
 <h3 class="anchored" data-anchor-id="saving-and-loading-models">Saving and Loading Models</h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save model</span></span>
+<div id="961e44d1" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save model</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>accelerator.save_model(model, <span class="st">"path/to/save"</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Or save state dict</span></span>
@@ -562,10 +592,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Load complete training state</span></span>
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>accelerator.load_state(<span class="st">"checkpoint_dir"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="evaluation-loop" class="level3">
 <h3 class="anchored" data-anchor-id="evaluation-loop">Evaluation Loop</h3>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_model(model, eval_dataloader, accelerator):</span>
+<div id="b363330b" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_model(model, eval_dataloader, accelerator):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    model.<span class="bu">eval</span>()</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    total_loss <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    total_samples <span class="op">=</span> <span class="dv">0</span></span>
@@ -582,13 +614,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    avg_loss <span class="op">=</span> total_loss <span class="op">/</span> total_samples</span>
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> avg_loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="multi-gpu-training" class="level2">
 <h2 class="anchored" data-anchor-id="multi-gpu-training">Multi-GPU Training</h2>
 <section id="data-parallel-training" class="level3">
 <h3 class="anchored" data-anchor-id="data-parallel-training">Data Parallel Training</h3>
-<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
+<div id="13503e82" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_multi_gpu():</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    accelerator <span class="op">=</span> Accelerator()</span>
@@ -611,6 +645,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>        accelerator.backward(loss)</span>
 <span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
 <span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="launch-commands" class="level3">
 <h3 class="anchored" data-anchor-id="launch-commands">Launch Commands</h3>
@@ -622,13 +657,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Launch on multiple nodes</span></span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="ex">accelerate</span> launch <span class="at">--num_processes</span><span class="op">=</span>8 <span class="at">--num_machines</span><span class="op">=</span>2 <span class="at">--main_process_ip</span><span class="op">=</span>192.168.1.1 train.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Multi-Node Training
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For multi-node training, ensure all nodes can communicate with each other and specify the correct IP address of the main process.</p>
+</div>
+</div>
 </section>
 </section>
 <section id="mixed-precision-training" class="level2">
 <h2 class="anchored" data-anchor-id="mixed-precision-training">Mixed Precision Training</h2>
 <section id="automatic-mixed-precision" class="level3">
 <h3 class="anchored" data-anchor-id="automatic-mixed-precision">Automatic Mixed Precision</h3>
-<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable mixed precision in config or during initialization</span></span>
+<div id="a4dc7fa7" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable mixed precision in config or during initialization</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>accelerator <span class="op">=</span> Accelerator(mixed_precision<span class="op">=</span><span class="st">"fp16"</span>)  <span class="co"># or "bf16"</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Training loop remains exactly the same</span></span>
@@ -640,10 +689,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    accelerator.backward(loss)</span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    optimizer.step()</span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="manual-mixed-precision-control" class="level3">
 <h3 class="anchored" data-anchor-id="manual-mixed-precision-control">Manual Mixed Precision Control</h3>
-<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Access the scaler if needed</span></span>
+<div id="4ddf06e4" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Access the scaler if needed</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> accelerator.mixed_precision <span class="op">==</span> <span class="st">"fp16"</span>:</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    scaler <span class="op">=</span> accelerator.scaler</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -652,13 +703,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    scaled_loss.backward()</span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    scaler.step(optimizer)</span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    scaler.update()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Precision Types
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>fp16</strong>: Good for most cases, significant speedup</li>
+<li><strong>bf16</strong>: Better numerical stability, requires newer hardware</li>
+<li><strong>no</strong>: Full precision, slower but most stable</li>
+</ul>
+</div>
+</div>
 </section>
 </section>
 <section id="gradient-accumulation" class="level2">
 <h2 class="anchored" data-anchor-id="gradient-accumulation">Gradient Accumulation</h2>
 <section id="basic-gradient-accumulation" class="level3">
 <h3 class="anchored" data-anchor-id="basic-gradient-accumulation">Basic Gradient Accumulation</h3>
-<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>accelerator <span class="op">=</span> Accelerator(gradient_accumulation_steps<span class="op">=</span><span class="dv">4</span>)</span>
+<div id="c6eb015e" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>accelerator <span class="op">=</span> Accelerator(gradient_accumulation_steps<span class="op">=</span><span class="dv">4</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> batch <span class="kw">in</span> train_dataloader:</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Use accumulate context manager</span></span>
@@ -669,10 +739,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        accelerator.backward(loss)</span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="dynamic-gradient-accumulation" class="level3">
 <h3 class="anchored" data-anchor-id="dynamic-gradient-accumulation">Dynamic Gradient Accumulation</h3>
-<div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_with_dynamic_accumulation():</span>
+<div id="eb654bca" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_with_dynamic_accumulation():</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    accumulation_steps <span class="op">=</span> <span class="dv">2</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, batch <span class="kw">in</span> <span class="bu">enumerate</span>(train_dataloader):</span>
@@ -684,6 +756,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (i <span class="op">+</span> <span class="dv">1</span>) <span class="op">%</span> accumulation_steps <span class="op">==</span> <span class="dv">0</span>:</span>
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>            optimizer.step()</span>
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="deepspeed-integration" class="level2">
@@ -710,7 +783,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="using-deepspeed" class="level3">
 <h3 class="anchored" data-anchor-id="using-deepspeed">Using DeepSpeed</h3>
-<div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
+<div id="46dace9e" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize with DeepSpeed</span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>accelerator <span class="op">=</span> Accelerator(deepspeed_plugin<span class="op">=</span><span class="st">"ds_config.json"</span>)</span>
@@ -727,6 +801,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Training code remains the same</span></span>
 <span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>model, optimizer <span class="op">=</span> accelerator.prepare(model, optimizer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="launch-with-deepspeed" class="level3">
 <h3 class="anchored" data-anchor-id="launch-with-deepspeed">Launch with DeepSpeed</h3>
@@ -739,7 +814,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="common-issues-and-solutions">Common Issues and Solutions</h3>
 <section id="memory-issues" class="level4">
 <h4 class="anchored" data-anchor-id="memory-issues">Memory Issues</h4>
-<div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clear cache regularly</span></span>
+<div id="f8fb08fb" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clear cache regularly</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> accelerator.is_main_process:</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    torch.cuda.empty_cache()</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -747,10 +823,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>model.gradient_checkpointing_enable()</span>
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Reduce batch size or increase gradient accumulation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="synchronization-issues" class="level4">
 <h4 class="anchored" data-anchor-id="synchronization-issues">Synchronization Issues</h4>
-<div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Wait for all processes</span></span>
+<div id="7b499b25" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Wait for all processes</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>accelerator.wait_for_everyone()</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Gather data from all processes</span></span>
@@ -758,10 +836,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Reduce across processes</span></span>
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>avg_loss <span class="op">=</span> accelerator.<span class="bu">reduce</span>(loss, reduction<span class="op">=</span><span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="debugging" class="level4">
 <h4 class="anchored" data-anchor-id="debugging">Debugging</h4>
-<div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable debug mode</span></span>
+<div id="3f1eed30" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable debug mode</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>accelerator <span class="op">=</span> Accelerator(debug<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if running in distributed mode</span></span>
@@ -770,10 +850,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Print only on main process</span></span>
 <span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>accelerator.<span class="bu">print</span>(<span class="st">"This will only print once"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="performance-tips" class="level3">
 <h3 class="anchored" data-anchor-id="performance-tips">Performance Tips</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Optimization Strategies
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ol type="1">
 <li><strong>Use appropriate batch sizes</strong>: Larger batch sizes generally improve GPU utilization</li>
 <li><strong>Enable mixed precision</strong>: Use fp16 or bf16 for faster training</li>
@@ -781,7 +872,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>DataLoader optimization</strong>: Use <code>num_workers</code> and <code>pin_memory=True</code></li>
 <li><strong>Compile models</strong>: Use <code>torch.compile()</code> for PyTorch 2.0+</li>
 </ol>
-<div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Optimized setup</span></span>
+</div>
+</div>
+<div id="e9e3b453" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Optimized setup</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>accelerator <span class="op">=</span> Accelerator(</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    mixed_precision<span class="op">=</span><span class="st">"bf16"</span>,</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    gradient_accumulation_steps<span class="op">=</span><span class="dv">4</span></span>
@@ -798,11 +892,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    pin_memory<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    shuffle<span class="op">=</span><span class="va">True</span></span>
 <span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="complete-example-bert-fine-tuning" class="level2">
 <h2 class="anchored" data-anchor-id="complete-example-bert-fine-tuning">Complete Example: BERT Fine-tuning</h2>
-<div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<p>Here’s a complete example showing how to fine-tune BERT for sequence classification:</p>
+<div id="c638064d" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoTokenizer, AutoModelForSequenceClassification, AdamW</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
@@ -869,7 +966,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb24-65"><a href="#cb24-65" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-66"><a href="#cb24-66" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
 <span id="cb24-67"><a href="#cb24-67" aria-hidden="true" tabindex="-1"></a>    main()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This guide covers the essential aspects of using Hugging Face Accelerate for distributed training. The library abstracts away much of the complexity while providing fine-grained control when needed.</p>
+</div>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>This guide covers the essential aspects of using Hugging Face Accelerate for distributed training. The library abstracts away much of the complexity while providing fine-grained control when needed. Key takeaways:</p>
+<ul>
+<li><strong>Simplicity</strong>: Minimal code changes required for distributed training</li>
+<li><strong>Flexibility</strong>: Works with any PyTorch model and training loop</li>
+<li><strong>Performance</strong>: Built-in support for mixed precision and gradient accumulation</li>
+<li><strong>Scalability</strong>: Easy scaling from single GPU to multi-node training</li>
+<li><strong>Integration</strong>: Seamless integration with popular frameworks like DeepSpeed</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Next Steps
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Explore the <a href="https://huggingface.co/docs/accelerate/">official Accelerate documentation</a></li>
+<li>Try the examples with your own models and datasets</li>
+<li>Experiment with different optimization strategies</li>
+<li>Consider advanced features like FSDP for very large models</li>
+</ul>
+</div>
+</div>
 
 
 </section>
