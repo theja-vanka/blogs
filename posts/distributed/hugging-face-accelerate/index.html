@@ -436,7 +436,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Run the configuration wizard to set up your training environment:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">accelerate</span> config</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Or create a config file programmatically:</p>
-<div id="b1f43fd2" class="cell" data-execution_count="1">
+<div id="1d5bd5a7" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate.utils <span class="im">import</span> write_basic_config</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -449,7 +449,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="sec-accelerator" class="level3">
 <h3 class="anchored" data-anchor-id="sec-accelerator">The Accelerator Object</h3>
 <p>The <code>Accelerator</code> is the main class that handles device placement, gradient synchronization, and other distributed training concerns.</p>
-<div id="87acdf16" class="cell" data-execution_count="2">
+<div id="58033a74" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize accelerator</span></span>
@@ -464,7 +464,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="sec-device-placement" class="level3">
 <h3 class="anchored" data-anchor-id="sec-device-placement">Device Placement</h3>
 <p>Accelerate automatically handles device placement:</p>
-<div id="724306b7" class="cell" data-execution_count="3">
+<div id="7d894315" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manual device placement (old way)</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model.to(device)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>batch <span class="op">=</span> {k: v.to(device) <span class="cf">for</span> k, v <span class="kw">in</span> batch.items()}</span>
@@ -492,7 +492,7 @@ Key Benefit
 <h2 class="anchored" data-anchor-id="simple-training-loop">Simple Training Loop</h2>
 <section id="sec-basic-example" class="level3">
 <h3 class="anchored" data-anchor-id="sec-basic-example">Basic Example</h3>
-<div id="766403fd" class="cell" data-execution_count="4">
+<div id="9c260666" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
@@ -554,7 +554,7 @@ Key Benefit
 <h2 class="anchored" data-anchor-id="advanced-features">Advanced Features</h2>
 <section id="logging-and-tracking" class="level3">
 <h3 class="anchored" data-anchor-id="logging-and-tracking">Logging and Tracking</h3>
-<div id="51a6460a" class="cell" data-execution_count="5">
+<div id="0fd94c03" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate.logging <span class="im">import</span> get_logger</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -576,7 +576,7 @@ Key Benefit
 </section>
 <section id="saving-and-loading-models" class="level3">
 <h3 class="anchored" data-anchor-id="saving-and-loading-models">Saving and Loading Models</h3>
-<div id="98e7a730" class="cell" data-execution_count="6">
+<div id="2c29e9a3" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save model</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>accelerator.save_model(model, <span class="st">"path/to/save"</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -595,7 +595,7 @@ Key Benefit
 </section>
 <section id="evaluation-loop" class="level3">
 <h3 class="anchored" data-anchor-id="evaluation-loop">Evaluation Loop</h3>
-<div id="f0a82c4c" class="cell" data-execution_count="7">
+<div id="800ef8b2" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_model(model, eval_dataloader, accelerator):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    model.<span class="bu">eval</span>()</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    total_loss <span class="op">=</span> <span class="dv">0</span></span>
@@ -641,7 +641,7 @@ for batch in train_dataloader:
     optimizer.step()
     optimizer.zero_grad()</code></pre>
 <pre><code>
-### Launch Commands {#sec-launch-commands}
+### Launch Commands
 
 ```{.bash}
 # Launch on 4 GPUs
