@@ -24,9 +24,13 @@ The traditional approach to neural network design relies heavily on human expert
 
 ## The Architecture Design Challenge
 
-Neural network architecture design involves making numerous interconnected decisions about layer types, connectivity patterns, activation functions, and structural components. The complexity of these decisions grows exponentially with network depth and the variety of available operations. Consider that even a simple decision tree for a 10-layer network with 5 possible layer types per position yields 5^10 possible architectures—nearly 10 million configurations.
+Neural network architecture design involves making numerous interconnected decisions about layer types, connectivity patterns, activation functions, and structural components. The complexity of these decisions grows exponentially with network depth and the variety of available operations. Consider that even a simple decision tree for a 10-layer network with 5 possible layer types per position yields $5^{10}$ possible architectures—nearly 10 million configurations.
 
-The manual design process typically follows established patterns and heuristics. Researchers begin with proven architectures like ResNet or VGG, then modify them based on domain knowledge and empirical results. This approach has limitations: it's time-consuming, potentially biased toward human preconceptions, and may miss novel architectural innovations that could significantly improve performance.
+::: {.callout-note}
+The manual design process typically follows established patterns and heuristics. Researchers begin with proven architectures like ResNet or VGG, then modify them based on domain knowledge and empirical results.
+:::
+
+This approach has limitations: it's time-consuming, potentially biased toward human preconceptions, and may miss novel architectural innovations that could significantly improve performance.
 
 ## Core Concepts and Definitions
 
@@ -42,9 +46,18 @@ The search space defines the set of all possible architectures that the NAS algo
 
 Evaluating architecture performance is computationally expensive, as it typically requires training each candidate architecture to convergence. NAS methods employ various strategies to reduce this computational burden:
 
-- **Proxy Tasks**: Training on simplified versions of the target task, such as using fewer epochs, smaller datasets, or reduced model sizes.
-- **Performance Prediction**: Using machine learning models to predict architecture performance based on structural features without full training.
-- **Weight Sharing**: Sharing weights among similar architectural components to reduce training time.
+::: {.panel-tabset}
+
+## Proxy Tasks
+Training on simplified versions of the target task, such as using fewer epochs, smaller datasets, or reduced model sizes.
+
+## Performance Prediction
+Using machine learning models to predict architecture performance based on structural features without full training.
+
+## Weight Sharing
+Sharing weights among similar architectural components to reduce training time.
+
+:::
 
 ### Search Strategy
 
@@ -59,16 +72,20 @@ The search strategy determines how the NAS algorithm navigates the search space 
 
 Neural Architecture Search emerged from the broader field of evolutionary computation and neural evolution. Early work in the 1990s explored evolving neural network topologies using genetic algorithms, but computational limitations prevented widespread adoption.
 
-The modern NAS era began with the 2017 paper "Neural Architecture Search with Reinforcement Learning" by Zoph and Le. This work demonstrated that reinforcement learning could automatically design architectures that matched or exceeded human-designed networks on image classification tasks. The success of this approach sparked intense research interest and rapid development in the field.
+::: {.callout-important}
+The modern NAS era began with the 2017 paper "Neural Architecture Search with Reinforcement Learning" by Zoph and Le. This work demonstrated that reinforcement learning could automatically design architectures that matched or exceeded human-designed networks on image classification tasks.
+:::
 
 Key milestones in NAS development include:
 
-- **2017**: Introduction of reinforcement learning-based NAS
-- **2018**: Development of Efficient Neural Architecture Search (ENAS) with weight sharing
-- **2019**: Introduction of differentiable architecture search (DARTS)
-- **2020**: Hardware-aware NAS and multi-objective optimization
-- **2021**: Zero-shot NAS and training-free performance estimation
-- **2022**: Transformer architecture search and large-scale NAS
+| Year | Milestone |
+|------|-----------|
+| 2017 | Introduction of reinforcement learning-based NAS |
+| 2018 | Development of Efficient Neural Architecture Search (ENAS) with weight sharing |
+| 2019 | Introduction of differentiable architecture search (DARTS) |
+| 2020 | Hardware-aware NAS and multi-objective optimization |
+| 2021 | Zero-shot NAS and training-free performance estimation |
+| 2022 | Transformer architecture search and large-scale NAS |
 
 ## Major NAS Methodologies
 
@@ -83,7 +100,9 @@ The original NAS formulation used the REINFORCE algorithm to train the controlle
 3. The validation accuracy provides a reward signal
 4. The controller parameters are updated using policy gradients
 
+::: {.callout-warning}
 This approach achieved remarkable results, discovering architectures that outperformed human-designed networks on ImageNet classification. However, the computational cost was enormous—the original paper required 22,400 GPU-days to find optimal architectures.
+:::
 
 ### Evolutionary Approaches
 
@@ -108,9 +127,9 @@ In DARTS, instead of selecting a single operation for each edge in the architect
 
 The DARTS formulation involves:
 
-1. **Architecture Parameters**: Weights that determine the importance of each operation
-2. **Network Weights**: Standard neural network parameters
-3. **Bilevel Optimization**: Alternating between optimizing network weights and architecture parameters
+- **Architecture Parameters**: Weights that determine the importance of each operation
+- **Network Weights**: Standard neural network parameters
+- **Bilevel Optimization**: Alternating between optimizing network weights and architecture parameters
 
 After training, the final architecture is obtained by selecting the operation with the highest weight for each edge. This approach reduces search time from thousands of GPU-days to a few GPU-days.
 
@@ -159,11 +178,12 @@ Macro search spaces consider the overall network structure, including decisions 
 - **Channel Dimensions**: Number of filters in each layer
 - **Skip Connections**: Long-range connections between layers
 
+::: {.callout-tip}
 Macro search is more challenging than cell-based search because:
-
 - The search space is typically much larger
 - Architectural decisions are more interdependent
 - Performance evaluation is more expensive
+:::
 
 ### Hierarchical Search Spaces
 
@@ -255,10 +275,12 @@ Common approaches include:
 
 Different hardware platforms have unique characteristics that affect architecture performance:
 
-- **Mobile Devices**: Limited memory and battery life prioritize efficiency
-- **Edge Devices**: Extreme resource constraints and real-time requirements
-- **Cloud GPUs**: High throughput and parallel processing capabilities
-- **Specialized Hardware**: TPUs, FPGAs, and custom accelerators
+| Platform | Characteristics | Priorities |
+|----------|----------------|------------|
+| Mobile Devices | Limited memory and battery life | Efficiency |
+| Edge Devices | Extreme resource constraints | Real-time performance |
+| Cloud GPUs | High throughput capabilities | Parallel processing |
+| Specialized Hardware | TPUs, FPGAs, custom accelerators | Optimized operations |
 
 ### Latency Prediction
 
@@ -422,10 +444,13 @@ As AI systems become more multi-modal, NAS must handle:
 
 ### Search Space Design
 
+::: {.callout-tip}
+## Best Practices
 - **Start Simple**: Begin with well-understood search spaces before exploring novel designs
 - **Validate Assumptions**: Ensure that the search space can express effective architectures
 - **Consider Constraints**: Incorporate deployment constraints into the search space design
 - **Enable Diversity**: Allow for architectural diversity to avoid local optima
+:::
 
 ### Performance Estimation
 
@@ -458,6 +483,9 @@ However, significant challenges remain. Computational costs, while reduced, are 
 
 The future of NAS looks promising, with emerging directions including zero-shot evaluation, federated learning integration, and multi-modal architecture search. As the field matures, we can expect to see more efficient methods, better theoretical understanding, and broader adoption in practical applications.
 
-For practitioners looking to apply NAS, the key is to start with established methods and well-designed search spaces, carefully validate performance estimation strategies, and consider the specific constraints and requirements of their deployment scenarios. As the field continues to evolve, NAS will likely become an increasingly important tool for developing efficient and effective neural network architectures across a wide range of applications.
+::: {.callout-note}
+## Key Takeaways
+For practitioners looking to apply NAS, the key is to start with established methods and well-designed search spaces, carefully validate performance estimation strategies, and consider the specific constraints and requirements of their deployment scenarios.
+:::
 
 The ultimate goal of NAS is not just to automate architecture design, but to discover fundamental principles of neural network structure that can inform future research and development. By understanding what makes architectures effective across different tasks and constraints, we can build more intelligent, efficient, and capable AI systems.

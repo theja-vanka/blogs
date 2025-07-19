@@ -75,6 +75,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles/styles.css">
 </head>
@@ -341,9 +370,9 @@ ul.task-list li input[type="checkbox"] {
   </ul></li>
   <li><a href="#performance-estimation-strategies" id="toc-performance-estimation-strategies" class="nav-link" data-scroll-target="#performance-estimation-strategies">Performance Estimation Strategies</a>
   <ul class="collapse">
-  <li><a href="#proxy-tasks" id="toc-proxy-tasks" class="nav-link" data-scroll-target="#proxy-tasks">Proxy Tasks</a></li>
-  <li><a href="#weight-sharing" id="toc-weight-sharing" class="nav-link" data-scroll-target="#weight-sharing">Weight Sharing</a></li>
-  <li><a href="#performance-prediction" id="toc-performance-prediction" class="nav-link" data-scroll-target="#performance-prediction">Performance Prediction</a></li>
+  <li><a href="#proxy-tasks-1" id="toc-proxy-tasks-1" class="nav-link" data-scroll-target="#proxy-tasks-1">Proxy Tasks</a></li>
+  <li><a href="#weight-sharing-1" id="toc-weight-sharing-1" class="nav-link" data-scroll-target="#weight-sharing-1">Weight Sharing</a></li>
+  <li><a href="#performance-prediction-1" id="toc-performance-prediction-1" class="nav-link" data-scroll-target="#performance-prediction-1">Performance Prediction</a></li>
   </ul></li>
   <li><a href="#hardware-aware-nas" id="toc-hardware-aware-nas" class="nav-link" data-scroll-target="#hardware-aware-nas">Hardware-Aware NAS</a>
   <ul class="collapse">
@@ -408,8 +437,21 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="the-architecture-design-challenge" class="level2">
 <h2 class="anchored" data-anchor-id="the-architecture-design-challenge">The Architecture Design Challenge</h2>
-<p>Neural network architecture design involves making numerous interconnected decisions about layer types, connectivity patterns, activation functions, and structural components. The complexity of these decisions grows exponentially with network depth and the variety of available operations. Consider that even a simple decision tree for a 10-layer network with 5 possible layer types per position yields 5^10 possible architectures—nearly 10 million configurations.</p>
-<p>The manual design process typically follows established patterns and heuristics. Researchers begin with proven architectures like ResNet or VGG, then modify them based on domain knowledge and empirical results. This approach has limitations: it’s time-consuming, potentially biased toward human preconceptions, and may miss novel architectural innovations that could significantly improve performance.</p>
+<p>Neural network architecture design involves making numerous interconnected decisions about layer types, connectivity patterns, activation functions, and structural components. The complexity of these decisions grows exponentially with network depth and the variety of available operations. Consider that even a simple decision tree for a 10-layer network with 5 possible layer types per position yields <span class="math inline">\(5^{10}\)</span> possible architectures—nearly 10 million configurations.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The manual design process typically follows established patterns and heuristics. Researchers begin with proven architectures like ResNet or VGG, then modify them based on domain knowledge and empirical results.</p>
+</div>
+</div>
+<p>This approach has limitations: it’s time-consuming, potentially biased toward human preconceptions, and may miss novel architectural innovations that could significantly improve performance.</p>
 </section>
 <section id="core-concepts-and-definitions" class="level2">
 <h2 class="anchored" data-anchor-id="core-concepts-and-definitions">Core Concepts and Definitions</h2>
@@ -425,11 +467,20 @@ ul.task-list li input[type="checkbox"] {
 <section id="performance-estimation" class="level3">
 <h3 class="anchored" data-anchor-id="performance-estimation">Performance Estimation</h3>
 <p>Evaluating architecture performance is computationally expensive, as it typically requires training each candidate architecture to convergence. NAS methods employ various strategies to reduce this computational burden:</p>
-<ul>
-<li><strong>Proxy Tasks</strong>: Training on simplified versions of the target task, such as using fewer epochs, smaller datasets, or reduced model sizes.</li>
-<li><strong>Performance Prediction</strong>: Using machine learning models to predict architecture performance based on structural features without full training.</li>
-<li><strong>Weight Sharing</strong>: Sharing weights among similar architectural components to reduce training time.</li>
-</ul>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Proxy Tasks</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Performance Prediction</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Weight Sharing</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>Training on simplified versions of the target task, such as using fewer epochs, smaller datasets, or reduced model sizes.</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>Using machine learning models to predict architecture performance based on structural features without full training.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>Sharing weights among similar architectural components to reduce training time.</p>
+</div>
+</div>
+</div>
 </section>
 <section id="search-strategy" class="level3">
 <h3 class="anchored" data-anchor-id="search-strategy">Search Strategy</h3>
@@ -445,16 +496,58 @@ ul.task-list li input[type="checkbox"] {
 <section id="historical-development" class="level2">
 <h2 class="anchored" data-anchor-id="historical-development">Historical Development</h2>
 <p>Neural Architecture Search emerged from the broader field of evolutionary computation and neural evolution. Early work in the 1990s explored evolving neural network topologies using genetic algorithms, but computational limitations prevented widespread adoption.</p>
-<p>The modern NAS era began with the 2017 paper “Neural Architecture Search with Reinforcement Learning” by Zoph and Le. This work demonstrated that reinforcement learning could automatically design architectures that matched or exceeded human-designed networks on image classification tasks. The success of this approach sparked intense research interest and rapid development in the field.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The modern NAS era began with the 2017 paper “Neural Architecture Search with Reinforcement Learning” by Zoph and Le. This work demonstrated that reinforcement learning could automatically design architectures that matched or exceeded human-designed networks on image classification tasks.</p>
+</div>
+</div>
 <p>Key milestones in NAS development include:</p>
-<ul>
-<li><strong>2017</strong>: Introduction of reinforcement learning-based NAS</li>
-<li><strong>2018</strong>: Development of Efficient Neural Architecture Search (ENAS) with weight sharing</li>
-<li><strong>2019</strong>: Introduction of differentiable architecture search (DARTS)</li>
-<li><strong>2020</strong>: Hardware-aware NAS and multi-objective optimization</li>
-<li><strong>2021</strong>: Zero-shot NAS and training-free performance estimation</li>
-<li><strong>2022</strong>: Transformer architecture search and large-scale NAS</li>
-</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 35%">
+<col style="width: 64%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Year</th>
+<th>Milestone</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2017</td>
+<td>Introduction of reinforcement learning-based NAS</td>
+</tr>
+<tr class="even">
+<td>2018</td>
+<td>Development of Efficient Neural Architecture Search (ENAS) with weight sharing</td>
+</tr>
+<tr class="odd">
+<td>2019</td>
+<td>Introduction of differentiable architecture search (DARTS)</td>
+</tr>
+<tr class="even">
+<td>2020</td>
+<td>Hardware-aware NAS and multi-objective optimization</td>
+</tr>
+<tr class="odd">
+<td>2021</td>
+<td>Zero-shot NAS and training-free performance estimation</td>
+</tr>
+<tr class="even">
+<td>2022</td>
+<td>Transformer architecture search and large-scale NAS</td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="major-nas-methodologies" class="level2">
 <h2 class="anchored" data-anchor-id="major-nas-methodologies">Major NAS Methodologies</h2>
@@ -468,7 +561,19 @@ ul.task-list li input[type="checkbox"] {
 <li>The validation accuracy provides a reward signal</li>
 <li>The controller parameters are updated using policy gradients</li>
 </ol>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>This approach achieved remarkable results, discovering architectures that outperformed human-designed networks on ImageNet classification. However, the computational cost was enormous—the original paper required 22,400 GPU-days to find optimal architectures.</p>
+</div>
+</div>
 </section>
 <section id="evolutionary-approaches" class="level3">
 <h3 class="anchored" data-anchor-id="evolutionary-approaches">Evolutionary Approaches</h3>
@@ -489,11 +594,11 @@ ul.task-list li input[type="checkbox"] {
 <p>DARTS revolutionized NAS by making the search process differentiable, enabling gradient-based optimization. The key insight is to relax the discrete architecture search into a continuous optimization problem.</p>
 <p>In DARTS, instead of selecting a single operation for each edge in the architecture graph, all possible operations are initially included with learnable weights. The architecture is represented as a weighted combination of all operations, with the weights learned through gradient descent.</p>
 <p>The DARTS formulation involves:</p>
-<ol type="1">
+<ul>
 <li><strong>Architecture Parameters</strong>: Weights that determine the importance of each operation</li>
 <li><strong>Network Weights</strong>: Standard neural network parameters</li>
 <li><strong>Bilevel Optimization</strong>: Alternating between optimizing network weights and architecture parameters</li>
-</ol>
+</ul>
 <p>After training, the final architecture is obtained by selecting the operation with the highest weight for each edge. This approach reduces search time from thousands of GPU-days to a few GPU-days.</p>
 </section>
 <section id="one-shot-architecture-search" class="level3">
@@ -541,12 +646,19 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>Channel Dimensions</strong>: Number of filters in each layer</li>
 <li><strong>Skip Connections</strong>: Long-range connections between layers</li>
 </ul>
-<p>Macro search is more challenging than cell-based search because:</p>
-<ul>
-<li>The search space is typically much larger</li>
-<li>Architectural decisions are more interdependent</li>
-<li>Performance evaluation is more expensive</li>
-</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Macro search is more challenging than cell-based search because: - The search space is typically much larger - Architectural decisions are more interdependent - Performance evaluation is more expensive</p>
+</div>
+</div>
 </section>
 <section id="hierarchical-search-spaces" class="level3">
 <h3 class="anchored" data-anchor-id="hierarchical-search-spaces">Hierarchical Search Spaces</h3>
@@ -566,8 +678,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="performance-estimation-strategies" class="level2">
 <h2 class="anchored" data-anchor-id="performance-estimation-strategies">Performance Estimation Strategies</h2>
-<section id="proxy-tasks" class="level3">
-<h3 class="anchored" data-anchor-id="proxy-tasks">Proxy Tasks</h3>
+<section id="proxy-tasks-1" class="level3">
+<h3 class="anchored" data-anchor-id="proxy-tasks-1">Proxy Tasks</h3>
 <p>Proxy tasks reduce evaluation cost by training on simplified versions of the target problem:</p>
 <ul>
 <li><strong>Reduced Epochs</strong>: Training for fewer iterations to get approximate performance</li>
@@ -582,8 +694,8 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>Task Similarity</strong>: How closely the proxy resembles the target task</li>
 </ul>
 </section>
-<section id="weight-sharing" class="level3">
-<h3 class="anchored" data-anchor-id="weight-sharing">Weight Sharing</h3>
+<section id="weight-sharing-1" class="level3">
+<h3 class="anchored" data-anchor-id="weight-sharing-1">Weight Sharing</h3>
 <p>Weight sharing reduces training time by reusing parameters across similar architectural components:</p>
 <ul>
 <li><strong>Parameter Inheritance</strong>: New architectures inherit weights from previously trained models</li>
@@ -597,8 +709,8 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>Optimization</strong>: Balancing individual architecture performance with shared efficiency</li>
 </ul>
 </section>
-<section id="performance-prediction" class="level3">
-<h3 class="anchored" data-anchor-id="performance-prediction">Performance Prediction</h3>
+<section id="performance-prediction-1" class="level3">
+<h3 class="anchored" data-anchor-id="performance-prediction-1">Performance Prediction</h3>
 <p>Machine learning models can predict architecture performance without full training:</p>
 <ul>
 <li><strong>Feature Engineering</strong>: Extracting architectural features (depth, width, connectivity)</li>
@@ -644,12 +756,42 @@ ul.task-list li input[type="checkbox"] {
 <section id="platform-specific-considerations" class="level3">
 <h3 class="anchored" data-anchor-id="platform-specific-considerations">Platform-Specific Considerations</h3>
 <p>Different hardware platforms have unique characteristics that affect architecture performance:</p>
-<ul>
-<li><strong>Mobile Devices</strong>: Limited memory and battery life prioritize efficiency</li>
-<li><strong>Edge Devices</strong>: Extreme resource constraints and real-time requirements</li>
-<li><strong>Cloud GPUs</strong>: High throughput and parallel processing capabilities</li>
-<li><strong>Specialized Hardware</strong>: TPUs, FPGAs, and custom accelerators</li>
-</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 42%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Platform</th>
+<th>Characteristics</th>
+<th>Priorities</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mobile Devices</td>
+<td>Limited memory and battery life</td>
+<td>Efficiency</td>
+</tr>
+<tr class="even">
+<td>Edge Devices</td>
+<td>Extreme resource constraints</td>
+<td>Real-time performance</td>
+</tr>
+<tr class="odd">
+<td>Cloud GPUs</td>
+<td>High throughput capabilities</td>
+<td>Parallel processing</td>
+</tr>
+<tr class="even">
+<td>Specialized Hardware</td>
+<td>TPUs, FPGAs, custom accelerators</td>
+<td>Optimized operations</td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="latency-prediction" class="level3">
 <h3 class="anchored" data-anchor-id="latency-prediction">Latency Prediction</h3>
@@ -830,12 +972,24 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="best-practices-and-recommendations">Best Practices and Recommendations</h2>
 <section id="search-space-design-1" class="level3">
 <h3 class="anchored" data-anchor-id="search-space-design-1">Search Space Design</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Best Practices
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
 <li><strong>Start Simple</strong>: Begin with well-understood search spaces before exploring novel designs</li>
 <li><strong>Validate Assumptions</strong>: Ensure that the search space can express effective architectures</li>
 <li><strong>Consider Constraints</strong>: Incorporate deployment constraints into the search space design</li>
 <li><strong>Enable Diversity</strong>: Allow for architectural diversity to avoid local optima</li>
 </ul>
+</div>
+</div>
 </section>
 <section id="performance-estimation-1" class="level3">
 <h3 class="anchored" data-anchor-id="performance-estimation-1">Performance Estimation</h3>
@@ -871,7 +1025,19 @@ ul.task-list li input[type="checkbox"] {
 <p>Key achievements include the development of efficient search methods like DARTS, the integration of hardware constraints into the search process, and the successful application of NAS to diverse domains beyond computer vision. These advances have democratized access to high-quality architectures and enabled the discovery of designs that outperform human-crafted networks.</p>
 <p>However, significant challenges remain. Computational costs, while reduced, are still substantial. Search space design continues to introduce biases that may limit architectural diversity. Reproducibility issues persist due to the computational requirements and implementation complexity. Generalization across tasks and datasets remains an active area of research.</p>
 <p>The future of NAS looks promising, with emerging directions including zero-shot evaluation, federated learning integration, and multi-modal architecture search. As the field matures, we can expect to see more efficient methods, better theoretical understanding, and broader adoption in practical applications.</p>
-<p>For practitioners looking to apply NAS, the key is to start with established methods and well-designed search spaces, carefully validate performance estimation strategies, and consider the specific constraints and requirements of their deployment scenarios. As the field continues to evolve, NAS will likely become an increasingly important tool for developing efficient and effective neural network architectures across a wide range of applications.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Takeaways
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For practitioners looking to apply NAS, the key is to start with established methods and well-designed search spaces, carefully validate performance estimation strategies, and consider the specific constraints and requirements of their deployment scenarios.</p>
+</div>
+</div>
 <p>The ultimate goal of NAS is not just to automate architecture design, but to discover fundamental principles of neural network structure that can inform future research and development. By understanding what makes architectures effective across different tasks and constraints, we can build more intelligent, efficient, and capable AI systems.</p>
 
 
