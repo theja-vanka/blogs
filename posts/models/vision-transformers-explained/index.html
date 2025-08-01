@@ -492,6 +492,8 @@ Key Insight
 <li><strong>Classification Token</strong>: A special learnable [CLS] token is prepended to the sequence, similar to BERT’s approach</li>
 </ol>
 <div class="cell" data-layout-align="default">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    A[Input Image 224×224] --&gt; B[Divide into 16×16 patches]</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    B --&gt; C[196 patches]</span>
@@ -500,6 +502,7 @@ Key Insight
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    E --&gt; F[Add positional encoding]</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    F --&gt; G[Prepend CLS token]</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    G --&gt; H[Sequence ready for transformer]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <p></p><figure class="figure"><p></p>
@@ -563,6 +566,8 @@ Patch Size Trade-off
 <li><strong>Residual Connections</strong>: Skip connections around both attention and MLP blocks</li>
 </ul>
 <div class="cell" data-layout-align="default">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>graph TD</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    A[Input Patches] --&gt; B[Patch Embedding]</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    B --&gt; C[Add Position Encoding]</span>
@@ -574,6 +579,7 @@ Patch Size Trade-off
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    H --&gt; I[Extract CLS Token]</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    I --&gt; J[Classification Head]</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    J --&gt; K[Output Predictions]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <p></p><figure class="figure"><p></p>
@@ -805,6 +811,8 @@ Table&nbsp;1: ViT Model Variants
 <section id="computer-vision-tasks" class="level3">
 <h3 class="anchored" data-anchor-id="computer-vision-tasks">Computer Vision Tasks</h3>
 <div class="cell" data-layout-align="default">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mindmap</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  root((ViT Applications))</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    Object Detection</span>
@@ -819,6 +827,7 @@ Table&nbsp;1: ViT Model Variants
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    Video Analysis</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      TimeSformer</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      Video ViT</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <p></p><figure class="figure"><p></p>
