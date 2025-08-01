@@ -538,6 +538,8 @@ Dataset Scale
 <h3 class="anchored" data-anchor-id="the-sampling-pipeline">The Sampling Pipeline</h3>
 <p>Image generation in Stable Diffusion follows a carefully orchestrated sampling pipeline that transforms random noise into coherent images:</p>
 <div class="cell" data-layout-align="default">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    A[Random Noise] --&gt; B[Text Encoding]</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    B --&gt; C[Iterative Denoising]</span>
@@ -547,6 +549,7 @@ Dataset Scale
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    B --&gt; F[CLIP Text Encoder]</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    C --&gt; G[U-Net Denoising]</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    D --&gt; H[VAE Decoder]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <p></p><figure class="figure"><p></p>
