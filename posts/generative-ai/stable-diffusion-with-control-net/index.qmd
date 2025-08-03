@@ -1,0 +1,902 @@
+---
+title: "Complete Guide to Stable Diffusion with ControlNet"
+author: "Krishnatheja Vanka"
+date: "2025-07-22"
+categories: [code, research, intermediate]
+format:
+  html:
+    code-fold: false
+    math: mathjax
+execute:
+  echo: true
+  timing: true
+jupyter: python3
+---
+
+# Complete Guide to Stable Diffusion with ControlNet
+![](sd-cn.png)
+
+## Introduction
+
+ControlNet is a neural network architecture that allows you to control Stable Diffusion image generation with additional input conditions like edge maps, depth maps, poses, and more. It provides precise control over the composition, structure, and layout of generated images while maintaining the creative power of diffusion models.
+
+### Key Benefits
+
+- **Precise Control**: Direct influence over image structure and composition
+- **Consistency**: Maintain specific poses, edges, or layouts across generations
+- **Flexibility**: Multiple conditioning types for different use cases
+- **Quality**: Enhanced output quality with structured guidance
+
+## Installation & Setup
+
+### Environment Setup
+
+```{.bash}
+# Create conda environment
+conda create -n controlnet python=3.10
+conda activate controlnet
+
+# Install PyTorch with CUDA support
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+# Install core dependencies
+pip install diffusers transformers accelerate
+pip install controlnet-aux
+pip install opencv-python
+pip install xformers  # Optional but recommended for performance
+```
+
+### Required Libraries
+
+```{python}
+#| label: imports
+#| code-summary: "Import required libraries"
+#| eval: false
+
+import torch
+import numpy as np
+import cv2
+from PIL import Image
+from diffusers import (
+    StableDiffusionControlNetPipeline,
+    ControlNetModel,
+    UniPCMultistepScheduler
+)
+from controlnet_aux import (
+    CannyDetector,
+    OpenposeDetector,
+    MidasDetector,
+    HEDdetector,
+    MLSDdetector,
+    LineartDetector,
+    LineartAnimeDetector
+)
+from transformers import pipeline
+```
+
+### Basic Setup Function
+
+```{python}
+#| label: setup-pipeline
+#| code-summary: "Setup ControlNet pipeline"
+#| eval: false
+
+def setup_controlnet_pipeline(controlnet_type="canny", model_id="runwayml/stable-diffusion-v1-5"):
+    """
+    Setup ControlNet pipeline with specified type and model
+    
+    Args:
+        controlnet_type: Type of ControlNet ('canny', 'openpose', 'depth', etc.)
+        model_id: Base Stable Diffusion model to use
+    
+    Returns:
+        Configured pipeline
+    """
+    # ControlNet model mapping
+    controlnet_models = {
+        "canny": "lllyasviel/sd-controlnet-canny",
+        "openpose": "lllyasviel/sd-controlnet-openpose",
+        "depth": "lllyasviel/sd-controlnet-depth",
+        "hed": "lllyasviel/sd-controlnet-hed",
+        "mlsd": "lllyasviel/sd-controlnet-mlsd",
+        "normal": "lllyasviel/sd-controlnet-normal-map",
+        "scribble": "lllyasviel/sd-controlnet-scribble",
+        "seg": "lllyasviel/sd-controlnet-seg"
+    }
+    
+    # Load ControlNet
+    controlnet = ControlNetModel.from_pretrained(
+        controlnet_models[controlnet_type],
+        torch_dtype=torch.float16
+    )
+    
+    # Create pipeline
+    pipe = StableDiffusionControlNetPipeline.from_pretrained(
+        model_id,
+        controlnet=controlnet,
+        torch_dtype=torch.float16,
+        safety_checker=None,
+        requires_safety_checker=False
+    )
+    
+    # Optimize for GPU
+    pipe = pipe.to("cuda")
+    pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
+    
+    # Enable memory efficient attention
+    pipe.enable_model_cpu_offload()
+    pipe.enable_xformers_memory_efficient_attention()
+    
+    return pipe
+```
+
+## Understanding ControlNet
+
+### Core Concept
+
+ControlNet works by adding additional neural network layers to Stable Diffusion that process conditioning inputs (like edge maps or poses) and inject this information into the generation process. The original model weights remain frozen while the ControlNet layers learn to translate conditioning inputs into meaningful guidance.
+
+::: {.callout-note}
+## Architecture Overview
+
+ControlNet maintains the original Stable Diffusion weights while adding trainable layers that process conditioning inputs and inject control signals at multiple resolution levels in the UNet architecture.
+:::
+
+### Architecture Overview
+
+```{python}
+#| label: architecture-concept
+#| code-summary: "Conceptual ControlNet architecture"
+#| eval: false
+
+class ControlNetArchitecture:
+    """
+    Conceptual overview of ControlNet architecture
+    """
+    def __init__(self):
+        self.encoder_layers = []  # Process conditioning input
+        self.zero_convolutions = []  # Ensure training stability
+        self.connection_layers = []  # Connect to UNet blocks
+    
+    def forward(self, x_noisy, timestep, conditioning_input):
+        # Process conditioning input through encoder
+        control_features = self.process_conditioning(conditioning_input)
+        
+        # Apply zero convolutions for stable training
+        control_features = self.apply_zero_convs(control_features)
+        
+        # Inject into UNet at multiple resolution levels
+        return self.inject_control(x_noisy, timestep, control_features)
+```
+
+## Basic Implementation
+
+### Canny Edge Control 
+
+Canny edge detection provides structural control based on edges in the input image.
+
+```{python}
+#| label: canny-generation
+#| code-summary: "Generate images with Canny edge control"
+#| eval: false
+
+def generate_with_canny(pipe, image_path, prompt, negative_prompt="", num_inference_steps=20):
+    """
+    Generate image using Canny edge control
+    """
+    # Load and preprocess image
+    original_image = Image.open(image_path)
+    original_image = original_image.resize((512, 512))
+    
+    # Create Canny detector
+    canny_detector = CannyDetector()
+    
+    # Generate Canny edge map
+    canny_image = canny_detector(original_image)
+    
+    # Generate image
+    result = pipe(
+        prompt=prompt,
+        image=canny_image,
+        negative_prompt=negative_prompt,
+        num_inference_steps=num_inference_steps,
+        guidance_scale=7.5,
+        controlnet_conditioning_scale=1.0
+    )
+    
+    return result.images[0], canny_image
+
+# Example usage
+pipe = setup_controlnet_pipeline("canny")
+prompt = "a beautiful landscape painting, oil painting style, vibrant colors"
+generated_image, control_image = generate_with_canny(pipe, "input.jpg", prompt)
+```
+
+### OpenPose Human Pose Control
+
+OpenPose allows control over human poses and body positions.
+
+```{python}
+#| label: openpose-generation
+#| code-summary: "Generate images with OpenPose control"
+#| eval: false
+
+def generate_with_openpose(pipe, image_path, prompt, negative_prompt=""):
+    """
+    Generate image using OpenPose control
+    """
+    # Load image
+    original_image = Image.open(image_path)
+    original_image = original_image.resize((512, 512))
+    
+    # Create OpenPose detector
+    openpose_detector = OpenposeDetector.from_pretrained('lllyasviel/Annotators')
+    
+    # Generate pose keypoints
+    pose_image = openpose_detector(original_image)
+    
+    # Generate image with pose control
+    result = pipe(
+        prompt=prompt,
+        image=pose_image,
+        negative_prompt=negative_prompt,
+        num_inference_steps=20,
+        guidance_scale=7.5,
+        controlnet_conditioning_scale=1.0
+    )
+    
+    return result.images[0], pose_image
+
+# Example usage
+pipe = setup_controlnet_pipeline("openpose")
+prompt = "a robot dancing, futuristic style, neon lighting"
+generated_image, pose_image = generate_with_openpose(pipe, "person_dancing.jpg", prompt)
+```
+
+### Depth Map Control
+
+Depth maps provide 3D structure control for more realistic spatial relationships.
+
+```{python}
+#| label: depth-generation
+#| code-summary: "Generate images with depth map control"
+#| eval: false
+
+def generate_with_depth(pipe, image_path, prompt, negative_prompt=""):
+    """
+    Generate image using depth map control
+    """
+    # Load image
+    original_image = Image.open(image_path)
+    original_image = original_image.resize((512, 512))
+    
+    # Create depth estimator
+    depth_estimator = pipeline('depth-estimation')
+    
+    # Generate depth map
+    depth = depth_estimator(original_image)['depth']
+    depth_image = Image.fromarray(np.array(depth)).convert('RGB')
+    
+    # Generate image with depth control
+    result = pipe(
+        prompt=prompt,
+        image=depth_image,
+        negative_prompt=negative_prompt,
+        num_inference_steps=20,
+        guidance_scale=7.5,
+        controlnet_conditioning_scale=1.0
+    )
+    
+    return result.images[0], depth_image
+```
+
+## Advanced ControlNet Types
+
+### Line Art Control
+
+Perfect for anime-style generation and clean line art conversion.
+
+```{python}
+#| label: lineart-setup
+#| code-summary: "Setup line art control pipeline"
+#| eval: false
+
+def setup_lineart_pipeline():
+    """
+    Setup pipeline for line art control
+    """
+    controlnet = ControlNetModel.from_pretrained(
+        "lllyasviel/sd-controlnet-lineart",
+        torch_dtype=torch.float16
+    )
+    
+    pipe = StableDiffusionControlNetPipeline.from_pretrained(
+        "runwayml/stable-diffusion-v1-5",
+        controlnet=controlnet,
+        torch_dtype=torch.float16
+    ).to("cuda")
+    
+    return pipe
+
+def generate_with_lineart(pipe, image_path, prompt, anime_style=False):
+    """
+    Generate using line art control
+    """
+    original_image = Image.open(image_path).resize((512, 512))
+    
+    # Choose detector based on style
+    if anime_style:
+        detector = LineartAnimeDetector.from_pretrained('lllyasviel/Annotators')
+    else:
+        detector = LineartDetector.from_pretrained('lllyasviel/Annotators')
+    
+    lineart_image = detector(original_image)
+    
+    result = pipe(
+        prompt=prompt,
+        image=lineart_image,
+        num_inference_steps=20,
+        guidance_scale=7.5,
+        controlnet_conditioning_scale=1.0
+    )
+    
+    return result.images[0], lineart_image
+```
+
+### Scribble Control
+
+Allows rough sketches to guide generation.
+
+```{python}
+#| label: scribble-control
+#| code-summary: "Scribble-based image generation"
+#| eval: false
+
+def create_scribble_from_sketch(sketch_path):
+    """
+    Process a rough sketch for scribble control
+    """
+    sketch = cv2.imread(sketch_path, 0)
+    
+    # Apply threshold to create clean binary image
+    _, binary = cv2.threshold(sketch, 127, 255, cv2.THRESH_BINARY)
+    
+    # Convert to 3-channel RGB
+    scribble = cv2.cvtColor(binary, cv2.COLOR_GRAY2RGB)
+    
+    return Image.fromarray(scribble)
+
+def generate_with_scribble(pipe, scribble_image, prompt):
+    """
+    Generate from scribble input
+    """
+    result = pipe(
+        prompt=prompt,
+        image=scribble_image,
+        num_inference_steps=20,
+        guidance_scale=7.5,
+        controlnet_conditioning_scale=1.0
+    )
+    
+    return result.images[0]
+```
+
+### Normal Map Control
+
+Provides detailed surface normal information for realistic lighting.
+
+```{python}
+#| label: normal-map
+#| code-summary: "Generate and use normal maps for control"
+#| eval: false
+
+def generate_normal_map(image_path):
+    """
+    Generate normal map from image
+    """
+    # Load depth estimator
+    depth_estimator = MidasDetector.from_pretrained('lllyasviel/Annotators')
+    
+    image = Image.open(image_path).resize((512, 512))
+    
+    # Generate depth map
+    depth_map = depth_estimator(image)
+    
+    # Convert depth to normal map (simplified)
+    depth_array = np.array(depth_map)
+    
+    # Calculate gradients
+    grad_x = cv2.Sobel(depth_array, cv2.CV_64F, 1, 0, ksize=3)
+    grad_y = cv2.Sobel(depth_array, cv2.CV_64F, 0, 1, ksize=3)
+    
+    # Create normal vectors
+    normal_x = -grad_x / 255.0
+    normal_y = -grad_y / 255.0
+    normal_z = np.ones_like(normal_x)
+    
+    # Normalize
+    length = np.sqrt(normal_x**2 + normal_y**2 + normal_z**2)
+    normal_x /= length
+    normal_y /= length
+    normal_z /= length
+    
+    # Convert to 0-255 range
+    normal_map = np.stack([
+        ((normal_x + 1) * 127.5).astype(np.uint8),
+        ((normal_y + 1) * 127.5).astype(np.uint8),
+        ((normal_z + 1) * 127.5).astype(np.uint8)
+    ], axis=-1)
+    
+    return Image.fromarray(normal_map)
+```
+
+## Combining Multiple ControlNets
+
+::: {.callout-tip}
+## Multi-ControlNet Benefits
+
+Combining multiple ControlNets allows for more sophisticated control by leveraging different types of conditioning simultaneously, such as pose + depth or edges + normal maps.
+:::
+
+### Multi-ControlNet Setup
+
+```{python}
+#| label: multi-controlnet-setup
+#| code-summary: "Setup pipeline with multiple ControlNets"
+#| eval: false
+
+def setup_multi_controlnet_pipeline(controlnet_types):
+    """
+    Setup pipeline with multiple ControlNets
+    """
+    from diffusers import MultiControlNetModel
+    
+    controlnet_models = {
+        "canny": "lllyasviel/sd-controlnet-canny",
+        "openpose": "lllyasviel/sd-controlnet-openpose",
+        "depth": "lllyasviel/sd-controlnet-depth"
+    }
+    
+    # Load multiple ControlNets
+    controlnets = [
+        ControlNetModel.from_pretrained(controlnet_models[ctype], torch_dtype=torch.float16)
+        for ctype in controlnet_types
+    ]
+    
+    # Create multi-ControlNet
+    multi_controlnet = MultiControlNetModel(controlnets)
+    
+    # Create pipeline
+    pipe = StableDiffusionControlNetPipeline.from_pretrained(
+        "runwayml/stable-diffusion-v1-5",
+        controlnet=multi_controlnet,
+        torch_dtype=torch.float16
+    ).to("cuda")
+    
+    return pipe
+
+def generate_with_multiple_controls(pipe, image_path, prompt):
+    """
+    Generate using multiple control inputs
+    """
+    original_image = Image.open(image_path).resize((512, 512))
+    
+    # Generate different control images
+    canny_detector = CannyDetector()
+    openpose_detector = OpenposeDetector.from_pretrained('lllyasviel/Annotators')
+    
+    canny_image = canny_detector(original_image)
+    pose_image = openpose_detector(original_image)
+    
+    # Generate with multiple controls
+    result = pipe(
+        prompt=prompt,
+        image=[canny_image, pose_image],
+        num_inference_steps=20,
+        guidance_scale=7.5,
+        controlnet_conditioning_scale=[1.0, 0.8]  # Different weights for each control
+    )
+    
+    return result.images[0]
+
+# Example usage
+pipe = setup_multi_controlnet_pipeline(["canny", "openpose"])
+result = generate_with_multiple_controls(pipe, "input.jpg", "a cyberpunk warrior")
+```
+
+## Fine-tuning Parameters
+
+### Control Strength and Guidance
+
+```{python}
+#| label: advanced-control
+#| code-summary: "Advanced parameter control for fine-tuning"
+#| eval: false
+
+def advanced_generation_control(pipe, control_image, prompt, **kwargs):
+    """
+    Advanced parameter control for fine-tuning generation
+    """
+    # Default parameters
+    params = {
+        'prompt': prompt,
+        'image': control_image,
+        'num_inference_steps': 20,
+        'guidance_scale': 7.5,
+        'controlnet_conditioning_scale': 1.0,
+        'control_guidance_start': 0.0,
+        'control_guidance_end': 1.0,
+        'eta': 0.0,
+        'generator': torch.manual_seed(42)
+    }
+    
+    # Update with custom parameters
+    params.update(kwargs)
+    
+    # Generate image
+    result = pipe(**params)
+    
+    return result.images[0]
+
+# Examples of parameter variations
+variations = [
+    # Strong control throughout
+    {'controlnet_conditioning_scale': 1.5},
+    
+    # Weak control for more creativity
+    {'controlnet_conditioning_scale': 0.5},
+    
+    # Control only in early steps
+    {'control_guidance_end': 0.5},
+    
+    # Control only in later steps
+    {'control_guidance_start': 0.5},
+    
+    # Higher guidance for more prompt adherence
+    {'guidance_scale': 12.0},
+    
+    # More inference steps for quality
+    {'num_inference_steps': 50}
+]
+```
+
+### Adaptive Control Strength
+
+```{python}
+#| label: adaptive-control
+#| code-summary: "Automatically adjust control strength based on complexity"
+#| eval: false
+
+def adaptive_control_strength(pipe, control_image, prompt, complexity_factor=1.0):
+    """
+    Automatically adjust control strength based on image complexity
+    """
+    # Analyze control image complexity
+    control_array = np.array(control_image.convert('L'))
+    
+    # Calculate edge density as complexity measure
+    edges = cv2.Canny(control_array, 50, 150)
+    edge_density = np.sum(edges > 0) / edges.size
+    
+    # Adjust control strength based on complexity
+    base_strength = 1.0
+    if edge_density > 0.1:  # High detail
+        control_strength = base_strength * 0.8 * complexity_factor
+    elif edge_density < 0.05:  # Low detail
+        control_strength = base_strength * 1.2 * complexity_factor
+    else:  # Medium detail
+        control_strength = base_strength * complexity_factor
+    
+    result = pipe(
+        prompt=prompt,
+        image=control_image,
+        controlnet_conditioning_scale=control_strength,
+        num_inference_steps=20,
+        guidance_scale=7.5
+    )
+    
+    return result.images[0], control_strength
+```
+
+## Production Optimization
+
+### Memory Management
+
+```{python}
+#| label: optimized-generator
+#| code-summary: "Production-ready ControlNet generator with optimization"
+#| eval: false
+
+class OptimizedControlNetGenerator:
+    """
+    Production-ready ControlNet generator with optimization
+    """
+    
+    def __init__(self, controlnet_type="canny", enable_cpu_offload=True):
+        self.pipe = setup_controlnet_pipeline(controlnet_type)
+        
+        if enable_cpu_offload:
+            self.pipe.enable_model_cpu_offload()
+        
+        # Enable memory efficient attention
+        self.pipe.enable_xformers_memory_efficient_attention()
+        
+        # Compile model for faster inference (PyTorch 2.0+)
+        try:
+            self.pipe.unet = torch.compile(self.pipe.unet, mode="reduce-overhead", fullgraph=True)
+        except:
+            print("Torch compile not available, skipping optimization")
+    
+    def generate_batch(self, control_images, prompts, batch_size=4):
+        """
+        Generate multiple images in batches for efficiency
+        """
+        results = []
+        
+        for i in range(0, len(prompts), batch_size):
+            batch_prompts = prompts[i:i+batch_size]
+            batch_images = control_images[i:i+batch_size]
+            
+            # Clear cache before batch
+            torch.cuda.empty_cache()
+            
+            batch_results = self.pipe(
+                prompt=batch_prompts,
+                image=batch_images,
+                num_inference_steps=20,
+                guidance_scale=7.5
+            )
+            
+            results.extend(batch_results.images)
+        
+        return results
+    
+    def generate_with_callback(self, control_image, prompt, callback=None):
+        """
+        Generate with progress callback
+        """
+        def progress_callback(step, timestep, latents):
+            if callback:
+                callback(step, timestep)
+        
+        result = self.pipe(
+            prompt=prompt,
+            image=control_image,
+            callback=progress_callback,
+            callback_steps=1
+        )
+        
+        return result.images[0]
+```
+
+### Caching and Preprocessing
+
+```{python}
+#| label: caching-system
+#| code-summary: "Cache system for preprocessed control images"
+#| eval: false
+
+import os
+import hashlib
+
+class ControlNetCache:
+    """
+    Cache system for preprocessed control images
+    """
+    
+    def __init__(self, cache_dir="./controlnet_cache"):
+        self.cache_dir = cache_dir
+        os.makedirs(cache_dir, exist_ok=True)
+        self.detectors = {}
+    
+    def get_detector(self, detector_type):
+        """
+        Lazy load and cache detectors
+        """
+        if detector_type not in self.detectors:
+            detector_map = {
+                'canny': CannyDetector(),
+                'openpose': OpenposeDetector.from_pretrained('lllyasviel/Annotators'),
+                'hed': HEDdetector.from_pretrained('lllyasviel/Annotators'),
+                'mlsd': MLSDdetector.from_pretrained('lllyasviel/Annotators')
+            }
+            self.detectors[detector_type] = detector_map[detector_type]
+        
+        return self.detectors[detector_type]
+    
+    def get_control_image(self, image_path, control_type, force_refresh=False):
+        """
+        Get control image with caching
+        """
+        # Create cache key
+        image_hash = hashlib.md5(open(image_path, 'rb').read()).hexdigest()
+        cache_path = os.path.join(self.cache_dir, f"{image_hash}_{control_type}.png")
+        
+        # Check cache
+        if os.path.exists(cache_path) and not force_refresh:
+            return Image.open(cache_path)
+        
+        # Generate control image
+        original_image = Image.open(image_path).resize((512, 512))
+        detector = self.get_detector(control_type)
+        control_image = detector(original_image)
+        
+        # Save to cache
+        control_image.save(cache_path)
+        
+        return control_image
+```
+
+## Troubleshooting
+
+::: {.callout-warning}
+## Common Issues
+
+- **GPU Memory**: ControlNet models require significant GPU memory (8GB+ recommended)
+- **Image Format**: Ensure control images are in RGB format and proper dimensions
+- **Model Compatibility**: Match ControlNet models with compatible Stable Diffusion versions
+:::
+
+### Common Issues and Solutions
+
+```{python}
+#| label: diagnostics
+#| code-summary: "Diagnostic function for common ControlNet issues"
+#| eval: false
+
+def diagnose_controlnet_issues(pipe, control_image, prompt):
+    """
+    Diagnostic function for common ControlNet issues
+    """
+    issues = []
+    
+    # Check control image format
+    if control_image.mode != 'RGB':
+        issues.append("Control image should be RGB format")
+        control_image = control_image.convert('RGB')
+    
+    # Check image size
+    if control_image.size != (512, 512):
+        issues.append(f"Control image size {control_image.size} != (512, 512)")
+        control_image = control_image.resize((512, 512))
+    
+    # Check GPU memory
+    if torch.cuda.is_available():
+        memory_allocated = torch.cuda.memory_allocated() / 1e9
+        memory_reserved = torch.cuda.memory_reserved() / 1e9
+        
+        if memory_reserved > 10:  # More than 10GB
+            issues.append(f"High GPU memory usage: {memory_reserved:.1f}GB")
+    
+    # Check prompt length
+    if len(prompt.split()) > 75:
+        issues.append("Very long prompt may cause issues")
+    
+    if issues:
+        print("Detected issues:")
+        for issue in issues:
+            print(f"- {issue}")
+    
+    return control_image
+
+def memory_cleanup():
+    """
+    Clean up GPU memory
+    """
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+        torch.cuda.ipc_collect()
+
+# Error handling wrapper
+def safe_generate(pipe, control_image, prompt, max_retries=3):
+    """
+    Generate with error handling and retries
+    """
+    for attempt in range(max_retries):
+        try:
+            # Diagnose issues
+            control_image = diagnose_controlnet_issues(pipe, control_image, prompt)
+            
+            # Generate
+            result = pipe(
+                prompt=prompt,
+                image=control_image,
+                num_inference_steps=20,
+                guidance_scale=7.5
+            )
+            
+            return result.images[0]
+            
+        except RuntimeError as e:
+            if "out of memory" in str(e).lower():
+                print(f"GPU OOM on attempt {attempt + 1}, cleaning memory...")
+                memory_cleanup()
+                
+                if attempt == max_retries - 1:
+                    raise e
+            else:
+                raise e
+        
+        except Exception as e:
+            print(f"Unexpected error on attempt {attempt + 1}: {e}")
+            if attempt == max_retries - 1:
+                raise e
+    
+    return None
+```
+
+### Performance Benchmarking
+
+```{python}
+#| label: benchmarking
+#| code-summary: "Benchmark ControlNet performance"
+#| eval: false
+
+import time
+from contextlib import contextmanager
+
+@contextmanager
+def timer():
+    """
+    Simple timing context manager
+    """
+    start = time.time()
+    yield
+    end = time.time()
+    print(f"Execution time: {end - start:.2f} seconds")
+
+def benchmark_controlnet(pipe, control_image, prompt, runs=5):
+    """
+    Benchmark ControlNet performance
+    """
+    times = []
+    
+    # Warmup
+    _ = pipe(prompt=prompt, image=control_image, num_inference_steps=5)
+    
+    # Benchmark runs
+    for i in range(runs):
+        start_time = time.time()
+        result = pipe(
+            prompt=prompt,
+            image=control_image,
+            num_inference_steps=20,
+            guidance_scale=7.5
+        )
+        end_time = time.time()
+        times.append(end_time - start_time)
+    
+    avg_time = sum(times) / len(times)
+    print(f"Average generation time: {avg_time:.2f} seconds")
+    print(f"Images per minute: {60 / avg_time:.1f}")
+    
+    return result.images[0]
+```
+
+## Best Practices Summary
+
+::: {.callout-tip collapse="true"}
+## Key Recommendations
+
+1. **Memory Management**: Use CPU offloading and memory efficient attention for large models
+2. **Preprocessing**: Cache control images when generating multiple variations
+3. **Parameter Tuning**: Adjust `controlnet_conditioning_scale` based on desired control strength
+4. **Quality vs Speed**: Balance `num_inference_steps` with generation time requirements
+5. **Multi-Control**: Use different conditioning scales when combining multiple ControlNets
+6. **Error Handling**: Implement robust error handling for production systems
+7. **Optimization**: Use torch.compile() and xformers for performance improvements
+:::
+
+### Parameter Reference Table
+
+| Parameter | Range | Effect |
+|-----------|-------|--------|
+| `controlnet_conditioning_scale` | 0.5-1.5 | Control strength |
+| `guidance_scale` | 5.0-15.0 | Prompt adherence |
+| `num_inference_steps` | 10-50 | Quality vs speed |
+| `control_guidance_start` | 0.0-0.5 | When control starts |
+| `control_guidance_end` | 0.5-1.0 | When control ends |
+
+: ControlNet Parameter Reference {#tbl-parameters}
+
+This comprehensive guide provides everything needed to implement Stable Diffusion with ControlNet, from basic usage to production-ready systems. The modular structure allows for easy customization and extension based on specific requirements.

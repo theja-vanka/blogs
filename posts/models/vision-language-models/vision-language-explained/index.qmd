@@ -1,7 +1,7 @@
 ---
 title: "Vision-Language Models: Bridging Visual and Textual Understanding"
 author: "Krishnatheja Vanka"
-date: "2025-06-22"
+date: "2025-08-02"
 categories: [code, beginner]
 format:
   html:
@@ -15,6 +15,8 @@ jupyter: python3
 # Vision-Language Models: Bridging Visual and Textual Understanding
 ![](vl.png)
 
+## Introduction
+
 Vision-Language Models (VLMs) represent one of the most exciting frontiers in artificial intelligence, combining computer vision and natural language processing to create systems that can understand and reason about both images and text simultaneously. These multimodal models are revolutionizing how machines interpret the world around us.
 
 ## What Are Vision-Language Models?
@@ -27,7 +29,9 @@ Vision-Language Models are neural networks designed to process and understand bo
 - Perform visual reasoning tasks
 - Extract and understand text within images
 
+::: {.callout-note}
 The key innovation lies in their ability to create shared representations that bridge the semantic gap between visual and linguistic information.
+:::
 
 ## Architecture Deep Dive
 
@@ -35,7 +39,11 @@ The key innovation lies in their ability to create shared representations that b
 
 Most modern VLMs follow a encoder-decoder architecture with several key components:
 
-```python
+```{python}
+#| label: vlm-architecture
+#| eval: false
+#| code-summary: "Basic VLM Architecture"
+
 class VisionLanguageModel:
     def __init__(self):
         self.vision_encoder = VisionTransformer()
@@ -68,7 +76,11 @@ The vision component typically uses:
 - **Convolutional Neural Networks**: Extract hierarchical visual features
 - **Region-based methods**: Focus on specific image regions
 
-```python
+```{python}
+#| label: patch-embedding
+#| eval: false
+#| code-summary: "Patch Embedding Implementation"
+
 def patch_embedding(image, patch_size=16):
     """Convert image to patch embeddings"""
     patches = image.unfold(2, patch_size, patch_size)
@@ -91,7 +103,13 @@ Text processing leverages transformer architectures:
 
 The critical challenge is combining visual and textual information:
 
-```python
+```{python}
+#| label: cross-attention
+#| eval: false
+#| code-summary: "Cross-Attention Mechanism"
+
+import torch.nn as nn
+
 class CrossAttention(nn.Module):
     def __init__(self, dim):
         super().__init__()
@@ -113,7 +131,14 @@ class CrossAttention(nn.Module):
 
 Many VLMs use contrastive learning to align visual and textual representations:
 
-```python
+```{python}
+#| label: contrastive-loss
+#| eval: false
+#| code-summary: "CLIP-style Contrastive Loss"
+
+import torch
+import torch.nn.functional as F
+
 def contrastive_loss(image_features, text_features, temperature=0.07):
     """CLIP-style contrastive loss"""
     # Normalize features
@@ -135,19 +160,30 @@ def contrastive_loss(image_features, text_features, temperature=0.07):
 
 ### Multi-Task Learning
 
+::: {.callout-tip}
+## Training Objectives
 VLMs often train on multiple objectives simultaneously:
 
 - Image-text matching
 - Masked language modeling
 - Image captioning
 - Visual question answering
+:::
 
 ### Data Requirements
 
 Training requires massive paired datasets:
 
-```python
-class VLMDataset:
+```{python}
+#| label: vlm-dataset
+#| eval: false
+#| code-summary: "VLM Dataset Class"
+
+from torch.utils.data import Dataset
+from torchvision import transforms
+from PIL import Image
+
+class VLMDataset(Dataset):
     def __init__(self, image_paths, captions):
         self.image_paths = image_paths
         self.captions = captions
@@ -168,6 +204,9 @@ class VLMDataset:
             'caption': caption,
             'image_id': idx
         }
+    
+    def __len__(self):
+        return len(self.image_paths)
 ```
 
 ## Popular VLM Architectures
@@ -176,7 +215,13 @@ class VLMDataset:
 
 CLIP learns visual concepts from natural language supervision:
 
-```python
+```{python}
+#| label: clip-model
+#| eval: false
+#| code-summary: "CLIP Architecture"
+
+import numpy as np
+
 class CLIP(nn.Module):
     def __init__(self, vision_model, text_model):
         super().__init__()
@@ -211,7 +256,24 @@ BLIP uses a unified architecture for multiple vision-language tasks:
 
 Flamingo excels at few-shot learning by conditioning on visual examples:
 
-```python
+```{python}
+#| label: flamingo-layer
+#| eval: false
+#| code-summary: "Flamingo Layer Implementation"
+
+class FeedForward(nn.Module):
+    def __init__(self, dim, hidden_dim=None):
+        super().__init__()
+        hidden_dim = hidden_dim or 4 * dim
+        self.net = nn.Sequential(
+            nn.Linear(dim, hidden_dim),
+            nn.GELU(),
+            nn.Linear(hidden_dim, dim)
+        )
+    
+    def forward(self, x):
+        return self.net(x)
+
 class FlamingoLayer(nn.Module):
     def __init__(self, dim):
         super().__init__()
@@ -235,7 +297,11 @@ class FlamingoLayer(nn.Module):
 
 Here's a simplified VLM implementation for image captioning:
 
-```python
+```{python}
+#| label: simple-vlm
+#| eval: false
+#| code-summary: "Complete Simple VLM Implementation"
+
 import torch
 import torch.nn as nn
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
@@ -277,9 +343,17 @@ class SimpleVLM(nn.Module):
         )
         
         return outputs
+```
 
-# Training loop
+### Training Loop
+
+```{python}
+#| label: training-loop
+#| eval: false
+#| code-summary: "VLM Training Function"
+
 def train_vlm(model, dataloader, optimizer, device):
+    """Training loop for VLM"""
     model.train()
     total_loss = 0
     
@@ -310,14 +384,22 @@ def train_vlm(model, dataloader, optimizer, device):
 
 VLMs are evaluated using various metrics depending on the task:
 
-### Image Captioning
-- **BLEU**: Measures n-gram overlap with reference captions
-- **ROUGE**: Evaluates recall-oriented similarity
-- **CIDEr**: Consensus-based metric for image description
-- **SPICE**: Semantic similarity metric
+### Image Captioning Metrics
 
-```python
+| Metric | Description | Range |
+|--------|-------------|-------|
+| **BLEU** | N-gram overlap with reference captions | 0-1 |
+| **ROUGE** | Recall-oriented similarity | 0-1 |
+| **CIDEr** | Consensus-based metric for image description | 0-10 |
+| **SPICE** | Semantic similarity metric | 0-1 |
+
+```{python}
+#| label: bleu-score
+#| eval: false
+#| code-summary: "BLEU Score Computation"
+
 def compute_bleu_score(predictions, references):
+    """Compute BLEU score for image captioning"""
     from nltk.translate.bleu_score import corpus_bleu
     
     # Tokenize predictions and references
@@ -340,8 +422,14 @@ def compute_bleu_score(predictions, references):
 ## Applications and Use Cases
 
 ### Content Generation
-```python
+
+```{python}
+#| label: caption-generation
+#| eval: false
+#| code-summary: "Caption Generation Function"
+
 def generate_caption(model, image, tokenizer, max_length=50):
+    """Generate caption for an image"""
     model.eval()
     with torch.no_grad():
         # Process image
@@ -358,53 +446,85 @@ def generate_caption(model, image, tokenizer, max_length=50):
         # Decode caption
         caption = tokenizer.decode(generated_ids[0], skip_special_tokens=True)
         return caption
+
+def preprocess_image(image):
+    """Preprocess image for model input"""
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                           std=[0.229, 0.224, 0.225])
+    ])
+    return transform(image).unsqueeze(0)
 ```
 
 ### Document Understanding
+
+::: {.callout-important}
+## Key Applications
 VLMs excel at processing documents with both text and visual elements:
 
 - Form understanding
 - Chart and graph interpretation
 - Layout analysis
 - OCR with context
+:::
 
-### Accessibility
-- Image description for visually impaired users
-- Scene understanding for navigation
-- Object recognition and identification
+### Other Applications
 
-### E-commerce
-- Product description generation
-- Visual search and recommendation
-- Quality assessment from images
+- **Accessibility**: Image description for visually impaired users
+- **E-commerce**: Product description generation and visual search
+- **Navigation**: Scene understanding and object recognition
 
 ## Challenges and Limitations
 
 ### Computational Requirements
+
 VLMs require significant computational resources:
 
-```python
+```{python}
+#| label: memory-estimation
+#| eval: false
+#| code-summary: "Memory Usage Estimation"
+
 def estimate_memory_usage(batch_size, image_size, model_params):
-    """Estimate GPU memory usage"""
+    """Estimate GPU memory usage for VLM"""
     image_memory = batch_size * 3 * image_size * image_size * 4  # bytes
     model_memory = model_params * 4  # 4 bytes per parameter
     activation_memory = batch_size * model_params * 0.3  # rough estimate
     
     total_gb = (image_memory + model_memory + activation_memory) / (1024**3)
     return total_gb
+
+# Example usage
+memory_gb = estimate_memory_usage(
+    batch_size=32, 
+    image_size=224, 
+    model_params=175_000_000  # 175M parameters
+)
+print(f"Estimated memory usage: {memory_gb:.2f} GB")
 ```
 
 ### Bias and Fairness
+
+::: {.callout-warning}
+## Bias Concerns
 VLMs can perpetuate biases present in training data:
 
 - Gender and racial stereotypes
 - Cultural biases in image interpretation
 - Socioeconomic biases in scene understanding
+:::
 
-### Hallucination
+### Hallucination Detection
+
 Models may generate plausible but incorrect descriptions:
 
-```python
+```{python}
+#| label: hallucination-detection
+#| eval: false
+#| code-summary: "Simple Hallucination Detection"
+
 def detect_hallucination(caption, image_objects):
     """Simple hallucination detection"""
     mentioned_objects = extract_objects_from_caption(caption)
@@ -415,18 +535,27 @@ def detect_hallucination(caption, image_objects):
             hallucinated_objects.append(obj)
     
     return hallucinated_objects
+
+def extract_objects_from_caption(caption):
+    """Extract mentioned objects from caption"""
+    # Simplified implementation - in practice, use NLP techniques
+    import re
+    nouns = re.findall(r'\b[a-z]+\b', caption.lower())
+    return nouns
 ```
 
 ## Future Directions
 
-### Multimodal Reasoning
-Advanced VLMs are moving toward more sophisticated reasoning:
+### Advanced Capabilities
 
-- Temporal understanding in videos
-- Spatial reasoning in 3D scenes
-- Causal reasoning from visual evidence
+Future VLMs are moving toward more sophisticated reasoning:
+
+- **Temporal understanding** in videos
+- **Spatial reasoning** in 3D scenes
+- **Causal reasoning** from visual evidence
 
 ### Efficiency Improvements
+
 Research focuses on making VLMs more efficient:
 
 - Model compression and pruning
@@ -434,6 +563,7 @@ Research focuses on making VLMs more efficient:
 - Efficient attention mechanisms
 
 ### Interactive Systems
+
 Future VLMs will support more interactive applications:
 
 - Conversational visual AI
@@ -443,7 +573,15 @@ Future VLMs will support more interactive applications:
 ## Best Practices for Implementation
 
 ### Data Preparation
-```python
+
+```{python}
+#| label: data-preparation
+#| eval: false
+#| code-summary: "Dataset Preparation Function"
+
+import json
+import os
+
 def prepare_vlm_dataset(image_dir, caption_file):
     """Prepare dataset for VLM training"""
     dataset = []
@@ -464,16 +602,21 @@ def prepare_vlm_dataset(image_dir, caption_file):
     return dataset
 ```
 
-### Model Optimization
+### Model Optimization Tips
+
+::: {.callout-tip}
+## Optimization Strategies
 - Use mixed precision training
 - Implement gradient checkpointing
 - Apply learning rate scheduling
 - Monitor for overfitting
+:::
 
 ### Deployment Considerations
-- Model quantization for edge deployment
-- Caching strategies for repeated queries
-- Load balancing for high-traffic applications
+
+- **Model quantization** for edge deployment
+- **Caching strategies** for repeated queries
+- **Load balancing** for high-traffic applications
 
 ## Conclusion
 

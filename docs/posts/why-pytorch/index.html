@@ -22,6 +22,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -316,16 +351,17 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#why-i-choose-pytorch-for-deep-learning" id="toc-why-i-choose-pytorch-for-deep-learning" class="nav-link active" data-scroll-target="#why-i-choose-pytorch-for-deep-learning">Why I Choose PyTorch for Deep Learning</a>
   <ul class="collapse">
-  <li><a href="#the-power-of-dynamic-computation-graphs" id="toc-the-power-of-dynamic-computation-graphs" class="nav-link" data-scroll-target="#the-power-of-dynamic-computation-graphs">The Power of Dynamic Computation Graphs</a></li>
-  <li><a href="#pythonic-design-philosophy" id="toc-pythonic-design-philosophy" class="nav-link" data-scroll-target="#pythonic-design-philosophy">Pythonic Design Philosophy</a></li>
-  <li><a href="#research-first-mentality" id="toc-research-first-mentality" class="nav-link" data-scroll-target="#research-first-mentality">Research-First Mentality</a></li>
-  <li><a href="#exceptional-debugging-experience" id="toc-exceptional-debugging-experience" class="nav-link" data-scroll-target="#exceptional-debugging-experience">Exceptional Debugging Experience</a></li>
-  <li><a href="#mature-ecosystem-and-community" id="toc-mature-ecosystem-and-community" class="nav-link" data-scroll-target="#mature-ecosystem-and-community">Mature Ecosystem and Community</a></li>
-  <li><a href="#performance-and-production-readiness" id="toc-performance-and-production-readiness" class="nav-link" data-scroll-target="#performance-and-production-readiness">Performance and Production Readiness</a></li>
-  <li><a href="#automatic-differentiation-done-right" id="toc-automatic-differentiation-done-right" class="nav-link" data-scroll-target="#automatic-differentiation-done-right">Automatic Differentiation Done Right</a></li>
-  <li><a href="#growing-industry-adoption" id="toc-growing-industry-adoption" class="nav-link" data-scroll-target="#growing-industry-adoption">Growing Industry Adoption</a></li>
-  <li><a href="#future-proof-architecture" id="toc-future-proof-architecture" class="nav-link" data-scroll-target="#future-proof-architecture">Future-Proof Architecture</a></li>
-  <li><a href="#making-the-choice" id="toc-making-the-choice" class="nav-link" data-scroll-target="#making-the-choice">Making the Choice</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#sec-dynamic-graphs" id="toc-sec-dynamic-graphs" class="nav-link" data-scroll-target="#sec-dynamic-graphs">The Power of Dynamic Computation Graphs</a></li>
+  <li><a href="#sec-pythonic-design" id="toc-sec-pythonic-design" class="nav-link" data-scroll-target="#sec-pythonic-design">Pythonic Design Philosophy</a></li>
+  <li><a href="#sec-research-first" id="toc-sec-research-first" class="nav-link" data-scroll-target="#sec-research-first">Research-First Mentality</a></li>
+  <li><a href="#sec-debugging" id="toc-sec-debugging" class="nav-link" data-scroll-target="#sec-debugging">Exceptional Debugging Experience</a></li>
+  <li><a href="#sec-ecosystem" id="toc-sec-ecosystem" class="nav-link" data-scroll-target="#sec-ecosystem">Mature Ecosystem and Community</a></li>
+  <li><a href="#sec-performance" id="toc-sec-performance" class="nav-link" data-scroll-target="#sec-performance">Performance and Production Readiness</a></li>
+  <li><a href="#sec-autograd" id="toc-sec-autograd" class="nav-link" data-scroll-target="#sec-autograd">Automatic Differentiation Done Right</a></li>
+  <li><a href="#sec-industry" id="toc-sec-industry" class="nav-link" data-scroll-target="#sec-industry">Growing Industry Adoption</a></li>
+  <li><a href="#sec-future-proof" id="toc-sec-future-proof" class="nav-link" data-scroll-target="#sec-future-proof">Future-Proof Architecture</a></li>
+  <li><a href="#sec-conclusion" id="toc-sec-conclusion" class="nav-link" data-scroll-target="#sec-conclusion">Making the Choice</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -345,57 +381,219 @@ ul.task-list li input[type="checkbox"] {
 <section id="why-i-choose-pytorch-for-deep-learning" class="level1">
 <h1>Why I Choose PyTorch for Deep Learning</h1>
 <p><img src="pytorch.png" class="img-fluid"></p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>When it comes to deep learning frameworks, the landscape offers several compelling options. TensorFlow, JAX, and PyTorch each have their strengths, but after working extensively with multiple frameworks, PyTorch has become my go-to choice for deep learning projects. Here’s why this dynamic framework continues to win over researchers and practitioners alike.</p>
-<section id="the-power-of-dynamic-computation-graphs" class="level2">
-<h2 class="anchored" data-anchor-id="the-power-of-dynamic-computation-graphs">The Power of Dynamic Computation Graphs</h2>
-<p>PyTorch’s defining feature is its dynamic computation graph, also known as “define-by-run.” Unlike static graphs where you must define the entire network architecture upfront, PyTorch builds the computational graph on-the-fly as operations execute. This approach offers unprecedented flexibility for complex architectures and experimental research.</p>
-<p>Consider debugging a recurrent neural network with variable sequence lengths. In PyTorch, you can step through your code line by line, inspect tensors at any point, and modify the network behavior based on runtime conditions. This dynamic nature makes PyTorch feel more like writing regular Python code rather than wrestling with a rigid framework.</p>
 </section>
-<section id="pythonic-design-philosophy" class="level2">
-<h2 class="anchored" data-anchor-id="pythonic-design-philosophy">Pythonic Design Philosophy</h2>
+<section id="sec-dynamic-graphs" class="level2">
+<h2 class="anchored" data-anchor-id="sec-dynamic-graphs">The Power of Dynamic Computation Graphs</h2>
+<p>PyTorch’s defining feature is its <strong>dynamic computation graph</strong>, also known as “define-by-run.” Unlike static graphs where you must define the entire network architecture upfront, PyTorch builds the computational graph on-the-fly as operations execute. This approach offers unprecedented flexibility for complex architectures and experimental research.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Dynamic vs Static Graphs
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Consider debugging a recurrent neural network with variable sequence lengths. In PyTorch, you can step through your code line by line, inspect tensors at any point, and modify the network behavior based on runtime conditions.</p>
+</div>
+</div>
+<p>This dynamic nature makes PyTorch feel more like writing regular Python code rather than wrestling with a rigid framework.</p>
+</section>
+<section id="sec-pythonic-design" class="level2">
+<h2 class="anchored" data-anchor-id="sec-pythonic-design">Pythonic Design Philosophy</h2>
 <p>PyTorch embraces Python’s design principles, making it intuitive for developers already familiar with the language. The API feels natural and follows Python conventions closely. Operations like tensor manipulation, automatic differentiation, and model definition align with how Python developers expect to write code.</p>
-<p>The framework integrates seamlessly with the broader Python ecosystem. NumPy arrays convert effortlessly to PyTorch tensors, matplotlib works perfectly for visualization, and standard Python debugging tools function as expected. This integration reduces the learning curve and allows developers to leverage existing Python skills.</p>
+<p>The framework integrates seamlessly with the broader Python ecosystem:</p>
+<ul>
+<li><strong>NumPy</strong>: Arrays convert effortlessly to PyTorch tensors</li>
+<li><strong>Matplotlib</strong>: Works perfectly for visualization<br>
+</li>
+<li><strong>Standard debugging tools</strong>: Function as expected</li>
+</ul>
+<p>This integration reduces the learning curve and allows developers to leverage existing Python skills.</p>
 </section>
-<section id="research-first-mentality" class="level2">
-<h2 class="anchored" data-anchor-id="research-first-mentality">Research-First Mentality</h2>
+<section id="sec-research-first" class="level2">
+<h2 class="anchored" data-anchor-id="sec-research-first">Research-First Mentality</h2>
 <p>PyTorch originated from the research community and maintains strong connections to academic work. The framework prioritizes flexibility and experimentation over rigid optimization, making it ideal for cutting-edge research where novel architectures and training procedures are constantly emerging.</p>
-<p>Major research breakthroughs often appear first in PyTorch implementations. The framework’s flexibility allows researchers to quickly prototype new ideas without fighting against framework constraints. This research-first approach has created a virtuous cycle where PyTorch continues to attract top researchers, leading to more innovations and better tooling.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Research Impact
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Major research breakthroughs often appear first in PyTorch implementations. The framework’s flexibility allows researchers to quickly prototype new ideas without fighting against framework constraints.</p>
+</div>
+</div>
+<p>This research-first approach has created a virtuous cycle where PyTorch continues to attract top researchers, leading to more innovations and better tooling.</p>
 </section>
-<section id="exceptional-debugging-experience" class="level2">
-<h2 class="anchored" data-anchor-id="exceptional-debugging-experience">Exceptional Debugging Experience</h2>
-<p>Debugging deep learning models can be notoriously challenging, but PyTorch makes this process more manageable. Since PyTorch code executes imperatively, you can use standard Python debugging tools like pdb, print statements, and IDE debuggers effectively.</p>
+<section id="sec-debugging" class="level2">
+<h2 class="anchored" data-anchor-id="sec-debugging">Exceptional Debugging Experience</h2>
+<p>Debugging deep learning models can be notoriously challenging, but PyTorch makes this process more manageable. Since PyTorch code executes imperatively, you can use standard Python debugging tools effectively:</p>
+<ul>
+<li><code>pdb</code> debugger</li>
+<li>Print statements</li>
+<li>IDE debuggers</li>
+</ul>
 <p>The framework provides excellent error messages that point to the exact line where issues occur. When tensor shapes don’t match or operations fail, PyTorch gives clear, actionable feedback rather than cryptic error messages buried deep in the framework’s internals.</p>
 </section>
-<section id="mature-ecosystem-and-community" class="level2">
-<h2 class="anchored" data-anchor-id="mature-ecosystem-and-community">Mature Ecosystem and Community</h2>
-<p>PyTorch has cultivated a vibrant ecosystem of libraries and tools. PyTorch Lightning simplifies training loops and experiment management. Transformers from Hugging Face provides state-of-the-art pre-trained models. TorchVision, TorchText, and TorchAudio offer domain-specific utilities for computer vision, natural language processing, and audio processing respectively.</p>
+<section id="sec-ecosystem" class="level2">
+<h2 class="anchored" data-anchor-id="sec-ecosystem">Mature Ecosystem and Community</h2>
+<p>PyTorch has cultivated a vibrant ecosystem of libraries and tools:</p>
+<div id="tbl-ecosystem" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ecosystem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Key PyTorch Ecosystem Libraries
+</figcaption>
+<div aria-describedby="tbl-ecosystem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Library</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>PyTorch Lightning</strong></td>
+<td>Simplifies training loops and experiment management</td>
+</tr>
+<tr class="even">
+<td><strong>Transformers</strong> (Hugging Face)</td>
+<td>State-of-the-art pre-trained models</td>
+</tr>
+<tr class="odd">
+<td><strong>TorchVision</strong></td>
+<td>Computer vision utilities</td>
+</tr>
+<tr class="even">
+<td><strong>TorchText</strong></td>
+<td>Natural language processing tools</td>
+</tr>
+<tr class="odd">
+<td><strong>TorchAudio</strong></td>
+<td>Audio processing capabilities</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
 <p>The community actively contributes tutorials, examples, and extensions. PyTorch’s documentation is comprehensive and includes practical examples alongside API references. The official tutorials cover everything from basic tensor operations to advanced topics like distributed training and model optimization.</p>
 </section>
-<section id="performance-and-production-readiness" class="level2">
-<h2 class="anchored" data-anchor-id="performance-and-production-readiness">Performance and Production Readiness</h2>
-<p>While PyTorch initially focused on research flexibility, recent versions have significantly improved production capabilities. TorchScript allows converting dynamic PyTorch models to static representations for deployment. TorchServe provides model serving infrastructure, and PyTorch Mobile enables deployment on mobile devices.</p>
-<p>The framework delivers competitive performance for training and inference. PyTorch’s JIT compiler optimizes computation graphs, and the framework efficiently utilizes GPU resources. For most applications, PyTorch’s performance matches or exceeds alternatives while maintaining superior flexibility.</p>
+<section id="sec-performance" class="level2">
+<h2 class="anchored" data-anchor-id="sec-performance">Performance and Production Readiness</h2>
+<p>While PyTorch initially focused on research flexibility, recent versions have significantly improved production capabilities:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Deployment Tools</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Performance Features</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<ul>
+<li><strong>TorchScript</strong>: Converts dynamic PyTorch models to static representations</li>
+<li><strong>TorchServe</strong>: Provides model serving infrastructure<br>
+</li>
+<li><strong>PyTorch Mobile</strong>: Enables deployment on mobile devices</li>
+</ul>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<ul>
+<li><strong>JIT Compiler</strong>: Optimizes computation graphs</li>
+<li><strong>GPU Utilization</strong>: Efficient resource management</li>
+<li><strong>Competitive Performance</strong>: Matches or exceeds alternatives</li>
+</ul>
+</div>
+</div>
+</div>
+<p>For most applications, PyTorch’s performance matches or exceeds alternatives while maintaining superior flexibility.</p>
 </section>
-<section id="automatic-differentiation-done-right" class="level2">
-<h2 class="anchored" data-anchor-id="automatic-differentiation-done-right">Automatic Differentiation Done Right</h2>
-<p>PyTorch’s automatic differentiation system, Autograd, elegantly handles gradient computation. The system tracks operations on tensors and builds a computational graph automatically. Computing gradients requires just a single <code>.backward()</code> call, and the system handles complex scenarios like gradient accumulation and higher-order derivatives naturally.</p>
+<section id="sec-autograd" class="level2">
+<h2 class="anchored" data-anchor-id="sec-autograd">Automatic Differentiation Done Right</h2>
+<p>PyTorch’s automatic differentiation system, <strong>Autograd</strong>, elegantly handles gradient computation. The system tracks operations on tensors and builds a computational graph automatically. Computing gradients requires just a single <code>.backward()</code> call.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example of PyTorch's automatic differentiation</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create tensors with gradient tracking</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.tensor([<span class="fl">2.0</span>], requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> torch.tensor([<span class="fl">3.0</span>], requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Define computation</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> x <span class="op">*</span> y <span class="op">+</span> x<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute gradients automatically</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>z.backward()</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dz/dx = </span><span class="sc">{</span>x<span class="sc">.</span>grad<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># dz/dx = [7.0]</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dz/dy = </span><span class="sc">{</span>y<span class="sc">.</span>grad<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># dz/dy = [2.0]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The differentiation system integrates smoothly with control flow, making it easy to implement complex architectures with conditional execution, loops, and dynamic behavior. This capability proves essential for advanced architectures like attention mechanisms and recursive networks.</p>
 </section>
-<section id="growing-industry-adoption" class="level2">
-<h2 class="anchored" data-anchor-id="growing-industry-adoption">Growing Industry Adoption</h2>
-<p>While TensorFlow dominated early industry adoption, PyTorch has gained significant ground in production environments. Major companies like Facebook (Meta), Tesla, and OpenAI use PyTorch for critical applications. The framework’s improved deployment tools and performance optimizations have made it increasingly viable for production use.</p>
+<section id="sec-industry" class="level2">
+<h2 class="anchored" data-anchor-id="sec-industry">Growing Industry Adoption</h2>
+<p>While TensorFlow dominated early industry adoption, PyTorch has gained significant ground in production environments. Major companies using PyTorch include:</p>
+<ul>
+<li><strong>Meta</strong> (Facebook)</li>
+<li><strong>Tesla</strong></li>
+<li><strong>OpenAI</strong></li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Unified Development
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Many companies now choose PyTorch for both research and production, eliminating the need to translate models between frameworks. This unified approach reduces complexity and accelerates the path from research to deployment.</p>
+</div>
+</div>
 </section>
-<section id="future-proof-architecture" class="level2">
-<h2 class="anchored" data-anchor-id="future-proof-architecture">Future-Proof Architecture</h2>
-<p>PyTorch’s design principles position it well for future developments in deep learning. The framework’s flexibility accommodates new paradigms like few-shot learning, meta-learning, and neural architecture search without requiring major architectural changes.</p>
+<section id="sec-future-proof" class="level2">
+<h2 class="anchored" data-anchor-id="sec-future-proof">Future-Proof Architecture</h2>
+<p>PyTorch’s design principles position it well for future developments in deep learning. The framework’s flexibility accommodates new paradigms without requiring major architectural changes:</p>
+<ul>
+<li>Few-shot learning</li>
+<li>Meta-learning<br>
+</li>
+<li>Neural architecture search</li>
+</ul>
 <p>The PyTorch team actively develops new features while maintaining backward compatibility. Regular releases introduce performance improvements, new operators, and enhanced tooling without breaking existing code.</p>
 </section>
-<section id="making-the-choice" class="level2">
-<h2 class="anchored" data-anchor-id="making-the-choice">Making the Choice</h2>
-<p>Choosing PyTorch means prioritizing flexibility, ease of use, and alignment with modern Python development practices. The framework excels for research, education, and increasingly for production applications. Its dynamic nature, excellent debugging capabilities, and strong ecosystem make it an compelling choice for deep learning projects.</p>
-<p>While other frameworks have their merits, PyTorch’s combination of research-friendly design, production readiness, and vibrant community creates a compelling package for deep learning practitioners. The framework continues evolving rapidly while maintaining its core philosophy of putting developers first.</p>
+<section id="sec-conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="sec-conclusion">Making the Choice</h2>
+<p>Choosing PyTorch means prioritizing:</p>
+<ol type="1">
+<li><strong>Flexibility</strong> - Dynamic computation graphs</li>
+<li><strong>Ease of use</strong> - Pythonic design</li>
+<li><strong>Modern development practices</strong> - Excellent debugging and tooling</li>
+</ol>
+<p>The framework excels for research, education, and increasingly for production applications. Its dynamic nature, excellent debugging capabilities, and strong ecosystem make it a compelling choice for deep learning projects.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Recommendation
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>For anyone starting a new deep learning project or considering a framework switch, PyTorch offers a modern, flexible foundation that grows with your needs and supports both experimentation and deployment.</p>
+</div>
+</div>
+<p>While other frameworks have their merits, PyTorch’s combination of research-friendly design, production readiness, and vibrant community creates a compelling package for deep learning practitioners. The framework continues evolving rapidly while maintaining its core philosophy of putting developers first.</p>
+<hr>
+<p><em>This guide reflects the current state of PyTorch and its ecosystem. The deep learning landscape continues to evolve, but PyTorch’s foundational strengths position it well for future developments.</em></p>
 
 
 </section>
