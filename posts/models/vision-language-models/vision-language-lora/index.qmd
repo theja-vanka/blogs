@@ -80,6 +80,7 @@ LoRA is based on the hypothesis that weight updates during fine-tuning have a lo
 $$\Delta W = BA$$
 
 Where:
+
 - $W$ is the original weight matrix ($d \times d$)
 - $B$ is a learnable matrix ($d \times r$)  
 - $A$ is a learnable matrix ($r \times d$)
@@ -172,58 +173,29 @@ Modern VLMs typically consist of:
 3. **Multimodal Fusion**: Combines visual and textual representations
 4. **Output Head**: Task-specific prediction layers
 
-```{python}
-#| label: vlm-architecture-diagram
-#| fig-cap: "Vision-Language Model Architecture"
-#| echo: false
-#| code-fold: true
+```{mermaid}
+%%| code-fold: true
+%%| echo: false
 
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-
-fig, ax = plt.subplots(1, 1, figsize=(12, 8))
-
-# Define components
-components = [
-    {"name": "Image Input", "pos": (1, 6), "size": (1.5, 1), "color": "lightblue"},
-    {"name": "Vision\nEncoder", "pos": (1, 4.5), "size": (1.5, 1), "color": "lightgreen"},
-    {"name": "Text Input", "pos": (1, 1.5), "size": (1.5, 1), "color": "lightblue"},
-    {"name": "Text\nEncoder", "pos": (1, 0), "size": (1.5, 1), "color": "lightgreen"},
-    {"name": "Multimodal\nFusion", "pos": (4, 2.25), "size": (2, 1.5), "color": "lightyellow"},
-    {"name": "Output\nHead", "pos": (7, 2.25), "size": (1.5, 1.5), "color": "lightcoral"},
-    {"name": "Predictions", "pos": (9.5, 2.25), "size": (1.5, 1), "color": "lightgray"}
-]
-
-# Draw components
-for comp in components:
-    rect = patches.Rectangle(comp["pos"], comp["size"][0], comp["size"][1], 
-                           linewidth=2, edgecolor='black', facecolor=comp["color"])
-    ax.add_patch(rect)
-    ax.text(comp["pos"][0] + comp["size"][0]/2, comp["pos"][1] + comp["size"][1]/2, 
-           comp["name"], ha='center', va='center', fontsize=10, weight='bold')
-
-# Draw arrows
-arrows = [
-    ((1.75, 6), (1.75, 5.5)),  # Image to Vision Encoder
-    ((1.75, 2.5), (1.75, 1)),  # Text to Text Encoder
-    ((2.5, 5), (4, 3.5)),      # Vision to Fusion
-    ((2.5, 0.5), (4, 2.25)),   # Text to Fusion
-    ((6, 3), (7, 3)),          # Fusion to Output
-    ((8.5, 3), (9.5, 3))       # Output to Predictions
-]
-
-for start, end in arrows:
-    ax.annotate('', xy=end, xytext=start,
-                arrowprops=dict(arrowstyle='->', lw=2, color='black'))
-
-ax.set_xlim(0, 11.5)
-ax.set_ylim(-0.5, 7.5)
-ax.set_aspect('equal')
-ax.axis('off')
-ax.set_title('Vision-Language Model Architecture', fontsize=16, weight='bold', pad=20)
-
-plt.tight_layout()
-plt.show()
+flowchart TD
+    A[Image Input] --> B[Vision<br/>Encoder]
+    C[Text Input] --> D[Text<br/>Encoder]
+    B --> E[Multimodal<br/>Fusion]
+    D --> E
+    E --> F[Output<br/>Head]
+    F --> G[Predictions]
+    
+    classDef input fill:#add8e6,stroke:#000,stroke-width:2px
+    classDef encoder fill:#90ee90,stroke:#000,stroke-width:2px
+    classDef fusion fill:#ffffe0,stroke:#000,stroke-width:2px
+    classDef output fill:#f08080,stroke:#000,stroke-width:2px
+    classDef prediction fill:#d3d3d3,stroke:#000,stroke-width:2px
+    
+    class A,C input
+    class B,D encoder
+    class E fusion
+    class F output
+    class G prediction
 ```
 
 ### Popular VLM Architectures
@@ -304,38 +276,15 @@ class VLMLoRAAdapter:
 
 Not all layers benefit equally from LoRA adaptation:
 
-```{python}
-#| label: tbl-layer-priority
-#| tbl-cap: "LoRA Layer Selection Priority"
-#| echo: false
-
-import pandas as pd
-
-layer_priority_data = {
-    'Priority': ['High', 'High', 'High', 'Medium', 'Medium', 'Low', 'Low'],
-    'Layer Type': [
-        'Final attention layers',
-        'Cross-modal attention',
-        'Task-specific output heads',
-        'Middle transformer layers',
-        'Feed-forward networks',
-        'Early encoder layers',
-        'Embedding layers'
-    ],
-    'Reason': [
-        'Most task-specific representations',
-        'Critical for multimodal fusion',
-        'Direct impact on outputs',
-        'Balanced feature extraction',
-        'Non-linear transformations',
-        'Generic low-level features',
-        'Fixed vocabulary representations'
-    ]
-}
-
-df = pd.DataFrame(layer_priority_data)
-print(df.to_string(index=False))
-```
+| Priority | Layer Type | Reason |
+|----------|------------|--------|
+| High | Final attention layers | Most task-specific representations |
+| High | Cross-modal attention | Critical for multimodal fusion |
+| High | Task-specific output heads | Direct impact on outputs |
+| Medium | Middle transformer layers | Balanced feature extraction |
+| Medium | Feed-forward networks | Non-linear transformations |
+| Low | Early encoder layers | Generic low-level features |
+| Low | Embedding layers | Fixed vocabulary representations |
 
 ### Rank Selection Guidelines
 
@@ -385,6 +334,7 @@ plt.show()
 ```
 
 **Rank Selection Guidelines:**
+
 - **r = 1-4**: Minimal parameters, suitable for simple adaptations
 - **r = 8-16**: Balanced efficiency and performance for most tasks
 - **r = 32-64**: Higher capacity for complex domain adaptations
@@ -987,71 +937,157 @@ config = TrainingConfig()
 
 ### 1. Domain Adaptation
 
-```{python}
-#| label: domain-adaptation
-#| code-fold: true
+::: {.panel-tabset}
 
-# Domain-specific LoRA configurations
-domain_configs = {
-    "medical_imaging": {
-        "config": LoRAConfig(
-            rank=32,
-            alpha=32,
-            target_modules=["q_proj", "v_proj", "fc1", "fc2"],
-            task_type="medical_vqa"
-        ),
-        "description": "Optimized for medical image analysis",
-        "key_features": [
-            "Higher rank for complex medical patterns",
-            "Focus on attention and MLP layers",
-            "Enhanced feature extraction capabilities"
-        ]
-    },
-    
-    "satellite_imagery": {
-        "config": LoRAConfig(
-            rank=16,
-            alpha=16,
-            target_modules=["qkv", "proj"],
-            task_type="remote_sensing"
-        ),
-        "description": "Adapted for satellite and aerial imagery",
-        "key_features": [
-            "Balanced rank for efficiency",
-            "Vision-focused adaptations",
-            "Spatial relationship modeling"
-        ]
-    },
-    
-    "autonomous_driving": {
-        "config": LoRAConfig(
-            rank=24,
-            alpha=24,
-            target_modules=["q_proj", "k_proj", "v_proj", "dense"],
-            task_type="scene_understanding"
-        ),
-        "description": "Designed for autonomous vehicle perception",
-        "key_features": [
-            "Real-time inference requirements",
-            "Multi-object detection focus",
-            "Safety-critical applications"
-        ]
-    }
-}
+#### Medical Imaging
 
-print("Domain Adaptation Configurations:")
-print("=" * 50)
+::: {.callout-note icon=false}
+#### Configuration Overview
+**Optimized for medical image analysis**
 
-for domain, info in domain_configs.items():
-    print(f"\n{domain.replace('_', ' ').title()}:")
-    print(f"  Description: {info['description']}")
-    print(f"  Rank: {info['config'].rank}")
-    print(f"  Alpha: {info['config'].alpha}")
-    print(f"  Target modules: {', '.join(info['config'].target_modules)}")
-    print("  Key features:")
-    for feature in info['key_features']:
-        print(f"    • {feature}")
-```
+**Rank:** 32 | **Alpha:** 32  
+**Target modules:** q_proj, v_proj, fc1, fc2
+:::
+
+::: {.panel-tabset group="medical"}
+
+#### Key Features
+
+::: {.grid}
+
+::: {.g-col-4}
+#### Higher Rank
+Complex medical patterns require higher dimensional adaptations for accurate analysis
+:::
+
+::: {.g-col-4}
+#### Attention Focus
+Specialized targeting of attention and MLP layers for medical feature detection
+:::
+
+::: {.g-col-4}
+#### Enhanced Extraction
+Advanced feature extraction capabilities for diagnostic imaging
+:::
+
+:::
+
+#### Technical Details
+
+| Parameter | Value | Purpose |
+|-----------|--------|---------|
+| Rank | 32 | Handle complex medical pattern recognition |
+| Alpha | 32 | Balanced learning rate for medical data |
+| Modules | q_proj, v_proj, fc1, fc2 | Focus on attention and feed-forward layers |
+
+:::
+
+#### Satellite Imagery
+
+::: {.callout-note icon=false}
+#### Configuration Overview
+**Adapted for satellite and aerial imagery**
+
+**Rank:** 16 | **Alpha:** 16  
+**Target modules:** qkv, proj
+:::
+
+::: {.panel-tabset group="satellite"}
+
+#### Key Features
+
+::: {.grid}
+
+::: {.g-col-4}
+#### Balanced Efficiency
+Optimized rank for computational efficiency while maintaining accuracy
+:::
+
+::: {.g-col-4}
+#### Vision-Focused
+Specialized adaptations for computer vision tasks
+:::
+
+::: {.g-col-4}
+#### Spatial Modeling
+Enhanced spatial relationship understanding for geographic data
+:::
+
+:::
+
+#### Technical Details
+
+| Parameter | Value | Purpose |
+|-----------|--------|---------|
+| Rank | 16 | Balance between performance and efficiency |
+| Alpha | 16 | Moderate learning rate for aerial imagery |
+| Modules | qkv, proj | Streamlined attention mechanisms |
+
+:::
+
+#### Autonomous Driving
+
+::: {.callout-note icon=false}
+#### Configuration Overview
+**Designed for autonomous vehicle perception**
+
+**Rank:** 24 | **Alpha:** 24  
+**Target modules:** q_proj, k_proj, v_proj, dense
+:::
+
+::: {.panel-tabset group="driving"}
+
+#### Key Features
+
+::: {.grid}
+
+::: {.g-col-4}
+#### Real-Time Performance
+Optimized for real-time inference requirements in vehicle systems
+:::
+
+::: {.g-col-4}
+#### Multi-Object Detection
+Specialized for detecting and tracking multiple objects simultaneously
+:::
+
+::: {.g-col-4}
+#### Safety-Critical
+Designed for safety-critical applications with high reliability standards
+:::
+
+:::
+
+#### Technical Details
+
+| Parameter | Value | Purpose |
+|-----------|--------|---------|
+| Rank | 24 | High performance for safety-critical applications |
+| Alpha | 24 | Balanced learning for multi-object scenarios |
+| Modules | q_proj, k_proj, v_proj, dense | Comprehensive attention and dense layer targeting |
+
+:::
+
+:::
+
+#### Summary Comparison
+
+::: {.callout-note}
+#### Quick Reference Table
+
+| Use Case | Rank | Alpha | Primary Focus | Target Modules |
+|----------|------|-------|---------------|----------------|
+| Medical Imaging | 32 | 32 | Complex pattern recognition | q_proj, v_proj, fc1, fc2 |
+| Satellite Imagery | 16 | 16 | Efficient spatial analysis | qkv, proj |
+| Autonomous Driving | 24 | 24 | Real-time multi-object detection | q_proj, k_proj, v_proj, dense |
+:::
+
+::: {.callout-tip}
+#### Configuration Guidelines
+- **Higher ranks** (24-32) for complex, safety-critical applications
+- **Moderate ranks** (16-20) for balanced efficiency and performance  
+- **Lower ranks** (4-12) for lightweight, fast inference applications
+:::
 
 ### 2. Multi-lingual Vision-Language
 
@@ -1236,96 +1272,58 @@ for task_name, num_examples in tasks.items():
 
 ### 1. Hyperparameter Selection
 
-```{python}
-#| label: hyperparameter-guidelines
-#| code-fold: true
+::: {.panel-tabset}
 
-class LoRAHyperparameterGuide:
-    def __init__(self):
-        self.guidelines = {
-            "rank_selection": {
-                "simple_adaptation": {"min": 1, "max": 8, "recommended": 4},
-                "balanced_performance": {"min": 8, "max": 32, "recommended": 16},
-                "complex_domains": {"min": 32, "max": 128, "recommended": 64},
-                "high_capacity": {"min": 128, "max": 256, "recommended": 128}
-            },
-            "alpha_selection": {
-                "conservative": "alpha = rank",
-                "aggressive": "alpha = 2 * rank", 
-                "very_aggressive": "alpha = 4 * rank",
-                "typical_range": (8, 64)
-            },
-            "learning_rates": {
-                "lora_parameters": {"min": 1e-5, "max": 1e-3, "recommended": 1e-4},
-                "base_parameters": {"min": 1e-6, "max": 1e-4, "recommended": 1e-5},
-                "warmup_ratio": 0.1
-            }
-        }
-    
-    def get_recommendations(self, task_complexity="balanced", domain_shift="moderate"):
-        """Get hyperparameter recommendations based on task characteristics"""
-        
-        # Rank recommendations
-        if task_complexity == "simple":
-            rank_category = "simple_adaptation"
-        elif task_complexity == "complex":
-            rank_category = "complex_domains"  
-        else:
-            rank_category = "balanced_performance"
-        
-        rank_info = self.guidelines["rank_selection"][rank_category]
-        
-        # Alpha based on domain shift
-        if domain_shift == "small":
-            alpha_multiplier = 1
-        elif domain_shift == "large":
-            alpha_multiplier = 2
-        else:
-            alpha_multiplier = 1.5
-        
-        recommended_rank = rank_info["recommended"]
-        recommended_alpha = int(recommended_rank * alpha_multiplier)
-        
-        recommendations = {
-            "rank": recommended_rank,
-            "alpha": recommended_alpha,
-            "lora_lr": self.guidelines["learning_rates"]["lora_parameters"]["recommended"],
-            "base_lr": self.guidelines["learning_rates"]["base_parameters"]["recommended"],
-            "reasoning": {
-                "rank": f"Selected {recommended_rank} for {task_complexity} task complexity",
-                "alpha": f"Alpha={recommended_alpha} for {domain_shift} domain shift",
-                "learning_rate": "Standard rates for stable training"
-            }
-        }
-        
-        return recommendations
+## Simple Classification
 
-# Hyperparameter recommendation system
-guide = LoRAHyperparameterGuide()
+::: {.callout-tip}
+## Recommended Settings
+- **Rank**: 4
+- **Alpha**: 4
+- **LoRA Learning Rate**: 0.0001
+- **Base Learning Rate**: 1e-05
+:::
 
-# Example scenarios
-scenarios = [
-    {"task": "Simple classification", "complexity": "simple", "domain": "small"},
-    {"task": "Medical VQA", "complexity": "complex", "domain": "large"},
-    {"task": "General captioning", "complexity": "balanced", "domain": "moderate"}
-]
+**Reasoning**: Selected rank 4 for simple task complexity. This configuration provides sufficient adaptation capacity for straightforward classification tasks while maintaining parameter efficiency.
 
-print("LoRA Hyperparameter Recommendations:")
-print("=" * 45)
+## Medical VQA
 
-for scenario in scenarios:
-    print(f"\nScenario: {scenario['task']}")
-    recommendations = guide.get_recommendations(
-        scenario['complexity'], 
-        scenario['domain']
-    )
-    
-    print(f"  Rank: {recommendations['rank']}")
-    print(f"  Alpha: {recommendations['alpha']}")
-    print(f"  LoRA LR: {recommendations['lora_lr']}")
-    print(f"  Base LR: {recommendations['base_lr']}")
-    print(f"  Reasoning: {recommendations['reasoning']['rank']}")
-```
+::: {.callout-tip}
+## Recommended Settings
+- **Rank**: 64
+- **Alpha**: 128
+- **LoRA Learning Rate**: 0.0001
+- **Base Learning Rate**: 1e-05
+:::
+
+**Reasoning**: Selected rank 64 for complex task complexity. Medical Visual Question Answering requires higher capacity to handle the intricate relationships between medical imagery and specialized domain knowledge.
+
+## General Captioning
+
+::: {.callout-tip}
+## Recommended Settings
+- **Rank**: 16
+- **Alpha**: 24
+- **LoRA Learning Rate**: 0.0001
+- **Base Learning Rate**: 1e-05
+:::
+
+**Reasoning**: Selected rank 16 for balanced task complexity. General captioning strikes a middle ground between simple classification and highly specialized tasks, requiring moderate adaptation capacity.
+
+:::
+
+#### Summary Table
+
+::: {.callout-note}
+#### Quick Reference Table
+
+| Scenario | Rank | Alpha | LoRA LR | Base LR | Task Complexity |
+|----------|------|-------|---------|---------|-----------------|
+| Simple Classification | 4 | 4 | 0.0001 | 1e-05 | Low |
+| Medical VQA | 64 | 128 | 0.0001 | 1e-05 | High |
+| General Captioning | 16 | 24 | 0.0001 | 1e-05 | Medium |
+:::
+
 
 ### 2. Module Selection Strategy
 
@@ -1375,322 +1373,235 @@ plt.show()
 
 ### 3. Training Best Practices
 
-```{python}
-#| label: training-best-practices
-#| code-fold: true
+::: {.panel-tabset}
 
-class LoRATrainingBestPractices:
-    def __init__(self):
-        self.practices = {
-            "gradient_handling": {
-                "use_gradient_accumulation": True,
-                "accumulation_steps": 4,
-                "apply_gradient_clipping": True,
-                "max_grad_norm": 1.0,
-                "clip_lora_only": True
-            },
-            "monitoring": {
-                "track_adapter_weights": True,
-                "monitor_rank_utilization": True,
-                "log_training_metrics": True,
-                "use_early_stopping": True,
-                "patience": 3
-            },
-            "checkpointing": {
-                "save_best_model": True,
-                "save_regular_checkpoints": True,
-                "checkpoint_frequency": 1,  # epochs
-                "keep_top_k": 3
-            },
-            "optimization": {
-                "use_mixed_precision": True,
-                "enable_gradient_checkpointing": True,
-                "separate_parameter_groups": True,
-                "use_warmup": True,
-                "warmup_ratio": 0.1
-            }
-        }
-    
-    def get_training_checklist(self):
-        """Generate training checklist"""
-        checklist = []
-        
-        checklist.append("🔧 Setup Phase:")
-        checklist.append("  ✓ Configure separate learning rates for LoRA and base parameters")
-        checklist.append("  ✓ Enable mixed precision training")
-        checklist.append("  ✓ Set up gradient accumulation")
-        checklist.append("  ✓ Configure gradient clipping")
-        
-        checklist.append("\n📊 Monitoring Phase:")
-        checklist.append("  ✓ Track LoRA weight norms")
-        checklist.append("  ✓ Monitor validation metrics")
-        checklist.append("  ✓ Check for overfitting signs")
-        checklist.append("  ✓ Validate rank utilization")
-        
-        checklist.append("\n💾 Checkpointing Phase:")
-        checklist.append("  ✓ Save model at regular intervals")
-        checklist.append("  ✓ Keep best performing checkpoint")
-        checklist.append("  ✓ Save LoRA adapters separately")
-        checklist.append("  ✓ Document hyperparameters")
-        
-        checklist.append("\n🎯 Evaluation Phase:")
-        checklist.append("  ✓ Test on multiple datasets")
-        checklist.append("  ✓ Measure parameter efficiency")
-        checklist.append("  ✓ Check inference speed")
-        checklist.append("  ✓ Validate robustness")
-        
-        return checklist
-    
-    def validate_configuration(self, config):
-        """Validate training configuration"""
-        issues = []
-        warnings = []
-        
-        # Check rank settings
-        if hasattr(config, 'rank'):
-            if config.rank < 1:
-                issues.append("Rank must be >= 1")
-            elif config.rank > 128:
-                warnings.append("Very high rank may reduce efficiency benefits")
-        
-        # Check alpha settings
-        if hasattr(config, 'alpha') and hasattr(config, 'rank'):
-            if config.alpha < config.rank / 4:
-                warnings.append("Very low alpha may limit adaptation strength")
-            elif config.alpha > config.rank * 4:
-                warnings.append("Very high alpha may cause instability")
-        
-        # Check learning rates
-        if hasattr(config, 'learning_rate'):
-            if config.learning_rate > 1e-2:
-                warnings.append("High learning rate may cause instability")
-            elif config.learning_rate < 1e-6:
-                warnings.append("Very low learning rate may slow convergence")
-        
-        return {
-            "issues": issues,
-            "warnings": warnings,
-            "valid": len(issues) == 0
-        }
+## Setup Phase
 
-# Best practices demonstration
-practices = LoRATrainingBestPractices()
+- Configure separate learning rates for LoRA and base parameters
+- Enable mixed precision training
+- Set up gradient accumulation
+- Configure gradient clipping
 
-print("LoRA Training Best Practices:")
-print("=" * 35)
+## Monitoring Phase
 
-# Show checklist
-checklist = practices.get_training_checklist()
-for item in checklist:
-    print(item)
+- Track LoRA weight norms
+- Monitor validation metrics
+- Check for overfitting signs
+- Validate rank utilization
 
-print("\n" + "=" * 35)
+## Checkpointing Phase
 
-# Validate example configurations
-example_configs = [
-    {"name": "Good Config", "rank": 16, "alpha": 16, "learning_rate": 1e-4},
-    {"name": "High Rank", "rank": 256, "alpha": 256, "learning_rate": 1e-4},
-    {"name": "Low Alpha", "rank": 16, "alpha": 2, "learning_rate": 1e-4}
-]
+- Save model at regular intervals
+- Keep best performing checkpoint
+- Save LoRA adapters separately
+- Document hyperparameters
 
-print("\nConfiguration Validation:")
-for config_dict in example_configs:
-    config = type('Config', (), config_dict)()
-    validation = practices.validate_configuration(config)
-    
-    print(f"\n{config_dict['name']}:")
-    print(f"  Valid: {'✓' if validation['valid'] else '✗'}")
-    
-    if validation['issues']:
-        print("  Issues:")
-        for issue in validation['issues']:
-            print(f"    ❌ {issue}")
-    
-    if validation['warnings']:
-        print("  Warnings:")
-        for warning in validation['warnings']:
-            print(f"    ⚠️  {warning}")
-```
+## Evaluation Phase
+
+- Test on multiple datasets
+- Measure parameter efficiency
+- Check inference speed
+- Validate robustness
+
+:::
+
+#### Configuration Validation
+
+::: {.panel-tabset}
+
+## Good Config
+::: {.callout-tip}
+## Status: ✅ Valid
+Configuration is valid and ready to use.
+:::
+
+## High Rank
+::: {.callout-tip}
+## Status: ✅ Valid
+:::
+
+::: {.callout-warning}
+## Warnings
+⚠️ Very high rank may reduce efficiency benefits
+:::
+
+## Low Alpha
+::: {.callout-tip}
+## Status: ✅ Valid
+:::
+
+::: {.callout-warning}
+## Warnings
+⚠️ Very low alpha may limit adaptation strength
+:::
+
+:::
 
 ## Troubleshooting
 
 ### Common Issues and Solutions
+::: {.panel-tabset}
 
-```{python}
-#| label: troubleshooting-guide
-#| code-fold: true
+### Example Diagnosis
 
-class LoRATroubleshootingGuide:
-    def __init__(self):
-        self.issues = {
-            "training_instability": {
-                "symptoms": [
-                    "Loss spikes or NaN values",
-                    "Gradient explosion", 
-                    "Poor convergence"
-                ],
-                "solutions": [
-                    "Apply gradient clipping (max_norm=1.0)",
-                    "Use learning rate scheduling",
-                    "Enable gradient accumulation",
-                    "Reduce learning rate",
-                    "Check data preprocessing"
-                ],
-                "code_example": """
-# Gradient clipping
-torch.nn.utils.clip_grad_norm_(lora_parameters, max_norm=1.0)
+::: {.callout-warning icon=false}
+## Training Issue Analysis
 
-# Learning rate scheduling
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-    optimizer, mode='min', factor=0.5, patience=3
-)"""
-            },
-            
-            "overfitting": {
-                "symptoms": [
-                    "Large gap between train/validation performance",
-                    "High LoRA weight magnitudes",
-                    "Perfect training accuracy"
-                ],
-                "solutions": [
-                    "Add dropout to LoRA layers",
-                    "Apply weight decay to LoRA parameters",
-                    "Use early stopping",
-                    "Reduce rank or alpha",
-                    "Increase dataset size"
-                ],
-                "code_example": """
-# Dropout in LoRA layers
-lora_layer = LoRALayer(dropout=0.2)
+**Symptoms Observed:**
+- Loss spikes during training
+- Gradient explosion detected  
+- Poor convergence after many epochs
 
-# Weight decay for LoRA parameters  
-optimizer = torch.optim.AdamW(lora_params, weight_decay=0.01)"""
-            },
-            
-            "memory_issues": {
-                "symptoms": [
-                    "CUDA out of memory errors",
-                    "Slow training speed",
-                    "System crashes"
-                ],
-                "solutions": [
-                    "Enable gradient checkpointing",
-                    "Reduce batch size and use gradient accumulation",
-                    "Use mixed precision training",
-                    "Merge LoRA weights for inference",
-                    "Clear unused variables"
-                ],
-                "code_example": """
-# Gradient checkpointing
-model.gradient_checkpointing_enable()
+**Diagnosis:** Training Instability  
+**Confidence Level:** 67%
+:::
 
-# Mixed precision training
-with torch.cuda.amp.autocast():
-    outputs = model(**batch)"""
-            },
-            
-            "poor_performance": {
-                "symptoms": [
-                    "Lower accuracy than expected",
-                    "Slow convergence",
-                    "Inconsistent results"
-                ],
-                "solutions": [
-                    "Increase rank gradually",
-                    "Target more modules", 
-                    "Adjust learning rates",
-                    "Check data quality",
-                    "Validate preprocessing"
-                ],
-                "code_example": """
-# Progressive rank increase
-def increase_rank(model, new_rank):
-    for module in model.modules():
-        if isinstance(module, LoRALinear):
-            expand_lora_rank(module, new_rank)"""
-            }
-        }
-    
-    def diagnose_issue(self, symptoms):
-        """Diagnose issues based on symptoms"""
-        matches = []
-        
-        for issue_name, issue_info in self.issues.items():
-            symptom_matches = sum(1 for symptom in symptoms 
-                                if any(s.lower() in symptom.lower() 
-                                      for s in issue_info["symptoms"]))
-            
-            if symptom_matches > 0:
-                matches.append({
-                    "issue": issue_name,
-                    "confidence": symptom_matches / len(issue_info["symptoms"]),
-                    "solutions": issue_info["solutions"],
-                    "code_example": issue_info["code_example"]
-                })
-        
-        # Sort by confidence
-        matches.sort(key=lambda x: x["confidence"], reverse=True)
-        return matches
-    
-    def get_debugging_checklist(self):
-        """Get debugging checklist"""
-        return [
-            "📊 Check Data Quality:",
-            "  • Validate input preprocessing",
-            "  • Check label distribution", 
-            "  • Verify data augmentation",
-            "  • Ensure proper batching",
-            "",
-            "🔧 Verify Model Configuration:",
-            "  • Confirm LoRA target modules",
-            "  • Check rank and alpha values",
-            "  • Validate learning rates",
-            "  • Ensure proper initialization",
-            "",
-            "📈 Monitor Training Metrics:",
-            "  • Track loss curves",
-            "  • Monitor gradient norms",
-            "  • Check weight magnitudes",
-            "  • Validate learning rate schedule",
-            "",
-            "💾 System Resources:",
-            "  • Monitor GPU memory usage",
-            "  • Check system RAM",
-            "  • Verify disk space",
-            "  • Monitor temperature/throttling"
-        ]
+::: {.callout-tip}
+## Recommended Solutions
 
-# Troubleshooting demonstration
-troubleshooter = LoRATroubleshootingGuide()
+- **Apply gradient clipping** (max_norm=1.0)
+- **Use learning rate scheduling** 
+- **Enable gradient accumulation**
+:::
 
-print("LoRA Troubleshooting Guide:")
-print("=" * 30)
+### Debugging Checklist
 
-# Example issue diagnosis
-example_symptoms = [
-    "Loss spikes during training",
-    "Gradient explosion detected", 
-    "Poor convergence after many epochs"
-]
+::: {.panel-tabset group="checklist"}
 
-print("Example Issue Diagnosis:")
-print(f"Symptoms: {', '.join(example_symptoms)}")
+#### 📊 Data Quality
 
-matches = troubleshooter.diagnose_issue(example_symptoms)
+::: {.callout-note collapse="false"}
+## Data Validation Steps
 
-for match in matches[:2]:  # Show top 2 matches
-    print(f"\nLikely Issue: {match['issue'].replace('_', ' ').title()}")
-    print(f"Confidence: {match['confidence']:.2f}")
-    print("Recommended Solutions:")
-    for solution in match['solutions'][:3]:  # Show top 3 solutions
-        print(f"  • {solution}")
+- [ ] **Validate input preprocessing**
+  - Check normalization parameters
+  - Verify tokenization consistency
+- [ ] **Check label distribution**
+  - Examine class balance
+  - Identify potential bias
+- [ ] **Verify data augmentation**
+  - Test augmentation pipeline
+  - Ensure proper randomization
+- [ ] **Ensure proper batching**
+  - Validate batch size settings
+  - Check data loader configuration
+:::
 
-print("\n" + "=" * 30)
-print("Debugging Checklist:")
-checklist = troubleshooter.get_debugging_checklist()
-for item in checklist:
-    print(item)
+#### 🔧 Model Configuration
+
+::: {.callout-note collapse="false"}
+## Configuration Verification
+
+- [ ] **Confirm LoRA target modules**
+  - Verify layer selection
+  - Check module naming consistency
+- [ ] **Check rank and alpha values**
+  - Validate rank appropriateness
+  - Ensure alpha scaling is correct
+- [ ] **Validate learning rates**
+  - Test different LR values
+  - Check optimizer settings
+- [ ] **Ensure proper initialization**
+  - Verify weight initialization
+  - Check adapter placement
+:::
+
+#### 📈 Training Metrics
+
+::: {.callout-note collapse="false"}
+## Monitoring Guidelines
+
+- [ ] **Track loss curves**
+  - Monitor training/validation loss
+  - Identify overfitting patterns
+- [ ] **Monitor gradient norms**
+  - Check for gradient explosion
+  - Detect vanishing gradients
+- [ ] **Check weight magnitudes**
+  - Monitor parameter updates
+  - Verify adapter weights
+- [ ] **Validate learning rate schedule**
+  - Confirm schedule implementation
+  - Monitor LR decay patterns
+:::
+
+#### 💾 System Resources
+
+::: {.callout-note collapse="false"}
+## Resource Monitoring
+
+- [ ] **Monitor GPU memory usage**
+  - Track memory consumption
+  - Optimize memory allocation
+- [ ] **Check system RAM**
+  - Monitor system memory
+  - Identify memory leaks
+- [ ] **Verify disk space**
+  - Check storage availability
+  - Monitor checkpoint sizes
+- [ ] **Monitor temperature/throttling**
+  - Check GPU temperatures
+  - Detect thermal throttling
+:::
+
+:::
+
+### Debugging Tools
+#### LoRA Debugging Analysis
+::: {.grid}
+
+::: {.g-col-6}
+**Adapter Information:**
+
+- **Name:** medical_vqa_adapter
+- **Health Status:** 🟢 Healthy
+:::
+
+::: {.g-col-6}
+**Rank Utilization Summary:**
+
+- **Mean:** 0.537
+- **Std Dev:** 0.184  
+- **Range:** 0.250 - 0.812
+:::
+
+:::
+
+::: {.callout-tip}
+## 💡 Recommendation
+
+LoRA configuration appears optimal based on current metrics.
+:::
+
+:::
+
+::: {.callout-note}
+## Quick Summary
+| Issue | Symptoms | Solution |
+|-------|----------|----------|
+| **Gradient Explosion** | Loss spikes, NaN values | Apply gradient clipping |
+| **Slow Convergence** | Plateau in loss | Adjust learning rate |
+| **Memory Issues** | OOM errors | Reduce batch size, use gradient accumulation |
+| **Overfitting** | Train/val loss divergence | Add regularization, reduce rank |
+| **Poor Performance** | Low accuracy | Increase rank, check target modules |
+:::
+
+### Additional Resources
+
+::: {.callout-note collapse="true"}
+## Useful Commands
+
+```{.bash}
+# Monitor GPU usage
+nvidia-smi -l 1
+
+# Check disk space
+df -h
+
+# Monitor system resources
+htop
 ```
+:::
 
 ### Debugging Tools
 
@@ -2569,492 +2480,386 @@ plt.show()
 
 ## Future Directions
 
-### Emerging Techniques
+::: {.panel-tabset}
 
-```{python}
-#| label: future-directions
-#| code-fold: true
+## Emerging Techniques
 
-class EmergingLoRATechniques:
-    """Showcase of emerging LoRA techniques and future directions"""
-    
-    def __init__(self):
-        self.techniques = {
-            "dynamic_lora": {
-                "description": "Adaptive rank and module selection during training",
-                "key_features": [
-                    "Runtime rank adjustment",
-                    "Automatic module importance scoring",
-                    "Dynamic resource allocation"
-                ],
-                "potential_impact": "30-50% efficiency improvement",
-                "maturity": "Research phase"
-            },
-            
-            "hierarchical_lora": {
-                "description": "Multi-level adaptation for different abstraction levels",
-                "key_features": [
-                    "Coarse-to-fine adaptation hierarchy",
-                    "Layer-specific rank allocation",
-                    "Compositional parameter sharing"
-                ],
-                "potential_impact": "Better transfer learning",
-                "maturity": "Early development"
-            },
-            
-            "conditional_lora": {
-                "description": "Task-conditional parameter generation",
-                "key_features": [
-                    "Dynamic adapter generation",
-                    "Task-aware parameter synthesis",
-                    "Meta-learning integration"
-                ],
-                "potential_impact": "Unlimited task adaptation",
-                "maturity": "Conceptual"
-            },
-            
-            "federated_lora": {
-                "description": "Distributed learning with privacy preservation",
-                "key_features": [
-                    "Decentralized adapter training",
-                    "Privacy-preserving aggregation",
-                    "Personalized adaptations"
-                ],
-                "potential_impact": "Privacy-safe collaboration",
-                "maturity": "Active research"
-            },
-            
-            "neural_architecture_lora": {
-                "description": "Architecture search for optimal LoRA configurations",
-                "key_features": [
-                    "Automated hyperparameter optimization",
-                    "Architecture-aware adaptation",
-                    "Performance-efficiency trade-off optimization"
-                ],
-                "potential_impact": "Optimal configurations automatically",
-                "maturity": "Research phase"
-            }
-        }
-    
-    def get_research_roadmap(self):
-        """Generate research roadmap for LoRA development"""
-        roadmap = {
-            "short_term": {
-                "timeframe": "6-12 months",
-                "focus_areas": [
-                    "Improved rank selection algorithms",
-                    "Better initialization strategies", 
-                    "Enhanced debugging tools",
-                    "Standardized evaluation protocols"
-                ],
-                "expected_outcomes": [
-                    "More stable training",
-                    "Better out-of-box performance",
-                    "Easier troubleshooting"
-                ]
-            },
-            
-            "medium_term": {
-                "timeframe": "1-2 years", 
-                "focus_areas": [
-                    "Dynamic and adaptive LoRA",
-                    "Multi-modal LoRA extensions",
-                    "Automated hyperparameter optimization",
-                    "Large-scale deployment frameworks"
-                ],
-                "expected_outcomes": [
-                    "Self-optimizing systems",
-                    "Audio-visual-text models",
-                    "Production-ready pipelines"
-                ]
-            },
-            
-            "long_term": {
-                "timeframe": "2-5 years",
-                "focus_areas": [
-                    "Theoretical understanding of adaptation",
-                    "Novel mathematical frameworks",
-                    "Integration with emerging architectures",
-                    "Quantum-inspired adaptations"
-                ],
-                "expected_outcomes": [
-                    "Principled design guidelines",
-                    "Next-generation efficiency",
-                    "Revolutionary capabilities"
-                ]
-            }
-        }
-        
-        return roadmap
-    
-    def predict_impact(self, technique_name: str) -> Dict[str, Any]:
-        """Predict potential impact of emerging techniques"""
-        if technique_name not in self.techniques:
-            return {"error": f"Unknown technique: {technique_name}"}
-        
-        technique = self.techniques[technique_name]
-        
-        # Simulate impact prediction
-        impact_factors = {
-            "efficiency_gain": np.random.uniform(1.2, 2.5),
-            "performance_improvement": np.random.uniform(0.02, 0.15),
-            "adoption_timeline": np.random.choice(["6 months", "1 year", "2 years", "3+ years"]),
-            "implementation_complexity": np.random.choice(["low", "medium", "high", "very high"]),
-            "research_interest": np.random.uniform(0.6, 0.95)
-        }
-        
-        return {
-            "technique": technique_name,
-            "description": technique["description"],
-            "predicted_impact": impact_factors,
-            "key_benefits": technique["key_features"],
-            "current_maturity": technique["maturity"]
-        }
+### Dynamic LoRA
+- **Description**: Adaptive rank and module selection during training
+- **Potential Impact**: 30-50% efficiency improvement
+- **Maturity**: Research phase
+- **Status**: 🔬 Active Research
 
-# Future directions demonstration
-print("Future Directions in LoRA Research:")
-print("=" * 40)
+### Hierarchical LoRA
+- **Description**: Multi-level adaptation for different abstraction levels
+- **Potential Impact**: Better transfer learning
+- **Maturity**: Early development
+- **Status**: 🌱 Early Development
 
-future_tech = EmergingLoRATechniques()
+### Conditional LoRA
+- **Description**: Task-conditional parameter generation
+- **Potential Impact**: Unlimited task adaptation
+- **Maturity**: Conceptual
+- **Status**: 💡 Conceptual
 
-# Show emerging techniques
-print("\nEmerging Techniques:")
-for name, info in future_tech.techniques.items():
-    print(f"\n{name.replace('_', ' ').title()}:")
-    print(f"  • {info['description']}")
-    print(f"  • Potential impact: {info['potential_impact']}")
-    print(f"  • Maturity: {info['maturity']}")
+### Federated LoRA
+- **Description**: Distributed learning with privacy preservation
+- **Potential Impact**: Privacy-safe collaboration
+- **Maturity**: Active research
+- **Status**: 🔬 Active Research
 
-print("\n" + "=" * 40)
+### Neural Architecture LoRA
+- **Description**: Architecture search for optimal LoRA configurations
+- **Potential Impact**: Optimal configurations automatically
+- **Maturity**: Research phase
+- **Status**: 🔬 Research Phase
 
-# Research roadmap
-roadmap = future_tech.get_research_roadmap()
-print("\nResearch Roadmap:")
+## Research Roadmap
 
-for term, details in roadmap.items():
-    print(f"\n{term.replace('_', ' ').title()} ({details['timeframe']}):")
-    print("  Focus Areas:")
-    for area in details['focus_areas']:
-        print(f"    • {area}")
-    print("  Expected Outcomes:")
-    for outcome in details['expected_outcomes']:
-        print(f"    ✓ {outcome}")
+### Short Term (6-12 months)
 
-print("\n" + "=" * 40)
+::: {.callout-tip}
+## Focus Areas
+- Improved rank selection algorithms
+- Better initialization strategies
+- Enhanced debugging tools
+- Standardized evaluation protocols
+:::
 
-# Impact prediction example
-print("\nImpact Prediction Example:")
-prediction = future_tech.predict_impact("dynamic_lora")
+**Expected Outcomes:**
 
-print(f"Technique: {prediction['technique'].replace('_', ' ').title()}")
-print(f"Description: {prediction['description']}")
-print("Predicted Impact:")
-for factor, value in prediction['predicted_impact'].items():
-    if isinstance(value, float):
-        if 'gain' in factor or 'improvement' in factor:
-            print(f"  • {factor.replace('_', ' ').title()}: {value:.1f}x" if 'gain' in factor else f"  • {factor.replace('_', ' ').title()}: +{value:.1%}")
-        else:
-            print(f"  • {factor.replace('_', ' ').title()}: {value:.2f}")
-    else:
-        print(f"  • {factor.replace('_', ' ').title()}: {value}")
+- More stable training
+- Better out-of-box performance
+- Easier troubleshooting
+
+### Medium Term (1-2 years)
+
+::: {.callout-note}
+## Focus Areas
+- Dynamic and adaptive LoRA
+- Multi-modal LoRA extensions
+- Automated hyperparameter optimization
+- Large-scale deployment frameworks
+:::
+
+**Expected Outcomes:**
+
+- Self-optimizing systems
+- Audio-visual-text models
+- Production-ready pipelines
+
+### Long Term (2-5 years)
+
+::: {.callout-important}
+## Focus Areas
+- Theoretical understanding of adaptation
+- Novel mathematical frameworks
+- Integration with emerging architectures
+- Quantum-inspired adaptations
+:::
+
+**Expected Outcomes:**
+
+- Principled design guidelines
+- Next-generation efficiency
+- Revolutionary capabilities
+:::
+
+### Impact Analysis
+
+#### Dynamic LoRA Case Study
+
+::: {.callout-warning}
+## Predicted Impact Analysis
+**Technique**: Dynamic LoRA  
+**Description**: Adaptive rank and module selection during training
+:::
+
+| Metric | Value |
+|--------|-------|
+| **Efficiency Gain** | 1.8x |
+| **Performance Improvement** | +3.0% |
+| **Adoption Timeline** | 6 months |
+| **Implementation Complexity** | Medium |
+| **Research Interest Score** | 0.94/1.00 |
+
+```{mermaid}
+%%| echo: false
+
+gantt
+    title LoRA Research Timeline
+    dateFormat  YYYY-MM
+    section Short Term
+    Rank Selection     :active, st1, 2024-08, 6M
+    Initialization     :active, st2, 2024-08, 6M
+    Debugging Tools    :st3, after st1, 4M
+    section Medium Term
+    Dynamic LoRA       :mt1, 2025-02, 12M
+    Multi-modal        :mt2, 2025-06, 18M
+    Auto-optimization  :mt3, after mt1, 12M
+    section Long Term
+    Theory Framework   :lt1, 2026-01, 24M
+    Next-gen Arch      :lt2, 2026-06, 30M
+    Quantum Inspired   :lt3, 2027-01, 36M
 ```
+
+#### Summary
+
+::: {.callout-tip}
+## Key Takeaways
+1. **Dynamic LoRA** shows the most immediate promise with 1.8x efficiency gains
+2. **Short-term focus** should be on stability and usability improvements
+3. **Long-term vision** includes theoretical breakthroughs and quantum adaptations
+4. **Timeline** spans from 6 months to 5 years for full roadmap completion
+:::
+
 
 ### Research Opportunities
 
-```{python}
-#| label: research-opportunities
-#| code-fold: true
+::: {.callout-important}
+## Key Research Domains
+Three primary areas have been identified for immediate investigation:
+:::
 
-class LoRAResearchOpportunities:
-    """Identify key research opportunities in LoRA for VLMs"""
-    
-    def __init__(self):
-        self.research_areas = {
-            "theoretical_analysis": {
-                "priority": "high",
-                "description": "Better understanding of LoRA's approximation capabilities",
-                "open_questions": [
-                    "What is the theoretical limit of low-rank approximation?",
-                    "How does rank relate to task complexity?",
-                    "Can we predict optimal rank analytically?",
-                    "What are the convergence guarantees?"
-                ],
-                "potential_methods": [
-                    "Matrix perturbation theory",
-                    "Information theory analysis", 
-                    "Optimization theory",
-                    "Statistical learning theory"
-                ]
-            },
-            
-            "architecture_specific": {
-                "priority": "high",
-                "description": "Optimized LoRA for different VLM architectures",
-                "open_questions": [
-                    "How should LoRA differ for Transformers vs CNNs?",
-                    "What's optimal for diffusion models?",
-                    "How to handle multi-scale architectures?",
-                    "What about retrieval-augmented models?"
-                ],
-                "potential_methods": [
-                    "Architecture-aware rank selection",
-                    "Layer-type specific adaptations",
-                    "Scale-dependent parameters",
-                    "Retrieval-aware fine-tuning"
-                ]
-            },
-            
-            "multimodal_extensions": {
-                "priority": "medium",
-                "description": "LoRA for audio-visual-text models",
-                "open_questions": [
-                    "How to balance modality-specific adaptations?",
-                    "Can we share parameters across modalities?",
-                    "How to handle temporal dynamics?",
-                    "What about cross-modal attention?"
-                ],
-                "potential_methods": [
-                    "Modality-aware parameter sharing",
-                    "Temporal LoRA for sequences",
-                    "Cross-modal adaptation matrices",
-                    "Hierarchical multimodal LoRA"
-                ]
-            },
-            
-            "continual_learning": {
-                "priority": "medium", 
-                "description": "LoRA for lifelong learning in VLMs",
-                "open_questions": [
-                    "How to prevent catastrophic forgetting?",
-                    "Can we grow adapters over time?",
-                    "How to balance old vs new knowledge?",
-                    "What about task interference?"
-                ],
-                "potential_methods": [
-                    "Progressive adapter growth",
-                    "Memory-based parameter selection",
-                    "Task-specific adapter routing",
-                    "Elastic weight consolidation for LoRA"
-                ]
-            },
-            
-            "efficiency_optimization": {
-                "priority": "high",
-                "description": "Hardware-aware LoRA optimization",
-                "open_questions": [
-                    "How to optimize for different hardware?",
-                    "Can we quantize LoRA parameters?",
-                    "What about sparsity in adaptations?",
-                    "How to minimize memory bandwidth?"
-                ],
-                "potential_methods": [
-                    "Hardware-aware rank selection",
-                    "Quantized LoRA parameters",
-                    "Sparse adaptation matrices",
-                    "Memory-efficient implementations"
-                ]
-            }
-        }
-    
-    def generate_research_proposals(self, area: str) -> Dict[str, Any]:
-        """Generate specific research proposals for an area"""
-        if area not in self.research_areas:
-            return {"error": f"Unknown research area: {area}"}
-        
-        area_info = self.research_areas[area]
-        
-        # Generate specific research proposals
-        proposals = []
-        
-        for i, question in enumerate(area_info["open_questions"][:3]):  # Top 3 questions
-            proposal = {
-                "title": f"Investigation of {question.replace('?', '')}",
-                "objective": question,
-                "methodology": area_info["potential_methods"][i] if i < len(area_info["potential_methods"]) else "To be determined",
-                "expected_timeline": "12-18 months",
-                "required_resources": ["GPU cluster", "Research team", "Datasets"],
-                "success_metrics": [
-                    "Theoretical insights published",
-                    "Empirical validation completed", 
-                    "Performance improvements demonstrated"
-                ]
-            }
-            proposals.append(proposal)
-        
-        return {
-            "research_area": area,
-            "priority": area_info["priority"],
-            "description": area_info["description"],
-            "proposals": proposals
-        }
-    
-    def assess_research_impact(self) -> Dict[str, Any]:
-        """Assess potential impact of different research areas"""
-        impact_assessment = {}
-        
-        for area, info in self.research_areas.items():
-            # Simulate impact scoring
-            scores = {
-                "scientific_impact": np.random.uniform(0.6, 0.95),
-                "practical_impact": np.random.uniform(0.5, 0.9),
-                "timeline_feasibility": np.random.uniform(0.4, 0.8),
-                "resource_requirements": np.random.uniform(0.3, 0.9),
-                "collaboration_potential": np.random.uniform(0.5, 0.95)
-            }
-            
-            # Compute overall impact score
-            weights = {"scientific_impact": 0.3, "practical_impact": 0.3, 
-                      "timeline_feasibility": 0.2, "resource_requirements": 0.1,
-                      "collaboration_potential": 0.1}
-            
-            overall_score = sum(scores[metric] * weight for metric, weight in weights.items())
-            
-            impact_assessment[area] = {
-                "priority": info["priority"],
-                "scores": scores,
-                "overall_impact": overall_score,
-                "recommendation": "high priority" if overall_score > 0.75 else "medium priority" if overall_score > 0.6 else "low priority"
-            }
-        
-        return impact_assessment
-    
-    def create_collaboration_map(self) -> Dict[str, Any]:
-        """Create collaboration opportunities map"""
-        collaborations = {
-            "academic_institutions": [
-                "Computer Vision labs for VLM architectures",
-                "Machine Learning theory groups for theoretical analysis",
-                "Systems labs for efficiency optimization",
-                "Cognitive Science for multimodal understanding"
-            ],
-            
-            "industry_partners": [
-                "Cloud providers for large-scale deployment",
-                "Hardware manufacturers for optimization",
-                "AI companies for real-world applications",
-                "Research labs for cutting-edge techniques"
-            ],
-            
-            "interdisciplinary_opportunities": [
-                "Neuroscience: Brain-inspired adaptation mechanisms",
-                "Mathematics: Advanced matrix theory applications",
-                "Psychology: Human-like learning patterns",
-                "Engineering: Hardware-software co-design"
-            ],
-            
-            "funding_opportunities": [
-                "NSF: Theoretical foundations of adaptation",
-                "DARPA: Efficient AI systems",
-                "NIH: Medical imaging applications",
-                "Industry grants: Practical deployments"
-            ]
-        }
-        
-        return collaborations
+::: {layout-ncol=3}
 
-# Research opportunities demonstration
-print("LoRA Research Opportunities:")
-print("=" * 35)
+::: {.card}
+**Theoretical Analysis**
 
-research_ops = LoRAResearchOpportunities()
+- Better understanding of LoRA's approximation capabilities
+- 4 key research questions identified
+- Focus on mathematical foundations
+:::
 
-# Show high-priority research areas
-high_priority_areas = [area for area, info in research_ops.research_areas.items() 
-                      if info["priority"] == "high"]
+::: {.card}
+**Architecture Specific**
 
-print("High-Priority Research Areas:")
-for area in high_priority_areas:
-    info = research_ops.research_areas[area]
-    print(f"\n{area.replace('_', ' ').title()}:")
-    print(f"  • {info['description']}")
-    print(f"  • Key questions: {len(info['open_questions'])} identified")
+- Optimized LoRA for different VLM architectures
+- 4 key research questions identified
+- Vision-language model specialization
+:::
 
-print("\n" + "=" * 35)
+::: {.card}
+**Efficiency Optimization**
 
-# Generate detailed proposal for one area
-print("\nDetailed Research Proposal Example:")
-proposal_details = research_ops.generate_research_proposals("theoretical_analysis")
+- Hardware-aware LoRA optimization
+- 4 key research questions identified
+- Performance and resource utilization
+:::
 
-print(f"Area: {proposal_details['research_area'].replace('_', ' ').title()}")
-print(f"Priority: {proposal_details['priority'].upper()}")
-print(f"Description: {proposal_details['description']}")
+:::
 
-if 'proposals' in proposal_details:
-    for i, proposal in enumerate(proposal_details['proposals'][:1], 1):  # Show first proposal
-        print(f"\nProposal {i}: {proposal['title']}")
-        print(f"  Objective: {proposal['objective']}")
-        print(f"  Methodology: {proposal['methodology']}")
-        print(f"  Timeline: {proposal['expected_timeline']}")
+### Detailed Proposals
 
-print("\n" + "=" * 35)
+::: {.callout-note collapse="false"}
+## Research Proposal Details
 
-# Impact assessment
-print("\nResearch Impact Assessment:")
-impact_assessment = research_ops.assess_research_impact()
+**Area:** Theoretical Analysis  
+**Priority:** HIGH  
+**Description:** Better understanding of LoRA's approximation capabilities
 
-# Sort by overall impact
-sorted_areas = sorted(impact_assessment.items(), 
-                     key=lambda x: x[1]['overall_impact'], reverse=True)
+#### Proposal 1: Theoretical Limits Investigation
 
-for area, assessment in sorted_areas:
-    print(f"\n{area.replace('_', ' ').title()}:")
-    print(f"  Overall Impact: {assessment['overall_impact']:.2f}")
-    print(f"  Recommendation: {assessment['recommendation'].upper()}")
-    print(f"  Scientific Impact: {assessment['scores']['scientific_impact']:.2f}")
-    print(f"  Practical Impact: {assessment['scores']['practical_impact']:.2f}")
+- **Objective:** What is the theoretical limit of low-rank approximation?
+- **Methodology:** Matrix perturbation theory
+- **Timeline:** 12-18 months
+- **Expected Outcomes:** 
+  - Mathematical bounds on approximation quality
+  - Guidelines for rank selection
+  - Theoretical framework for optimization
+:::
 
-print("\n" + "=" * 35)
+#### Research Questions Framework
 
-# Collaboration opportunities
-print("\nCollaboration Opportunities:")
-collab_map = research_ops.create_collaboration_map()
+::: {.panel-tabset}
 
-for category, opportunities in collab_map.items():
-    print(f"\n{category.replace('_', ' ').title()}:")
-    for opportunity in opportunities[:2]:  # Show first 2
-        print(f"  • {opportunity}")
-```
+#### Theoretical
+1. What are the fundamental limits of low-rank approximation in neural networks?
+2. How does rank selection impact convergence and generalization?
+3. Can we establish theoretical guarantees for LoRA performance?
+4. What is the relationship between rank and model capacity?
 
-## Conclusion
+#### Architectural
+1. How can LoRA be optimized for transformer architectures?
+2. What are the best practices for multi-modal model adaptation?
+3. How does LoRA performance vary across different layer types?
+4. Can we develop architecture-specific rank selection strategies?
 
-This comprehensive guide has covered the theoretical foundations, practical implementation, and production deployment of LoRA for Vision-Language Models. Key takeaways include:
+#### Efficiency
+1. What are the optimal hardware configurations for LoRA training?
+2. How can we minimize memory overhead during adaptation?
+3. What parallelization strategies work best for LoRA?
+4. Can we develop real-time adaptation capabilities?
 
-### Summary of Key Points
+:::
+
+### Impact Assessment
 
 ```{python}
-#| label: key-takeaways
 #| echo: false
+#| warning: false
 
-print("🎯 Key Takeaways from LoRA for VLMs:")
-print("=" * 45)
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
-takeaways = [
-    "🔬 Start with conservative hyperparameters (rank=16, alpha=16) and gradually increase complexity",
-    "🎯 Focus on high-impact modules (attention layers, cross-modal fusion) for maximum efficiency", 
-    "📊 Monitor both performance and efficiency metrics throughout development",
-    "🔧 Use appropriate debugging and analysis tools to understand adapter behavior",
-    "🚀 Implement progressive training strategies for stable convergence",
-    "⚡ Apply memory optimization techniques for large-scale deployment",
-    "📈 Establish comprehensive monitoring for production systems",
-    "🔄 Stay updated with emerging techniques and research developments",
-    "🤝 Consider task-specific configurations for optimal performance",
-    "🛡️ Implement robust troubleshooting procedures for common issues"
-]
+# Research impact data
+impact_data = pd.DataFrame({
+    'Area': ['Multimodal Extensions', 'Continual Learning', 'Architecture Specific', 
+             'Theoretical Analysis', 'Efficiency Optimization'],
+    'Overall_Impact': [0.75, 0.72, 0.65, 0.64, 0.63],
+    'Scientific_Impact': [0.79, 0.86, 0.84, 0.75, 0.72],
+    'Practical_Impact': [0.79, 0.72, 0.66, 0.53, 0.80],
+    'Priority': ['MEDIUM', 'MEDIUM', 'MEDIUM', 'MEDIUM', 'MEDIUM']
+})
 
-for i, takeaway in enumerate(takeaways, 1):
-    print(f"{i:2d}. {takeaway}")
+# Create the plot
+fig, ax = plt.subplots(figsize=(10, 8))
 
-print("\n" + "=" * 45)
-print("📚 This guide provides a solid foundation for leveraging LoRA")
-print("   in Vision-Language Model applications, from research through")  
-print("   production deployment and monitoring.")
+# Create a colormap for the areas (similar to viridis)
+colors = plt.cm.viridis(np.linspace(0, 1, len(impact_data)))
+
+# Create scatter plot
+scatter = ax.scatter(impact_data['Scientific_Impact'], 
+                    impact_data['Practical_Impact'],
+                    s=impact_data['Overall_Impact'] * 300,  # Scale size (3-8 range from R)
+                    c=colors,
+                    alpha=0.7)
+
+# Add text labels
+for i, area in enumerate(impact_data['Area']):
+    ax.annotate(area, 
+                (impact_data['Scientific_Impact'].iloc[i], 
+                 impact_data['Practical_Impact'].iloc[i]),
+                xytext=(5, 5), textcoords='offset points',
+                fontsize=9, ha='left')
+
+# Customize the plot
+ax.set_xlabel('Scientific Impact Score', fontsize=12)
+ax.set_ylabel('Practical Impact Score', fontsize=12)
+ax.set_title('Research Impact Assessment\nScientific vs Practical Impact Analysis', 
+             fontsize=14, fontweight='bold')
+
+# Set axis limits
+ax.set_xlim(0.5, 0.9)
+ax.set_ylim(0.5, 0.85)
+
+# Add grid
+ax.grid(True, alpha=0.3)
+
+# Create custom legend for size
+sizes = [0.63, 0.70, 0.75]  # Example sizes
+size_labels = ['0.63', '0.70', '0.75']
+legend_elements = [plt.scatter([], [], s=size*300, c='gray', alpha=0.7, label=label) 
+                   for size, label in zip(sizes, size_labels)]
+
+size_legend = ax.legend(handles=legend_elements, 
+                       title='Overall Impact', 
+                       loc='upper left',
+                       bbox_to_anchor=(0.02, 0.98))
+
+# Create color legend
+from matplotlib.patches import Patch
+color_legend_elements = [Patch(facecolor=colors[i], label=area) 
+                        for i, area in enumerate(impact_data['Area'])]
+color_legend = ax.legend(handles=color_legend_elements,
+                        title='Research Area',
+                        loc='lower right',
+                        bbox_to_anchor=(0.98, 0.02))
+
+# Add the size legend back (matplotlib removes previous legend when adding new one)
+ax.add_artist(size_legend)
+
+plt.tight_layout()
+plt.show()
+
 ```
 
-### Future Outlook
+### Impact Scores Summary
+
+| Research Area | Overall Impact | Scientific Impact | Practical Impact | Recommendation |
+|---------------|----------------|-------------------|------------------|----------------|
+| **Multimodal Extensions** | 0.75 | 0.79 | 0.79 | MEDIUM PRIORITY |
+| **Continual Learning** | 0.72 | 0.86 | 0.72 | MEDIUM PRIORITY |
+| **Architecture Specific** | 0.65 | 0.84 | 0.66 | MEDIUM PRIORITY |
+| **Theoretical Analysis** | 0.64 | 0.75 | 0.53 | MEDIUM PRIORITY |
+| **Efficiency Optimization** | 0.63 | 0.72 | 0.80 | MEDIUM PRIORITY |
+
+
+## Summary of Key Points
+
+1. **Conservative Hyperparameter Initialization**
+- Start with conservative hyperparameters (rank=16, alpha=16)
+- Gradually increase complexity based on validation performance
+- Avoid overfitting with aggressive initial configurations
+
+2. **Strategic Module Selection**
+- Focus on high-impact modules (attention layers, cross-modal fusion)
+- Prioritize modules that maximize efficiency gains
+- Consider computational cost vs. performance trade-offs
+
+3. **Comprehensive Monitoring**
+- Monitor both performance and efficiency metrics throughout development
+- Track convergence patterns and training stability
+- Implement early stopping based on validation metrics
+
+4. **Debugging and Analysis Tools**
+- Use appropriate debugging tools to understand adapter behavior
+- Analyze attention patterns and feature representations
+- Implement gradient flow monitoring for training diagnostics
+
+5. **Progressive Training Strategies**
+- Implement progressive training strategies for stable convergence
+- Use curriculum learning approaches when appropriate
+- Consider staged training with increasing complexity
+
+6. **Memory Optimization**
+- Apply memory optimization techniques for large-scale deployment
+- Implement gradient checkpointing and mixed precision training
+- Optimize batch sizes and sequence lengths
+
+7. **Production Monitoring**
+- Establish comprehensive monitoring for production systems
+- Track model performance drift and adaptation effectiveness
+- Implement automated alerts for performance degradation
+
+8. **Continuous Learning**
+- Stay updated with emerging techniques and research developments
+- Regularly evaluate new LoRA variants and improvements
+- Participate in community discussions and knowledge sharing
+
+9. **Task-Specific Optimization**
+- Consider task-specific configurations for optimal performance
+- Adapt hyperparameters based on domain requirements
+- Fine-tune approaches for different VLM applications
+
+10. **Robust Troubleshooting**
+- Implement robust troubleshooting procedures for common issues
+- Maintain comprehensive error handling and recovery mechanisms
+- Document solutions for recurring problems
+
+## Implementation Checklist
+- [ ] Initialize with conservative hyperparameters
+- [ ] Identify and target high-impact modules
+- [ ] Set up comprehensive monitoring systems
+- [ ] Configure debugging and analysis tools
+- [ ] Implement progressive training pipeline
+- [ ] Apply memory optimization techniques
+- [ ] Establish production monitoring
+- [ ] Create update and maintenance procedures
+- [ ] Customize for specific task requirements
+- [ ] Prepare troubleshooting documentation
+
+::: {.callout-tip}
+## Pro Tip
+Remember that successful LoRA implementation is an iterative process. Start simple, monitor carefully, and gradually optimize based on empirical results rather than theoretical assumptions.
+:::
+
+## Future Outlook
 
 As the field continues to evolve, LoRA and its variants will likely become even more sophisticated, enabling more efficient and capable multimodal AI systems. The techniques and principles outlined in this guide provide a solid foundation for leveraging these advances in your own Vision-Language Model applications.
 
-### Resources for Further Learning
+## Resources for Further Learning
 
 - **Hugging Face PEFT**: Parameter-Efficient Fine-Tuning library
 - **LoRA Paper**: "LoRA: Low-Rank Adaptation of Large Language Models" (Hu et al., 2021)
