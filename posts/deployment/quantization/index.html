@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Krishnatheja Vanka">
+<meta name="dcterms.date" content="2025-08-22">
+
+<title>Complete Guide to Quantization and Pruning – Krishnatheja Vanka’s Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../favicon.ico" rel="icon">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-bc185b5c5bdbcb35c2eb49d8a876ef70.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-5a86c4bd0c1f9981a70f893fdae069f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles/styles.css">
+</head>
+
+<body class="floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Krishnatheja Vanka’s Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/theja-vanka"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-page-right">
+      <h1 class="title">Complete Guide to Quantization and Pruning</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">code</div>
+                <div class="quarto-category">research</div>
+                <div class="quarto-category">advanced</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-page-right">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Krishnatheja Vanka </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 22, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#complete-guide-to-quantization-and-pruning" id="toc-complete-guide-to-quantization-and-pruning" class="nav-link active" data-scroll-target="#complete-guide-to-quantization-and-pruning">Complete Guide to Quantization and Pruning</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#why-model-compression-matters" id="toc-why-model-compression-matters" class="nav-link" data-scroll-target="#why-model-compression-matters">Why Model Compression Matters</a></li>
+  </ul></li>
+  <li><a href="#quantization" id="toc-quantization" class="nav-link" data-scroll-target="#quantization">Quantization</a>
+  <ul class="collapse">
+  <li><a href="#fundamentals-of-quantization" id="toc-fundamentals-of-quantization" class="nav-link" data-scroll-target="#fundamentals-of-quantization">Fundamentals of Quantization</a></li>
+  <li><a href="#types-of-quantization" id="toc-types-of-quantization" class="nav-link" data-scroll-target="#types-of-quantization">Types of Quantization</a></li>
+  <li><a href="#bit-width-considerations" id="toc-bit-width-considerations" class="nav-link" data-scroll-target="#bit-width-considerations">Bit-width Considerations</a></li>
+  <li><a href="#mixed-precision-quantization" id="toc-mixed-precision-quantization" class="nav-link" data-scroll-target="#mixed-precision-quantization">Mixed-Precision Quantization</a></li>
+  </ul></li>
+  <li><a href="#pruning" id="toc-pruning" class="nav-link" data-scroll-target="#pruning">Pruning</a>
+  <ul class="collapse">
+  <li><a href="#types-of-pruning" id="toc-types-of-pruning" class="nav-link" data-scroll-target="#types-of-pruning">Types of Pruning</a></li>
+  <li><a href="#pruning-granularities" id="toc-pruning-granularities" class="nav-link" data-scroll-target="#pruning-granularities">Pruning Granularities</a></li>
+  <li><a href="#pruning-schedules" id="toc-pruning-schedules" class="nav-link" data-scroll-target="#pruning-schedules">Pruning Schedules</a></li>
+  </ul></li>
+  <li><a href="#advanced-techniques" id="toc-advanced-techniques" class="nav-link" data-scroll-target="#advanced-techniques">Advanced Techniques</a>
+  <ul class="collapse">
+  <li><a href="#knowledge-distillation-with-compression" id="toc-knowledge-distillation-with-compression" class="nav-link" data-scroll-target="#knowledge-distillation-with-compression">Knowledge Distillation with Compression</a></li>
+  <li><a href="#neural-architecture-search-nas-for-compression" id="toc-neural-architecture-search-nas-for-compression" class="nav-link" data-scroll-target="#neural-architecture-search-nas-for-compression">Neural Architecture Search (NAS) for Compression</a></li>
+  <li><a href="#lottery-ticket-hypothesis-variants" id="toc-lottery-ticket-hypothesis-variants" class="nav-link" data-scroll-target="#lottery-ticket-hypothesis-variants">Lottery Ticket Hypothesis Variants</a></li>
+  </ul></li>
+  <li><a href="#implementation-examples" id="toc-implementation-examples" class="nav-link" data-scroll-target="#implementation-examples">Implementation Examples</a>
+  <ul class="collapse">
+  <li><a href="#pytorch-quantization-example" id="toc-pytorch-quantization-example" class="nav-link" data-scroll-target="#pytorch-quantization-example">PyTorch Quantization Example</a></li>
+  <li><a href="#pruning-example" id="toc-pruning-example" class="nav-link" data-scroll-target="#pruning-example">Pruning Example</a></li>
+  <li><a href="#structured-pruning-implementation" id="toc-structured-pruning-implementation" class="nav-link" data-scroll-target="#structured-pruning-implementation">Structured Pruning Implementation</a></li>
+  </ul></li>
+  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a>
+  <ul class="collapse">
+  <li><a href="#quantization-best-practices" id="toc-quantization-best-practices" class="nav-link" data-scroll-target="#quantization-best-practices">Quantization Best Practices</a></li>
+  <li><a href="#pruning-best-practices" id="toc-pruning-best-practices" class="nav-link" data-scroll-target="#pruning-best-practices">Pruning Best Practices</a></li>
+  <li><a href="#combined-approaches" id="toc-combined-approaches" class="nav-link" data-scroll-target="#combined-approaches">Combined Approaches</a></li>
+  </ul></li>
+  <li><a href="#tools-and-frameworks" id="toc-tools-and-frameworks" class="nav-link" data-scroll-target="#tools-and-frameworks">Tools and Frameworks</a>
+  <ul class="collapse">
+  <li><a href="#specialized-tools" id="toc-specialized-tools" class="nav-link" data-scroll-target="#specialized-tools">Specialized Tools</a></li>
+  </ul></li>
+  <li><a href="#sec-future" id="toc-sec-future" class="nav-link" data-scroll-target="#sec-future">Future Directions</a>
+  <ul class="collapse">
+  <li><a href="#emerging-quantization-techniques" id="toc-emerging-quantization-techniques" class="nav-link" data-scroll-target="#emerging-quantization-techniques">Emerging Quantization Techniques</a></li>
+  <li><a href="#advanced-pruning-methods" id="toc-advanced-pruning-methods" class="nav-link" data-scroll-target="#advanced-pruning-methods">Advanced Pruning Methods</a></li>
+  <li><a href="#integration-with-other-techniques" id="toc-integration-with-other-techniques" class="nav-link" data-scroll-target="#integration-with-other-techniques">Integration with Other Techniques</a></li>
+  <li><a href="#hardware-considerations" id="toc-hardware-considerations" class="nav-link" data-scroll-target="#hardware-considerations">Hardware Considerations</a></li>
+  </ul></li>
+  <li><a href="#sec-conclusion" id="toc-sec-conclusion" class="nav-link" data-scroll-target="#sec-conclusion">Conclusion</a></li>
+  <li><a href="#appendix-additional-resources" id="toc-appendix-additional-resources" class="nav-link" data-scroll-target="#appendix-additional-resources">Appendix: Additional Resources</a>
+  <ul class="collapse">
+  <li><a href="#code-repositories" id="toc-code-repositories" class="nav-link" data-scroll-target="#code-repositories">Code Repositories</a></li>
+  <li><a href="#research-papers" id="toc-research-papers" class="nav-link" data-scroll-target="#research-papers">Research Papers</a></li>
+  <li><a href="#datasets-for-evaluation" id="toc-datasets-for-evaluation" class="nav-link" data-scroll-target="#datasets-for-evaluation">Datasets for Evaluation</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
+
+
+
+
+
+
+<section id="complete-guide-to-quantization-and-pruning" class="level1">
+<h1>Complete Guide to Quantization and Pruning</h1>
+<p><img src="quart.png" class="img-fluid"></p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Model compression techniques are essential for deploying deep learning models in resource-constrained environments. Two of the most effective approaches are quantization and pruning, which can significantly reduce model size, memory usage, and inference time while maintaining acceptable performance.</p>
+<section id="why-model-compression-matters" class="level3">
+<h3 class="anchored" data-anchor-id="why-model-compression-matters">Why Model Compression Matters</h3>
+<p>Model compression addresses several critical challenges in deep learning deployment:</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Benefits of Model Compression
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Memory Efficiency</strong>: Reduced memory footprint enables deployment on mobile devices and edge hardware</li>
+<li><strong>Inference Speed</strong>: Faster computations through reduced precision arithmetic and fewer operations</li>
+<li><strong>Energy Consumption</strong>: Lower power requirements for battery-powered devices</li>
+<li><strong>Cost Reduction</strong>: Decreased cloud computing costs and hardware requirements</li>
+<li><strong>Accessibility</strong>: Enables AI deployment in environments with limited computational resources</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="quantization" class="level2">
+<h2 class="anchored" data-anchor-id="quantization">Quantization</h2>
+<p>Quantization reduces the precision of model weights and activations from floating-point representations (typically 32-bit) to lower-bit representations (8-bit, 4-bit, or even binary).</p>
+<section id="fundamentals-of-quantization" class="level3">
+<h3 class="anchored" data-anchor-id="fundamentals-of-quantization">Fundamentals of Quantization</h3>
+<section id="uniform-quantization" class="level4">
+<h4 class="anchored" data-anchor-id="uniform-quantization">Uniform Quantization</h4>
+<p>The most common form maps continuous values to a finite set of discrete levels:</p>
+<p><span id="eq-quantization"><span class="math display">\[Q(x) = \text{round}\left(\frac{x - \text{zero\_point}}{\text{scale}}\right) + \text{zero\_point} \tag{1}\]</span></span></p>
+<p>Where:</p>
+<ul>
+<li><code>scale</code>: The step size between quantization levels</li>
+<li><code>zero_point</code>: The value that maps to zero in the quantized representation</li>
+</ul>
+</section>
+<section id="asymmetric-vs-symmetric-quantization" class="level4">
+<h4 class="anchored" data-anchor-id="asymmetric-vs-symmetric-quantization">Asymmetric vs Symmetric Quantization</h4>
+<p><strong>Symmetric Quantization</strong>: Zero point is at the center of the range</p>
+<ul>
+<li>Simpler implementation</li>
+<li>Better for weights that are roughly centered around zero</li>
+<li>Formula: <span class="math inline">\(Q(x) = \text{round}(x / \text{scale})\)</span></li>
+</ul>
+<p><strong>Asymmetric Quantization</strong>: Zero point can be anywhere in the range</p>
+<ul>
+<li>Better utilization of the quantization range</li>
+<li>More suitable for activations (often non-negative)</li>
+<li>Handles skewed distributions better</li>
+</ul>
+</section>
+</section>
+<section id="types-of-quantization" class="level3">
+<h3 class="anchored" data-anchor-id="types-of-quantization">Types of Quantization</h3>
+<section id="post-training-quantization-ptq" class="level4">
+<h4 class="anchored" data-anchor-id="post-training-quantization-ptq">Post-Training Quantization (PTQ)</h4>
+<p>Quantizes a pre-trained model without retraining:</p>
+<p><strong>Static PTQ</strong>: Uses a calibration dataset to determine quantization parameters</p>
+<ul>
+<li>Faster deployment</li>
+<li>No training data required</li>
+<li>May have accuracy degradation for complex models</li>
+</ul>
+<p><strong>Dynamic PTQ</strong>: Determines quantization parameters at runtime</p>
+<ul>
+<li>Better accuracy than static PTQ</li>
+<li>Slightly higher inference overhead</li>
+<li>No calibration dataset needed</li>
+</ul>
+</section>
+<section id="quantization-aware-training-qat" class="level4">
+<h4 class="anchored" data-anchor-id="quantization-aware-training-qat">Quantization-Aware Training (QAT)</h4>
+<p>Simulates quantization effects during training:</p>
+<ul>
+<li>Higher accuracy preservation</li>
+<li>Requires retraining the model</li>
+<li>Longer development time but better results</li>
+</ul>
+</section>
+</section>
+<section id="bit-width-considerations" class="level3">
+<h3 class="anchored" data-anchor-id="bit-width-considerations">Bit-width Considerations</h3>
+<div id="tbl-bitwidth" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-bitwidth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Quantization bit-width comparison
+</figcaption>
+<div aria-describedby="tbl-bitwidth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Bit-width</th>
+<th>Compression</th>
+<th>Accuracy Trade-off</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>8-bit (INT8)</td>
+<td>2-4x</td>
+<td>Minimal</td>
+<td>Most common, well-supported</td>
+</tr>
+<tr class="even">
+<td>4-bit</td>
+<td>Up to 8x</td>
+<td>Moderate</td>
+<td>Inference-only scenarios</td>
+</tr>
+<tr class="odd">
+<td>Binary/Ternary</td>
+<td>Up to 32x</td>
+<td>Significant</td>
+<td>Extreme compression needs</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="mixed-precision-quantization" class="level3">
+<h3 class="anchored" data-anchor-id="mixed-precision-quantization">Mixed-Precision Quantization</h3>
+<p>Different layers use different precisions based on sensitivity analysis:</p>
+<ul>
+<li>Critical layers (e.g., first and last layers) kept at higher precision</li>
+<li>Less sensitive layers quantized more aggressively</li>
+<li>Automated search algorithms determine optimal bit allocation</li>
+</ul>
+</section>
+</section>
+<section id="pruning" class="level2">
+<h2 class="anchored" data-anchor-id="pruning">Pruning</h2>
+<p>Pruning removes redundant or less important connections, neurons, or entire layers from neural networks.</p>
+<section id="types-of-pruning" class="level3">
+<h3 class="anchored" data-anchor-id="types-of-pruning">Types of Pruning</h3>
+<section id="magnitude-based-pruning" class="level4">
+<h4 class="anchored" data-anchor-id="magnitude-based-pruning">Magnitude-Based Pruning</h4>
+<p>Removes weights with the smallest absolute values:</p>
+<ul>
+<li>Simple to implement</li>
+<li>Works well for many architectures</li>
+<li>May not capture weight importance accurately</li>
+</ul>
+</section>
+<section id="gradient-based-pruning" class="level4">
+<h4 class="anchored" data-anchor-id="gradient-based-pruning">Gradient-Based Pruning</h4>
+<p>Considers gradients to determine weight importance:</p>
+<ul>
+<li><strong>Fisher Information</strong>: Uses second-order derivatives</li>
+<li><strong>SNIP</strong> (Single-shot Network Pruning): Prunes before training</li>
+<li><strong>GraSP</strong>: Gradient Signal Preservation</li>
+</ul>
+</section>
+<section id="lottery-ticket-hypothesis" class="level4">
+<h4 class="anchored" data-anchor-id="lottery-ticket-hypothesis">Lottery Ticket Hypothesis</h4>
+<p>Identifies sparse subnetworks that can be trained from scratch:</p>
+<ul>
+<li>Iterative magnitude pruning</li>
+<li>Rewinding to early training checkpoints</li>
+<li>Maintains original network performance</li>
+</ul>
+</section>
+</section>
+<section id="pruning-granularities" class="level3">
+<h3 class="anchored" data-anchor-id="pruning-granularities">Pruning Granularities</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Unstructured Pruning</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Structured Pruning</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Semi-Structured Pruning</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>Removes individual weights regardless of their position:</p>
+<ul>
+<li>Higher compression ratios possible</li>
+<li>Irregular sparsity patterns</li>
+<li>May not lead to actual speedup without specialized hardware</li>
+</ul>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>Removes entire structures (channels, filters, layers):</p>
+<ul>
+<li><strong>Channel Pruning</strong>: Removes entire feature map channels</li>
+<li><strong>Filter Pruning</strong>: Removes convolutional filters</li>
+<li><strong>Block Pruning</strong>: Removes structured weight blocks</li>
+</ul>
+<p>Benefits: - Guaranteed speedup on standard hardware - Maintains regular computation patterns - Easier to implement in existing frameworks</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>Balances compression and hardware efficiency:</p>
+<ul>
+<li>N:M sparsity (e.g., 2:4 sparsity removes 2 out of every 4 weights)</li>
+<li>Supported by modern hardware (NVIDIA Ampere architecture)</li>
+<li>Good compression with hardware acceleration</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="pruning-schedules" class="level3">
+<h3 class="anchored" data-anchor-id="pruning-schedules">Pruning Schedules</h3>
+<div class="cell" data-eval="false" data-layout-align="default">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    A[Start Training] --&gt; B{Pruning Strategy}</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    B --&gt;|One-Shot| C[Remove All Weights at Once]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    B --&gt;|Gradual| D[Remove Weights Incrementally]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    B --&gt;|Iterative| E[Cycle: Prune-Train-Recover]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    C --&gt; F[Simple Implementation]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    D --&gt; G[Better Accuracy Preservation]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    E --&gt; H[Highest Accuracy Retention]</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    F --&gt; I[May Cause Accuracy Drop]</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    G --&gt; J[Network Adapts Gradually]</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    H --&gt; K[Computationally Expensive]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="advanced-techniques" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-techniques">Advanced Techniques</h2>
+<section id="knowledge-distillation-with-compression" class="level3">
+<h3 class="anchored" data-anchor-id="knowledge-distillation-with-compression">Knowledge Distillation with Compression</h3>
+<p>Combines compression with knowledge transfer:</p>
+<ul>
+<li>Teacher-student framework during compression</li>
+<li>Maintains performance while reducing model size</li>
+<li>Particularly effective for quantization</li>
+</ul>
+</section>
+<section id="neural-architecture-search-nas-for-compression" class="level3">
+<h3 class="anchored" data-anchor-id="neural-architecture-search-nas-for-compression">Neural Architecture Search (NAS) for Compression</h3>
+<p>Automated design of compressed architectures:</p>
+<ul>
+<li>Hardware-aware NAS considers deployment constraints</li>
+<li>Co-optimization of architecture and compression</li>
+<li>Differentiable NAS for quantization</li>
+</ul>
+</section>
+<section id="lottery-ticket-hypothesis-variants" class="level3">
+<h3 class="anchored" data-anchor-id="lottery-ticket-hypothesis-variants">Lottery Ticket Hypothesis Variants</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Variants
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>SNIP (Single-shot Network Pruning)</strong>:</p>
+<ul>
+<li>Prunes networks before training</li>
+<li>Uses gradient information for importance scoring</li>
+<li>Faster than iterative approaches</li>
+</ul>
+<p><strong>GraSP (Gradient Signal Preservation)</strong>:</p>
+<ul>
+<li>Maintains gradient flow through the network</li>
+<li>Better performance on deep networks</li>
+<li>Considers layer-wise interactions</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="implementation-examples" class="level2">
+<h2 class="anchored" data-anchor-id="implementation-examples">Implementation Examples</h2>
+<section id="pytorch-quantization-example" class="level3">
+<h3 class="anchored" data-anchor-id="pytorch-quantization-example">PyTorch Quantization Example</h3>
+<div id="pytorch-quantization" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.quantization <span class="im">as</span> quant</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a simple model</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SimpleModel(nn.Module):</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv1 <span class="op">=</span> nn.Conv2d(<span class="dv">3</span>, <span class="dv">32</span>, <span class="dv">3</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv2 <span class="op">=</span> nn.Conv2d(<span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">3</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc <span class="op">=</span> nn.Linear(<span class="dv">64</span>, <span class="dv">10</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> torch.relu(<span class="va">self</span>.conv1(x))</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> torch.relu(<span class="va">self</span>.conv2(x))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> torch.flatten(x, <span class="dv">1</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc(x)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Post-training quantization</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> SimpleModel()</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">eval</span>()</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare model for quantization</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>model.qconfig <span class="op">=</span> quant.get_default_qconfig(<span class="st">'fbgemm'</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>quant.prepare(model, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Calibrate with sample data</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co"># calibrate_model(model, calibration_data)</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to quantized model</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>quantized_model <span class="op">=</span> quant.convert(model, inplace<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="pruning-example" class="level3">
+<h3 class="anchored" data-anchor-id="pruning-example">Pruning Example</h3>
+<div id="pytorch-pruning" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.utils.prune <span class="im">as</span> prune</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply magnitude-based unstructured pruning</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> SimpleModel()</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>parameters_to_prune <span class="op">=</span> [</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    (model.conv1, <span class="st">'weight'</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    (model.conv2, <span class="st">'weight'</span>),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    (model.fc, <span class="st">'weight'</span>),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Prune 30% of weights globally</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>prune.global_unstructured(</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    parameters_to_prune,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    pruning_method<span class="op">=</span>prune.L1Unstructured,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    amount<span class="op">=</span><span class="fl">0.3</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Make pruning permanent</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> module, param <span class="kw">in</span> parameters_to_prune:</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    prune.remove(module, param)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="structured-pruning-implementation" class="level3">
+<h3 class="anchored" data-anchor-id="structured-pruning-implementation">Structured Pruning Implementation</h3>
+<div id="structured-pruning" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.utils.prune <span class="im">as</span> prune</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> channel_pruning(model, layer_name, amount):</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Prune channels based on L1 norm of filters"""</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    layer <span class="op">=</span> <span class="bu">getattr</span>(model, layer_name)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate channel importance (L1 norm)</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    importance <span class="op">=</span> torch.norm(layer.weight.data, p<span class="op">=</span><span class="dv">1</span>, dim<span class="op">=</span>[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>])</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Determine channels to prune</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    num_channels <span class="op">=</span> <span class="bu">len</span>(importance)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    num_prune <span class="op">=</span> <span class="bu">int</span>(amount <span class="op">*</span> num_channels)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> num_prune <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        _, indices <span class="op">=</span> torch.topk(importance, num_prune, largest<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create pruning mask</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        prune.structured(layer, name<span class="op">=</span><span class="st">'weight'</span>, amount<span class="op">=</span>amount, </span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>                        dim<span class="op">=</span><span class="dv">0</span>, importance_scores<span class="op">=</span>importance)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>channel_pruning(model, <span class="st">'conv1'</span>, <span class="fl">0.5</span>)  <span class="co"># Prune 50% of channels</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices" class="level2">
+<h2 class="anchored" data-anchor-id="best-practices">Best Practices</h2>
+<section id="quantization-best-practices" class="level3">
+<h3 class="anchored" data-anchor-id="quantization-best-practices">Quantization Best Practices</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Quantization Guidelines
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Start with 8-bit quantization</strong>: Best balance of compression and accuracy</li>
+<li><strong>Use calibration data</strong>: Representative of actual deployment data</li>
+<li><strong>Layer sensitivity analysis</strong>: Identify which layers are most sensitive to quantization</li>
+<li><strong>Gradual quantization</strong>: Start with less aggressive quantization and increase gradually</li>
+<li><strong>Batch normalization folding</strong>: Combine BN parameters with preceding layer weights</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="pruning-best-practices" class="level3">
+<h3 class="anchored" data-anchor-id="pruning-best-practices">Pruning Best Practices</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Pruning Guidelines
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Sensitivity analysis</strong>: Determine which layers/channels are most important</li>
+<li><strong>Gradual pruning</strong>: Remove weights incrementally during training</li>
+<li><strong>Fine-tuning</strong>: Always fine-tune after pruning to recover accuracy</li>
+<li><strong>Layer-wise pruning ratios</strong>: Different layers may benefit from different pruning ratios</li>
+<li><strong>Structured over unstructured</strong>: Choose structured pruning for guaranteed speedup</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="combined-approaches" class="level3">
+<h3 class="anchored" data-anchor-id="combined-approaches">Combined Approaches</h3>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important Considerations
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Order matters</strong>: Generally prune first, then quantize</li>
+<li><strong>Joint optimization</strong>: Consider both techniques simultaneously during training</li>
+<li><strong>Hardware considerations</strong>: Align compression strategy with deployment hardware</li>
+<li><strong>Validation throughout</strong>: Monitor accuracy at each compression stage</li>
+</ol>
+</div>
+</div>
+</section>
+</section>
+<section id="tools-and-frameworks" class="level2">
+<h2 class="anchored" data-anchor-id="tools-and-frameworks">Tools and Frameworks</h2>
+<div id="tbl-tools" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-tools-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Model compression tools comparison
+</figcaption>
+<div aria-describedby="tbl-tools-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 25%">
+<col style="width: 17%">
+<col style="width: 35%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Framework</th>
+<th>Quantization</th>
+<th>Pruning</th>
+<th>Special Features</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>PyTorch</strong></td>
+<td>torch.quantization</td>
+<td>torch.nn.utils.prune</td>
+<td>TorchScript optimization</td>
+</tr>
+<tr class="even">
+<td><strong>TensorFlow</strong></td>
+<td>Model Optimization Toolkit</td>
+<td>Built-in pruning</td>
+<td>TFLite for mobile</td>
+</tr>
+<tr class="odd">
+<td><strong>NVIDIA TensorRT</strong></td>
+<td>Automatic mixed precision</td>
+<td>Layer fusion</td>
+<td>High-performance inference</td>
+</tr>
+<tr class="even">
+<td><strong>Intel Neural Compressor</strong></td>
+<td>Cross-framework support</td>
+<td>Auto-tuning</td>
+<td>Hardware-specific optimizations</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<section id="specialized-tools" class="level3">
+<h3 class="anchored" data-anchor-id="specialized-tools">Specialized Tools</h3>
+<p><strong>NVIDIA TensorRT</strong>:</p>
+<ul>
+<li>High-performance inference optimization</li>
+<li>Automatic mixed precision</li>
+<li>Layer fusion and kernel optimization</li>
+</ul>
+<p><strong>Intel Neural Compressor</strong>:</p>
+<ul>
+<li>Cross-framework quantization</li>
+<li>Automatic accuracy-driven tuning</li>
+<li>Hardware-specific optimizations</li>
+</ul>
+<p><strong>Apache TVM</strong>:</p>
+<ul>
+<li>Deep learning compiler stack</li>
+<li>Auto-tuning for different hardware</li>
+<li>Graph-level optimizations</li>
+</ul>
+<p><strong>ONNX Runtime</strong>:</p>
+<ul>
+<li>Cross-platform inference optimization</li>
+<li>Dynamic quantization</li>
+<li>Graph optimizations</li>
+</ul>
+</section>
+</section>
+<section id="sec-future" class="level2">
+<h2 class="anchored" data-anchor-id="sec-future">Future Directions</h2>
+<section id="emerging-quantization-techniques" class="level3">
+<h3 class="anchored" data-anchor-id="emerging-quantization-techniques">Emerging Quantization Techniques</h3>
+<ul>
+<li><strong>Mixed-bit Networks</strong>: Different precisions for different operations</li>
+<li><strong>Learned Quantization</strong>: Neural networks learn quantization parameters</li>
+<li><strong>Hardware-Software Co-design</strong>: Quantization schemes designed for specific hardware</li>
+</ul>
+</section>
+<section id="advanced-pruning-methods" class="level3">
+<h3 class="anchored" data-anchor-id="advanced-pruning-methods">Advanced Pruning Methods</h3>
+<ul>
+<li><strong>Differentiable Pruning</strong>: End-to-end learning of sparse structures</li>
+<li><strong>Dynamic Sparsity</strong>: Runtime adaptation of sparsity patterns</li>
+<li><strong>Cross-layer Dependencies</strong>: Pruning decisions considering global network structure</li>
+</ul>
+</section>
+<section id="integration-with-other-techniques" class="level3">
+<h3 class="anchored" data-anchor-id="integration-with-other-techniques">Integration with Other Techniques</h3>
+<div class="cell" data-eval="false" data-layout-align="default">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>graph TD</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    A[Model Compression] --&gt; B[Neural Architecture Search]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    A --&gt; C[Federated Learning]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    A --&gt; D[Continual Learning]</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    B --&gt; E[Joint Architecture &amp; Compression Optimization]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    C --&gt; F[Compression for Distributed Training]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    D --&gt; G[Maintaining Compression Benefits]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="hardware-considerations" class="level3">
+<h3 class="anchored" data-anchor-id="hardware-considerations">Hardware Considerations</h3>
+<ul>
+<li><strong>Specialized Accelerators</strong>: ASICs designed for sparse and low-precision computation</li>
+<li><strong>In-memory Computing</strong>: Compression for neuromorphic and analog computing</li>
+<li><strong>Edge AI Chips</strong>: Dedicated hardware for compressed model inference</li>
+</ul>
+</section>
+</section>
+<section id="sec-conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="sec-conclusion">Conclusion</h2>
+<p>Quantization and pruning are essential techniques for practical deep learning deployment. Success requires understanding the trade-offs between compression ratio, accuracy preservation, and hardware compatibility. The field continues to evolve with new methods that push the boundaries of what’s possible with compressed neural networks.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Takeaways
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Start with well-established techniques (8-bit quantization, magnitude pruning)</li>
+<li>Always validate on representative data and deployment hardware</li>
+<li>Consider the entire deployment pipeline, not just model accuracy</li>
+<li>Combine multiple compression techniques for maximum benefit</li>
+<li>Stay informed about hardware-specific optimizations and emerging methods</li>
+</ul>
+</div>
+</div>
+<p>The future of neural network compression lies in automated, hardware-aware optimization that considers the full spectrum of deployment constraints while maintaining the intelligence and capabilities that make deep learning so powerful.</p>
+<hr>
+</section>
+<section id="appendix-additional-resources" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-additional-resources">Appendix: Additional Resources</h2>
+<section id="code-repositories" class="level3">
+<h3 class="anchored" data-anchor-id="code-repositories">Code Repositories</h3>
+<ul>
+<li><a href="https://github.com/pytorch/pytorch">PyTorch Model Optimization</a></li>
+<li><a href="https://github.com/tensorflow/model-optimization">TensorFlow Model Optimization</a></li>
+<li><a href="https://github.com/intel/neural-compressor">Neural Compressor</a></li>
+</ul>
+</section>
+<section id="research-papers" class="level3">
+<h3 class="anchored" data-anchor-id="research-papers">Research Papers</h3>
+<ul>
+<li>Lottery Ticket Hypothesis <span class="citation" data-cites="frankle2019lottery">[@frankle2019lottery]</span></li>
+<li>Quantization and Training of Neural Networks <span class="citation" data-cites="jacob2018quantization">[@jacob2018quantization]</span></li>
+<li>Structured Pruning Methods <span class="citation" data-cites="liu2017learning">[@liu2017learning]</span></li>
+</ul>
+</section>
+<section id="datasets-for-evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="datasets-for-evaluation">Datasets for Evaluation</h3>
+<ul>
+<li>ImageNet for computer vision models</li>
+<li>GLUE benchmark for NLP models</li>
+<li>Common Voice for speech models</li>
+</ul>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© 2025 Krishnatheja Vanka</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
