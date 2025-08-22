@@ -176,7 +176,10 @@ After installation, configure essential settings:
 Kubeflow Pipelines are built from reusable components, each encapsulating a specific ML task:
 
 ```{mermaid}
-graph TD
+%%| code-fold: true
+%%| echo: false
+
+graph LR
     A[Data Ingestion] --> B[Data Preprocessing]
     B --> C[Feature Engineering]
     C --> D[Model Training]
@@ -252,6 +255,9 @@ Kubeflow supports distributed training across multiple frameworks:
 ### Deployment Patterns
 
 ```{mermaid}
+%%| code-fold: true
+%%| echo: false
+
 graph LR
     A[Model Registry] --> B[Canary Deployment]
     A --> C[A/B Testing]

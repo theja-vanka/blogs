@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Krishnatheja Vanka">
+<meta name="dcterms.date" content="2025-08-22">
+
+<title>Complete Guide to DINOv3: Self-Supervised Vision Transformers – Krishnatheja Vanka’s Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../favicon.ico" rel="icon">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-bc185b5c5bdbcb35c2eb49d8a876ef70.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-5a86c4bd0c1f9981a70f893fdae069f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-62c28fcd870f55f61984f019219cbd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="../../../styles/styles.css">
+</head>
+
+<body class="floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Krishnatheja Vanka’s Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/theja-vanka"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-page-right">
+      <h1 class="title">Complete Guide to DINOv3: Self-Supervised Vision Transformers</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">code</div>
+                <div class="quarto-category">research</div>
+                <div class="quarto-category">advanced</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-page-right">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Krishnatheja Vanka </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 22, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#complete-guide-to-dinov3-self-supervised-vision-transformers" id="toc-complete-guide-to-dinov3-self-supervised-vision-transformers" class="nav-link active" data-scroll-target="#complete-guide-to-dinov3-self-supervised-vision-transformers">Complete Guide to DINOv3: Self-Supervised Vision Transformers</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#what-is-dinov3" id="toc-what-is-dinov3" class="nav-link" data-scroll-target="#what-is-dinov3">What is DINOv3?</a>
+  <ul class="collapse">
+  <li><a href="#core-principles" id="toc-core-principles" class="nav-link" data-scroll-target="#core-principles">Core Principles</a></li>
+  </ul></li>
+  <li><a href="#evolution-from-dino-to-dinov3" id="toc-evolution-from-dino-to-dinov3" class="nav-link" data-scroll-target="#evolution-from-dino-to-dinov3">Evolution from DINO to DINOv3</a>
+  <ul class="collapse">
+  <li><a href="#dino-2021" id="toc-dino-2021" class="nav-link" data-scroll-target="#dino-2021">DINO (2021)</a></li>
+  <li><a href="#dinov2-2023" id="toc-dinov2-2023" class="nav-link" data-scroll-target="#dinov2-2023">DINOv2 (2023)</a></li>
+  <li><a href="#dinov3-2024" id="toc-dinov3-2024" class="nav-link" data-scroll-target="#dinov3-2024">DINOv3 (2024)</a></li>
+  </ul></li>
+  <li><a href="#key-features-and-capabilities" id="toc-key-features-and-capabilities" class="nav-link" data-scroll-target="#key-features-and-capabilities">Key Features and Capabilities</a></li>
+  <li><a href="#technical-architecture" id="toc-technical-architecture" class="nav-link" data-scroll-target="#technical-architecture">Technical Architecture</a>
+  <ul class="collapse">
+  <li><a href="#vision-transformer-backbone" id="toc-vision-transformer-backbone" class="nav-link" data-scroll-target="#vision-transformer-backbone">Vision Transformer Backbone</a></li>
+  <li><a href="#self-distillation-framework" id="toc-self-distillation-framework" class="nav-link" data-scroll-target="#self-distillation-framework">Self-Distillation Framework</a></li>
+  <li><a href="#key-components" id="toc-key-components" class="nav-link" data-scroll-target="#key-components">Key Components</a></li>
+  </ul></li>
+  <li><a href="#training-methodology" id="toc-training-methodology" class="nav-link" data-scroll-target="#training-methodology">Training Methodology</a>
+  <ul class="collapse">
+  <li><a href="#dataset-curation" id="toc-dataset-curation" class="nav-link" data-scroll-target="#dataset-curation">Dataset Curation</a></li>
+  <li><a href="#training-process" id="toc-training-process" class="nav-link" data-scroll-target="#training-process">Training Process</a></li>
+  <li><a href="#training-infrastructure" id="toc-training-infrastructure" class="nav-link" data-scroll-target="#training-infrastructure">Training Infrastructure</a></li>
+  </ul></li>
+  <li><a href="#model-variants-and-specifications" id="toc-model-variants-and-specifications" class="nav-link" data-scroll-target="#model-variants-and-specifications">Model Variants and Specifications</a>
+  <ul class="collapse">
+  <li><a href="#available-models" id="toc-available-models" class="nav-link" data-scroll-target="#available-models">Available Models</a></li>
+  <li><a href="#model-selection-guidelines" id="toc-model-selection-guidelines" class="nav-link" data-scroll-target="#model-selection-guidelines">Model Selection Guidelines</a></li>
+  </ul></li>
+  <li><a href="#installation-and-setup" id="toc-installation-and-setup" class="nav-link" data-scroll-target="#installation-and-setup">Installation and Setup</a>
+  <ul class="collapse">
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#installation-options" id="toc-installation-options" class="nav-link" data-scroll-target="#installation-options">Installation Options</a></li>
+  <li><a href="#environment-setup" id="toc-environment-setup" class="nav-link" data-scroll-target="#environment-setup">Environment Setup</a></li>
+  </ul></li>
+  <li><a href="#usage-examples" id="toc-usage-examples" class="nav-link" data-scroll-target="#usage-examples">Usage Examples</a>
+  <ul class="collapse">
+  <li><a href="#basic-feature-extraction" id="toc-basic-feature-extraction" class="nav-link" data-scroll-target="#basic-feature-extraction">Basic Feature Extraction</a></li>
+  <li><a href="#batch-processing" id="toc-batch-processing" class="nav-link" data-scroll-target="#batch-processing">Batch Processing</a></li>
+  <li><a href="#fine-tuning-for-classification" id="toc-fine-tuning-for-classification" class="nav-link" data-scroll-target="#fine-tuning-for-classification">Fine-tuning for Classification</a></li>
+  <li><a href="#semantic-segmentation-setup" id="toc-semantic-segmentation-setup" class="nav-link" data-scroll-target="#semantic-segmentation-setup">Semantic Segmentation Setup</a></li>
+  </ul></li>
+  <li><a href="#applications-and-use-cases" id="toc-applications-and-use-cases" class="nav-link" data-scroll-target="#applications-and-use-cases">Applications and Use Cases</a>
+  <ul class="collapse">
+  <li><a href="#computer-vision-tasks" id="toc-computer-vision-tasks" class="nav-link" data-scroll-target="#computer-vision-tasks">Computer Vision Tasks</a></li>
+  <li><a href="#content-understanding" id="toc-content-understanding" class="nav-link" data-scroll-target="#content-understanding">Content Understanding</a></li>
+  <li><a href="#scientific-applications" id="toc-scientific-applications" class="nav-link" data-scroll-target="#scientific-applications">Scientific Applications</a></li>
+  <li><a href="#creative-and-media-applications" id="toc-creative-and-media-applications" class="nav-link" data-scroll-target="#creative-and-media-applications">Creative and Media Applications</a></li>
+  </ul></li>
+  <li><a href="#performance-and-benchmarks" id="toc-performance-and-benchmarks" class="nav-link" data-scroll-target="#performance-and-benchmarks">Performance and Benchmarks</a>
+  <ul class="collapse">
+  <li><a href="#imagenet-classification" id="toc-imagenet-classification" class="nav-link" data-scroll-target="#imagenet-classification">ImageNet Classification</a></li>
+  <li><a href="#dense-prediction-tasks" id="toc-dense-prediction-tasks" class="nav-link" data-scroll-target="#dense-prediction-tasks">Dense Prediction Tasks</a></li>
+  <li><a href="#cross-domain-performance" id="toc-cross-domain-performance" class="nav-link" data-scroll-target="#cross-domain-performance">Cross-Domain Performance</a></li>
+  <li><a href="#computational-efficiency" id="toc-computational-efficiency" class="nav-link" data-scroll-target="#computational-efficiency">Computational Efficiency</a></li>
+  </ul></li>
+  <li><a href="#advantages-and-limitations" id="toc-advantages-and-limitations" class="nav-link" data-scroll-target="#advantages-and-limitations">Advantages and Limitations</a>
+  <ul class="collapse">
+  <li><a href="#advantages" id="toc-advantages" class="nav-link" data-scroll-target="#advantages">Advantages</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  </ul></li>
+  <li><a href="#future-directions" id="toc-future-directions" class="nav-link" data-scroll-target="#future-directions">Future Directions</a>
+  <ul class="collapse">
+  <li><a href="#technical-improvements" id="toc-technical-improvements" class="nav-link" data-scroll-target="#technical-improvements">Technical Improvements</a></li>
+  <li><a href="#application-areas" id="toc-application-areas" class="nav-link" data-scroll-target="#application-areas">Application Areas</a></li>
+  <li><a href="#research-opportunities" id="toc-research-opportunities" class="nav-link" data-scroll-target="#research-opportunities">Research Opportunities</a></li>
+  </ul></li>
+  <li><a href="#sec-resources" id="toc-sec-resources" class="nav-link" data-scroll-target="#sec-resources">Resources and References</a>
+  <ul class="collapse">
+  <li><a href="#official-resources" id="toc-official-resources" class="nav-link" data-scroll-target="#official-resources">Official Resources</a></li>
+  <li><a href="#documentation-and-tutorials" id="toc-documentation-and-tutorials" class="nav-link" data-scroll-target="#documentation-and-tutorials">Documentation and Tutorials</a></li>
+  <li><a href="#related-work" id="toc-related-work" class="nav-link" data-scroll-target="#related-work">Related Work</a></li>
+  <li><a href="#community-and-support" id="toc-community-and-support" class="nav-link" data-scroll-target="#community-and-support">Community and Support</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
+
+
+
+
+
+
+<section id="complete-guide-to-dinov3-self-supervised-vision-transformers" class="level1">
+<h1>Complete Guide to DINOv3: Self-Supervised Vision Transformers</h1>
+<p><img src="dino.png" class="img-fluid"></p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>DINOv3 represents a breakthrough in computer vision, offering the first truly universal vision backbone that achieves state-of-the-art performance across diverse visual tasks without requiring fine-tuning. Developed by Meta AI, DINOv3 scales self-supervised learning to unprecedented levels, training on 1.7 billion images with up to 7 billion parameters.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Innovation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>DINOv3’s ability to produce high-quality, transferable features that work across different domains and tasks straight out of the box represents a significant advancement in foundation models for computer vision.</p>
+</div>
+</div>
+</section>
+<section id="what-is-dinov3" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-dinov3">What is DINOv3?</h2>
+<p>DINOv3 is a self-supervised learning method for computer vision that uses Vision Transformers (ViTs) to learn robust visual representations without labeled data. The key innovation lies in its ability to produce high-quality, transferable features that work across different domains and tasks straight out of the box.</p>
+<section id="core-principles" class="level3">
+<h3 class="anchored" data-anchor-id="core-principles">Core Principles</h3>
+<p><strong>Self-Supervised Learning</strong>: DINOv3 learns by comparing different views of the same image, using a teacher-student framework where the model learns to predict consistent representations across augmented versions of images.</p>
+<p><strong>Universal Features</strong>: Unlike traditional models trained for specific tasks, DINOv3 produces general-purpose visual features that transfer well to various downstream applications.</p>
+<p><strong>Scalability</strong>: The architecture is designed to scale effectively with both dataset size and model parameters, enabling training on massive datasets.</p>
+</section>
+</section>
+<section id="evolution-from-dino-to-dinov3" class="level2">
+<h2 class="anchored" data-anchor-id="evolution-from-dino-to-dinov3">Evolution from DINO to DINOv3</h2>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">timeline
+    title Evolution of DINO Models
+    
+    2021 : DINO v1
+         : Self-distillation with ViTs
+         : Emergent segmentation properties
+         : Limited scale
+    
+    2023 : DINO v2
+         : Improved training methodology
+         : Better data curation
+         : Enhanced downstream performance
+    
+    2024 : DINO v3
+         : Massive scale (1.7B images)
+         : Universal backbone
+         : 7B parameter models
+         : State-of-the-art frozen performance
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<section id="dino-2021" class="level3">
+<h3 class="anchored" data-anchor-id="dino-2021">DINO (2021)</h3>
+<ul>
+<li>Introduced self-distillation with Vision Transformers</li>
+<li>Demonstrated emergent segmentation properties<br>
+</li>
+<li>Limited to smaller scales and datasets</li>
+</ul>
+</section>
+<section id="dinov2-2023" class="level3">
+<h3 class="anchored" data-anchor-id="dinov2-2023">DINOv2 (2023)</h3>
+<ul>
+<li>Improved training methodology</li>
+<li>Better data curation techniques</li>
+<li>Enhanced performance on downstream tasks</li>
+</ul>
+</section>
+<section id="dinov3-2024" class="level3">
+<h3 class="anchored" data-anchor-id="dinov3-2024">DINOv3 (2024)</h3>
+<ul>
+<li>Massive scale: 1.7 billion images, 7 billion parameters</li>
+<li>First frozen backbone to outperform specialized models</li>
+<li>Universal performance across domains (natural, aerial, medical images)</li>
+<li>High-resolution feature extraction capabilities</li>
+</ul>
+</section>
+</section>
+<section id="key-features-and-capabilities" class="level2">
+<h2 class="anchored" data-anchor-id="key-features-and-capabilities">Key Features and Capabilities</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Universal Vision Backbone</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">High-Resolution Features</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Frozen Model Performance</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">Emergent Properties</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<ul>
+<li>Single model works across multiple domains without fine-tuning</li>
+<li>Consistent performance on natural images, satellite imagery, and specialized domains</li>
+<li>Eliminates need for domain-specific model training</li>
+</ul>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<ul>
+<li>Produces detailed, semantically meaningful feature maps</li>
+<li>Enables fine-grained understanding of image content</li>
+<li>Supports dense prediction tasks effectively</li>
+</ul>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<ul>
+<li>Achieves state-of-the-art results without parameter updates</li>
+<li>Reduces computational overhead for deployment</li>
+<li>Simplifies integration into existing pipelines</li>
+</ul>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<ul>
+<li>Automatic semantic segmentation capabilities</li>
+<li>Object localization without explicit training</li>
+<li>Scene understanding and spatial reasoning</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="technical-architecture" class="level2">
+<h2 class="anchored" data-anchor-id="technical-architecture">Technical Architecture</h2>
+<section id="vision-transformer-backbone" class="level3">
+<h3 class="anchored" data-anchor-id="vision-transformer-backbone">Vision Transformer Backbone</h3>
+<p>DINOv3 builds upon the Vision Transformer architecture with several key modifications:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A[Input Image] --&gt; B[Patch Embedding]
+    B --&gt; C[Positional Encoding]
+    C --&gt; D[Transformer Blocks]
+    D --&gt; E[Feature Extraction]
+    E --&gt; F[Output Features]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="self-distillation-framework" class="level3">
+<h3 class="anchored" data-anchor-id="self-distillation-framework">Self-Distillation Framework</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Teacher-Student Learning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The self-distillation framework consists of two networks: a teacher network (exponential moving average of student weights) and a student network (main learning network).</p>
+</div>
+</div>
+<p><strong>Teacher Network</strong>:</p>
+<ul>
+<li>Exponential moving average of student weights</li>
+<li>Produces stable target representations</li>
+<li>Uses centering and sharpening operations</li>
+</ul>
+<p><strong>Student Network</strong>:</p>
+<ul>
+<li>Main learning network</li>
+<li>Processes augmented image views</li>
+<li>Minimizes distance to teacher representations</li>
+</ul>
+</section>
+<section id="key-components" class="level3">
+<h3 class="anchored" data-anchor-id="key-components">Key Components</h3>
+<ol type="1">
+<li><strong>Patch Embedding</strong>: Divides images into patches and projects them to embedding space</li>
+<li><strong>Multi-Head Attention</strong>: Captures relationships between image patches</li>
+<li><strong>Feed-Forward Networks</strong>: Processes attention outputs</li>
+<li><strong>Layer Normalization</strong>: Stabilizes training</li>
+<li><strong>CLS Token</strong>: Global image representation</li>
+</ol>
+</section>
+</section>
+<section id="training-methodology" class="level2">
+<h2 class="anchored" data-anchor-id="training-methodology">Training Methodology</h2>
+<section id="dataset-curation" class="level3">
+<h3 class="anchored" data-anchor-id="dataset-curation">Dataset Curation</h3>
+<ul>
+<li><strong>Scale</strong>: 1.7 billion images from diverse sources</li>
+<li><strong>Quality Control</strong>: Automated filtering and deduplication</li>
+<li><strong>Diversity</strong>: Natural images, web content, satellite imagery</li>
+<li><strong>Resolution</strong>: High-resolution training for detailed features</li>
+</ul>
+</section>
+<section id="training-process" class="level3">
+<h3 class="anchored" data-anchor-id="training-process">Training Process</h3>
+<ol type="1">
+<li><strong>Data Augmentation</strong>: Multiple views of each image through crops, color jittering, and geometric transforms</li>
+<li><strong>Teacher-Student Learning</strong>: Student network learns to match teacher predictions</li>
+<li><strong>Multi-Crop Strategy</strong>: Uses global and local crops for comprehensive understanding</li>
+<li><strong>Loss Function</strong>: Cross-entropy between student and teacher outputs</li>
+<li><strong>Optimization</strong>: AdamW optimizer with cosine learning rate schedule</li>
+</ol>
+</section>
+<section id="training-infrastructure" class="level3">
+<h3 class="anchored" data-anchor-id="training-infrastructure">Training Infrastructure</h3>
+<ul>
+<li>Distributed training across multiple GPUs</li>
+<li>Gradient accumulation for effective large batch training</li>
+<li>Mixed precision for memory efficiency</li>
+<li>Checkpoint saving and resumption capabilities</li>
+</ul>
+</section>
+</section>
+<section id="model-variants-and-specifications" class="level2">
+<h2 class="anchored" data-anchor-id="model-variants-and-specifications">Model Variants and Specifications</h2>
+<section id="available-models" class="level3">
+<h3 class="anchored" data-anchor-id="available-models">Available Models</h3>
+<div id="tbl-model-variants" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-model-variants-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Model variants and their specifications
+</figcaption>
+<div aria-describedby="tbl-model-variants-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 18%">
+<col style="width: 20%">
+<col style="width: 31%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Parameters</th>
+<th>Patch Size</th>
+<th>Input Resolution</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>DINOv3-ViT-S/16</td>
+<td>22M</td>
+<td>16×16</td>
+<td>224×224+</td>
+<td>Lightweight applications</td>
+</tr>
+<tr class="even">
+<td>DINOv3-ViT-B/16</td>
+<td>86M</td>
+<td>16×16</td>
+<td>224×224+</td>
+<td>Balanced performance</td>
+</tr>
+<tr class="odd">
+<td>DINOv3-ViT-L/16</td>
+<td>307M</td>
+<td>16×16</td>
+<td>224×224+</td>
+<td>High performance</td>
+</tr>
+<tr class="even">
+<td>DINOv3-ViT-g/16</td>
+<td>1.1B</td>
+<td>16×16</td>
+<td>224×224+</td>
+<td>Maximum capability</td>
+</tr>
+<tr class="odd">
+<td>DINOv3-ViT-G/16</td>
+<td>7B</td>
+<td>16×16</td>
+<td>518×518+</td>
+<td>Research and high-end applications</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="model-selection-guidelines" class="level3">
+<h3 class="anchored" data-anchor-id="model-selection-guidelines">Model Selection Guidelines</h3>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Choosing the Right Model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Small (S)</strong>: Mobile and edge applications, real-time inference</li>
+<li><strong>Base (B)</strong>: General purpose, good balance of speed and accuracy</li>
+<li><strong>Large (L)</strong>: High-accuracy applications, research</li>
+<li><strong>Giant (g/G)</strong>: Maximum performance, resource-rich environments</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="installation-and-setup" class="level2">
+<h2 class="anchored" data-anchor-id="installation-and-setup">Installation and Setup</h2>
+<section id="prerequisites" class="level3">
+<h3 class="anchored" data-anchor-id="prerequisites">Prerequisites</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Python 3.8+</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># PyTorch 1.12+</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># CUDA (for GPU acceleration)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="installation-options" class="level3">
+<h3 class="anchored" data-anchor-id="installation-options">Installation Options</h3>
+<section id="option-1-using-hugging-face-transformers" class="level4">
+<h4 class="anchored" data-anchor-id="option-1-using-hugging-face-transformers">Option 1: Using Hugging Face Transformers</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install transformers torch torchvision</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="option-2-from-source" class="level4">
+<h4 class="anchored" data-anchor-id="option-2-from-source">Option 2: From Source</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/facebookresearch/dinov3.git</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> dinov3</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="option-3-using-pre-built-containers" class="level4">
+<h4 class="anchored" data-anchor-id="option-3-using-pre-built-containers">Option 3: Using Pre-built Containers</h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull pytorch/pytorch:latest</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Add DINOv3 installation commands</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="environment-setup" class="level3">
+<h3 class="anchored" data-anchor-id="environment-setup">Environment Setup</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create conda environment</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-n</span> dinov3 python=3.9</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate dinov3</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Install dependencies</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install torch torchvision torchaudio</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install transformers pillow numpy matplotlib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="usage-examples" class="level2">
+<h2 class="anchored" data-anchor-id="usage-examples">Usage Examples</h2>
+<section id="basic-feature-extraction" class="level3">
+<h3 class="anchored" data-anchor-id="basic-feature-extraction">Basic Feature Extraction</h3>
+<div id="basic-feature-extraction" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> DINOv3Model, DINOv3ImageProcessor</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load model and processor</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>processor <span class="op">=</span> DINOv3ImageProcessor.from_pretrained(</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'facebook/dinov3-vits16-pretrain-lvd1689m'</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> DINOv3Model.from_pretrained(</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'facebook/dinov3-vits16-pretrain-lvd1689m'</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Load and process image</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> Image.<span class="bu">open</span>(<span class="st">'path/to/your/image.jpg'</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>inputs <span class="op">=</span> processor(image, return_tensors<span class="op">=</span><span class="st">"pt"</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract features</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> model(<span class="op">**</span>inputs)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> outputs.last_hidden_state</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    cls_token <span class="op">=</span> features[:, <span class="dv">0</span>]  <span class="co"># Global representation</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    patch_features <span class="op">=</span> features[:, <span class="dv">1</span>:]  <span class="co"># Patch-level features</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="batch-processing" class="level3">
+<h3 class="anchored" data-anchor-id="batch-processing">Batch Processing</h3>
+<div id="batch-processing" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchvision <span class="im">import</span> transforms</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom dataset class</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ImageDataset(torch.utils.data.Dataset):</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, image_dir, transform<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.image_dir <span class="op">=</span> image_dir</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.image_files <span class="op">=</span> [</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>            f <span class="cf">for</span> f <span class="kw">in</span> os.listdir(image_dir) </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> f.endswith((<span class="st">'.jpg'</span>, <span class="st">'.png'</span>))</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.transform <span class="op">=</span> transform</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__len__</span>(<span class="va">self</span>):</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>.image_files)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__getitem__</span>(<span class="va">self</span>, idx):</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        image_path <span class="op">=</span> os.path.join(<span class="va">self</span>.image_dir, <span class="va">self</span>.image_files[idx])</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> Image.<span class="bu">open</span>(image_path).convert(<span class="st">'RGB'</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.transform:</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>            image <span class="op">=</span> <span class="va">self</span>.transform(image)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> image</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup data loading</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>transform <span class="op">=</span> transforms.Compose([</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    transforms.Resize((<span class="dv">224</span>, <span class="dv">224</span>)),</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    transforms.ToTensor(),</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    transforms.Normalize(</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        mean<span class="op">=</span>[<span class="fl">0.485</span>, <span class="fl">0.456</span>, <span class="fl">0.406</span>], </span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>        std<span class="op">=</span>[<span class="fl">0.229</span>, <span class="fl">0.224</span>, <span class="fl">0.225</span>]</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> ImageDataset(<span class="st">'path/to/images'</span>, transform<span class="op">=</span>transform)</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>dataloader <span class="op">=</span> DataLoader(dataset, batch_size<span class="op">=</span><span class="dv">32</span>, shuffle<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Process batches</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">eval</span>()</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>all_features <span class="op">=</span> []</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> batch <span class="kw">in</span> dataloader:</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> torch.no_grad():</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>        outputs <span class="op">=</span> model(pixel_values<span class="op">=</span>batch)</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>        features <span class="op">=</span> outputs.last_hidden_state[:, <span class="dv">0</span>]  <span class="co"># CLS tokens</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>        all_features.append(features)</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>all_features <span class="op">=</span> torch.cat(all_features, dim<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="fine-tuning-for-classification" class="level3">
+<h3 class="anchored" data-anchor-id="fine-tuning-for-classification">Fine-tuning for Classification</h3>
+<div id="classification-finetuning" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> DINOv3Model</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DINOv3Classifier(nn.Module):</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, num_classes<span class="op">=</span><span class="dv">1000</span>, </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                 pretrained_model_name<span class="op">=</span><span class="st">'facebook/dinov3-vits16-pretrain-lvd1689m'</span>):</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.backbone <span class="op">=</span> DINOv3Model.from_pretrained(pretrained_model_name)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.classifier <span class="op">=</span> nn.Linear(</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.backbone.config.hidden_size, </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            num_classes</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, pixel_values):</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        outputs <span class="op">=</span> <span class="va">self</span>.backbone(pixel_values<span class="op">=</span>pixel_values)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        cls_token <span class="op">=</span> outputs.last_hidden_state[:, <span class="dv">0</span>]</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.classifier(cls_token)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Usage</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> DINOv3Classifier(num_classes<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> torch.optim.AdamW(model.parameters(), lr<span class="op">=</span><span class="fl">1e-4</span>)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>criterion <span class="op">=</span> nn.CrossEntropyLoss()</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Training loop would go here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="semantic-segmentation-setup" class="level3">
+<h3 class="anchored" data-anchor-id="semantic-segmentation-setup">Semantic Segmentation Setup</h3>
+<div id="segmentation-setup" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> DINOv3Model</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DINOv3Segmentation(nn.Module):</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, num_classes, </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                 pretrained_model_name<span class="op">=</span><span class="st">'facebook/dinov3-vits16-pretrain-lvd1689m'</span>):</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.backbone <span class="op">=</span> DINOv3Model.from_pretrained(pretrained_model_name)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.decode_head <span class="op">=</span> nn.Sequential(</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>            nn.Conv2d(<span class="va">self</span>.backbone.config.hidden_size, <span class="dv">256</span>, <span class="dv">3</span>, padding<span class="op">=</span><span class="dv">1</span>),</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>            nn.BatchNorm2d(<span class="dv">256</span>),</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>            nn.ReLU(inplace<span class="op">=</span><span class="va">True</span>),</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>            nn.Conv2d(<span class="dv">256</span>, num_classes, <span class="dv">1</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, pixel_values):</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        B, C, H, W <span class="op">=</span> pixel_values.shape</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        outputs <span class="op">=</span> <span class="va">self</span>.backbone(pixel_values<span class="op">=</span>pixel_values)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        patch_features <span class="op">=</span> outputs.last_hidden_state[:, <span class="dv">1</span>:]  <span class="co"># Remove CLS token</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Reshape to spatial dimensions</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        patch_size <span class="op">=</span> <span class="dv">16</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>        h_patches, w_patches <span class="op">=</span> H <span class="op">//</span> patch_size, W <span class="op">//</span> patch_size</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>        features <span class="op">=</span> patch_features.reshape(B, h_patches, w_patches, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        features <span class="op">=</span> features.permute(<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>)  <span class="co"># B, C, H, W</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Upsample and classify</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>        features <span class="op">=</span> nn.functional.interpolate(</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>            features, size<span class="op">=</span>(H, W), mode<span class="op">=</span><span class="st">'bilinear'</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.decode_head(features)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="applications-and-use-cases" class="level2">
+<h2 class="anchored" data-anchor-id="applications-and-use-cases">Applications and Use Cases</h2>
+<section id="computer-vision-tasks" class="level3">
+<h3 class="anchored" data-anchor-id="computer-vision-tasks">Computer Vision Tasks</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Object Detection</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Semantic Segmentation</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Instance Segmentation</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<ul>
+<li>Use DINOv3 features with detection heads (DETR, FasterRCNN)</li>
+<li>Excellent performance without fine-tuning</li>
+<li>Works across diverse object categories</li>
+</ul>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<ul>
+<li>Dense pixel-level predictions</li>
+<li>High-quality boundary detection</li>
+<li>Effective for medical imaging, aerial imagery</li>
+</ul>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<ul>
+<li>Combines detection and segmentation</li>
+<li>Useful for counting and analysis applications</li>
+<li>Good generalization to new domains</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="content-understanding" class="level3">
+<h3 class="anchored" data-anchor-id="content-understanding">Content Understanding</h3>
+<p><strong>Image Retrieval</strong></p>
+<ul>
+<li>Use CLS token as global image descriptor</li>
+<li>Efficient similarity search in large databases</li>
+<li>Cross-domain retrieval capabilities</li>
+</ul>
+<p><strong>Content Moderation</strong></p>
+<ul>
+<li>Detect inappropriate or harmful content</li>
+<li>Classify image types and categories</li>
+<li>Identify policy violations</li>
+</ul>
+<p><strong>Quality Assessment</strong></p>
+<ul>
+<li>Assess image quality and aesthetics</li>
+<li>Detect blurriness, artifacts, or corruption</li>
+<li>Content filtering and ranking</li>
+</ul>
+</section>
+<section id="scientific-applications" class="level3">
+<h3 class="anchored" data-anchor-id="scientific-applications">Scientific Applications</h3>
+<p><strong>Medical Imaging</strong></p>
+<ul>
+<li>Pathology analysis</li>
+<li>Radiology image understanding</li>
+<li>Drug discovery applications</li>
+</ul>
+<p><strong>Satellite Imagery</strong></p>
+<ul>
+<li>Land use classification</li>
+<li>Environmental monitoring</li>
+<li>Urban planning and development</li>
+</ul>
+<p><strong>Biological Research</strong></p>
+<ul>
+<li>Cell counting and classification</li>
+<li>Microscopy image analysis</li>
+<li>Species identification</li>
+</ul>
+</section>
+<section id="creative-and-media-applications" class="level3">
+<h3 class="anchored" data-anchor-id="creative-and-media-applications">Creative and Media Applications</h3>
+<p><strong>Art and Design</strong></p>
+<ul>
+<li>Style transfer and generation</li>
+<li>Content-aware editing</li>
+<li>Creative asset organization</li>
+</ul>
+<p><strong>Video Analysis</strong></p>
+<ul>
+<li>Frame-level understanding</li>
+<li>Action recognition</li>
+<li>Video summarization</li>
+</ul>
+</section>
+</section>
+<section id="performance-and-benchmarks" class="level2">
+<h2 class="anchored" data-anchor-id="performance-and-benchmarks">Performance and Benchmarks</h2>
+<section id="imagenet-classification" class="level3">
+<h3 class="anchored" data-anchor-id="imagenet-classification">ImageNet Classification</h3>
+<ul>
+<li><strong>Linear Probing</strong>: 84.5% top-1 accuracy (ViT-G)</li>
+<li><strong>k-NN Classification</strong>: 82.1% top-1 accuracy</li>
+<li><strong>Few-shot Learning</strong>: Superior performance with limited data</li>
+</ul>
+</section>
+<section id="dense-prediction-tasks" class="level3">
+<h3 class="anchored" data-anchor-id="dense-prediction-tasks">Dense Prediction Tasks</h3>
+<ul>
+<li><strong>ADE20K Segmentation</strong>: 58.8 mIoU</li>
+<li><strong>COCO Detection</strong>: 59.3 AP (Mask R-CNN)</li>
+<li><strong>Video Segmentation</strong>: State-of-the-art on DAVIS</li>
+</ul>
+</section>
+<section id="cross-domain-performance" class="level3">
+<h3 class="anchored" data-anchor-id="cross-domain-performance">Cross-Domain Performance</h3>
+<ul>
+<li><strong>Natural Images</strong>: Excellent baseline performance</li>
+<li><strong>Aerial Imagery</strong>: 15-20% improvement over supervised baselines</li>
+<li><strong>Medical Images</strong>: Strong transfer learning capabilities</li>
+</ul>
+</section>
+<section id="computational-efficiency" class="level3">
+<h3 class="anchored" data-anchor-id="computational-efficiency">Computational Efficiency</h3>
+<ul>
+<li><strong>Inference Speed</strong>: Competitive with supervised models</li>
+<li><strong>Memory Usage</strong>: Efficient attention mechanisms</li>
+<li><strong>Scalability</strong>: Linear scaling with input resolution</li>
+</ul>
+</section>
+</section>
+<section id="advantages-and-limitations" class="level2">
+<h2 class="anchored" data-anchor-id="advantages-and-limitations">Advantages and Limitations</h2>
+<section id="advantages" class="level3">
+<h3 class="anchored" data-anchor-id="advantages">Advantages</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Strengths
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Universal Applicability</strong></p>
+<ul>
+<li>Single model for multiple tasks</li>
+<li>No fine-tuning required for many applications</li>
+<li>Consistent performance across domains</li>
+</ul>
+<p><strong>High-Quality Features</strong></p>
+<ul>
+<li>Rich semantic representations</li>
+<li>Fine-grained spatial information</li>
+<li>Emergent properties like segmentation</li>
+</ul>
+<p><strong>Scalability</strong></p>
+<ul>
+<li>Effective use of large datasets</li>
+<li>Scales well with model size</li>
+<li>Efficient training methodology</li>
+</ul>
+<p><strong>Research Impact</strong></p>
+<ul>
+<li>Pushes boundaries of self-supervised learning</li>
+<li>Demonstrates viability of foundation models in vision</li>
+<li>Enables new research directions</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="limitations" class="level3">
+<h3 class="anchored" data-anchor-id="limitations">Limitations</h3>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Current Constraints
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Computational Requirements</strong></p>
+<ul>
+<li>Large models require significant resources</li>
+<li>High memory usage during training</li>
+<li>GPU-intensive inference for large variants</li>
+</ul>
+<p><strong>Data Dependency</strong></p>
+<ul>
+<li>Performance depends on training data quality</li>
+<li>May have biases from training dataset</li>
+<li>Limited performance on very specialized domains</li>
+</ul>
+<p><strong>Interpretability</strong></p>
+<ul>
+<li>Complex attention mechanisms</li>
+<li>Difficult to understand learned representations</li>
+<li>Black-box nature of transformers</li>
+</ul>
+<p><strong>Task-Specific Limitations</strong></p>
+<ul>
+<li>May not match specialized models for specific tasks</li>
+<li>Requires additional components for some applications</li>
+<li>Not optimized for real-time mobile applications</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="future-directions" class="level2">
+<h2 class="anchored" data-anchor-id="future-directions">Future Directions</h2>
+<section id="technical-improvements" class="level3">
+<h3 class="anchored" data-anchor-id="technical-improvements">Technical Improvements</h3>
+<p><strong>Architecture Enhancements</strong></p>
+<ul>
+<li>More efficient attention mechanisms</li>
+<li>Better handling of high-resolution images</li>
+<li>Improved spatial reasoning capabilities</li>
+</ul>
+<p><strong>Training Methodology</strong></p>
+<ul>
+<li>Better data curation strategies</li>
+<li>More efficient self-supervised objectives</li>
+<li>Multi-modal learning integration</li>
+</ul>
+<p><strong>Scalability</strong></p>
+<ul>
+<li>Even larger models and datasets</li>
+<li>Better distributed training techniques</li>
+<li>More efficient inference methods</li>
+</ul>
+</section>
+<section id="application-areas" class="level3">
+<h3 class="anchored" data-anchor-id="application-areas">Application Areas</h3>
+<p><strong>Multimodal Learning</strong></p>
+<ul>
+<li>Integration with language models</li>
+<li>Vision-language understanding</li>
+<li>Cross-modal retrieval and generation</li>
+</ul>
+<p><strong>Real-time Applications</strong></p>
+<ul>
+<li>Mobile and edge deployment</li>
+<li>Real-time video processing</li>
+<li>Interactive applications</li>
+</ul>
+<p><strong>Specialized Domains</strong></p>
+<ul>
+<li>Domain-specific fine-tuning strategies</li>
+<li>Better handling of specialized imagery</li>
+<li>Integration with domain knowledge</li>
+</ul>
+</section>
+<section id="research-opportunities" class="level3">
+<h3 class="anchored" data-anchor-id="research-opportunities">Research Opportunities</h3>
+<p><strong>Foundation Models</strong></p>
+<ul>
+<li>Vision-centric foundation models</li>
+<li>Integration with other modalities</li>
+<li>Unified multimodal architectures</li>
+</ul>
+<p><strong>Self-Supervised Learning</strong></p>
+<ul>
+<li>New pretext tasks and objectives</li>
+<li>Better theoretical understanding</li>
+<li>More efficient training methods</li>
+</ul>
+<p><strong>Transfer Learning</strong></p>
+<ul>
+<li>Better understanding of transferability</li>
+<li>Improved few-shot learning</li>
+<li>Domain adaptation techniques</li>
+</ul>
+</section>
+</section>
+<section id="sec-resources" class="level2">
+<h2 class="anchored" data-anchor-id="sec-resources">Resources and References</h2>
+<section id="official-resources" class="level3">
+<h3 class="anchored" data-anchor-id="official-resources">Official Resources</h3>
+<ul>
+<li><strong>GitHub Repository</strong>: <a href="https://github.com/facebookresearch/dinov3">facebookresearch/dinov3</a></li>
+<li><strong>Hugging Face Models</strong>: <a href="https://huggingface.co/facebook">facebook/dinov3-*</a></li>
+<li><strong>Meta AI Blog</strong>: Technical blog posts and announcements</li>
+<li><strong>ArXiv Papers</strong>: Latest research publications</li>
+</ul>
+</section>
+<section id="documentation-and-tutorials" class="level3">
+<h3 class="anchored" data-anchor-id="documentation-and-tutorials">Documentation and Tutorials</h3>
+<ul>
+<li><strong>Hugging Face Documentation</strong>: Comprehensive usage guides</li>
+<li><strong>PyTorch Tutorials</strong>: Integration with PyTorch ecosystem</li>
+<li><strong>Community Tutorials</strong>: Third-party guides and examples</li>
+</ul>
+</section>
+<section id="related-work" class="level3">
+<h3 class="anchored" data-anchor-id="related-work">Related Work</h3>
+<ul>
+<li><strong>DINO</strong>: Original self-distillation paper</li>
+<li><strong>DINOv2</strong>: Intermediate improvements</li>
+<li><strong>Vision Transformers</strong>: Foundation architecture</li>
+<li><strong>Self-Supervised Learning</strong>: Broader field context</li>
+</ul>
+</section>
+<section id="community-and-support" class="level3">
+<h3 class="anchored" data-anchor-id="community-and-support">Community and Support</h3>
+<ul>
+<li><strong>GitHub Issues</strong>: Bug reports and feature requests</li>
+<li><strong>Research Community</strong>: Academic discussions and collaborations</li>
+<li><strong>Industry Applications</strong>: Real-world deployment examples</li>
+</ul>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>DINOv3 represents a significant milestone in computer vision, demonstrating that self-supervised learning can produce universal visual features that rival or exceed specialized supervised models. Its ability to work across diverse domains without fine-tuning opens up new possibilities for practical applications and research directions.</p>
+<p>The model’s success lies in its careful scaling of both data and model size, combined with effective self-supervised training techniques. As the field continues to evolve, DINOv3 provides a strong foundation for future developments in foundation models for computer vision.</p>
+<p>Whether you’re a researcher exploring new frontiers in self-supervised learning or a practitioner looking to deploy state-of-the-art vision capabilities, DINOv3 offers a powerful and flexible solution that can adapt to a wide range of visual understanding tasks.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Looking Forward
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The success of DINOv3 paves the way for even more powerful and universal vision models, potentially leading to truly general-purpose computer vision systems that can understand and analyze visual content across any domain.</p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© 2025 Krishnatheja Vanka</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

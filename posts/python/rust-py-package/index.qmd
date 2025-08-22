@@ -14,17 +14,31 @@ jupyter: python3
 
 # Python Package Development with Rust - Complete Guide
 
-![](rust.jpg)
+![](rust.png)
 
 ## Overview
 
 This guide covers creating Python packages with Rust backends using PyO3 and maturin. This approach combines Rust's performance and safety with Python's ecosystem accessibility.
 
+::: {.callout-tip}
+## Why Rust + Python?
+- **Performance**: Rust provides near C-level performance
+- **Safety**: Memory safety without garbage collection
+- **Ecosystem**: Access to Python's vast library ecosystem
+- **Maintainability**: Rust's type system catches many bugs at compile time
+:::
+
 ## Prerequisites
 
+Before starting, ensure you have:
+
 - Python 3.7+ installed
-- Rust toolchain installed (rustup recommended)
+- Rust toolchain installed (rustup recommended)  
 - Basic knowledge of both Python and Rust
+
+::: {.callout-note}
+You can install Rust from [rustup.rs](https://rustup.rs/) if you haven't already.
+:::
 
 ## Installation
 
@@ -40,7 +54,7 @@ pip install pyo3-pack
 
 ## Project Setup
 
-### 1. Initialize the Project
+### Initialize the Project
 
 ```bash
 # Create a new directory
@@ -52,7 +66,8 @@ maturin init --bindings pyo3
 ```
 
 This creates the basic structure:
-```
+
+```{.default filename="Project Structure"}
 my-rust-python-package/
 ├── Cargo.toml
 ├── pyproject.toml
@@ -63,9 +78,9 @@ my-rust-python-package/
         └── __init__.py
 ```
 
-### 2. Configure Cargo.toml
+### Configure Cargo.toml
 
-```toml
+```{.toml filename="Cargo.toml"}
 [package]
 name = "my-rust-python-package"
 version = "0.1.0"
@@ -92,9 +107,9 @@ classifiers = [
 ]
 ```
 
-### 3. Configure pyproject.toml
+### Configure pyproject.toml
 
-```toml
+```{.toml filename="pyproject.toml"}
 [build-system]
 requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
@@ -123,7 +138,7 @@ features = ["pyo3/extension-module"]
 
 Edit `src/lib.rs`:
 
-```rust
+```{.rust filename="src/lib.rs"}
 use pyo3::prelude::*;
 
 /// Formats the sum of two numbers as string.
@@ -167,9 +182,16 @@ fn my_rust_python_package(_py: Python, m: &PyModule) -> PyResult<()> {
 }
 ```
 
+::: {.callout-important}
+## PyO3 Attributes
+- `#[pyfunction]`: Exposes a Rust function to Python
+- `#[pymodule]`: Creates a Python module from Rust code
+- `PyResult<T>`: Standard return type for functions that can fail
+:::
+
 ### Working with Python Objects
 
-```rust
+```{.rust filename="Working with Python Objects"}
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList};
 
@@ -201,7 +223,7 @@ fn process_dict(dict: &PyDict) -> PyResult<f64> {
 
 ### Creating Python Classes
 
-```rust
+```{.rust filename="Python Classes in Rust"}
 use pyo3::prelude::*;
 
 #[pyclass]
@@ -245,9 +267,17 @@ impl Counter {
 // m.add_class::<Counter>()?;
 ```
 
+::: {.callout-tip}
+## Class Attributes
+- `#[pyclass]`: Makes a Rust struct available as a Python class
+- `#[pymethods]`: Groups methods for a Python class
+- `#[new]`: Constructor method
+- `#[getter]`/`#[setter]`: Property accessors
+:::
+
 ### Error Handling
 
-```rust
+```{.rust filename="Error Handling"}
 use pyo3::prelude::*;
 use pyo3::exceptions::PyValueError;
 
@@ -277,7 +307,7 @@ fn might_fail(should_fail: bool) -> PyResult<String> {
 
 ## Building and Testing
 
-### Development Build
+### Development Build 
 
 ```bash
 # Build the package in development mode
@@ -286,6 +316,13 @@ maturin develop
 # Or with debug symbols
 maturin develop --release
 ```
+
+::: {.callout-note}
+## Development vs Release
+- Development builds are faster to compile but slower to run
+- Release builds are optimized for performance
+- Use development builds during iteration, release builds for benchmarking
+:::
 
 ### Production Build
 
@@ -301,7 +338,7 @@ maturin build --release --target x86_64-unknown-linux-gnu
 
 Create a test script `test_package.py`:
 
-```python
+```{.python filename="test_package.py"}
 import my_rust_python_package as pkg
 
 # Test basic functions
@@ -328,7 +365,7 @@ except ValueError as e:
 
 Edit `python/my_rust_python_package/__init__.py`:
 
-```python
+```{.python filename="python/my_rust_python_package/__init__.py"}
 from .my_rust_python_package import *
 
 __version__ = "0.1.0"
@@ -344,7 +381,7 @@ def python_helper_function(data):
 
 Create `python/my_rust_python_package/__init__.pyi`:
 
-```python
+```{.python filename="python/my_rust_python_package/__init__.pyi"}
 from typing import List, Dict, Any, Optional
 
 def sum_as_string(a: int, b: int) -> str: ...
@@ -367,17 +404,23 @@ class Counter:
 class CustomError(Exception): ...
 ```
 
+::: {.callout-important}
+## Type Stub Files
+Type stub files (`.pyi`) provide type information for Python tooling like mypy, IDEs, and static analysis tools. They're crucial for a good developer experience.
+:::
+
 ## Performance Optimization
 
 ### Using Rust's Parallel Processing
 
 Add to `Cargo.toml`:
-```toml
+
+```{.toml filename="Cargo.toml - Add Rayon"}
 [dependencies]
 rayon = "1.7"
 ```
 
-```rust
+```{.rust filename="Parallel Processing"}
 use rayon::prelude::*;
 
 #[pyfunction]
@@ -393,7 +436,7 @@ fn parallel_fibonacci(numbers: Vec<u64>) -> Vec<u64> {
 
 ### Memory-Efficient Operations
 
-```rust
+```{.rust filename="NumPy Integration"}
 use pyo3::prelude::*;
 use numpy::{PyArray1, PyReadonlyArray1};
 
@@ -426,7 +469,7 @@ cibuildwheel --platform linux
 
 Create `.github/workflows/ci.yml`:
 
-```yaml
+```{.yaml filename=".github/workflows/ci.yml"}
 name: CI
 
 on:
@@ -478,7 +521,7 @@ jobs:
 
 ### Publishing to PyPI
 
-```bash
+```{.bash}
 # Install twine
 pip install twine
 
@@ -488,6 +531,14 @@ maturin build --release
 # Upload to PyPI
 twine upload target/wheels/*
 ```
+
+::: {.callout-warning}
+## Publishing Checklist
+- Test your package thoroughly before publishing
+- Use semantic versioning
+- Include comprehensive documentation
+- Test installation on clean environments
+:::
 
 ## Best Practices
 
@@ -538,4 +589,31 @@ python -m pdb your_test_script.py
 RUST_BACKTRACE=1 python your_test_script.py
 ```
 
+::: {.callout-tip}
+## Debugging Tips
+- Use `println!` macros in Rust for simple debugging
+- Python's `breakpoint()` function works well with Rust extensions
+- Consider using `gdb` or `lldb` for complex debugging scenarios
+:::
+
+## Conclusion
+
 This guide provides a solid foundation for creating Python packages with Rust backends. The combination offers excellent performance while maintaining Python's ease of use and ecosystem compatibility.
+
+Key takeaways:
+
+- **Setup**: Use maturin for seamless Rust-Python integration
+- **Development**: Leverage PyO3's powerful binding capabilities  
+- **Performance**: Utilize Rust's speed and Python's ecosystem
+- **Distribution**: Standard Python packaging tools work seamlessly
+
+The Rust-Python ecosystem continues to evolve rapidly, making it an excellent choice for performance-critical Python applications.
+
+---
+
+## Further Reading
+
+- [PyO3 User Guide](https://pyo3.rs/)
+- [Maturin Documentation](https://github.com/PyO3/maturin)
+- [Rust Book](https://doc.rust-lang.org/book/)
+- [Python Packaging User Guide](https://packaging.python.org/)

@@ -555,7 +555,6 @@ Pandas and Polars differ in several fundamental aspects:
 
 **Pandas** uses eager execution by default:
 ```{python}
-#| echo: false
 # Each operation is executed immediately
 pd_df = pd.read_csv('data.csv')
 pd_df = pd_df[pd_df['age'] > 0]  # Filter is applied immediately
@@ -565,7 +564,6 @@ result = pd_df.groupby('gender').sum()  # Groupby is executed immediately
 
 **Polars** supports both eager and lazy execution:
 ```{python}
-#| echo: false
 # Eager execution
 pl_df = pl.read_csv('data.csv')
 pl_df = pl_df.filter(pl.col('age') > 0)

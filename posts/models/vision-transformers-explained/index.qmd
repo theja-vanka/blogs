@@ -43,8 +43,9 @@ The fundamental innovation of ViTs lies in treating images as sequences of patch
 
 ```{mermaid}
 %%| code-fold: true
+%%| echo: false
 
-flowchart TD
+flowchart LR
     A[Input Image 224×224] --> B[Divide into 16×16 patches]
     B --> C[196 patches]
     C --> D[Flatten each patch]
@@ -88,8 +89,9 @@ The core of ViT consists of standard transformer encoder blocks, each containing
 
 ```{mermaid}
 %%| code-fold: true
+%%| echo: false
 
-graph TD
+graph LR
     A[Input Patches] --> B[Patch Embedding]
     B --> C[Add Position Encoding]
     C --> D[Add CLS Token]
@@ -225,6 +227,7 @@ Training ViTs from scratch on small datasets often leads to poor performance. Pr
 
 ```{mermaid}
 %%| code-fold: true
+%%| echo: false
 
 mindmap
   root((ViT Applications))
