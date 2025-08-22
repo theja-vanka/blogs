@@ -9,7 +9,7 @@
 <meta name="author" content="Krishnatheja Vanka">
 <meta name="dcterms.date" content="2025-08-23">
 
-<title>Mamba Transformers: Revolutionizing Sequence Modeling with Selective State Space Models – Krishnatheja Vanka’s Blog</title>
+<title>Complete Guide to Mamba Transformers: Implementation and Theory – Krishnatheja Vanka’s Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -346,11 +346,11 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-right">
-      <h1 class="title">Mamba Transformers: Revolutionizing Sequence Modeling with Selective State Space Models</h1>
+      <h1 class="title">Complete Guide to Mamba Transformers: Implementation and Theory</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
                 <div class="quarto-category">tutorial</div>
-                <div class="quarto-category">advanced</div>
+                <div class="quarto-category">intermediate</div>
               </div>
                   </div>
   </div>
@@ -473,7 +473,7 @@ window.Quarto = {
 
 <section id="complete-guide-to-mamba-transformers-implementation-and-theory" class="level1">
 <h1>Complete Guide to Mamba Transformers: Implementation and Theory</h1>
-<p><img src="mamba_code.png" class="img-fluid"></p>
+<p><img src="mambac.png" class="img-fluid"></p>
 <section id="sec-introduction" class="level2">
 <h2 class="anchored" data-anchor-id="sec-introduction">Introduction to Mamba</h2>
 <p>Mamba is a revolutionary architecture that addresses the quadratic complexity problem of traditional transformers through selective state space models (SSMs). Unlike transformers that use attention mechanisms, Mamba processes sequences with linear complexity while maintaining comparable or superior performance.</p>
@@ -544,7 +544,7 @@ y_k = Cx_k + Du_k
 <section id="selective-scan-algorithm" class="level3">
 <h3 class="anchored" data-anchor-id="selective-scan-algorithm">Selective Scan Algorithm</h3>
 <p>The heart of Mamba is the selective scan that computes:</p>
-<div id="dddd9e3e" class="cell" data-execution_count="1">
+<div id="17a30453" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span>
@@ -592,7 +592,7 @@ y_k = Cx_k + Du_k
 </section>
 <section id="mamba-block-architecture" class="level3">
 <h3 class="anchored" data-anchor-id="mamba-block-architecture">Mamba Block Architecture</h3>
-<div id="2e3c83c9" class="cell" data-execution_count="2">
+<div id="e5336f86" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MambaBlock(nn.Module):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Mamba block implementing selective state space model</span></span>
@@ -634,7 +634,7 @@ y_k = Cx_k + Du_k
 <h2 class="anchored" data-anchor-id="complete-implementation">Complete Implementation</h2>
 <section id="full-mamba-model" class="level3">
 <h3 class="anchored" data-anchor-id="full-mamba-model">Full Mamba Model</h3>
-<div id="056386b7" class="cell" data-execution_count="3">
+<div id="389de209" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Mamba(nn.Module):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Complete Mamba model implementation</span></span>
@@ -709,7 +709,7 @@ y_k = Cx_k + Du_k
 </section>
 <section id="enhanced-mambablock-implementation" class="level3">
 <h3 class="anchored" data-anchor-id="enhanced-mambablock-implementation">Enhanced MambaBlock Implementation</h3>
-<div id="f41cadab" class="cell" data-execution_count="4">
+<div id="86de1a53" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MambaBlock(nn.Module):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>,</span>
@@ -863,7 +863,7 @@ y_k = Cx_k + Du_k
 </section>
 <section id="supporting-components" class="level3">
 <h3 class="anchored" data-anchor-id="supporting-components">Supporting Components</h3>
-<div id="5845e9b4" class="cell" data-execution_count="5">
+<div id="d2a0861d" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ResidualBlock(nn.Module):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Residual block with pre-normalization"""</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, mixer):</span>
@@ -891,7 +891,7 @@ y_k = Cx_k + Du_k
 <h2 class="anchored" data-anchor-id="training-and-optimization">Training and Optimization</h2>
 <section id="training-configuration" class="level3">
 <h3 class="anchored" data-anchor-id="training-configuration">Training Configuration</h3>
-<div id="4e29d092" class="cell" data-execution_count="6">
+<div id="7902c658" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TrainingConfig:</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Configuration class for training hyperparameters"""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Model architecture</span></span>
@@ -917,7 +917,7 @@ y_k = Cx_k + Du_k
 </section>
 <section id="optimizer-setup" class="level3">
 <h3 class="anchored" data-anchor-id="optimizer-setup">Optimizer Setup</h3>
-<div id="dfb1faa9" class="cell" data-execution_count="7">
+<div id="b7fa5a37" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_optimizer(model, config):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Create optimizer with proper weight decay configuration</span></span>
@@ -965,7 +965,7 @@ y_k = Cx_k + Du_k
 </section>
 <section id="training-loop-implementation" class="level3">
 <h3 class="anchored" data-anchor-id="training-loop-implementation">Training Loop Implementation</h3>
-<div id="a5e29411" class="cell" data-execution_count="8">
+<div id="ad28b683" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MambaTrainer:</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Comprehensive trainer for Mamba models"""</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1030,7 +1030,7 @@ y_k = Cx_k + Du_k
 <h2 class="anchored" data-anchor-id="practical-applications">Practical Applications</h2>
 <section id="text-generation" class="level3">
 <h3 class="anchored" data-anchor-id="text-generation">Text Generation</h3>
-<div id="b243f97d" class="cell" data-execution_count="9">
+<div id="9f9140df" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_text(model, tokenizer, prompt, max_length<span class="op">=</span><span class="dv">100</span>, temperature<span class="op">=</span><span class="fl">0.8</span>):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Generate text using Mamba model</span></span>
@@ -1085,7 +1085,7 @@ y_k = Cx_k + Du_k
 </section>
 <section id="document-classification" class="level3">
 <h3 class="anchored" data-anchor-id="document-classification">Document Classification</h3>
-<div id="744f5997" class="cell" data-execution_count="10">
+<div id="520b2f23" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MambaClassifier(nn.Module):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Mamba-based document classifier"""</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1135,7 +1135,7 @@ y_k = Cx_k + Du_k
 <h2 class="anchored" data-anchor-id="performance-optimization">Performance Optimization</h2>
 <section id="memory-optimization" class="level3">
 <h3 class="anchored" data-anchor-id="memory-optimization">Memory Optimization</h3>
-<div id="4792d4d7" class="cell" data-execution_count="11">
+<div id="6f50ff27" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> OptimizedMamba(Mamba):</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Memory-optimized Mamba with gradient checkpointing"""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1230,7 +1230,7 @@ y_k = Cx_k + Du_k
 </section>
 <section id="benchmarking-implementation" class="level3">
 <h3 class="anchored" data-anchor-id="benchmarking-implementation">Benchmarking Implementation</h3>
-<div id="49dbeb36" class="cell" data-execution_count="12">
+<div id="185124cd" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> benchmark_models():</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compare Mamba vs Transformer performance across sequence lengths</span></span>
@@ -1306,7 +1306,7 @@ y_k = Cx_k + Du_k
 <h2 class="anchored" data-anchor-id="advanced-extensions">Advanced Extensions</h2>
 <section id="multi-modal-mamba" class="level3">
 <h3 class="anchored" data-anchor-id="multi-modal-mamba">Multi-Modal Mamba</h3>
-<div id="57c3f4cb" class="cell" data-execution_count="13">
+<div id="a5a14ecb" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiModalMamba(nn.Module):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Multi-modal Mamba for text and vision processing"""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1362,7 +1362,7 @@ y_k = Cx_k + Du_k
 </section>
 <section id="sparse-mamba-implementation" class="level3">
 <h3 class="anchored" data-anchor-id="sparse-mamba-implementation">Sparse Mamba Implementation</h3>
-<div id="7b0c7718" class="cell" data-execution_count="14">
+<div id="8088e6d8" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SparseMamba(MambaBlock):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Sparse version of Mamba with reduced connectivity"""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1403,7 +1403,7 @@ y_k = Cx_k + Du_k
 </section>
 <section id="mixture-of-experts-moe-mamba" class="level3">
 <h3 class="anchored" data-anchor-id="mixture-of-experts-moe-mamba">Mixture of Experts (MoE) Mamba</h3>
-<div id="60ceec8e" class="cell" data-execution_count="15">
+<div id="2429b8c9" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MambaExpert(nn.Module):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Individual expert in MoE Mamba"""</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1503,7 +1503,7 @@ y_k = Cx_k + Du_k
 </section>
 <section id="bidirectional-mamba" class="level3">
 <h3 class="anchored" data-anchor-id="bidirectional-mamba">Bidirectional Mamba</h3>
-<div id="ace0bfea" class="cell" data-execution_count="16">
+<div id="37d3492e" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BidirectionalMamba(nn.Module):</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Bidirectional Mamba for enhanced context modeling"""</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1551,7 +1551,7 @@ y_k = Cx_k + Du_k
 <h2 class="anchored" data-anchor-id="model-analysis-and-interpretability">Model Analysis and Interpretability</h2>
 <section id="visualization-tools" class="level3">
 <h3 class="anchored" data-anchor-id="visualization-tools">Visualization Tools</h3>
-<div id="62205160" class="cell" data-execution_count="17">
+<div id="c7463f7b" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MambaVisualizer:</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Visualization tools for Mamba model analysis"""</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1683,7 +1683,7 @@ y_k = Cx_k + Du_k
 <h2 class="anchored" data-anchor-id="production-deployment">Production Deployment</h2>
 <section id="model-serving-with-fastapi" class="level3">
 <h3 class="anchored" data-anchor-id="model-serving-with-fastapi">Model Serving with FastAPI</h3>
-<div id="3a4f01fb" class="cell" data-execution_count="18">
+<div id="978799d0" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> FastAPI, HTTPException</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> uvicorn</span>
@@ -1827,7 +1827,7 @@ y_k = Cx_k + Du_k
 </section>
 <section id="distributed-training-setup" class="level3">
 <h3 class="anchored" data-anchor-id="distributed-training-setup">Distributed Training Setup</h3>
-<div id="46e4832a" class="cell" data-execution_count="19">
+<div id="c73c7410" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.distributed <span class="im">as</span> dist</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.nn.parallel <span class="im">import</span> DistributedDataParallel <span class="im">as</span> DDP</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data.distributed <span class="im">import</span> DistributedSampler</span>
@@ -1989,7 +1989,7 @@ y_k = Cx_k + Du_k
 <h2 class="anchored" data-anchor-id="experimental-features">Experimental Features</h2>
 <section id="adaptive-computation-time-act" class="level3">
 <h3 class="anchored" data-anchor-id="adaptive-computation-time-act">Adaptive Computation Time (ACT)</h3>
-<div id="ebf2cbbf" class="cell" data-execution_count="20">
+<div id="8ae14be8" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ACTMamba(nn.Module):</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Mamba with Adaptive Computation Time"""</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -2068,7 +2068,7 @@ y_k = Cx_k + Du_k
 </section>
 <section id="hierarchical-processing" class="level3">
 <h3 class="anchored" data-anchor-id="hierarchical-processing">Hierarchical Processing</h3>
-<div id="ff7fd873" class="cell" data-execution_count="21">
+<div id="526d1fb0" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> HierarchicalMamba(nn.Module):</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Hierarchical Mamba for multi-scale processing"""</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    </span>
