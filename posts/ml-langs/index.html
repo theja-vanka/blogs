@@ -383,7 +383,7 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#programming-languages-in-computer-vision-machine-learning" id="toc-programming-languages-in-computer-vision-machine-learning" class="nav-link active" data-scroll-target="#programming-languages-in-computer-vision-machine-learning">Programming Languages in Computer Vision &amp; Machine Learning</a></li>
   <li><a href="#python-in-cv-ml" id="toc-python-in-cv-ml" class="nav-link" data-scroll-target="#python-in-cv-ml">Python in CV &amp; ML</a>
   <ul class="collapse">
   <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
@@ -500,9 +500,16 @@ window.Quarto = {
 
 
 
+<section id="programming-languages-in-computer-vision-machine-learning" class="level1">
+<h1>Programming Languages in Computer Vision &amp; Machine Learning</h1>
 <p><img src="langs.png" class="img-fluid"></p>
-<section id="introduction" class="level1">
-<h1>Introduction</h1>
+<p>When I look back at my career so far, it feels like a journey through different languages, each chapter shaping the way I think about solving problems.</p>
+<p>It all began with Java in collage. That was my first serious step into software development — a world of strong typing, object-oriented design, and enterprise-scale thinking. It gave me discipline in structure, patterns, and writing code that lasts.</p>
+<p>From there, I transitioned into JavaScript during my time at TopRankers. It was like entering a different universe — one that was faster, more dynamic, and centered around creating immediate impact for users. JavaScript taught me how to think in terms of interactivity, responsiveness, and user experience.</p>
+<p>At Waycool Foods, my journey deepened as I worked with both Python and JavaScript. Here, I started to bridge worlds — backend logic, data-driven decision-making, and the user-facing layer. This dual exposure helped me appreciate the power of Python’s simplicity and versatility, alongside the speed and ubiquity of JavaScript.</p>
+<p>Then came Mareana, where my focus shifted entirely to Python and MLOps. This was the turning point — moving from writing applications to building scalable machine learning systems. It was about automation, pipelines, monitoring, and making sure models didn’t just work in a notebook but thrived in production. I learned how to bring discipline into the chaos of experimentation.</p>
+<p>Now at Lytx, I find myself in the exciting realm of applied research. Here, Python is my closest ally — powering experiments in computer vision, machine learning, and deep learning. It’s no longer just about deployment, but about pushing boundaries, asking new questions, and finding answers in data.</p>
+<p>Looking back, each language and role wasn’t just a skill upgrade — it was a mindset shift. Java gave me structure, JavaScript gave me adaptability, MLOps taught me scale, and research has taught me curiosity. Together, they form the story of how I grew from a developer into a practitioner of applied AI.</p>
 <p>The choice of programming language for computer vision and machine learning projects depends on a careful balance of performance requirements, development speed, team expertise, and deployment constraints. This guide explores the four primary languages used in CV &amp; ML: Python, C++, JavaScript, and Go.</p>
 </section>
 <section id="python-in-cv-ml" class="level1">
@@ -604,7 +611,7 @@ window.Quarto = {
 </section>
 <section id="code-example" class="level2">
 <h2 class="anchored" data-anchor-id="code-example">Code Example</h2>
-<div id="b133e89d" class="cell" data-execution_count="1">
+<div id="a1312060" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torchvision.models <span class="im">as</span> models</span>
@@ -1387,7 +1394,7 @@ window.Quarto = {
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    m<span class="op">.</span>def<span class="op">(</span><span class="st">"fast_compute"</span><span class="op">,</span> <span class="op">&amp;</span>fast_compute<span class="op">);</span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>ctypes</strong>: Call C/C++ shared libraries directly from Python without compilation:</p>
-<div id="85a4f268" class="cell" data-execution_count="2">
+<div id="a76aca4c" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ctypes</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>lib <span class="op">=</span> ctypes.CDLL(<span class="st">'./libexample.so'</span>)</span>
@@ -1396,7 +1403,7 @@ window.Quarto = {
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> lib.fast_compute(<span class="dv">42</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Cython</strong>: Write Python-like code that compiles to C extensions:</p>
-<div id="82cdc6f1" class="cell" data-execution_count="3">
+<div id="e28dd05f" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cython_module.pyx</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fast_compute(<span class="bu">int</span> n):</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    cdef <span class="bu">int</span> result <span class="op">=</span> n <span class="op">*</span> n</span>
@@ -1430,7 +1437,7 @@ window.Quarto = {
 <li>Maintain model accuracy across platforms</li>
 <li>Optimize for specific hardware targets</li>
 </ul>
-<div id="b26914f2" class="cell" data-execution_count="4">
+<div id="a8a9f32f" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Export PyTorch to ONNX</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>dummy_input <span class="op">=</span> torch.randn(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">224</span>, <span class="dv">224</span>)</span>
