@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Krishnatheja Vanka">
-<meta name="dcterms.date" content="2099-03-22">
+<meta name="dcterms.date" content="2025-12-21">
 
-<title>Welcome To My Blog – Krishnatheja Vanka’s Blog</title>
+<title>Mathematics Behind Grounding DINO – Krishnatheja Vanka’s Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,29 +25,29 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<link href="../../favicon.ico" rel="icon">
-<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-db7551fb198f90e53e140817f36f545d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-941aa739f4f6ead0e06d988344f7e38f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-db7551fb198f90e53e140817f36f545d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<link href="../../../../favicon.ico" rel="icon">
+<script src="../../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap-db7551fb198f90e53e140817f36f545d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-941aa739f4f6ead0e06d988344f7e38f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-db7551fb198f90e53e140817f36f545d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -76,8 +76,37 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="../../styles/styles.css">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../../styles/styles.css">
 </head>
 
 <body class="floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -249,7 +278,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="../../../../index.html">
     <span class="navbar-title">Krishnatheja Vanka’s Blog</span>
     </a>
   </div>
@@ -260,7 +289,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html"> 
+    <a class="nav-link" href="../../../../about.html"> 
 <span class="menu-text">About me</span></a>
   </li>  
   <li class="nav-item compact">
@@ -280,9 +309,11 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-right">
-      <h1 class="title">Welcome To My Blog</h1>
+      <h1 class="title">Mathematics Behind Grounding DINO</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">news</div>
+                <div class="quarto-category">code</div>
+                <div class="quarto-category">tutorial</div>
+                <div class="quarto-category">intermediate</div>
               </div>
                   </div>
   </div>
@@ -300,7 +331,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">March 22, 2099</p>
+        <p class="date">December 21, 2025</p>
       </div>
     </div>
     
@@ -315,7 +346,40 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#welcome-to-my-computer-vision-blog" id="toc-welcome-to-my-computer-vision-blog" class="nav-link active" data-scroll-target="#welcome-to-my-computer-vision-blog">👁️ Welcome to My Computer Vision Blog!</a></li>
+  <li><a href="#mathematics-behind-grounding-dino" id="toc-mathematics-behind-grounding-dino" class="nav-link active" data-scroll-target="#mathematics-behind-grounding-dino">Mathematics Behind Grounding DINO</a>
+  <ul class="collapse">
+  <li><a href="#core-architecture-components" id="toc-core-architecture-components" class="nav-link" data-scroll-target="#core-architecture-components">Core Architecture Components</a>
+  <ul class="collapse">
+  <li><a href="#feature-extraction" id="toc-feature-extraction" class="nav-link" data-scroll-target="#feature-extraction">Feature Extraction</a></li>
+  <li><a href="#feature-enhancement-module" id="toc-feature-enhancement-module" class="nav-link" data-scroll-target="#feature-enhancement-module">Feature Enhancement Module</a></li>
+  <li><a href="#language-guided-query-selection" id="toc-language-guided-query-selection" class="nav-link" data-scroll-target="#language-guided-query-selection">Language-Guided Query Selection</a></li>
+  </ul></li>
+  <li><a href="#transformer-decoder-architecture" id="toc-transformer-decoder-architecture" class="nav-link" data-scroll-target="#transformer-decoder-architecture">Transformer Decoder Architecture</a>
+  <ul class="collapse">
+  <li><a href="#cross-modality-decoder" id="toc-cross-modality-decoder" class="nav-link" data-scroll-target="#cross-modality-decoder">Cross-Modality Decoder</a></li>
+  </ul></li>
+  <li><a href="#prediction-heads" id="toc-prediction-heads" class="nav-link" data-scroll-target="#prediction-heads">Prediction Heads</a>
+  <ul class="collapse">
+  <li><a href="#classification-head" id="toc-classification-head" class="nav-link" data-scroll-target="#classification-head">Classification Head</a></li>
+  <li><a href="#bounding-box-regression-head" id="toc-bounding-box-regression-head" class="nav-link" data-scroll-target="#bounding-box-regression-head">Bounding Box Regression Head</a></li>
+  </ul></li>
+  <li><a href="#loss-functions" id="toc-loss-functions" class="nav-link" data-scroll-target="#loss-functions">Loss Functions</a>
+  <ul class="collapse">
+  <li><a href="#bipartite-matching-loss" id="toc-bipartite-matching-loss" class="nav-link" data-scroll-target="#bipartite-matching-loss">Bipartite Matching Loss</a></li>
+  <li><a href="#total-loss" id="toc-total-loss" class="nav-link" data-scroll-target="#total-loss">Total Loss</a></li>
+  </ul></li>
+  <li><a href="#contrastive-alignment" id="toc-contrastive-alignment" class="nav-link" data-scroll-target="#contrastive-alignment">Contrastive Alignment</a>
+  <ul class="collapse">
+  <li><a href="#contrastive-learning-for-vision-language-alignment" id="toc-contrastive-learning-for-vision-language-alignment" class="nav-link" data-scroll-target="#contrastive-learning-for-vision-language-alignment">Contrastive Learning for Vision-Language Alignment</a></li>
+  </ul></li>
+  <li><a href="#key-mathematical-innovations" id="toc-key-mathematical-innovations" class="nav-link" data-scroll-target="#key-mathematical-innovations">Key Mathematical Innovations</a>
+  <ul class="collapse">
+  <li><a href="#enhanced-feature-fusion" id="toc-enhanced-feature-fusion" class="nav-link" data-scroll-target="#enhanced-feature-fusion">Enhanced Feature Fusion</a></li>
+  <li><a href="#position-encoding" id="toc-position-encoding" class="nav-link" data-scroll-target="#position-encoding">Position Encoding</a></li>
+  </ul></li>
+  <li><a href="#inference-process" id="toc-inference-process" class="nav-link" data-scroll-target="#inference-process">Inference Process</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
   </ul>
 </nav>
 </nav>
@@ -331,18 +395,224 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="welcome-to-my-computer-vision-blog" class="level1">
-<h1>👁️ Welcome to My Computer Vision Blog!</h1>
-<p><img src="thumbnail.jpg" class="img-fluid"></p>
-<p>This is the first post in this blog.</p>
-<p>Hello and welcome!</p>
-<p>I’m thrilled to kick off this blog dedicated to exploring the fascinating world of <strong>computer vision</strong> — a field where machines learn to see, interpret, and understand the visual world around us. Whether you’re a seasoned AI researcher, an aspiring developer, or simply curious about how technology can “see,” you’ll find something valuable here.</p>
-<p>From image processing techniques to deep learning breakthroughs, from real-world applications to hands-on tutorials — this blog will cover it all. My goal is to make computer vision approachable, insightful, and exciting for everyone.</p>
-<p>So, whether you’re here to learn, build, or stay on top of the latest innovations, I’m glad to have you along for the journey. Let’s dive into the visual future together!</p>
-<p>Stay tuned, and let’s make machines see the world like never before. 🚀</p>
-<p>Cheers, <br> Krishna</p>
+<section id="mathematics-behind-grounding-dino" class="level1">
+<h1>Mathematics Behind Grounding DINO</h1>
+<p><img src="groundingdino.png" class="img-fluid"></p>
+<p>Grounding DINO (Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection) is a state-of-the-art open-set object detection model that combines vision and language modalities. It extends the DINO (DETR with Improved deNoising anchOr boxes) architecture to perform zero-shot object detection using natural language descriptions.</p>
+<section id="core-architecture-components" class="level2">
+<h2 class="anchored" data-anchor-id="core-architecture-components">Core Architecture Components</h2>
+<section id="feature-extraction" class="level3">
+<h3 class="anchored" data-anchor-id="feature-extraction">Feature Extraction</h3>
+<p><strong>Image Encoder</strong>: Grounding DINO uses a backbone network (typically Swin Transformer) to extract visual features:</p>
+<p><span id="eq-image-encoder"><span class="math display">\[
+\mathbf{F}_{img} = \text{Backbone}(\mathbf{I}) \in \mathbb{R}^{H \times W \times C}
+\tag{1}\]</span></span></p>
+<p>where <span class="math inline">\(\mathbf{I}\)</span> is the input image, and <span class="math inline">\(H, W, C\)</span> represent the spatial dimensions and channels.</p>
+<p><strong>Text Encoder</strong>: A BERT-based encoder processes the text query:</p>
+<p><span id="eq-text-encoder"><span class="math display">\[
+\mathbf{F}_{text} = \text{TextEncoder}(\mathbf{T}) \in \mathbb{R}^{L \times D}
+\tag{2}\]</span></span></p>
+<p>where <span class="math inline">\(\mathbf{T}\)</span> is the tokenized text, <span class="math inline">\(L\)</span> is the sequence length, and <span class="math inline">\(D\)</span> is the embedding dimension.</p>
+</section>
+<section id="feature-enhancement-module" class="level3">
+<h3 class="anchored" data-anchor-id="feature-enhancement-module">Feature Enhancement Module</h3>
+<p>The model employs a Feature Enhancer to strengthen features through multi-modal interactions:</p>
+<p><span id="eq-feature-enhancer"><span class="math display">\[
+\mathbf{F}'_{img}, \mathbf{F}'_{text} = \text{FeatureEnhancer}(\mathbf{F}_{img}, \mathbf{F}_{text})
+\tag{3}\]</span></span></p>
+<p>This involves:</p>
+<ul>
+<li><strong>Deformable Self-Attention</strong> for image features</li>
+<li><strong>Self-Attention</strong> for text features</li>
+<li><strong>Cross-Attention</strong> between modalities</li>
+</ul>
+</section>
+<section id="language-guided-query-selection" class="level3">
+<h3 class="anchored" data-anchor-id="language-guided-query-selection">Language-Guided Query Selection</h3>
+<p>Grounding DINO introduces a novel query initialization mechanism that leverages text features:</p>
+<p><span id="eq-query-init"><span class="math display">\[
+\mathbf{Q}_{init} = \text{QuerySelect}(\mathbf{F}'_{img}, \mathbf{F}'_{text})
+\tag{4}\]</span></span></p>
+<p>The queries are selected based on similarity between image and text features:</p>
+<p><span id="eq-similarity-score"><span class="math display">\[
+\text{Score}(i, j) = \frac{\mathbf{F}'_{img}[i] \cdot \mathbf{F}'_{text}[j]}{||\mathbf{F}'_{img}[i]|| \cdot ||\mathbf{F}'_{text}[j]||}
+\tag{5}\]</span></span></p>
+<p>Top-k positions with highest scores are selected as initial anchor points.</p>
+</section>
+</section>
+<section id="transformer-decoder-architecture" class="level2">
+<h2 class="anchored" data-anchor-id="transformer-decoder-architecture">Transformer Decoder Architecture</h2>
+<section id="cross-modality-decoder" class="level3">
+<h3 class="anchored" data-anchor-id="cross-modality-decoder">Cross-Modality Decoder</h3>
+<p>The decoder consists of multiple layers, each containing:</p>
+<p><strong>Self-Attention on Queries</strong>:</p>
+<p><span id="eq-self-attention"><span class="math display">\[
+\mathbf{Q}^{(l+1)} = \text{SelfAttn}(\mathbf{Q}^{(l)}) + \mathbf{Q}^{(l)}
+\tag{6}\]</span></span></p>
+<p><strong>Image Cross-Attention</strong> (Deformable Attention):</p>
+<p><span id="eq-image-cross-attn"><span class="math display">\[
+\mathbf{Q}^{(l+1)} = \text{DeformAttn}(\mathbf{Q}^{(l+1)}, \mathbf{F}'_{img}) + \mathbf{Q}^{(l+1)}
+\tag{7}\]</span></span></p>
+<p>The deformable attention is computed as:</p>
+<p><span id="eq-deformable-attn"><span class="math display">\[
+\text{DeformAttn}(\mathbf{q}, \mathbf{x}, \mathbf{p}) = \sum_{m=1}^{M} \mathbf{W}_m \sum_{k=1}^{K} A_{mqk} \cdot \mathbf{W}'_m \mathbf{x}(\mathbf{p}_q + \Delta\mathbf{p}_{mqk})
+\tag{8}\]</span></span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(M\)</span> is the number of attention heads</li>
+<li><span class="math inline">\(K\)</span> is the number of sampling points</li>
+<li><span class="math inline">\(A_{mqk}\)</span> are attention weights</li>
+<li><span class="math inline">\(\Delta\mathbf{p}_{mqk}\)</span> are learned offsets</li>
+<li><span class="math inline">\(\mathbf{p}_q\)</span> is the reference point</li>
+</ul>
+<p><strong>Text Cross-Attention</strong>:</p>
+<p><span id="eq-text-cross-attn"><span class="math display">\[
+\mathbf{Q}^{(l+1)} = \text{TextAttn}(\mathbf{Q}^{(l+1)}, \mathbf{F}'_{text}) + \mathbf{Q}^{(l+1)}
+\tag{9}\]</span></span></p>
+<p>Standard cross-attention:</p>
+<p><span id="eq-standard-attention"><span class="math display">\[
+\text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^T}{\sqrt{d_k}}\right)\mathbf{V}
+\tag{10}\]</span></span></p>
+</section>
+</section>
+<section id="prediction-heads" class="level2">
+<h2 class="anchored" data-anchor-id="prediction-heads">Prediction Heads</h2>
+<section id="classification-head" class="level3">
+<h3 class="anchored" data-anchor-id="classification-head">Classification Head</h3>
+<p>For each query <span class="math inline">\(\mathbf{q}_i\)</span>, the model computes similarity with text tokens:</p>
+<p><span id="eq-classification-similarity"><span class="math display">\[
+\mathbf{s}_i = \frac{\mathbf{q}_i \mathbf{W}_c \cdot \mathbf{F}'_{text}^T}{||\mathbf{q}_i \mathbf{W}_c|| \cdot ||\mathbf{F}'_{text}||}
+\tag{11}\]</span></span></p>
+<p>Classification score for token <span class="math inline">\(j\)</span>:</p>
+<p><span id="eq-classification-score"><span class="math display">\[
+p_{ij} = \text{sigmoid}(\mathbf{s}_{ij})
+\tag{12}\]</span></span></p>
+</section>
+<section id="bounding-box-regression-head" class="level3">
+<h3 class="anchored" data-anchor-id="bounding-box-regression-head">Bounding Box Regression Head</h3>
+<p>The box coordinates are predicted as:</p>
+<p><span id="eq-bbox-prediction"><span class="math display">\[
+\mathbf{b}_i = \sigma(\text{FFN}_{box}(\mathbf{q}_i)) = [\hat{x}_c, \hat{y}_c, \hat{w}, \hat{h}]
+\tag{13}\]</span></span></p>
+<p>where <span class="math inline">\(\sigma\)</span> is the sigmoid function, and coordinates are normalized to [0, 1].</p>
+<p>The predicted box in absolute coordinates:</p>
+<p><span id="eq-absolute-coords"><span class="math display">\[
+\begin{align}
+x_c &amp;= \hat{x}_c \cdot W \\
+y_c &amp;= \hat{y}_c \cdot H \\
+w &amp;= \hat{w} \cdot W \\
+h &amp;= \hat{h} \cdot H
+\end{align}
+\tag{14}\]</span></span></p>
+</section>
+</section>
+<section id="loss-functions" class="level2">
+<h2 class="anchored" data-anchor-id="loss-functions">Loss Functions</h2>
+<section id="bipartite-matching-loss" class="level3">
+<h3 class="anchored" data-anchor-id="bipartite-matching-loss">Bipartite Matching Loss</h3>
+<p>Following DETR, Grounding DINO uses Hungarian matching to find optimal assignment between predictions and ground truth:</p>
+<p><span id="eq-hungarian-matching"><span class="math display">\[
+\hat{\sigma} = \arg\min_{\sigma \in \mathfrak{S}_N} \sum_{i}^{N} \mathcal{L}_{match}(y_i, \hat{y}_{\sigma(i)})
+\tag{15}\]</span></span></p>
+<p>where <span class="math inline">\(\mathfrak{S}_N\)</span> is the set of all permutations of N elements.</p>
+<p>The matching cost:</p>
+<p><span id="eq-matching-cost"><span class="math display">\[
+\mathcal{L}_{match}(y_i, \hat{y}_j) = -\mathbb{1}_{\{c_i \neq \emptyset\}} \hat{p}_j(c_i) + \mathbb{1}_{\{c_i \neq \emptyset\}} \mathcal{L}_{box}(b_i, \hat{b}_j)
+\tag{16}\]</span></span></p>
+</section>
+<section id="total-loss" class="level3">
+<h3 class="anchored" data-anchor-id="total-loss">Total Loss</h3>
+<p>After optimal matching, the total loss is:</p>
+<p><span id="eq-total-loss"><span class="math display">\[
+\mathcal{L} = \lambda_{cls}\mathcal{L}_{cls} + \lambda_{box}\mathcal{L}_{box} + \lambda_{giou}\mathcal{L}_{giou}
+\tag{17}\]</span></span></p>
+<p><strong>Classification Loss</strong> (Focal Loss):</p>
+<p><span id="eq-focal-loss"><span class="math display">\[
+\mathcal{L}_{cls} = -\alpha(1-p_t)^\gamma \log(p_t)
+\tag{18}\]</span></span></p>
+<p>where <span class="math inline">\(p_t\)</span> is the model’s estimated probability for the correct class.</p>
+<p><strong>Box L1 Loss</strong>:</p>
+<p><span id="eq-l1-loss"><span class="math display">\[
+\mathcal{L}_{box} = \sum_{i=1}^{N} \mathbb{1}_{\{c_i \neq \emptyset\}} ||b_i - \hat{b}_{\sigma(i)}||_1
+\tag{19}\]</span></span></p>
+<p><strong>GIoU Loss</strong> (Generalized Intersection over Union):</p>
+<p><span id="eq-giou-loss"><span class="math display">\[
+\mathcal{L}_{giou} = 1 - \text{GIoU}(b_i, \hat{b}_{\sigma(i)})
+\tag{20}\]</span></span></p>
+<p>where:</p>
+<p><span id="eq-giou-definition"><span class="math display">\[
+\text{GIoU} = \text{IoU} - \frac{|C \setminus (A \cup B)|}{|C|}
+\tag{21}\]</span></span></p>
+<p><span class="math inline">\(C\)</span> is the smallest convex hull enclosing both boxes <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>.</p>
+</section>
+</section>
+<section id="contrastive-alignment" class="level2">
+<h2 class="anchored" data-anchor-id="contrastive-alignment">Contrastive Alignment</h2>
+<section id="contrastive-learning-for-vision-language-alignment" class="level3">
+<h3 class="anchored" data-anchor-id="contrastive-learning-for-vision-language-alignment">Contrastive Learning for Vision-Language Alignment</h3>
+<p>During pre-training, Grounding DINO uses contrastive learning to align image regions with text phrases:</p>
+<p><span id="eq-contrastive-loss"><span class="math display">\[
+\mathcal{L}_{contrast} = -\log \frac{\exp(\text{sim}(\mathbf{v}_i, \mathbf{t}_i)/\tau)}{\sum_{j=1}^{B} \exp(\text{sim}(\mathbf{v}_i, \mathbf{t}_j)/\tau)}
+\tag{22}\]</span></span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(\mathbf{v}_i\)</span> is the visual embedding for region <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(\mathbf{t}_i\)</span> is the corresponding text embedding</li>
+<li><span class="math inline">\(\tau\)</span> is the temperature parameter</li>
+<li><span class="math inline">\(B\)</span> is the batch size</li>
+</ul>
+</section>
+</section>
+<section id="key-mathematical-innovations" class="level2">
+<h2 class="anchored" data-anchor-id="key-mathematical-innovations">Key Mathematical Innovations</h2>
+<section id="enhanced-feature-fusion" class="level3">
+<h3 class="anchored" data-anchor-id="enhanced-feature-fusion">Enhanced Feature Fusion</h3>
+<p>The cross-modality fusion uses a gating mechanism:</p>
+<p><span id="eq-feature-fusion"><span class="math display">\[
+\mathbf{F}_{fused} = \alpha \odot \mathbf{F}_{img} + (1-\alpha) \odot \mathbf{F}_{text}
+\tag{23}\]</span></span></p>
+<p>where <span class="math inline">\(\alpha = \sigma(\text{FFN}([\mathbf{F}_{img}; \mathbf{F}_{text}]))\)</span> is learned dynamically.</p>
+</section>
+<section id="position-encoding" class="level3">
+<h3 class="anchored" data-anchor-id="position-encoding">Position Encoding</h3>
+<p><strong>Image Position Encoding</strong>: 2D sine-cosine positional encoding:</p>
+<p><span id="eq-image-pos-encoding"><span class="math display">\[
+\begin{align}
+PE_{(x,y,2i)} &amp;= \sin\left(\frac{x}{10000^{2i/d}}\right) \\
+PE_{(x,y,2i+1)} &amp;= \cos\left(\frac{x}{10000^{2i/d}}\right)
+\end{align}
+\tag{24}\]</span></span></p>
+<p><strong>Text Position Encoding</strong>: Standard 1D positional encoding for sequence position.</p>
+</section>
+</section>
+<section id="inference-process" class="level2">
+<h2 class="anchored" data-anchor-id="inference-process">Inference Process</h2>
+<p>At inference time, given an image and text query:</p>
+<ol type="1">
+<li>Extract features: <span class="math inline">\(\mathbf{F}_{img}, \mathbf{F}_{text}\)</span></li>
+<li>Enhance features through cross-attention</li>
+<li>Initialize queries based on image-text similarity</li>
+<li>Pass through decoder layers</li>
+<li>Generate predictions for each query</li>
+<li>Apply NMS (Non-Maximum Suppression) to filter overlapping boxes:</li>
+</ol>
+<p><span id="eq-nms"><span class="math display">\[
+\text{Keep box } i \text{ if } \text{IoU}(b_i, b_j) &lt; \theta \text{ for all } j \text{ with higher score}
+\tag{25}\]</span></span></p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Grounding DINO’s mathematical framework elegantly combines:</p>
+<ul>
+<li>Deformable attention for efficient multi-scale feature processing</li>
+<li>Cross-modal attention for vision-language alignment</li>
+<li>Contrastive learning for robust feature representations</li>
+<li>Hungarian matching for optimal prediction-target assignment</li>
+</ul>
+<p>These components work together to enable open-vocabulary object detection, allowing the model to detect objects described by arbitrary text queries without fine-tuning on specific categories.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
