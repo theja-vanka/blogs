@@ -1,0 +1,556 @@
+---
+title: "Grounding DINO Implementation Guide"
+author: "Krishnatheja Vanka"
+date: "2025-12-21"
+categories: [code, tutorial, intermediate]
+format:
+  html:
+    code-fold: false
+execute:
+  echo: true
+  timing: true
+jupyter: python3
+---
+
+# Grounding DINO Implementation Guide
+![](groundingdino.png)
+
+Grounding DINO is a state-of-the-art open-set object detection model that combines language understanding with visual detection. It can detect and localize objects based on natural language descriptions, making it highly flexible for zero-shot object detection tasks.
+
+## Key Features
+
+- **Open-vocabulary detection**: Detect objects using free-form text descriptions
+- **Zero-shot capability**: No need for task-specific fine-tuning
+- **High accuracy**: Achieves strong performance on COCO and other benchmarks
+- **Flexible integration**: Works with various downstream tasks like segmentation
+
+## Architecture Components
+
+### Vision Backbone
+
+Grounding DINO uses a Swin Transformer as the vision backbone to extract multi-scale visual features from input images.
+
+### Language Backbone
+
+BERT is used as the text encoder to process language queries and extract semantic features.
+
+### Feature Enhancer
+
+A feature enhancer module fuses vision and language features through cross-modality attention mechanisms.
+
+### Language-Guided Query Selection
+
+The model uses language features to guide the selection of object queries in the decoder.
+
+### Cross-Modality Decoder
+
+A transformer decoder that performs cross-attention between image features and text features to predict bounding boxes.
+
+## Installation
+
+### Prerequisites
+
+```{bash}
+#| eval: false
+
+# Create a virtual environment
+python -m venv grounding_dino_env
+source grounding_dino_env/bin/activate  # On Windows: grounding_dino_env\Scripts\activate
+
+# Install PyTorch (adjust for your CUDA version)
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+```
+
+### Install Grounding DINO
+
+```{bash}
+#| eval: false
+
+# Clone the repository
+git clone https://github.com/IDEA-Research/GroundingDINO.git
+cd GroundingDINO
+
+# Install requirements
+pip install -e .
+
+# Alternative: Install from PyPI (if available)
+pip install groundingdino
+```
+
+### Download Model Weights
+
+```{bash}
+#| eval: false
+
+# Download pre-trained weights
+mkdir weights
+cd weights
+wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+```
+
+## Basic Implementation
+
+### Simple Detection Example
+
+```{python}
+#| eval: false
+
+import torch
+from PIL import Image
+from groundingdino.util.inference import load_model, load_image, predict, annotate
+
+# Load model
+model = load_model(
+    "groundingdino/config/GroundingDINO_SwinT_OGC.py",
+    "weights/groundingdino_swint_ogc.pth"
+)
+
+# Load image
+image_source, image = load_image("path/to/your/image.jpg")
+
+# Define text prompt
+TEXT_PROMPT = "cat . dog . person"
+BOX_THRESHOLD = 0.35
+TEXT_THRESHOLD = 0.25
+
+# Run inference
+boxes, logits, phrases = predict(
+    model=model,
+    image=image,
+    caption=TEXT_PROMPT,
+    box_threshold=BOX_THRESHOLD,
+    text_threshold=TEXT_THRESHOLD
+)
+
+# Visualize results
+annotated_frame = annotate(
+    image_source=image_source,
+    boxes=boxes,
+    logits=logits,
+    phrases=phrases
+)
+
+# Save or display
+Image.fromarray(annotated_frame).save("output.jpg")
+```
+
+### Custom Implementation
+
+```{python}
+#| eval: false
+
+import torch
+from groundingdino.util import box_ops
+from groundingdino.models import build_model
+from groundingdino.util.slconfig import SLConfig
+from groundingdino.util.utils import clean_state_dict
+
+def load_custom_model(config_path, checkpoint_path, device='cuda'):
+    """Load Grounding DINO model with custom configuration"""
+    args = SLConfig.fromfile(config_path)
+    args.device = device
+    model = build_model(args)
+    
+    checkpoint = torch.load(checkpoint_path, map_location='cpu')
+    model.load_state_dict(clean_state_dict(checkpoint['model']), strict=False)
+    model.eval()
+    return model.to(device)
+
+def preprocess_caption(caption):
+    """Process caption for model input"""
+    # Separate objects with periods
+    caption = caption.lower().strip()
+    if not caption.endswith('.'):
+        caption = caption + '.'
+    return caption
+
+def detect_objects(model, image_tensor, caption, box_threshold=0.35, text_threshold=0.25):
+    """
+    Run object detection
+    
+    Args:
+        model: Grounding DINO model
+        image_tensor: Preprocessed image tensor [C, H, W]
+        caption: Text description of objects to detect
+        box_threshold: Confidence threshold for boxes
+        text_threshold: Confidence threshold for text matching
+    
+    Returns:
+        boxes: Detected bounding boxes in [cx, cy, w, h] format
+        scores: Confidence scores
+        labels: Text labels for each box
+    """
+    caption = preprocess_caption(caption)
+    
+    with torch.no_grad():
+        outputs = model(image_tensor[None], captions=[caption])
+    
+    # Extract predictions
+    logits = outputs["pred_logits"].sigmoid()[0]  # [num_queries, num_classes]
+    boxes = outputs["pred_boxes"][0]  # [num_queries, 4]
+    
+    # Filter by thresholds
+    max_logits, _ = logits.max(dim=-1)
+    mask = max_logits > box_threshold
+    
+    boxes = boxes[mask]
+    logits = logits[mask]
+    
+    # Get phrase labels
+    phrases = []
+    scores = []
+    for logit in logits:
+        max_score, max_idx = logit.max(dim=-1)
+        if max_score > text_threshold:
+            phrases.append(caption.split('.')[max_idx.item()])
+            scores.append(max_score.item())
+    
+    return boxes, scores, phrases
+```
+
+### Image Preprocessing
+
+```{python}
+#| eval: false
+
+import cv2
+import numpy as np
+from torchvision.transforms import Compose, Resize, ToTensor, Normalize
+
+def preprocess_image(image_path, target_size=800):
+    """
+    Preprocess image for Grounding DINO
+    
+    Args:
+        image_path: Path to input image
+        target_size: Target size for the shorter side
+    
+    Returns:
+        image_tensor: Preprocessed image tensor
+        original_size: Original image dimensions (H, W)
+    """
+    # Read image
+    image = cv2.imread(image_path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    original_size = image.shape[:2]
+    
+    # Resize while maintaining aspect ratio
+    h, w = image.shape[:2]
+    scale = target_size / min(h, w)
+    new_h, new_w = int(h * scale), int(w * scale)
+    image = cv2.resize(image, (new_w, new_h))
+    
+    # Convert to tensor and normalize
+    transform = Compose([
+        ToTensor(),
+        Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+    
+    image_tensor = transform(image)
+    return image_tensor, original_size
+```
+
+## Advanced Usage
+
+### Batch Processing
+
+```{python}
+#| eval: false
+
+def batch_detect(model, image_paths, caption, batch_size=4):
+    """Process multiple images in batches"""
+    results = []
+    
+    for i in range(0, len(image_paths), batch_size):
+        batch_paths = image_paths[i:i+batch_size]
+        batch_tensors = []
+        batch_sizes = []
+        
+        for path in batch_paths:
+            tensor, size = preprocess_image(path)
+            batch_tensors.append(tensor)
+            batch_sizes.append(size)
+        
+        # Pad tensors to same size
+        max_h = max(t.shape[1] for t in batch_tensors)
+        max_w = max(t.shape[2] for t in batch_tensors)
+        
+        padded_batch = []
+        for tensor in batch_tensors:
+            pad_h = max_h - tensor.shape[1]
+            pad_w = max_w - tensor.shape[2]
+            padded = torch.nn.functional.pad(tensor, (0, pad_w, 0, pad_h))
+            padded_batch.append(padded)
+        
+        batch_tensor = torch.stack(padded_batch)
+        
+        # Run inference
+        with torch.no_grad():
+            outputs = model(batch_tensor, captions=[caption] * len(batch_paths))
+        
+        # Process outputs for each image
+        for j, (boxes, logits) in enumerate(zip(outputs["pred_boxes"], outputs["pred_logits"])):
+            results.append({
+                'image': batch_paths[j],
+                'boxes': boxes,
+                'logits': logits
+            })
+    
+    return results
+```
+
+### Integration with Segmentation
+
+```{python}
+#| eval: false
+
+def combine_with_sam(grounding_model, sam_predictor, image_path, text_prompt):
+    """
+    Combine Grounding DINO with Segment Anything Model (SAM)
+    for text-prompted segmentation
+    """
+    from segment_anything import SamPredictor
+    
+    # Detect objects with Grounding DINO
+    image_source, image = load_image(image_path)
+    boxes, logits, phrases = predict(
+        model=grounding_model,
+        image=image,
+        caption=text_prompt,
+        box_threshold=0.35,
+        text_threshold=0.25
+    )
+    
+    # Convert boxes to SAM format
+    h, w = image_source.shape[:2]
+    boxes_xyxy = box_ops.box_cxcywh_to_xyxy(boxes) * torch.Tensor([w, h, w, h])
+    
+    # Generate masks with SAM
+    sam_predictor.set_image(image_source)
+    transformed_boxes = sam_predictor.transform.apply_boxes_torch(
+        boxes_xyxy, image_source.shape[:2]
+    )
+    
+    masks, scores, _ = sam_predictor.predict_torch(
+        point_coords=None,
+        point_labels=None,
+        boxes=transformed_boxes,
+        multimask_output=False
+    )
+    
+    return masks, boxes, phrases
+```
+
+### Fine-tuning on Custom Dataset
+
+```{python}
+#| eval: false
+
+from torch.utils.data import DataLoader
+from groundingdino.datasets import CocoDetection
+
+def create_custom_dataloader(data_root, ann_file, batch_size=4):
+    """Create dataloader for custom dataset"""
+    dataset = CocoDetection(
+        img_folder=data_root,
+        ann_file=ann_file,
+        transforms=None,  # Add custom transforms
+        return_masks=False
+    )
+    
+    dataloader = DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=4,
+        collate_fn=lambda x: x  # Custom collate function
+    )
+    
+    return dataloader
+
+def fine_tune_model(model, train_loader, val_loader, epochs=10, lr=1e-5):
+    """Fine-tune Grounding DINO on custom data"""
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
+    criterion = torch.nn.CrossEntropyLoss()
+    
+    for epoch in range(epochs):
+        model.train()
+        train_loss = 0
+        
+        for batch in train_loader:
+            images, targets, captions = batch
+            
+            optimizer.zero_grad()
+            outputs = model(images, captions=captions)
+            
+            # Compute loss (simplified)
+            loss = compute_loss(outputs, targets)
+            loss.backward()
+            optimizer.step()
+            
+            train_loss += loss.item()
+        
+        # Validation
+        val_loss = validate(model, val_loader)
+        print(f"Epoch {epoch+1}/{epochs}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+```
+
+## Performance Optimization
+
+### Mixed Precision Training
+
+```{python}
+#| eval: false
+
+from torch.cuda.amp import autocast, GradScaler
+
+scaler = GradScaler()
+
+with autocast():
+    outputs = model(images, captions=captions)
+    loss = compute_loss(outputs, targets)
+
+scaler.scale(loss).backward()
+scaler.step(optimizer)
+scaler.update()
+```
+
+### TensorRT Optimization
+
+```{python}
+#| eval: false
+
+import torch_tensorrt
+
+# Compile model for TensorRT
+trt_model = torch_tensorrt.compile(
+    model,
+    inputs=[torch.randn(1, 3, 800, 800).cuda()],
+    enabled_precisions={torch.float16}
+)
+```
+
+### ONNX Export
+
+```{python}
+#| eval: false
+
+def export_to_onnx(model, output_path, input_size=(800, 800)):
+    """Export Grounding DINO to ONNX format"""
+    dummy_image = torch.randn(1, 3, *input_size).cuda()
+    dummy_caption = ["cat . dog"]
+    
+    torch.onnx.export(
+        model,
+        (dummy_image, dummy_caption),
+        output_path,
+        export_params=True,
+        opset_version=14,
+        do_constant_folding=True,
+        input_names=['image', 'caption'],
+        output_names=['boxes', 'logits'],
+        dynamic_axes={
+            'image': {0: 'batch_size'},
+            'boxes': {0: 'batch_size'},
+            'logits': {0: 'batch_size'}
+        }
+    )
+```
+
+## Common Issues and Solutions
+
+### Issue 1: CUDA Out of Memory
+
+**Solution**: Reduce batch size, use gradient accumulation, or resize images to smaller dimensions.
+
+```{python}
+#| eval: false
+
+# Gradient accumulation
+accumulation_steps = 4
+for i, batch in enumerate(dataloader):
+    loss = model(batch) / accumulation_steps
+    loss.backward()
+    
+    if (i + 1) % accumulation_steps == 0:
+        optimizer.step()
+        optimizer.zero_grad()
+```
+
+### Issue 2: Low Detection Accuracy
+
+**Solution**: Adjust thresholds, improve text prompts, or use more descriptive captions.
+
+```{python}
+#| eval: false
+
+# Try different threshold combinations
+box_thresholds = [0.25, 0.35, 0.45]
+text_thresholds = [0.20, 0.25, 0.30]
+
+best_results = None
+best_score = 0
+
+for box_th in box_thresholds:
+    for text_th in text_thresholds:
+        boxes, logits, phrases = predict(model, image, caption, box_th, text_th)
+        score = evaluate_results(boxes, ground_truth)
+        if score > best_score:
+            best_score = score
+            best_results = (boxes, logits, phrases)
+```
+
+### Issue 3: Slow Inference
+
+**Solution**: Use TensorRT, reduce image resolution, or batch process images.
+
+```{python}
+#| eval: false
+
+# Optimize image size
+def adaptive_resize(image, max_size=1024):
+    h, w = image.shape[:2]
+    scale = max_size / max(h, w)
+    new_h, new_w = int(h * scale), int(w * scale)
+    return cv2.resize(image, (new_w, new_h))
+```
+
+## Best Practices
+
+1. **Text Prompts**: Use clear, specific descriptions separated by periods
+   - Good: `"red car . person wearing hat . traffic light"`
+   - Bad: `"things in the street"`
+
+2. **Threshold Tuning**: Start with default values and adjust based on results
+   - Higher thresholds: Fewer false positives, may miss objects
+   - Lower thresholds: More detections, more false positives
+
+3. **Image Quality**: Use high-resolution images when possible
+   - Minimum recommended: 640x640
+   - Optimal: 800x800 or higher
+
+4. **Batch Processing**: Group similar-sized images to minimize padding overhead
+
+5. **GPU Memory**: Monitor usage and adjust batch size accordingly
+
+## Conclusion
+
+Grounding DINO provides a powerful framework for open-vocabulary object detection. Its ability to understand natural language makes it highly versatile for various computer vision applications, from autonomous driving to robotics and content moderation.
+
+## Resources
+
+- [Official GitHub Repository](https://github.com/IDEA-Research/GroundingDINO)
+- [Research Paper](https://arxiv.org/abs/2303.05499)
+- [Hugging Face Demo](https://huggingface.co/spaces/IDEA-Research/Grounding-DINO)
+- [API Documentation](https://groundingdino.readthedocs.io/)
+
+## Citation
+
+```bibtex
+@article{liu2023grounding,
+  title={Grounding dino: Marrying dino with grounded pre-training for open-set object detection},
+  author={Liu, Shilong and Zeng, Zhaoyang and Ren, Tianhe and Li, Feng and Zhang, Hao and Yang, Jie and Li, Chunyuan and Yang, Jianwei and Su, Hang and Zhu, Jun and others},
+  journal={arXiv preprint arXiv:2303.05499},
+  year={2023}
+}
+```
