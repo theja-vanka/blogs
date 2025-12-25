@@ -1,0 +1,939 @@
+---
+title: "SGLang: Comprehensive Guide to Structured Generation Language"
+author: "Krishnatheja Vanka"
+date: "2025-08-25"
+categories: [code, tutorial, intermediate]
+format:
+  html:
+    code-fold: false
+    math: mathjax
+execute:
+  echo: true
+  timing: true
+jupyter: python3
+---
+
+# SGLang: Comprehensive Guide to Structured Generation Language
+![](lang.png)
+
+::: {.callout-note}
+## About This Guide
+
+This comprehensive guide covers SGLang (Structured Generation Language), a revolutionary framework that transforms how developers interact with large language models (LLMs) and vision-language models. SGLang achieves unprecedented performance improvements while maintaining programming simplicity and flexibility.
+:::
+
+## Introduction {#sec-introduction}
+
+SGLang (Structured Generation Language) is a revolutionary framework that transforms how developers interact with large language models (LLMs) and vision-language models. By co-designing both the frontend programming interface and the backend runtime system, SGLang achieves unprecedented performance improvements while maintaining programming simplicity and flexibility.
+
+## What is SGLang? {#sec-what-is-sglang}
+
+SGLang is a fast serving framework for large language models and vision language models that makes your interaction with models faster and more controllable by co-designing the backend runtime and frontend language. SGLang consists of a frontend language and a runtime, where the frontend simplifies programming with primitives for generation and parallelism control, and the runtime accelerates execution with novel optimizations.
+
+### Key Benefits
+
+::: {.panel-tabset}
+
+#### Performance
+Up to **5x throughput improvements** over traditional serving methods through advanced optimization techniques.
+
+#### Controllability
+Fine-grained control over generation processes with structured primitives and constraint handling.
+
+#### Expressiveness
+Rich primitives for complex LLM programming patterns including parallel execution and multi-step reasoning.
+
+#### Efficiency
+Advanced caching and optimization techniques including RadixAttention for automatic KV cache reuse.
+
+#### Multimodal Support
+Native support for both language and vision-language models with unified processing pipeline.
+
+:::
+
+## Key Features {#sec-key-features}
+
+### Frontend Language Features
+
+```{mermaid}
+%%| echo: false
+
+graph TD
+    A[Frontend Language] --> B[Embedded DSL]
+    A --> C[Generation Primitives]
+    A --> D[Parallelism Control]
+    A --> E[Structured Outputs]
+    A --> F[Template System]
+    
+    B --> B1[Python Integration]
+    C --> C1["gen()" function]
+    C --> C2["select()" function]
+    D --> D1["fork()" for Parallel]
+    E --> E1[JSON/XML Support]
+    F --> F1[Dynamic Prompts]
+```
+
+- **Embedded DSL**: Domain-specific language embedded in Python
+- **Generation Primitives**: Built-in functions for text generation and control
+- **Parallelism Control**: Native support for parallel generation calls
+- **Structured Outputs**: Easy handling of JSON, XML, and custom formats
+- **Template System**: Powerful templating for dynamic prompt construction
+
+### Backend Runtime Features
+
+```{mermaid}
+%%| echo: false
+graph TD
+    A[Backend Runtime] --> B[RadixAttention]
+    A --> C[Zero-overhead Scheduler]
+    A --> D[Continuous Batching]
+    A --> E[Speculative Decoding]
+    A --> F[Multi-modal Processing]
+    A --> G[Quantization Support]
+    A --> H[Parallel Execution]
+    
+    B --> B1[KV Cache Reuse]
+    D --> D1[Dynamic Batching]
+    G --> G1[FP4/FP8/INT4/AWQ/GPTQ]
+    H --> H1[Tensor/Pipeline/Expert/Data]
+```
+
+## Architecture Overview {#sec-architecture}
+
+SGLang's architecture consists of two main components:
+
+::: {.callout-tip collapse="true"}
+## Architecture Details
+
+### 1. Frontend Language
+The frontend provides a Python-embedded DSL that simplifies LLM programming with:
+
+- Intuitive syntax for generation tasks
+- Built-in primitives for common patterns
+- Automatic optimization of generation calls
+- Type safety and error handling
+
+### 2. Backend Runtime
+The backend proposes RadixAttention, a technique for automatic and efficient KV cache reuse across multiple LLM generation calls. The runtime includes:
+
+- High-performance serving engine
+- Advanced memory management
+- Automatic optimization passes
+- Multi-GPU/multi-node support
+:::
+
+## Installation and Setup {#sec-installation}
+
+### Prerequisites
+
+::: {.callout-important}
+## System Requirements
+- Python 3.8 or higher
+- CUDA 11.8+ (for GPU acceleration)
+- PyTorch 2.0+
+:::
+
+### Basic Installation
+
+```{.bash filename="install.sh"}
+# Install from PyPI
+pip install sglang
+
+# Or install from source
+git clone https://github.com/sgl-project/sglang.git
+cd sglang
+pip install -e .
+```
+
+### GPU Support
+
+```{.bash}
+# For CUDA support
+pip install sglang[cuda]
+
+# For ROCm/AMD GPU support
+pip install sglang[rocm]
+```
+
+### Docker Installation
+
+```{.bash}
+# Pull official Docker image
+docker pull lmsysorg/sglang:latest
+
+# Run with GPU support
+docker run --gpus all -p 30000:30000 lmsysorg/sglang:latest
+```
+
+## Core Concepts {#sec-core-concepts}
+
+### 1. Generation Functions
+
+The core abstraction in SGLang is the generation function, which encapsulates prompts and generation logic:
+
+```{.python filename="basic_generation.py"}
+import sglang as sgl
+
+@sgl.function
+def simple_chat(s, user_message):
+    s += sgl.user(user_message)
+    s += sgl.assistant(sgl.gen("response", max_tokens=100))
+```
+
+### 2. State Management
+
+SGLang uses a state object `s` to track conversation history and manage generation context:
+
+```{.python filename="state_management.py"}
+@sgl.function
+def multi_turn_chat(s, messages):
+    for msg in messages:
+        s += sgl.user(msg)
+        s += sgl.assistant(sgl.gen("response", stop="\n"))
+```
+
+### 3. Control Primitives
+
+::: {.panel-tabset}
+
+#### gen()
+Generate text with specified constraints and parameters.
+
+#### select()
+Choose from predefined options or multiple choice answers.
+
+#### fork()
+Create parallel execution branches for concurrent processing.
+
+#### image()
+Process image inputs for vision-language model tasks.
+
+:::
+
+## Frontend Language Features {#sec-frontend}
+
+### Generation Primitives
+
+#### Basic Text Generation
+
+```{.python filename="story_generator.py"}
+@sgl.function
+def story_writer(s, theme):
+    s += f"Write a story about {theme}:\n"
+    s += sgl.gen("story", max_tokens=500, temperature=0.7)
+```
+
+#### Structured Generation
+
+```{.python filename="json_generator.py"}
+@sgl.function
+def json_generator(s, query):
+    s += f"Generate JSON for: {query}\n"
+    s += sgl.gen("json", max_tokens=200, regex=r'\{.*\}')
+```
+
+#### Conditional Generation
+
+```{.python filename="conditional_response.py"}
+@sgl.function
+def conditional_response(s, question, context):
+    s += f"Context: {context}\n"
+    s += f"Question: {question}\n"
+    
+    # First, determine if answerable
+    s += "Is this answerable? "
+    s += sgl.gen("answerable", choices=["Yes", "No"])
+    
+    if s["answerable"] == "Yes":
+        s += "\nAnswer: "
+        s += sgl.gen("answer", max_tokens=100)
+    else:
+        s += "\nI don't have enough information to answer this question."
+```
+
+### Parallel Execution
+
+```{.python filename="parallel_processing.py"}
+@sgl.function
+def parallel_summarization(s, documents):
+    # Fork execution for parallel processing
+    s += sgl.fork([
+        lambda: summarize_doc(doc) for doc in documents
+    ])
+    
+    # Combine results
+    summaries = [s[f"summary_{i}"] for i in range(len(documents))]
+    return summaries
+```
+
+### Template System
+
+```{.python filename="email_template.py"}
+@sgl.function
+def email_generator(s, recipient, subject, tone="professional"):
+    s += sgl.system(f"Write emails in a {tone} tone.")
+    s += f"To: {recipient}\n"
+    s += f"Subject: {subject}\n\n"
+    s += sgl.gen("body", max_tokens=300)
+```
+
+## Backend Runtime {#sec-backend}
+
+### RadixAttention
+
+::: {.callout-note}
+## RadixAttention Innovation
+
+RadixAttention structures and automates the reuse of Key-Value (KV) caches during runtime by storing them in a radix tree data structure.
+:::
+
+This enables:
+
+- **Prefix Sharing**: Common prompt prefixes are cached and reused
+- **Memory Efficiency**: Reduced memory usage through intelligent caching  
+- **Speed Improvements**: Faster generation through cache hits
+
+```{mermaid}
+%%| echo: false
+graph TD
+    A[Input Prompts] --> B[Radix Tree]
+    B --> C[Shared Prefixes]
+    B --> D[Unique Suffixes]
+    C --> E[KV Cache Reuse]
+    D --> F[New Computation]
+    E --> G[Performance Boost]
+    F --> G
+```
+
+### Continuous Batching
+
+The runtime implements continuous batching to:
+
+- Process multiple requests simultaneously
+- Dynamically adjust batch sizes
+- Optimize GPU utilization
+
+### Speculative Decoding
+
+Acceleration technique that:
+
+- Predicts multiple tokens ahead
+- Verifies predictions in parallel
+- Falls back to standard decoding when needed
+
+## Basic Usage Examples {#sec-basic-examples}
+
+### 1. Simple Text Generation
+
+```{.python filename="poem_generator.py"}
+import sglang as sgl
+
+# Set backend
+sgl.set_default_backend(sgl.RuntimeEndpoint("http://localhost:30000"))
+
+@sgl.function
+def generate_poem(s, topic):
+    s += f"Write a haiku about {topic}:\n"
+    s += sgl.gen("poem", max_tokens=50)
+
+# Execute
+result = generate_poem("spring")
+print(result["poem"])
+```
+
+### 2. Multi-step Reasoning
+
+```{.python filename="math_solver.py"}
+@sgl.function
+def math_solver(s, problem):
+    s += f"Problem: {problem}\n"
+    s += "Let me solve this step by step.\n"
+    s += "Step 1: "
+    s += sgl.gen("step1", max_tokens=50, stop="\n")
+    s += "\nStep 2: "
+    s += sgl.gen("step2", max_tokens=50, stop="\n")
+    s += "\nTherefore, the answer is: "
+    s += sgl.gen("answer", max_tokens=20)
+
+result = math_solver("What is 15% of 240?")
+```
+
+### 3. JSON Structured Output
+
+```{.python filename="info_extractor.py"}
+@sgl.function
+def extract_info(s, text):
+    s += f"Extract key information from this text:\n{text}\n"
+    s += "Output as JSON:\n"
+    s += sgl.gen(
+        "info", 
+        max_tokens=200, 
+        regex=r'\{[^}]*"name"[^}]*"age"[^}]*"location"[^}]*\}'
+    )
+
+result = extract_info("John Smith is 30 years old and lives in New York.")
+```
+
+### 4. Role-playing Conversation
+
+```{.python filename="roleplay.py"}
+@sgl.function
+def roleplay_chat(s, character, user_input):
+    s += sgl.system(f"You are {character}. Stay in character.")
+    s += sgl.user(user_input)
+    s += sgl.assistant(sgl.gen("response", max_tokens=150))
+
+result = roleplay_chat("a wise old wizard", "How do I learn magic?")
+```
+
+## Advanced Programming Patterns {#sec-advanced-patterns}
+
+### 1. Chain of Thought Reasoning
+
+```{.python filename="cot_reasoning.py"}
+@sgl.function
+def cot_reasoning(s, question):
+    s += f"Question: {question}\n"
+    s += "Let me think through this step by step:\n"
+    
+    for i in range(3):
+        s += f"Step {i+1}: "
+        s += sgl.gen(f"step_{i+1}", max_tokens=100, stop="\n")
+        s += "\n"
+    
+    s += "Final Answer: "
+    s += sgl.gen("answer", max_tokens=50)
+```
+
+### 2. Self-Correction Loop
+
+```{.python filename="self_correction.py"}
+@sgl.function
+def self_correct(s, task, max_iterations=3):
+    s += f"Task: {task}\n"
+    
+    for i in range(max_iterations):
+        s += f"Attempt {i+1}: "
+        s += sgl.gen(f"attempt_{i+1}", max_tokens=200)
+        
+        s += "\nIs this correct? "
+        s += sgl.gen("correct", choices=["Yes", "No"])
+        
+        if s["correct"] == "Yes":
+            break
+        else:
+            s += "\nLet me try again.\n"
+```
+
+### 3. Tree Search Generation
+
+```{.python filename="tree_search.py"}
+@sgl.function
+def tree_search_story(s, prompt, branches=3, depth=2):
+    s += prompt
+    
+    def explore_branch(state, current_depth):
+        if current_depth >= depth:
+            return
+        
+        candidates = []
+        for i in range(branches):
+            state += sgl.gen(f"branch_{current_depth}_{i}", max_tokens=50)
+            candidates.append(state[f"branch_{current_depth}_{i}"])
+        
+        # Select best candidate (simplified selection)
+        best_idx = 0  # In practice, use a scoring function
+        state += candidates[best_idx]
+        explore_branch(state, current_depth + 1)
+    
+    explore_branch(s, 0)
+```
+
+### 4. Parallel Agent Collaboration
+
+```{.python filename="multi_agent.py"}
+@sgl.function
+def multi_agent_discussion(s, topic, agents):
+    s += f"Topic: {topic}\n"
+    s += "Discussion:\n"
+    
+    # Initialize agents
+    agent_states = {}
+    for agent in agents:
+        agent_states[agent] = sgl.fork(lambda: agent_response(agent, topic))
+    
+    # Simulate rounds of discussion
+    for round in range(3):
+        s += f"\nRound {round + 1}:\n"
+        for agent in agents:
+            s += f"{agent}: "
+            s += sgl.gen(f"{agent}_round_{round}", max_tokens=100)
+            s += "\n"
+```
+
+## Performance Optimization {#sec-performance}
+
+### 1. Batch Processing
+
+::: {.callout-tip}
+## Optimization Strategy
+
+Process multiple inputs in a single batch for maximum throughput efficiency.
+:::
+
+```{.python filename="batch_processing.py"}
+# Process multiple inputs in a single batch
+@sgl.function
+def batch_classification(s, texts):
+    results = []
+    for text in texts:
+        s += f"Classify: {text}\nCategory: "
+        s += sgl.gen("category", choices=["positive", "negative", "neutral"])
+        results.append(s["category"])
+    return results
+
+# Execute with batching enabled
+sgl.set_default_backend(
+    sgl.RuntimeEndpoint("http://localhost:30000", batch_size=32)
+)
+```
+
+### 2. Caching Strategies
+
+```{.python filename="caching.py"}
+# Enable aggressive caching for repeated patterns
+@sgl.function
+def cached_qa(s, question, context):
+    # Use consistent formatting for better cache hits
+    s += f"Context: {context}\n"
+    s += f"Question: {question}\n"
+    s += "Answer: "
+    s += sgl.gen("answer", max_tokens=100, temperature=0.0)  # Deterministic for caching
+```
+
+### 3. Memory Management
+
+```{.python filename="memory_management.py"}
+# Optimize memory usage for long conversations
+@sgl.function
+def efficient_chat(s, messages, max_context_length=2000):
+    # Truncate context to stay within limits
+    total_length = sum(len(msg) for msg in messages)
+    if total_length > max_context_length:
+        messages = messages[-(max_context_length // 100):]
+    
+    for msg in messages:
+        s += sgl.user(msg)
+        s += sgl.assistant(sgl.gen("response", max_tokens=150))
+```
+
+## Vision-Language Model Support {#sec-vision-language}
+
+### 1. Image Understanding
+
+```{.python filename="image_description.py"}
+@sgl.function
+def describe_image(s, image_path, detail_level="medium"):
+    s += sgl.image(image_path)
+    s += f"Describe this image in {detail_level} detail:\n"
+    s += sgl.gen("description", max_tokens=300)
+
+# Usage
+result = describe_image("/path/to/image.jpg", "high")
+```
+
+### 2. Visual Question Answering
+
+```{.python filename="visual_qa.py"}
+@sgl.function
+def visual_qa(s, image_path, question):
+    s += sgl.image(image_path)
+    s += f"Question: {question}\n"
+    s += "Answer: "
+    s += sgl.gen("answer", max_tokens=150)
+
+result = visual_qa("/path/to/chart.png", "What is the highest value in this chart?")
+```
+
+### 3. Multi-modal Reasoning
+
+```{.python filename="multimodal_analysis.py"}
+@sgl.function
+def multimodal_analysis(s, image_path, context):
+    s += f"Context: {context}\n"
+    s += sgl.image(image_path)
+    s += "Based on the context and image, analyze:\n"
+    s += "1. Visual elements: "
+    s += sgl.gen("visual", max_tokens=100, stop="\n")
+    s += "\n2. Relationship to context: "
+    s += sgl.gen("relationship", max_tokens=100, stop="\n")
+    s += "\n3. Conclusion: "
+    s += sgl.gen("conclusion", max_tokens=100)
+```
+
+## Deployment and Serving {#sec-deployment}
+
+### 1. Starting a Server
+
+```{.bash filename="start_server.sh"}
+# Basic server startup
+python -m sglang.launch_server --model-path meta-llama/Llama-2-7b-chat-hf --port 30000
+
+# With specific configurations
+python -m sglang.launch_server \
+    --model-path meta-llama/Llama-2-7b-chat-hf \
+    --port 30000 \
+    --host 0.0.0.0 \
+    --tp-size 2 \
+    --mem-fraction-static 0.8
+```
+
+### 2. Client Configuration
+
+```{.python filename="client_setup.py"}
+import sglang as sgl
+
+# Connect to local server
+backend = sgl.RuntimeEndpoint("http://localhost:30000")
+sgl.set_default_backend(backend)
+
+# Connect to remote server with authentication
+backend = sgl.RuntimeEndpoint(
+    "https://api.example.com",
+    headers={"Authorization": "Bearer your-token"}
+)
+```
+
+### 3. Load Balancing
+
+```{.python filename="load_balancing.py"}
+# Multiple endpoints for load distribution
+endpoints = [
+    "http://server1:30000",
+    "http://server2:30000", 
+    "http://server3:30000"
+]
+
+backend = sgl.LoadBalancedEndpoint(endpoints)
+sgl.set_default_backend(backend)
+```
+
+### 4. Production Deployment
+
+```{.yaml filename="docker-compose.yml"}
+# Docker Compose example
+version: '3.8'
+services:
+  sglang-server:
+    image: lmsysorg/sglang:latest
+    ports:
+      - "30000:30000"
+    environment:
+      - MODEL_PATH=meta-llama/Llama-2-7b-chat-hf
+      - PORT=30000
+      - TP_SIZE=2
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 2
+              capabilities: [gpu]
+```
+
+## Best Practices {#sec-best-practices}
+
+### 1. Prompt Engineering
+
+```{.python filename="prompt_engineering.py"}
+# Use clear, structured prompts
+@sgl.function
+def good_prompt(s, task, examples):
+    s += "Task: " + task + "\n\n"
+    
+    # Provide examples
+    for i, example in enumerate(examples):
+        s += f"Example {i+1}:\n"
+        s += f"Input: {example['input']}\n"
+        s += f"Output: {example['output']}\n\n"
+    
+    s += "Now, complete this task:\n"
+    s += "Input: " + sgl.gen("input") + "\n"
+    s += "Output: " + sgl.gen("output", max_tokens=200)
+```
+
+### 2. Error Handling
+
+```{.python filename="error_handling.py"}
+@sgl.function
+def robust_generation(s, prompt):
+    try:
+        s += prompt
+        s += sgl.gen("response", max_tokens=100, timeout=30)
+        
+        # Validate output
+        if len(s["response"].strip()) == 0:
+            s += "Please provide a more detailed response: "
+            s += sgl.gen("retry", max_tokens=150)
+            
+    except sgl.GenerationError as e:
+        s += f"Generation failed: {e}. Using fallback."
+        s += "I apologize, but I cannot process this request."
+```
+
+### 3. Testing Strategies
+
+```{.python filename="testing.py"}
+import unittest
+import sglang as sgl
+
+class TestSGLangFunctions(unittest.TestCase):
+    def setUp(self):
+        # Use mock backend for testing
+        self.backend = sgl.MockBackend()
+        sgl.set_default_backend(self.backend)
+    
+    def test_simple_generation(self):
+        @sgl.function
+        def test_func(s):
+            s += "Hello"
+            s += sgl.gen("response", max_tokens=10)
+        
+        result = test_func()
+        self.assertIn("response", result)
+    
+    def test_structured_output(self):
+        @sgl.function
+        def json_test(s):
+            s += "Generate JSON: "
+            s += sgl.gen("json", regex=r'\{.*\}')
+        
+        result = json_test()
+        self.assertTrue(result["json"].startswith("{"))
+```
+
+### 4. Monitoring and Logging
+
+```{.python filename="monitoring.py"}
+import logging
+import time
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+@sgl.function
+def monitored_generation(s, prompt):
+    start_time = time.time()
+    
+    try:
+        s += prompt
+        s += sgl.gen("response", max_tokens=100)
+        
+        duration = time.time() - start_time
+        logger.info(f"Generation completed in {duration:.2f}s")
+        
+    except Exception as e:
+        logger.error(f"Generation failed: {e}")
+        raise
+```
+
+## Comparison with Other Frameworks {#sec-comparisons}
+
+::: {.panel-tabset}
+
+### SGLang vs. LMQL
+
+| Feature | SGLang | LMQL |
+|---------|--------|------|
+| Performance | High (RadixAttention) | Medium |
+| Python Integration | Native embedding | External DSL |
+| Caching | Automatic | Manual |
+| Parallelism | Built-in | Limited |
+
+### SGLang vs. Guidance
+
+| Feature | SGLang | Guidance |
+|---------|--------|----------|
+| Runtime Optimization | Yes | Limited |
+| Structured Output | Advanced | Basic |
+| Vision Support | Yes | No |
+| Deployment | Production-ready | Research-focused |
+
+### SGLang vs. LangChain
+
+| Feature | SGLang | LangChain |
+|---------|--------|-----------|
+| Level | Low-level control | High-level abstractions |
+| Performance | Optimized runtime | Variable |
+| Flexibility | High | Medium |
+| Learning Curve | Moderate | Low |
+
+:::
+
+## Troubleshooting {#sec-troubleshooting}
+
+### Common Issues
+
+#### 1. Connection Problems
+
+```{.python filename="debug_connection.py"}
+# Debug connection issues
+try:
+    backend = sgl.RuntimeEndpoint("http://localhost:30000")
+    backend.health_check()
+    print("Server is healthy")
+except ConnectionError:
+    print("Cannot connect to server. Check if it's running.")
+```
+
+#### 2. Memory Issues
+
+```{.bash filename="memory_debug.sh"}
+# Monitor memory usage
+nvidia-smi
+
+# Adjust memory settings
+python -m sglang.launch_server \
+    --model-path your-model \
+    --mem-fraction-static 0.6  # Reduce if getting OOM
+```
+
+#### 3. Generation Timeouts
+
+```{.python filename="timeout_handling.py"}
+@sgl.function
+def timeout_handling(s, prompt):
+    try:
+        s += prompt
+        s += sgl.gen("response", max_tokens=100, timeout=30)
+    except sgl.TimeoutError:
+        s += "Request timed out. Please try again."
+```
+
+#### 4. Performance Issues
+
+```{.python filename="performance_debug.py"}
+# Enable performance profiling
+sgl.set_debug_mode(True)
+
+@sgl.function
+def profiled_function(s, input):
+    with sgl.profile("generation"):
+        s += input
+        s += sgl.gen("output", max_tokens=100)
+```
+
+### Debugging Tips
+
+::: {.callout-warning}
+## Debugging Checklist
+
+1. **Enable Verbose Logging**
+   ```python
+   import logging
+   logging.getLogger("sglang").setLevel(logging.DEBUG)
+   ```
+
+2. **Check Server Logs**
+   ```bash
+   # Server logs show detailed execution info
+   tail -f sglang_server.log
+   ```
+
+3. **Use Mock Backend for Testing**
+   ```python
+   # Test logic without actual model calls
+   sgl.set_default_backend(sgl.MockBackend())
+   ```
+:::
+
+## Contributing {#sec-contributing}
+
+### Development Setup
+
+```{.bash filename="dev_setup.sh"}
+# Clone repository
+git clone https://github.com/sgl-project/sglang.git
+cd sglang
+
+# Create development environment
+conda create -n sglang-dev python=3.9
+conda activate sglang-dev
+
+# Install in development mode
+pip install -e .
+pip install -r requirements-dev.txt
+```
+
+### Running Tests
+
+```{.bash filename="run_tests.sh"}
+# Run all tests
+python -m pytest tests/
+
+# Run specific test category
+python -m pytest tests/test_frontend.py
+
+# Run with coverage
+python -m pytest --cov=sglang tests/
+```
+
+### Code Style
+
+```{.bash filename="code_style.sh"}
+# Format code
+black sglang/
+isort sglang/
+
+# Check style
+flake8 sglang/
+mypy sglang/
+```
+
+### Submitting PRs
+
+::: {.callout-tip}
+## Pull Request Guidelines
+
+1. Fork the repository
+2. Create a feature branch
+3. Add tests for new functionality
+4. Update documentation
+5. Submit pull request with clear description
+:::
+
+## Resources {#sec-resources}
+
+### Official Documentation
+
+- [SGLang Documentation](https://docs.sglang.ai/)
+- [GitHub Repository](https://github.com/sgl-project/sglang)
+- [Paper: SGLang: Efficient Execution of Structured Language Model Programs](https://arxiv.org/abs/2312.07104)
+
+### Community
+
+- [GitHub Discussions](https://github.com/sgl-project/sglang/discussions)
+- [Discord Server](https://discord.gg/sglang)
+- [Twitter Updates](https://twitter.com/sglang_ai)
+
+### Examples and Tutorials
+
+- [Official Examples](https://github.com/sgl-project/sglang/tree/main/examples)
+- [Tutorial Notebooks](https://github.com/sgl-project/sglang/tree/main/notebooks)
+- [Cookbook Recipes](https://github.com/sgl-project/sglang/tree/main/cookbook)
+
+### Related Projects
+
+- [UC Berkeley Sky Computing Lab](https://sky.cs.berkeley.edu/project/sglang/)
+- [LMSYS Organization](https://lmsys.org/)
+
+---
+
+::: {.callout-note}
+## Final Note
+
+This guide covers the essential aspects of SGLang, from basic concepts to advanced usage patterns. As SGLang continues to evolve rapidly, always refer to the official documentation for the most current information and updates.
+
+For questions and support, please visit the [GitHub Discussions](https://github.com/sgl-project/sglang/discussions) or check the official documentation.
+:::
