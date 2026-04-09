@@ -484,7 +484,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-project-layout-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
-<pre class="mermaid mermaid-js" data-label="fig-project-layout">flowchart TD
+<pre class="mermaid mermaid-js" data-label="fig-project-layout">flowchart LR
     ROOT["📁 repo root"]
 
     ROOT --&gt; GH["📁 .github/"]
@@ -496,27 +496,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     ROOT --&gt; MK["📄 Makefile"]
 
     GH --&gt; WF["📁 workflows/"]
-    GH --&gt; ACT["📁 actions/setup-mlflow/\nReusable composite action"]
-    WF --&gt; CI["ci.yml\nOn every PR"]
-    WF --&gt; TR["train.yml\nMerge to main / manual"]
-    WF --&gt; EV["evaluate.yml\nPost-training gate"]
-    WF --&gt; DP["deploy.yml\nRegistry stage promotion"]
+    GH --&gt; ACT["📁 actions/setup-mlflow/ Reusable composite action"]
+    WF --&gt; CI["ci.yml On every PR"]
+    WF --&gt; TR["train.yml Merge to main / manual"]
+    WF --&gt; EV["evaluate.yml Post-training gate"]
+    WF --&gt; DP["deploy.yml Registry stage promotion"]
 
-    SRC --&gt; DA["data/\nLoading, augmentation, versioning"]
-    SRC --&gt; MO["models/\nArchitecture definitions"]
-    SRC --&gt; TRA["training/\nLoops, callbacks"]
-    SRC --&gt; EVA["evaluation/\nMetrics, visualisations"]
-    SRC --&gt; SE["serving/\nInference wrapper"]
+    SRC --&gt; DA["data/ Loading, augmentation, versioning"]
+    SRC --&gt; MO["models/ Architecture definitions"]
+    SRC --&gt; TRA["training/ Loops, callbacks"]
+    SRC --&gt; EVA["evaluation/ Metrics, visualisations"]
+    SRC --&gt; SE["serving/ Inference wrapper"]
 
-    CFG --&gt; BY["base.yaml\nShared hyperparameters"]
-    CFG --&gt; EX["experiment/\nHydra overrides"]
-    CFG --&gt; DE["deployment/\nServing config per env"]
+    CFG --&gt; BY["base.yaml Shared hyperparameters"]
+    CFG --&gt; EX["experiment/ Hydra overrides"]
+    CFG --&gt; DE["deployment/ Serving config per env"]
 
     TST --&gt; UN["unit/"]
     TST --&gt; IN["integration/"]
-    TST --&gt; SM["smoke/\nFast inference checks"]
+    TST --&gt; SM["smoke/ Fast inference checks"]
 
-    MLF --&gt; MP["MLproject\nReproducible runs"]
+    MLF --&gt; MP["MLproject Reproducible runs"]
 
     SCR --&gt; RM["register_model.py"]
     SCR --&gt; CM["compare_runs.py"]
@@ -689,20 +689,20 @@ Figure&nbsp;1: Monorepo structure for a CV CI/CD pipeline
 <div aria-describedby="fig-trigger-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-trigger-map">flowchart TD
-    PR["🔀 Pull Request\nopened / updated"]
+    PR["🔀 Pull Request opened / updated"]
     MERGE["✅ Merge to main"]
-    MANUAL["🖱️ Manual dispatch\nworkflow_dispatch"]
-    WEBHOOK["🔔 MLFlow webhook /\nRegistry event"]
+    MANUAL["🖱️ Manual dispatch workflow_dispatch"]
+    WEBHOOK["🔔 MLFlow webhook / Registry event"]
 
-    PR --&gt; CI["ci.yml\nlint · unit tests\nsmoke inference · config validation"]
+    PR --&gt; CI["ci.yml lint · unit tests smoke inference · config validation"]
 
-    MERGE --&gt; TRAIN["train.yml\nfull training job\nlogs to MLFlow"]
-    TRAIN --&gt;|on success| EVAL["evaluate.yml\nquality gates\nmodel comparison"]
-    EVAL --&gt;|on pass| REG["📋 Opens PR to promote\nmodel in registry"]
+    MERGE --&gt; TRAIN["train.yml full training job logs to MLFlow"]
+    TRAIN --&gt;|on success| EVAL["evaluate.yml quality gates model comparison"]
+    EVAL --&gt;|on pass| REG["📋 Opens PR to promote model in registry"]
 
-    MANUAL --&gt; TRAIN2["train.yml\nre-train with custom params\n(experiments)"]
+    MANUAL --&gt; TRAIN2["train.yml re-train with custom params (experiments)"]
 
-    WEBHOOK --&gt; DEPLOY["deploy.yml\ndeploy 'Production'-staged\nmodel to serving infra"]
+    WEBHOOK --&gt; DEPLOY["deploy.yml deploy 'Production'-staged model to serving infra"]
 
     style CI fill:#d4edda,stroke:#28a745
     style TRAIN fill:#cce5ff,stroke:#004085
@@ -1020,16 +1020,16 @@ Figure&nbsp;2: GitHub event → workflow mapping
 <div aria-describedby="fig-promotion-ladder-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-promotion-ladder">flowchart TD
-    RUN["🏋️ Training Run\n(GitHub Actions · GPU runner)"]
-    STAGING["📦 Staging\nregistered candidate model"]
-    PRODUCTION["🚀 Production\nserving live traffic"]
-    ARCHIVED["🗄️ Archived\nretained for rollback"]
+    RUN["🏋️ Training Run (GitHub Actions · GPU runner)"]
+    STAGING["📦 Staging registered candidate model"]
+    PRODUCTION["🚀 Production serving live traffic"]
+    ARCHIVED["🗄️ Archived retained for rollback"]
 
-    RUN --&gt;|"quality gate passed\nautomated by evaluate.yml"| STAGING
-    STAGING --&gt;|"manual approval in GitHub Environments\nOR integration tests pass\nautomated by deploy.yml"| PRODUCTION
-    PRODUCTION --&gt;|"deprecate after N days\nor on next promotion"| ARCHIVED
+    RUN --&gt;|"quality gate passed automated by evaluate.yml"| STAGING
+    STAGING --&gt;|"manual approval in GitHub Environments OR integration tests pass automated by deploy.yml"| PRODUCTION
+    PRODUCTION --&gt;|"deprecate after N days or on next promotion"| ARCHIVED
 
-    ARCHIVED -.-&gt;|"rollback path\nrollback.yml"| PRODUCTION
+    ARCHIVED -.-&gt;|"rollback path rollback.yml"| PRODUCTION
 
     style RUN      fill:#cce5ff,stroke:#004085
     style STAGING  fill:#fff3cd,stroke:#856404
@@ -1139,7 +1139,7 @@ Figure&nbsp;3: MLFlow model registry stage promotion pipeline
 <span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Write GitHub Actions output</span></span>
 <span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(os.environ[<span class="st">"GITHUB_OUTPUT"</span>], <span class="st">"a"</span>) <span class="im">as</span> f:</span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>        f.write(<span class="ss">f"passed=</span><span class="sc">{</span><span class="st">'true'</span> <span class="cf">if</span> passed <span class="cf">else</span> <span class="st">'false'</span><span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>        f.write(<span class="ss">f"passed=</span><span class="sc">{</span><span class="st">'true'</span> <span class="cf">if</span> passed <span class="cf">else</span> <span class="st">'false'</span><span class="sc">}</span><span class="ss"> "</span>)</span>
 <span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>    sys.exit(<span class="dv">0</span> <span class="cf">if</span> passed <span class="cf">else</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1185,12 +1185,12 @@ Figure&nbsp;3: MLFlow model registry stage promotion pipeline
     EXP["{experiment_id}/"]
     RUN["{run_id}/"]
     ART["artifacts/"]
-    MET["metrics/\nMLFlow metric files\nauto-managed"]
+    MET["metrics/ MLFlow metric files auto-managed"]
 
-    MODEL["model/\nPyTorch · ONNX weights"]
-    EVAL["eval/\nConfusion matrices\nPR curves"]
-    CONFIG["config/\nFull config snapshot"]
-    DATA["data_version/\nDVC pointer file"]
+    MODEL["model/ PyTorch · ONNX weights"]
+    EVAL["eval/ Confusion matrices PR curves"]
+    CONFIG["config/ Full config snapshot"]
+    DATA["data_version/ DVC pointer file"]
 
     BUCKET --&gt; EXP
     EXP --&gt; RUN
@@ -1529,7 +1529,7 @@ Figure&nbsp;4: S3 artifact storage hierarchy under MLFlow
 <span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> slackapi/slack-github-action@v1</span></span>
 <span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
 <span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a><span class="fu">          payload</span><span class="kw">: </span><span class="ch">|</span></span>
-<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>            {"text": "🔄 *Production rollback executed* by ${{ github.actor }}\nReason: ${{ inputs.reason }}"}</span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>            {"text": "🔄 *Production rollback executed* by ${{ github.actor }} Reason: ${{ inputs.reason }}"}</span>
 <span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">env</span><span class="kw">:</span></span>
 <span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">SLACK_WEBHOOK_URL</span><span class="kw">:</span><span class="at"> ${{ secrets.SLACK_WEBHOOK_URL }}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
