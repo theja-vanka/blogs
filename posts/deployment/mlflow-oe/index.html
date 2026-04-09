@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Krishnatheja Vanka">
+<meta name="dcterms.date" content="2026-04-09">
+
+<title>MLflow Best Practices for Computer Vision (Deep Learning) – Krishnatheja Vanka’s Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../favicon.ico" rel="icon">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-db7551fb198f90e53e140817f36f545d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-941aa739f4f6ead0e06d988344f7e38f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-db7551fb198f90e53e140817f36f545d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../../styles/styles.css">
+</head>
+
+<body class="floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Krishnatheja Vanka’s Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/theja-vanka"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-page-right">
+      <h1 class="title">MLflow Best Practices for Computer Vision (Deep Learning)</h1>
+            <p class="subtitle lead">Operational Excellence in Production Systems</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">code</div>
+                <div class="quarto-category">mlops</div>
+                <div class="quarto-category">advanced</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-page-right">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Krishnatheja Vanka </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 9, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#mlflow-best-practices-for-computer-vision-deep-learning" id="toc-mlflow-best-practices-for-computer-vision-deep-learning" class="nav-link active" data-scroll-target="#mlflow-best-practices-for-computer-vision-deep-learning">MLflow Best Practices for Computer Vision (Deep Learning)</a>
+  <ul class="collapse">
+  <li><a href="#sec-experiment-tracking" id="toc-sec-experiment-tracking" class="nav-link" data-scroll-target="#sec-experiment-tracking">Experiment Tracking</a>
+  <ul class="collapse">
+  <li><a href="#structure-experiments-hierarchically" id="toc-structure-experiments-hierarchically" class="nav-link" data-scroll-target="#structure-experiments-hierarchically">Structure Experiments Hierarchically</a></li>
+  <li><a href="#use-nested-runs-for-multi-stage-pipelines" id="toc-use-nested-runs-for-multi-stage-pipelines" class="nav-link" data-scroll-target="#use-nested-runs-for-multi-stage-pipelines">Use Nested Runs for Multi-Stage Pipelines</a></li>
+  <li><a href="#tag-runs-consistently" id="toc-tag-runs-consistently" class="nav-link" data-scroll-target="#tag-runs-consistently">Tag Runs Consistently</a></li>
+  </ul></li>
+  <li><a href="#sec-model-logging" id="toc-sec-model-logging" class="nav-link" data-scroll-target="#sec-model-logging">Model Logging and Registration</a>
+  <ul class="collapse">
+  <li><a href="#log-models-with-signatures-and-input-examples" id="toc-log-models-with-signatures-and-input-examples" class="nav-link" data-scroll-target="#log-models-with-signatures-and-input-examples">Log Models with Signatures and Input Examples</a></li>
+  <li><a href="#use-the-model-registry-with-stage-transitions" id="toc-use-the-model-registry-with-stage-transitions" class="nav-link" data-scroll-target="#use-the-model-registry-with-stage-transitions">Use the Model Registry with Stage Transitions</a></li>
+  <li><a href="#custom-pyfuncs-for-prepost-processing" id="toc-custom-pyfuncs-for-prepost-processing" class="nav-link" data-scroll-target="#custom-pyfuncs-for-prepost-processing">Custom PyFuncs for Pre/Post-Processing</a></li>
+  </ul></li>
+  <li><a href="#sec-artifact-management" id="toc-sec-artifact-management" class="nav-link" data-scroll-target="#sec-artifact-management">Artifact Management</a>
+  <ul class="collapse">
+  <li><a href="#what-to-log-as-artifacts-cv-specific" id="toc-what-to-log-as-artifacts-cv-specific" class="nav-link" data-scroll-target="#what-to-log-as-artifacts-cv-specific">What to Log as Artifacts (CV-Specific)</a></li>
+  <li><a href="#log-config-files-not-just-parameters" id="toc-log-config-files-not-just-parameters" class="nav-link" data-scroll-target="#log-config-files-not-just-parameters">Log Config Files, Not Just Parameters</a></li>
+  </ul></li>
+  <li><a href="#sec-dataset-versioning" id="toc-sec-dataset-versioning" class="nav-link" data-scroll-target="#sec-dataset-versioning">Dataset Versioning &amp; Lineage</a>
+  <ul class="collapse">
+  <li><a href="#use-mlflow.log_input-mlflow-2.4" id="toc-use-mlflow.log_input-mlflow-2.4" class="nav-link" data-scroll-target="#use-mlflow.log_input-mlflow-2.4">Use <code>mlflow.log_input()</code> (MLflow ≥ 2.4)</a></li>
+  <li><a href="#record-dataset-hashes" id="toc-record-dataset-hashes" class="nav-link" data-scroll-target="#record-dataset-hashes">Record Dataset Hashes</a></li>
+  </ul></li>
+  <li><a href="#sec-hyperparameters" id="toc-sec-hyperparameters" class="nav-link" data-scroll-target="#sec-hyperparameters">Hyperparameter Management</a>
+  <ul class="collapse">
+  <li><a href="#log-all-hyperparameters-including-implicit-ones" id="toc-log-all-hyperparameters-including-implicit-ones" class="nav-link" data-scroll-target="#log-all-hyperparameters-including-implicit-ones">Log All Hyperparameters — Including Implicit Ones</a></li>
+  <li><a href="#integrate-with-optuna-ray-tune-for-hpo" id="toc-integrate-with-optuna-ray-tune-for-hpo" class="nav-link" data-scroll-target="#integrate-with-optuna-ray-tune-for-hpo">Integrate with Optuna / Ray Tune for HPO</a></li>
+  </ul></li>
+  <li><a href="#sec-metrics" id="toc-sec-metrics" class="nav-link" data-scroll-target="#sec-metrics">Metrics &amp; Evaluation</a>
+  <ul class="collapse">
+  <li><a href="#log-metrics-at-the-right-granularity" id="toc-log-metrics-at-the-right-granularity" class="nav-link" data-scroll-target="#log-metrics-at-the-right-granularity">Log Metrics at the Right Granularity</a></li>
+  <li><a href="#log-task-specific-cv-metrics" id="toc-log-task-specific-cv-metrics" class="nav-link" data-scroll-target="#log-task-specific-cv-metrics">Log Task-Specific CV Metrics</a></li>
+  <li><a href="#use-mlflow.evaluate-for-standardised-post-training-evaluation" id="toc-use-mlflow.evaluate-for-standardised-post-training-evaluation" class="nav-link" data-scroll-target="#use-mlflow.evaluate-for-standardised-post-training-evaluation">Use <code>mlflow.evaluate()</code> for Standardised Post-Training Evaluation</a></li>
+  </ul></li>
+  <li><a href="#sec-serving" id="toc-sec-serving" class="nav-link" data-scroll-target="#sec-serving">Model Serving &amp; Deployment</a>
+  <ul class="collapse">
+  <li><a href="#export-to-onnx-and-log-as-artefact" id="toc-export-to-onnx-and-log-as-artefact" class="nav-link" data-scroll-target="#export-to-onnx-and-log-as-artefact">Export to ONNX and Log as Artefact</a></li>
+  <li><a href="#load-production-models-by-stage-not-by-run-id" id="toc-load-production-models-by-stage-not-by-run-id" class="nav-link" data-scroll-target="#load-production-models-by-stage-not-by-run-id">Load Production Models by Stage, Not by Run ID</a></li>
+  <li><a href="#log-inference-latency-as-a-metric" id="toc-log-inference-latency-as-a-metric" class="nav-link" data-scroll-target="#log-inference-latency-as-a-metric">Log Inference Latency as a Metric</a></li>
+  </ul></li>
+  <li><a href="#sec-cicd" id="toc-sec-cicd" class="nav-link" data-scroll-target="#sec-cicd">CI/CD Integration</a>
+  <ul class="collapse">
+  <li><a href="#gate-promotions-on-metric-thresholds" id="toc-gate-promotions-on-metric-thresholds" class="nav-link" data-scroll-target="#gate-promotions-on-metric-thresholds">Gate Promotions on Metric Thresholds</a></li>
+  <li><a href="#automate-comparison-against-current-champion" id="toc-automate-comparison-against-current-champion" class="nav-link" data-scroll-target="#automate-comparison-against-current-champion">Automate Comparison Against Current Champion</a></li>
+  <li><a href="#environment-reproducibility" id="toc-environment-reproducibility" class="nav-link" data-scroll-target="#environment-reproducibility">Environment Reproducibility</a></li>
+  </ul></li>
+  <li><a href="#sec-governance" id="toc-sec-governance" class="nav-link" data-scroll-target="#sec-governance">Governance, Reproducibility &amp; Compliance</a>
+  <ul class="collapse">
+  <li><a href="#seed-everything" id="toc-seed-everything" class="nav-link" data-scroll-target="#seed-everything">Seed Everything</a></li>
+  <li><a href="#record-hardware-and-framework-versions" id="toc-record-hardware-and-framework-versions" class="nav-link" data-scroll-target="#record-hardware-and-framework-versions">Record Hardware and Framework Versions</a></li>
+  <li><a href="#store-model-cards-as-artefacts" id="toc-store-model-cards-as-artefacts" class="nav-link" data-scroll-target="#store-model-cards-as-artefacts">Store Model Cards as Artefacts</a></li>
+  </ul></li>
+  <li><a href="#sec-performance" id="toc-sec-performance" class="nav-link" data-scroll-target="#sec-performance">Performance &amp; Scalability</a>
+  <ul class="collapse">
+  <li><a href="#avoid-logging-inside-the-training-loop" id="toc-avoid-logging-inside-the-training-loop" class="nav-link" data-scroll-target="#avoid-logging-inside-the-training-loop">Avoid Logging Inside the Training Loop</a></li>
+  <li><a href="#use-autologging-selectively" id="toc-use-autologging-selectively" class="nav-link" data-scroll-target="#use-autologging-selectively">Use Autologging Selectively</a></li>
+  <li><a href="#backend-storage-recommendations" id="toc-backend-storage-recommendations" class="nav-link" data-scroll-target="#backend-storage-recommendations">Backend Storage Recommendations</a></li>
+  </ul></li>
+  <li><a href="#sec-checklists" id="toc-sec-checklists" class="nav-link" data-scroll-target="#sec-checklists">Quick Reference Checklists</a>
+  <ul class="collapse">
+  <li><a href="#per-run-checklist" id="toc-per-run-checklist" class="nav-link" data-scroll-target="#per-run-checklist">Per-Run Checklist</a></li>
+  <li><a href="#per-promotion-checklist" id="toc-per-promotion-checklist" class="nav-link" data-scroll-target="#per-promotion-checklist">Per-Promotion Checklist</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
+
+
+
+
+
+
+<section id="mlflow-best-practices-for-computer-vision-deep-learning" class="level1">
+<h1>MLflow Best Practices for Computer Vision (Deep Learning)</h1>
+<p><img src="flow.png" class="img-fluid"></p>
+<section id="sec-experiment-tracking" class="level2">
+<h2 class="anchored" data-anchor-id="sec-experiment-tracking">Experiment Tracking</h2>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Compatibility:</strong> MLflow ≥ 2.4 · PyTorch ≥ 2.0 · Python ≥ 3.10</p>
+</div>
+</div>
+</div>
+<hr>
+<section id="structure-experiments-hierarchically" class="level3">
+<h3 class="anchored" data-anchor-id="structure-experiments-hierarchically">Structure Experiments Hierarchically</h3>
+<p>Organise experiments to mirror your project structure. Avoid dumping all runs into a single experiment.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> mlflow</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># One experiment per model family or research objective</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>mlflow.set_experiment(<span class="st">"resnet-backbone-ablations"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>mlflow.set_experiment(<span class="st">"yolov8-object-detection-v2"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="use-nested-runs-for-multi-stage-pipelines" class="level3">
+<h3 class="anchored" data-anchor-id="use-nested-runs-for-multi-stage-pipelines">Use Nested Runs for Multi-Stage Pipelines</h3>
+<p>CV pipelines typically consist of preprocessing → training → evaluation → post-processing. Model each stage as a child run.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mlflow.start_run(run_name<span class="op">=</span><span class="st">"full-pipeline"</span>) <span class="im">as</span> parent_run:</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> mlflow.start_run(run_name<span class="op">=</span><span class="st">"data-augmentation"</span>, nested<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        mlflow.log_params({<span class="st">"augment_strategy"</span>: <span class="st">"mosaic"</span>, <span class="st">"img_size"</span>: <span class="dv">640</span>})</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> mlflow.start_run(run_name<span class="op">=</span><span class="st">"training"</span>, nested<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        mlflow.log_params({<span class="st">"epochs"</span>: <span class="dv">100</span>, <span class="st">"optimizer"</span>: <span class="st">"AdamW"</span>})</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> mlflow.start_run(run_name<span class="op">=</span><span class="st">"evaluation"</span>, nested<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        mlflow.log_metrics({<span class="st">"mAP50"</span>: <span class="fl">0.87</span>, <span class="st">"mAP50-95"</span>: <span class="fl">0.63</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="tag-runs-consistently" class="level3">
+<h3 class="anchored" data-anchor-id="tag-runs-consistently">Tag Runs Consistently</h3>
+<p>Tags are queryable — use them as first-class metadata for filtering and governance.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>mlflow.set_tags({</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"task"</span>: <span class="st">"object-detection"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"backbone"</span>: <span class="st">"ResNet50"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dataset"</span>: <span class="st">"COCO-2017"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"env"</span>: <span class="st">"production"</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"team"</span>: <span class="st">"cv-platform"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"git_commit"</span>: os.getenv(<span class="st">"GIT_COMMIT_SHA"</span>, <span class="st">"unknown"</span>),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Recommended Tag Schema:</strong></p>
+<div id="tbl-tag-schema" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-tag-schema-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Recommended MLflow tag schema for CV runs
+</figcaption>
+<div aria-describedby="tbl-tag-schema-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Tag Key</th>
+<th>Example Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>task</code></td>
+<td><code>segmentation</code></td>
+<td>CV task type</td>
+</tr>
+<tr class="even">
+<td><code>backbone</code></td>
+<td><code>EfficientNetV2-L</code></td>
+<td>Architecture family</td>
+</tr>
+<tr class="odd">
+<td><code>dataset</code></td>
+<td><code>COCO-2017</code></td>
+<td>Dataset identifier</td>
+</tr>
+<tr class="even">
+<td><code>env</code></td>
+<td><code>staging</code> / <code>production</code></td>
+<td>Deployment stage</td>
+</tr>
+<tr class="odd">
+<td><code>git_commit</code></td>
+<td><code>a3f8c12</code></td>
+<td>Code reproducibility</td>
+</tr>
+<tr class="even">
+<td><code>hardware</code></td>
+<td><code>A100-80GB</code></td>
+<td>Training hardware</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-model-logging" class="level2">
+<h2 class="anchored" data-anchor-id="sec-model-logging">Model Logging and Registration</h2>
+<section id="log-models-with-signatures-and-input-examples" class="level3">
+<h3 class="anchored" data-anchor-id="log-models-with-signatures-and-input-examples">Log Models with Signatures and Input Examples</h3>
+<p>Always include a model signature and a representative input example. This is critical for serving CV models correctly — it prevents type/shape mismatches at inference time.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> mlflow.pytorch</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Define signature from a real sample</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>sample_input <span class="op">=</span> np.random.rand(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">224</span>, <span class="dv">224</span>).astype(np.float32)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>sample_output <span class="op">=</span> model(torch.tensor(sample_input)).detach().numpy()</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>signature <span class="op">=</span> mlflow.models.infer_signature(sample_input, sample_output)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>mlflow.pytorch.log_model(</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    pytorch_model<span class="op">=</span>model,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    artifact_path<span class="op">=</span><span class="st">"model"</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    signature<span class="op">=</span>signature,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    input_example<span class="op">=</span>sample_input,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    registered_model_name<span class="op">=</span><span class="st">"cv-resnet50-classifier"</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="use-the-model-registry-with-stage-transitions" class="level3">
+<h3 class="anchored" data-anchor-id="use-the-model-registry-with-stage-transitions">Use the Model Registry with Stage Transitions</h3>
+<p>The Model Registry enforces promotion gates: <code>None → Staging → Production → Archived</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mlflow.tracking <span class="im">import</span> MlflowClient</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> MlflowClient()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Transition a validated model to production</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>client.transition_model_version_stage(</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"cv-resnet50-classifier"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    version<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    stage<span class="op">=</span><span class="st">"Production"</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    archive_existing_versions<span class="op">=</span><span class="va">True</span>,  <span class="co"># Auto-archive old production version</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Always archive old production versions.</strong> Never leave two versions in <code>Production</code> simultaneously unless you are intentionally running A/B traffic splits.</p>
+</div>
+</div>
+</section>
+<section id="custom-pyfuncs-for-prepost-processing" class="level3">
+<h3 class="anchored" data-anchor-id="custom-pyfuncs-for-prepost-processing">Custom PyFuncs for Pre/Post-Processing</h3>
+<p>Wrap preprocessing (resize, normalise, augment) and postprocessing (NMS, softmax, decode boxes) into the model artefact itself using <code>mlflow.pyfunc</code>. This avoids serving-time pipeline drift.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CVModelWrapper(mlflow.pyfunc.PythonModel):</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> load_context(<span class="va">self</span>, context):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> torch</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model <span class="op">=</span> torch.load(context.artifacts[<span class="st">"model_path"</span>])</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model.<span class="bu">eval</span>()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> predict(<span class="va">self</span>, context, model_input):</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> torch, numpy <span class="im">as</span> np</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Preprocess</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        tensor <span class="op">=</span> torch.tensor(model_input).<span class="bu">float</span>() <span class="op">/</span> <span class="fl">255.0</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        tensor <span class="op">=</span> (tensor <span class="op">-</span> <span class="fl">0.485</span>) <span class="op">/</span> <span class="fl">0.229</span>  <span class="co"># ImageNet normalisation</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Inference</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> torch.no_grad():</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>            logits <span class="op">=</span> <span class="va">self</span>.model(tensor)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Postprocess</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> logits.softmax(dim<span class="op">=-</span><span class="dv">1</span>).numpy()</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>mlflow.pyfunc.log_model(</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    artifact_path<span class="op">=</span><span class="st">"cv-model-wrapped"</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    python_model<span class="op">=</span>CVModelWrapper(),</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    artifacts<span class="op">=</span>{<span class="st">"model_path"</span>: <span class="st">"path/to/model.pt"</span>},</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+</section>
+<section id="sec-artifact-management" class="level2">
+<h2 class="anchored" data-anchor-id="sec-artifact-management">Artifact Management</h2>
+<section id="what-to-log-as-artifacts-cv-specific" class="level3">
+<h3 class="anchored" data-anchor-id="what-to-log-as-artifacts-cv-specific">What to Log as Artifacts (CV-Specific)</h3>
+<div id="tbl-artifacts" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-artifacts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: CV-specific artefacts and when to log them
+</figcaption>
+<div aria-describedby="tbl-artifacts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 37%">
+<col style="width: 21%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Artifact</th>
+<th>When to Log</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Sample predictions (images)</td>
+<td>End of each epoch</td>
+<td>Visual debugging of model behaviour</td>
+</tr>
+<tr class="even">
+<td>Confusion matrix (as PNG)</td>
+<td>Post-evaluation</td>
+<td>Class-level error analysis</td>
+</tr>
+<tr class="odd">
+<td>PR / ROC curves</td>
+<td>Post-evaluation</td>
+<td>Threshold selection guidance</td>
+</tr>
+<tr class="even">
+<td>Augmentation samples</td>
+<td>Pre-training</td>
+<td>Verify augmentation pipeline</td>
+</tr>
+<tr class="odd">
+<td>Class activation maps (Grad-CAM)</td>
+<td>Debugging runs</td>
+<td>Explainability</td>
+</tr>
+<tr class="even">
+<td>ONNX / TorchScript exports</td>
+<td>Release candidates</td>
+<td>Deployment-ready formats</td>
+</tr>
+<tr class="odd">
+<td>Training config YAML</td>
+<td>Every run</td>
+<td>Full reproducibility</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Log a batch of predictions as an image grid</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">4</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">8</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, ax <span class="kw">in</span> <span class="bu">enumerate</span>(axes.flat):</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    ax.imshow(pred_images[i])</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"Pred: </span><span class="sc">{</span>pred_labels[i]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">"/tmp/predictions_epoch_10.png"</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>mlflow.log_artifact(<span class="st">"/tmp/predictions_epoch_10.png"</span>, artifact_path<span class="op">=</span><span class="st">"visualisations"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="log-config-files-not-just-parameters" class="level3">
+<h3 class="anchored" data-anchor-id="log-config-files-not-just-parameters">Log Config Files, Not Just Parameters</h3>
+<p>Log the full YAML/JSON config alongside individual parameters. This is your single source of truth for reproducibility.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mlflow.log_artifact(<span class="st">"configs/train_config.yaml"</span>, artifact_path<span class="op">=</span><span class="st">"configs"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Logging the config file ensures you can fully reconstruct the training environment even if individual <code>log_params</code> calls are incomplete or inconsistent.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-dataset-versioning" class="level2">
+<h2 class="anchored" data-anchor-id="sec-dataset-versioning">Dataset Versioning &amp; Lineage</h2>
+<section id="use-mlflow.log_input-mlflow-2.4" class="level3">
+<h3 class="anchored" data-anchor-id="use-mlflow.log_input-mlflow-2.4">Use <code>mlflow.log_input()</code> (MLflow ≥ 2.4)</h3>
+<p>Track exact dataset versions to make runs reproducible and auditable.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> mlflow.data.from_numpy(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    features<span class="op">=</span>X_train,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    targets<span class="op">=</span>y_train,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"coco-detection-train"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    source<span class="op">=</span><span class="st">"s3://your-bucket/datasets/coco/2017/train/"</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mlflow.start_run():</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    mlflow.log_input(dataset, context<span class="op">=</span><span class="st">"training"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="record-dataset-hashes" class="level3">
+<h3 class="anchored" data-anchor-id="record-dataset-hashes">Record Dataset Hashes</h3>
+<p>For local or cached datasets, compute and log a SHA-256 checksum:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> hashlib</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dataset_hash(path: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> hashlib.sha256()</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(path, <span class="st">"rb"</span>) <span class="im">as</span> f:</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> chunk <span class="kw">in</span> <span class="bu">iter</span>(<span class="kw">lambda</span>: f.read(<span class="dv">65536</span>), <span class="st">b""</span>):</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>            h.update(chunk)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> h.hexdigest()</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>mlflow.log_param(<span class="st">"train_dataset_sha256"</span>, dataset_hash(<span class="st">"/data/train.tar.gz"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+</section>
+<section id="sec-hyperparameters" class="level2">
+<h2 class="anchored" data-anchor-id="sec-hyperparameters">Hyperparameter Management</h2>
+<section id="log-all-hyperparameters-including-implicit-ones" class="level3">
+<h3 class="anchored" data-anchor-id="log-all-hyperparameters-including-implicit-ones">Log All Hyperparameters — Including Implicit Ones</h3>
+<p>Don’t log only the obvious params. CV training has many implicit settings that affect results.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mlflow.log_params({</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Optimiser</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"optimizer"</span>: <span class="st">"AdamW"</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"lr"</span>: <span class="fl">1e-4</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"weight_decay"</span>: <span class="fl">1e-2</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"lr_scheduler"</span>: <span class="st">"cosine_annealing"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"warmup_epochs"</span>: <span class="dv">5</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Data</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"img_size"</span>: <span class="dv">640</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"batch_size"</span>: <span class="dv">32</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"num_workers"</span>: <span class="dv">8</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"augment_mosaic"</span>: <span class="va">True</span>,</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"augment_mixup"</span>: <span class="fl">0.1</span>,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"augment_hsv_h"</span>: <span class="fl">0.015</span>,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Architecture</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"backbone"</span>: <span class="st">"EfficientNetV2-L"</span>,</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pretrained"</span>: <span class="va">True</span>,</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"freeze_backbone_epochs"</span>: <span class="dv">10</span>,</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dropout"</span>: <span class="fl">0.2</span>,</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Training</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"epochs"</span>: <span class="dv">200</span>,</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"early_stopping_patience"</span>: <span class="dv">15</span>,</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"amp"</span>: <span class="va">True</span>,       <span class="co"># Automatic mixed precision</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"gradient_clip"</span>: <span class="fl">10.0</span>,</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"seed"</span>: <span class="dv">42</span>,</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="integrate-with-optuna-ray-tune-for-hpo" class="level3">
+<h3 class="anchored" data-anchor-id="integrate-with-optuna-ray-tune-for-hpo">Integrate with Optuna / Ray Tune for HPO</h3>
+<p>When running hyperparameter optimisation sweeps, each trial should be its own MLflow run, nested under a parent sweep run.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> optuna</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> objective(trial):</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    lr <span class="op">=</span> trial.suggest_float(<span class="st">"lr"</span>, <span class="fl">1e-5</span>, <span class="fl">1e-2</span>, log<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    dropout <span class="op">=</span> trial.suggest_float(<span class="st">"dropout"</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> mlflow.start_run(nested<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        mlflow.log_params({<span class="st">"lr"</span>: lr, <span class="st">"dropout"</span>: dropout})</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        val_map <span class="op">=</span> train_and_evaluate(lr<span class="op">=</span>lr, dropout<span class="op">=</span>dropout)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        mlflow.log_metric(<span class="st">"val_mAP50"</span>, val_map)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> val_map</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mlflow.start_run(run_name<span class="op">=</span><span class="st">"hpo-sweep"</span>):</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    study <span class="op">=</span> optuna.create_study(direction<span class="op">=</span><span class="st">"maximize"</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    study.optimize(objective, n_trials<span class="op">=</span><span class="dv">50</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+</section>
+<section id="sec-metrics" class="level2">
+<h2 class="anchored" data-anchor-id="sec-metrics">Metrics &amp; Evaluation</h2>
+<section id="log-metrics-at-the-right-granularity" class="level3">
+<h3 class="anchored" data-anchor-id="log-metrics-at-the-right-granularity">Log Metrics at the Right Granularity</h3>
+<p>Log per-step metrics for loss curves, per-epoch metrics for validation scores, and summary metrics at run end.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(num_epochs):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    train_loss <span class="op">=</span> run_training_epoch(...)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    val_map, val_map95 <span class="op">=</span> run_validation(...)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    mlflow.log_metrics({</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"train/loss"</span>: train_loss,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"val/mAP50"</span>: val_map,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"val/mAP50-95"</span>: val_map95,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"lr"</span>: scheduler.get_last_lr()[<span class="dv">0</span>],</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    }, step<span class="op">=</span>epoch)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary at end of training</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>mlflow.log_metrics({</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"best_val_mAP50"</span>: best_map,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"best_epoch"</span>: best_epoch,</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"total_train_time_hrs"</span>: elapsed <span class="op">/</span> <span class="dv">3600</span>,</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="log-task-specific-cv-metrics" class="level3">
+<h3 class="anchored" data-anchor-id="log-task-specific-cv-metrics">Log Task-Specific CV Metrics</h3>
+<div id="tbl-cv-metrics" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cv-metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3: Task-specific metrics for common CV tasks
+</figcaption>
+<div aria-describedby="tbl-cv-metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 71%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Task</th>
+<th>Key Metrics to Log</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Classification</td>
+<td><code>top1_acc</code>, <code>top5_acc</code>, <code>per_class_f1</code></td>
+</tr>
+<tr class="even">
+<td>Object Detection</td>
+<td><code>mAP50</code>, <code>mAP50-95</code>, <code>precision</code>, <code>recall</code>, <code>FPS</code></td>
+</tr>
+<tr class="odd">
+<td>Semantic Segmentation</td>
+<td><code>mIoU</code>, <code>pixel_acc</code>, <code>per_class_IoU</code></td>
+</tr>
+<tr class="even">
+<td>Instance Segmentation</td>
+<td><code>mask_AP</code>, <code>bbox_AP</code></td>
+</tr>
+<tr class="odd">
+<td>Anomaly Detection</td>
+<td><code>AUROC</code>, <code>AUPRC</code>, <code>F1@best_threshold</code></td>
+</tr>
+<tr class="even">
+<td>Depth Estimation</td>
+<td><code>AbsRel</code>, <code>RMSE</code>, <code>delta_1</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="use-mlflow.evaluate-for-standardised-post-training-evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="use-mlflow.evaluate-for-standardised-post-training-evaluation">Use <code>mlflow.evaluate()</code> for Standardised Post-Training Evaluation</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> mlflow.evaluate(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span><span class="ss">f"runs:/</span><span class="sc">{</span>run_id<span class="sc">}</span><span class="ss">/model"</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>test_dataset,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    targets<span class="op">=</span><span class="st">"labels"</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    model_type<span class="op">=</span><span class="st">"classifier"</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    evaluators<span class="op">=</span>[<span class="st">"default"</span>],</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    extra_metrics<span class="op">=</span>[</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>        mlflow.metrics.precision_score(average<span class="op">=</span><span class="st">"macro"</span>),</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        mlflow.metrics.recall_score(average<span class="op">=</span><span class="st">"macro"</span>),</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result.metrics)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+</section>
+<section id="sec-serving" class="level2">
+<h2 class="anchored" data-anchor-id="sec-serving">Model Serving &amp; Deployment</h2>
+<section id="export-to-onnx-and-log-as-artefact" class="level3">
+<h3 class="anchored" data-anchor-id="export-to-onnx-and-log-as-artefact">Export to ONNX and Log as Artefact</h3>
+<p>For production inference, ONNX enables hardware-agnostic deployment (TensorRT, OpenVINO, ONNX Runtime).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>dummy_input <span class="op">=</span> torch.randn(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">640</span>, <span class="dv">640</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>torch.onnx.export(</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    model,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    dummy_input,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"/tmp/model.onnx"</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    opset_version<span class="op">=</span><span class="dv">17</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    input_names<span class="op">=</span>[<span class="st">"images"</span>],</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    output_names<span class="op">=</span>[<span class="st">"output"</span>],</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    dynamic_axes<span class="op">=</span>{<span class="st">"images"</span>: {<span class="dv">0</span>: <span class="st">"batch_size"</span>}, <span class="st">"output"</span>: {<span class="dv">0</span>: <span class="st">"batch_size"</span>}},</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mlflow.start_run():</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    mlflow.log_artifact(<span class="st">"/tmp/model.onnx"</span>, artifact_path<span class="op">=</span><span class="st">"onnx"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="load-production-models-by-stage-not-by-run-id" class="level3">
+<h3 class="anchored" data-anchor-id="load-production-models-by-stage-not-by-run-id">Load Production Models by Stage, Not by Run ID</h3>
+<p>Never hardcode a <code>run_id</code> in serving code. Always load by registry stage.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ✅ Correct — stage-based loading</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> mlflow.pytorch.load_model(<span class="st">"models:/cv-resnet50-classifier/Production"</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ❌ Avoid — brittle, ties serving code to a specific run</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> mlflow.pytorch.load_model(<span class="st">"runs:/abc123xyz/model"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="log-inference-latency-as-a-metric" class="level3">
+<h3 class="anchored" data-anchor-id="log-inference-latency-as-a-metric">Log Inference Latency as a Metric</h3>
+<p>Track per-batch and per-image latency as part of your evaluation run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>latencies <span class="op">=</span> []</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> batch <span class="kw">in</span> test_loader:</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    t0 <span class="op">=</span> time.perf_counter()</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> model(batch)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    latencies.append((time.perf_counter() <span class="op">-</span> t0) <span class="op">*</span> <span class="dv">1000</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>mlflow.log_metrics({</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"p50_latency_ms"</span>: np.percentile(latencies, <span class="dv">50</span>),</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"p95_latency_ms"</span>: np.percentile(latencies, <span class="dv">95</span>),</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"p99_latency_ms"</span>: np.percentile(latencies, <span class="dv">99</span>),</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"throughput_imgs_per_sec"</span>: <span class="bu">len</span>(test_loader.dataset) <span class="op">/</span> (<span class="bu">sum</span>(latencies) <span class="op">/</span> <span class="dv">1000</span>),</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+</section>
+<section id="sec-cicd" class="level2">
+<h2 class="anchored" data-anchor-id="sec-cicd">CI/CD Integration</h2>
+<section id="gate-promotions-on-metric-thresholds" class="level3">
+<h3 class="anchored" data-anchor-id="gate-promotions-on-metric-thresholds">Gate Promotions on Metric Thresholds</h3>
+<p>Never promote a model to production manually. Automate stage transitions with metric gates.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mlflow.tracking <span class="im">import</span> MlflowClient</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> MlflowClient()</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>run <span class="op">=</span> client.get_run(candidate_run_id)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>metrics <span class="op">=</span> run.data.metrics</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>PRODUCTION_GATE <span class="op">=</span> {</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"val/mAP50"</span>: <span class="fl">0.85</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"p95_latency_ms"</span>: <span class="fl">50.0</span>,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>passed <span class="op">=</span> <span class="bu">all</span>(</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    metrics.get(k, <span class="dv">0</span>) <span class="op">&gt;=</span> v <span class="cf">if</span> <span class="st">"latency"</span> <span class="kw">not</span> <span class="kw">in</span> k</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> metrics.get(k, <span class="dv">9999</span>) <span class="op">&lt;=</span> v</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> PRODUCTION_GATE.items()</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> passed:</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    client.transition_model_version_stage(</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">"cv-detector"</span>,</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>        version<span class="op">=</span>candidate_version,</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>        stage<span class="op">=</span><span class="st">"Production"</span>,</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>        archive_existing_versions<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"✅ Promoted to Production"</span>)</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"❌ Failed promotion gate"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="automate-comparison-against-current-champion" class="level3">
+<h3 class="anchored" data-anchor-id="automate-comparison-against-current-champion">Automate Comparison Against Current Champion</h3>
+<p>Before any promotion, compare the challenger against the current champion model on a held-out test set.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>champion <span class="op">=</span> client.get_latest_versions(<span class="st">"cv-detector"</span>, stages<span class="op">=</span>[<span class="st">"Production"</span>])[<span class="dv">0</span>]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>champion_metrics <span class="op">=</span> client.get_run(champion.run_id).data.metrics</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>challenger_metrics <span class="op">=</span> client.get_run(challenger_run_id).data.metrics</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> challenger_metrics[<span class="st">"val/mAP50"</span>] <span class="op">&gt;</span> champion_metrics[<span class="st">"val/mAP50"</span>] <span class="op">+</span> <span class="fl">0.005</span>:</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Challenger beats champion — proceed with promotion"</span>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Challenger did not improve sufficiently — reject"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="environment-reproducibility" class="level3">
+<h3 class="anchored" data-anchor-id="environment-reproducibility">Environment Reproducibility</h3>
+<p>Always log the full environment alongside the model:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> subprocess</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Log pip freeze</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>pip_freeze <span class="op">=</span> subprocess.check_output([<span class="st">"pip"</span>, <span class="st">"freeze"</span>]).decode()</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"/tmp/requirements.txt"</span>, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    f.write(pip_freeze)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>mlflow.log_artifact(<span class="st">"/tmp/requirements.txt"</span>, artifact_path<span class="op">=</span><span class="st">"environment"</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co"># MLflow will also auto-capture conda.yaml / python_env.yaml when using log_model</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+</section>
+<section id="sec-governance" class="level2">
+<h2 class="anchored" data-anchor-id="sec-governance">Governance, Reproducibility &amp; Compliance</h2>
+<section id="seed-everything" class="level3">
+<h3 class="anchored" data-anchor-id="seed-everything">Seed Everything</h3>
+<p>Log all random seeds. In CV, augmentation pipelines use multiple RNGs (NumPy, PyTorch, Albumentations).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> <span class="dv">42</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>random.seed(SEED)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>np.random.seed(SEED)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>torch.manual_seed(SEED)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>torch.cuda.manual_seed_all(SEED)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>torch.backends.cudnn.deterministic <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>torch.backends.cudnn.benchmark <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>mlflow.log_param(<span class="st">"global_seed"</span>, SEED)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="record-hardware-and-framework-versions" class="level3">
+<h3 class="anchored" data-anchor-id="record-hardware-and-framework-versions">Record Hardware and Framework Versions</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torchvision</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> platform</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>mlflow.log_params({</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"python_version"</span>: platform.python_version(),</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pytorch_version"</span>: torch.__version__,</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"torchvision_version"</span>: torchvision.__version__,</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cuda_version"</span>: torch.version.cuda,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cudnn_version"</span>: <span class="bu">str</span>(torch.backends.cudnn.version()),</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"gpu_model"</span>: torch.cuda.get_device_name(<span class="dv">0</span>) <span class="cf">if</span> torch.cuda.is_available() <span class="cf">else</span> <span class="st">"CPU"</span>,</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"num_gpus"</span>: torch.cuda.device_count(),</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="store-model-cards-as-artefacts" class="level3">
+<h3 class="anchored" data-anchor-id="store-model-cards-as-artefacts">Store Model Cards as Artefacts</h3>
+<p>Document each registered model version with a model card (intended use, limitations, training data, fairness notes).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>model_card <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="st"># Model Card: cv-resnet50-classifier v3</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="st">## Intended Use</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="st">- Binary defect classification for manufacturing QC</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="st">- Input: 224x224 RGB images</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="st">## Limitations</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="st">- Not validated on night-time imagery</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="st">- Class imbalance: defect rate ~3%</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="st">## Training Data</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="st">- Source: Internal dataset, 2023-01 to 2024-06</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="st">- 85k training / 15k validation images</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="st">- SHA256: a3f8c12...</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="st">## Performance</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="st">- val/top1_acc: 96.4%</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="st">- p95_latency_ms: 12.3ms (A100)</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"/tmp/MODEL_CARD.md"</span>, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>    f.write(model_card)</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>mlflow.log_artifact(<span class="st">"/tmp/MODEL_CARD.md"</span>, artifact_path<span class="op">=</span><span class="st">"governance"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+</section>
+<section id="sec-performance" class="level2">
+<h2 class="anchored" data-anchor-id="sec-performance">Performance &amp; Scalability</h2>
+<section id="avoid-logging-inside-the-training-loop" class="level3">
+<h3 class="anchored" data-anchor-id="avoid-logging-inside-the-training-loop">Avoid Logging Inside the Training Loop</h3>
+<p>Excessive per-step metric logging adds I/O overhead. Batch or throttle your logging.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ❌ Too frequent — logs every step</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step, batch <span class="kw">in</span> <span class="bu">enumerate</span>(train_loader):</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> train_step(batch)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    mlflow.log_metric(<span class="st">"train/loss"</span>, loss, step<span class="op">=</span>step)  <span class="co"># Bottleneck!</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ✅ Log every N steps</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>LOG_INTERVAL <span class="op">=</span> <span class="dv">50</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step, batch <span class="kw">in</span> <span class="bu">enumerate</span>(train_loader):</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> train_step(batch)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> step <span class="op">%</span> LOG_INTERVAL <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>        mlflow.log_metric(<span class="st">"train/loss"</span>, loss, step<span class="op">=</span>step)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="use-autologging-selectively" class="level3">
+<h3 class="anchored" data-anchor-id="use-autologging-selectively">Use Autologging Selectively</h3>
+<p><code>mlflow.pytorch.autolog()</code> is convenient but can log too much noise in CV contexts. Prefer manual logging for control, and use autolog only as a baseline during exploration.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exploration: enable autolog</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>mlflow.pytorch.autolog(log_every_n_epoch<span class="op">=</span><span class="dv">1</span>, log_models<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Production: disable autolog, log explicitly</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>mlflow.pytorch.autolog(disable<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="backend-storage-recommendations" class="level3">
+<h3 class="anchored" data-anchor-id="backend-storage-recommendations">Backend Storage Recommendations</h3>
+<div id="tbl-backend" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-backend-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4: Backend storage options by team scale
+</figcaption>
+<div aria-describedby="tbl-backend-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 41%">
+<col style="width: 41%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scale</th>
+<th>Tracking Server</th>
+<th>Artifact Store</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Local/solo</td>
+<td>Local filesystem</td>
+<td>Local filesystem</td>
+</tr>
+<tr class="even">
+<td>Team</td>
+<td>PostgreSQL + MLflow Server</td>
+<td>S3 / GCS / Azure Blob</td>
+</tr>
+<tr class="odd">
+<td>Enterprise</td>
+<td>Managed MLflow (Databricks)</td>
+<td>Object store + CDN</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> mlflow</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Point to a remote tracking server</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>mlflow.set_tracking_uri(<span class="st">"http://your-mlflow-server:5000"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+</section>
+<section id="sec-checklists" class="level2">
+<h2 class="anchored" data-anchor-id="sec-checklists">Quick Reference Checklists</h2>
+<section id="per-run-checklist" class="level3">
+<h3 class="anchored" data-anchor-id="per-run-checklist">Per-Run Checklist</h3>
+<div class="callout callout-style-default callout-important no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>✅ Before closing a run, verify:
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul class="task-list">
+<li><label><input type="checkbox">Experiment name reflects the research objective</label></li>
+<li><label><input type="checkbox">All hyperparameters logged (including implicit/augmentation params)</label></li>
+<li><label><input type="checkbox">Git commit SHA tagged</label></li>
+<li><label><input type="checkbox">Training config YAML logged as artefact</label></li>
+<li><label><input type="checkbox">Dataset version/hash logged</label></li>
+<li><label><input type="checkbox">Model logged with signature and input example</label></li>
+<li><label><input type="checkbox">Evaluation metrics logged per epoch + summary</label></li>
+<li><label><input type="checkbox">Sample predictions visualised and logged</label></li>
+<li><label><input type="checkbox">Hardware/framework versions logged</label></li>
+<li><label><input type="checkbox">Global seeds logged and fixed</label></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="per-promotion-checklist" class="level3">
+<h3 class="anchored" data-anchor-id="per-promotion-checklist">Per-Promotion Checklist</h3>
+<div class="callout callout-style-default callout-important no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>✅ Before promoting to Production, verify:
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul class="task-list">
+<li><label><input type="checkbox">Challenger vs champion comparison passed</label></li>
+<li><label><input type="checkbox">All metric gates satisfied (mAP, latency, recall)</label></li>
+<li><label><input type="checkbox">ONNX export tested and logged</label></li>
+<li><label><input type="checkbox">Model card updated</label></li>
+<li><label><input type="checkbox">Old production version archived</label></li>
+<li><label><input type="checkbox"><code>requirements.txt</code> artifact present</label></li>
+</ul>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© 2025 Krishnatheja Vanka</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
