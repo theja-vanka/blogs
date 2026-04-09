@@ -1,0 +1,1073 @@
+---
+title: "GitHub Actions × MLFlow CI/CD for Computer Vision"
+subtitle: "Operational Excellence in Production Systems"
+description: |
+  A practitioner's guide to building reliable, reproducible, and observable
+  CV model pipelines using GitHub Actions and MLFlow.
+author: "Krishnatheja Vanka"
+date: "2026-04-09"
+categories: [code, mlops, advanced]
+format:
+  html:
+    code-fold: false
+execute:
+  echo: true
+  timing: true
+jupyter: python3
+---
+
+# GitHub Actions × MLFlow CI/CD for Computer Vision
+![](cicd.png)
+
+## Philosophy & Guiding Principles
+
+Operational excellence in CV production systems rests on four pillars:
+
+| Pillar | What it means in practice |
+|---|---|
+| **Reproducibility** | Every training run can be re-created identically from a commit SHA + data hash |
+| **Observability** | Every metric, artifact, and environment is logged and queryable |
+| **Automation** | Humans approve transitions; machines do everything else |
+| **Fail Fast** | Catch regressions on cheap compute (unit tests, sanity checks) before expensive GPU training |
+
+: Four pillars of operational excellence {.striped .hover}
+
+These principles drive every recommendation in this guide.
+
+---
+
+## Repository & Project Structure
+
+Organizing your monorepo consistently makes workflow triggers predictable and avoids accidental pipeline skips.
+
+```{mermaid}
+%%| label: fig-project-layout
+%%| fig-cap: "Monorepo structure for a CV CI/CD pipeline"
+%%| echo: false
+
+flowchart TD
+    ROOT["📁 repo root"]
+
+    ROOT --> GH["📁 .github/"]
+    ROOT --> SRC["📁 src/"]
+    ROOT --> CFG["📁 configs/"]
+    ROOT --> TST["📁 tests/"]
+    ROOT --> MLF["📁 mlflow/"]
+    ROOT --> SCR["📁 scripts/"]
+    ROOT --> MK["📄 Makefile"]
+
+    GH --> WF["📁 workflows/"]
+    GH --> ACT["📁 actions/setup-mlflow/\nReusable composite action"]
+    WF --> CI["ci.yml\nOn every PR"]
+    WF --> TR["train.yml\nMerge to main / manual"]
+    WF --> EV["evaluate.yml\nPost-training gate"]
+    WF --> DP["deploy.yml\nRegistry stage promotion"]
+
+    SRC --> DA["data/\nLoading, augmentation, versioning"]
+    SRC --> MO["models/\nArchitecture definitions"]
+    SRC --> TRA["training/\nLoops, callbacks"]
+    SRC --> EVA["evaluation/\nMetrics, visualisations"]
+    SRC --> SE["serving/\nInference wrapper"]
+
+    CFG --> BY["base.yaml\nShared hyperparameters"]
+    CFG --> EX["experiment/\nHydra overrides"]
+    CFG --> DE["deployment/\nServing config per env"]
+
+    TST --> UN["unit/"]
+    TST --> IN["integration/"]
+    TST --> SM["smoke/\nFast inference checks"]
+
+    MLF --> MP["MLproject\nReproducible runs"]
+
+    SCR --> RM["register_model.py"]
+    SCR --> CM["compare_runs.py"]
+    SCR --> PM["promote_model.py"]
+
+    style CI fill:#d4edda,stroke:#28a745
+    style TR fill:#cce5ff,stroke:#004085
+    style EV fill:#fff3cd,stroke:#856404
+    style DP fill:#f8d7da,stroke:#721c24
+```
+
+::: {.callout-important}
+## Key Rule
+Keep model training code, serving code, and infrastructure config in the same repository. Split repos for CV pipelines cause drift between what was trained and what is served.
+:::
+
+---
+
+## MLFlow Setup for CV Pipelines
+
+### MLProject File
+
+The `MLproject` file is the contract between your code and MLFlow's runner. Always define it — it makes runs reproducible from any environment.
+
+```{.yaml filename="mlflow/MLproject"}
+name: cv-pipeline
+
+conda_env: conda.yaml   # or docker_env / python_env
+
+entry_points:
+  train:
+    parameters:
+      config_path:  {type: str, default: "configs/base.yaml"}
+      data_version: {type: str}
+      run_name:     {type: str, default: "unnamed"}
+    command: >
+      python -m src.training.train
+        --config {config_path}
+        --data-version {data_version}
+        --run-name {run_name}
+
+  evaluate:
+    parameters:
+      run_id:      {type: str}
+      dataset:     {type: str, default: "val"}
+    command: >
+      python -m src.evaluation.evaluate
+        --run-id {run_id}
+        --dataset {dataset}
+```
+
+### Logging CV Artifacts — What to Always Log
+
+Log generously during training. Storage is cheap; missing data when debugging a production incident is expensive.
+
+```{.python filename="src/training/train.py"}
+import mlflow
+import mlflow.pytorch
+from pathlib import Path
+
+def training_run(config, data_version):
+    mlflow.set_experiment(config.experiment_name)
+
+    with mlflow.start_run(run_name=config.run_name) as run:
+        # --- Tags: non-numeric metadata ---
+        mlflow.set_tags({
+            "git.commit":    os.environ["GITHUB_SHA"],
+            "git.branch":    os.environ.get("GITHUB_REF_NAME", "local"),
+            "data.version":  data_version,
+            "model.arch":    config.model.architecture,
+            "triggered_by":  os.environ.get("GITHUB_ACTOR", "local"),
+        })
+
+        # --- Params: hyperparameters & config ---
+        mlflow.log_params(flatten_dict(config))   # log full config, not just LR/BS
+
+        # --- Training loop ---
+        for epoch in range(config.epochs):
+            metrics = train_one_epoch(model, loader, optimizer)
+
+            mlflow.log_metrics({
+                "train/loss":       metrics.loss,
+                "train/lr":         scheduler.get_last_lr()[0],
+                "val/mAP":          metrics.val_map,
+                "val/mAP_50":       metrics.val_map_50,
+                "val/precision":    metrics.precision,
+                "val/recall":       metrics.recall,
+                "gpu/memory_mb":    torch.cuda.max_memory_allocated() // 1e6,
+            }, step=epoch)
+
+        # --- CV-specific artifacts ---
+        # Confusion matrix image
+        mlflow.log_figure(plot_confusion_matrix(model, val_loader), "eval/confusion_matrix.png")
+        # PR curve per class
+        mlflow.log_figure(plot_pr_curves(model, val_loader), "eval/pr_curves.png")
+        # Sample predictions (good + failure cases)
+        log_prediction_grid(model, val_loader, run, n=16)
+        # Model weights + signature
+        signature = mlflow.models.infer_signature(sample_input, sample_output)
+        mlflow.pytorch.log_model(model, "model", signature=signature)
+        # Full config file for exact reproduction
+        mlflow.log_artifact("configs/base.yaml", "config")
+
+        return run.info.run_id
+```
+
+### Input/Output Signature
+
+Always define a model signature. It enforces schema validation at serving time and catches preprocessing mismatches before they reach users.
+
+```{.python filename="src/training/signature.py"}
+from mlflow.models.signature import ModelSignature
+from mlflow.types.schema import Schema, TensorSpec
+import numpy as np
+
+# For a BCHW image classifier
+input_schema  = Schema([TensorSpec(np.dtype(np.float32), (-1, 3, 224, 224), "image")])
+output_schema = Schema([TensorSpec(np.dtype(np.float32), (-1, 1000),         "logits")])
+signature     = ModelSignature(inputs=input_schema, outputs=output_schema)
+
+mlflow.pytorch.log_model(model, "model", signature=signature)
+```
+
+::: {.callout-tip}
+## Why signatures matter
+A model registered without an input/output schema loses automatic schema validation in serving. This makes it impossible to safely automate inference-time assertions and is a common source of silent production errors.
+:::
+
+---
+
+## GitHub Actions Workflow Architecture
+
+### Event-to-Workflow Mapping
+
+Design workflows around **what changed** and **who initiated** the change, not just which branch.
+
+```{mermaid}
+%%| label: fig-trigger-map
+%%| fig-cap: "GitHub event → workflow mapping"
+%%| echo: false
+
+flowchart TD
+    PR["🔀 Pull Request\nopened / updated"]
+    MERGE["✅ Merge to main"]
+    MANUAL["🖱️ Manual dispatch\nworkflow_dispatch"]
+    WEBHOOK["🔔 MLFlow webhook /\nRegistry event"]
+
+    PR --> CI["ci.yml\nlint · unit tests\nsmoke inference · config validation"]
+
+    MERGE --> TRAIN["train.yml\nfull training job\nlogs to MLFlow"]
+    TRAIN -->|on success| EVAL["evaluate.yml\nquality gates\nmodel comparison"]
+    EVAL -->|on pass| REG["📋 Opens PR to promote\nmodel in registry"]
+
+    MANUAL --> TRAIN2["train.yml\nre-train with custom params\n(experiments)"]
+
+    WEBHOOK --> DEPLOY["deploy.yml\ndeploy 'Production'-staged\nmodel to serving infra"]
+
+    style CI fill:#d4edda,stroke:#28a745
+    style TRAIN fill:#cce5ff,stroke:#004085
+    style TRAIN2 fill:#cce5ff,stroke:#004085
+    style EVAL fill:#fff3cd,stroke:#856404
+    style REG fill:#e2d9f3,stroke:#6f42c1
+    style DEPLOY fill:#f8d7da,stroke:#721c24
+```
+
+### Reusable Composite Action for MLFlow Setup
+
+Avoid duplicating MLFlow setup across every workflow with a composite action.
+
+```{.yaml filename=".github/actions/setup-mlflow/action.yml"}
+name: Setup MLFlow
+description: Installs dependencies and configures MLFlow tracking server
+
+inputs:
+  mlflow-tracking-uri:
+    required: true
+  mlflow-s3-bucket:
+    required: true
+  python-version:
+    required: false
+    default: "3.11"
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: pip
+
+    - name: Install dependencies
+      shell: bash
+      run: pip install -r requirements.txt
+
+    - name: Configure MLFlow
+      shell: bash
+      env:
+        MLFLOW_TRACKING_URI:      ${{ inputs.mlflow-tracking-uri }}
+        MLFLOW_S3_ENDPOINT_URL:   ${{ inputs.mlflow-s3-bucket }}
+      run: |
+        echo "MLFLOW_TRACKING_URI=$MLFLOW_TRACKING_URI"   >> $GITHUB_ENV
+        echo "MLFLOW_S3_ENDPOINT_URL=$MLFLOW_S3_ENDPOINT_URL" >> $GITHUB_ENV
+```
+
+---
+
+## CI Pipeline — Validate Before You Merge
+
+The goal of CI is to give fast, cheap signal on PRs — **no GPU, no real training**.
+
+```{.yaml filename=".github/workflows/ci.yml"}
+name: CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "src/**"
+      - "configs/**"
+      - "tests/**"
+      - "requirements*.txt"
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true         # Kill stale CI runs on force-push
+
+jobs:
+  lint-and-type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - run: pip install ruff mypy
+      - run: ruff check src/ tests/
+      - run: mypy src/ --ignore-missing-imports
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs: lint-and-type-check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-mlflow
+        with:
+          mlflow-tracking-uri: http://localhost:5000     # local ephemeral server
+          mlflow-s3-bucket:    ""
+      - name: Start local MLFlow server
+        run: mlflow server --backend-store-uri sqlite:///mlflow.db &
+      - name: Run unit tests
+        run: pytest tests/unit/ -v --tb=short --cov=src --cov-report=xml
+      - uses: codecov/codecov-action@v4
+
+  config-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - name: Validate all YAML configs
+        run: python scripts/validate_configs.py configs/
+
+  smoke-inference:
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-mlflow
+        with:
+          mlflow-tracking-uri: ${{ secrets.MLFLOW_TRACKING_URI }}
+          mlflow-s3-bucket:    ${{ secrets.MLFLOW_S3_BUCKET }}
+      - name: Run smoke test with current Production model
+        run: |
+          python scripts/smoke_test.py \
+            --model-stage Production \
+            --n-images 10 \
+            --max-latency-ms 200
+```
+
+### Smoke Test Script Pattern
+
+```{.python filename="scripts/smoke_test.py"}
+import mlflow.pyfunc, time, sys, argparse, numpy as np
+
+def run_smoke_test(stage: str, n_images: int, max_latency_ms: float):
+    model = mlflow.pyfunc.load_model(f"models:/cv-model/{stage}")
+    dummy_batch = np.random.rand(n_images, 3, 224, 224).astype(np.float32)
+
+    t0 = time.perf_counter()
+    preds = model.predict(dummy_batch)
+    latency_ms = (time.perf_counter() - t0) * 1000
+
+    print(f"Latency: {latency_ms:.1f}ms for {n_images} images")
+    assert latency_ms < max_latency_ms, (
+        f"Smoke test FAILED: {latency_ms:.1f}ms > {max_latency_ms}ms threshold"
+    )
+    assert preds.shape[0] == n_images, "Output batch size mismatch"
+    print("Smoke test PASSED ✓")
+
+if __name__ == "__main__":
+    p = argparse.ArgumentParser()
+    p.add_argument("--model-stage",    default="Production")
+    p.add_argument("--n-images",       type=int,   default=10)
+    p.add_argument("--max-latency-ms", type=float, default=200.0)
+    args = p.parse_args()
+    run_smoke_test(args.model_stage, args.n_images, args.max_latency_ms)
+```
+
+---
+
+## CD Pipeline — Promote, Register, Deploy
+
+### Training Workflow
+
+Training jobs are expensive — protect them with `workflow_dispatch` for manual runs and auto-trigger only on clean merges to `main`.
+
+```{.yaml filename=".github/workflows/train.yml"}
+name: Train
+
+on:
+  push:
+    branches: [main]
+    paths: ["src/models/**", "src/training/**", "configs/base.yaml"]
+  workflow_dispatch:
+    inputs:
+      config_override:
+        description: "Config file path (relative to configs/)"
+        default: "base.yaml"
+      data_version:
+        description: "DVC/data version tag"
+        required: true
+
+jobs:
+  train:
+    runs-on: [self-hosted, gpu]        # GPU runner required
+    timeout-minutes: 360
+    environment: training              # Requires manual approval gate in GitHub Environments
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-mlflow
+        with:
+          mlflow-tracking-uri: ${{ secrets.MLFLOW_TRACKING_URI }}
+          mlflow-s3-bucket:    ${{ secrets.MLFLOW_S3_BUCKET }}
+
+      - name: Pull data with DVC
+        env:
+          AWS_ACCESS_KEY_ID:     ${{ secrets.DVC_AWS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DVC_AWS_SECRET }}
+        run: |
+          dvc pull data/processed/${{ inputs.data_version || 'latest' }}
+
+      - name: Launch MLFlow training run
+        id: training
+        run: |
+          RUN_ID=$(python -m mlflow run mlflow/ \
+            -P config_path=configs/${{ inputs.config_override || 'base.yaml' }} \
+            -P data_version=${{ inputs.data_version || 'latest' }} \
+            -P run_name="ci-${{ github.sha }}" \
+            --env-manager local \
+            2>&1 | grep "Run ID:" | awk '{print $NF}')
+          echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+
+      - name: Export run ID as artifact
+        run: echo "${{ steps.training.outputs.run_id }}" > run_id.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: training-run-id
+          path: run_id.txt
+
+    outputs:
+      run_id: ${{ steps.training.outputs.run_id }}
+
+  evaluate:
+    needs: train
+    uses: ./.github/workflows/evaluate.yml
+    with:
+      run_id: ${{ needs.train.outputs.run_id }}
+    secrets: inherit
+```
+
+### Evaluation & Quality Gate Workflow
+
+```{.yaml filename=".github/workflows/evaluate.yml"}
+name: Evaluate
+
+on:
+  workflow_call:
+    inputs:
+      run_id:
+        required: true
+        type: string
+
+jobs:
+  quality-gate:
+    runs-on: [self-hosted, gpu]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-mlflow
+        with:
+          mlflow-tracking-uri: ${{ secrets.MLFLOW_TRACKING_URI }}
+          mlflow-s3-bucket:    ${{ secrets.MLFLOW_S3_BUCKET }}
+
+      - name: Run evaluation suite
+        run: |
+          python -m src.evaluation.evaluate \
+            --run-id ${{ inputs.run_id }} \
+            --dataset test \
+            --output-path eval_report.json
+
+      - name: Quality gate check
+        id: gate
+        run: |
+          python scripts/quality_gate.py \
+            --run-id      ${{ inputs.run_id }} \
+            --baseline    Production \
+            --thresholds  configs/deployment/thresholds.yaml \
+            --output      gate_result.json
+
+      - name: Upload evaluation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report-${{ inputs.run_id }}
+          path: |
+            eval_report.json
+            gate_result.json
+
+      - name: Register model if gate passes
+        if: ${{ steps.gate.outputs.passed == 'true' }}
+        run: |
+          python scripts/register_model.py \
+            --run-id    ${{ inputs.run_id }} \
+            --name      cv-model \
+            --stage     Staging \
+            --alias     "candidate-${{ github.sha }}"
+```
+
+---
+
+## Model Registry Workflow with MLFlow
+
+### Stage Transitions
+
+Use MLFlow's registry stages as a formal promotion pipeline: `None → Staging → Production`. Never skip a stage in automation — only allow it via manual approval.
+
+```{mermaid}
+%%| label: fig-promotion-ladder
+%%| fig-cap: "MLFlow model registry stage promotion pipeline"
+%%| echo: false
+
+flowchart TD
+    RUN["🏋️ Training Run\n(GitHub Actions · GPU runner)"]
+    STAGING["📦 Staging\nregistered candidate model"]
+    PRODUCTION["🚀 Production\nserving live traffic"]
+    ARCHIVED["🗄️ Archived\nretained for rollback"]
+
+    RUN -->|"quality gate passed\nautomated by evaluate.yml"| STAGING
+    STAGING -->|"manual approval in GitHub Environments\nOR integration tests pass\nautomated by deploy.yml"| PRODUCTION
+    PRODUCTION -->|"deprecate after N days\nor on next promotion"| ARCHIVED
+
+    ARCHIVED -.->|"rollback path\nrollback.yml"| PRODUCTION
+
+    style RUN      fill:#cce5ff,stroke:#004085
+    style STAGING  fill:#fff3cd,stroke:#856404
+    style PRODUCTION fill:#d4edda,stroke:#28a745
+    style ARCHIVED fill:#e2e3e5,stroke:#6c757d
+```
+
+```{.python filename="scripts/promote_model.py"}
+import mlflow
+from mlflow.tracking import MlflowClient
+
+def promote_to_production(model_name: str, staging_version: str):
+    client = MlflowClient()
+
+    # Archive current Production before promoting
+    prod_versions = client.get_latest_versions(model_name, stages=["Production"])
+    for v in prod_versions:
+        client.transition_model_version_stage(
+            name=model_name, version=v.version, stage="Archived",
+            archive_existing_versions=False,
+        )
+        print(f"Archived version {v.version}")
+
+    # Promote Staging to Production
+    client.transition_model_version_stage(
+        name=model_name, version=staging_version, stage="Production",
+    )
+    client.set_model_version_tag(model_name, staging_version,
+                                  "promoted_by", os.environ.get("GITHUB_ACTOR"))
+    client.set_model_version_tag(model_name, staging_version,
+                                  "promoted_at", datetime.utcnow().isoformat())
+    print(f"Promoted version {staging_version} to Production ✓")
+```
+
+### Quality Gate Script
+
+Define acceptance thresholds in config, not hardcoded in scripts. This lets you tighten gates per dataset or model class without changing pipeline code.
+
+```{.yaml filename="configs/deployment/thresholds.yaml"}
+min_improvement_over_baseline: 0.005   # mAP must improve by ≥ 0.5%
+absolute_thresholds:
+  val/mAP:       0.72
+  val/precision: 0.80
+  val/recall:    0.75
+regression_thresholds:               # alert if drop is larger than these
+  val/mAP:       0.02
+max_latency_p95_ms: 150
+```
+
+```{.python filename="scripts/quality_gate.py"}
+import mlflow, yaml, json, sys
+
+def check_gate(run_id, baseline_stage, thresholds_path, output_path):
+    client  = mlflow.tracking.MlflowClient()
+    run     = client.get_run(run_id)
+    metrics = run.data.metrics
+
+    thresholds = yaml.safe_load(open(thresholds_path))
+    results, passed = {}, True
+
+    # Absolute threshold checks
+    for metric, min_val in thresholds["absolute_thresholds"].items():
+        actual = metrics.get(metric, 0.0)
+        ok     = actual >= min_val
+        results[metric] = {"actual": actual, "threshold": min_val, "passed": ok}
+        if not ok:
+            print(f"FAIL {metric}: {actual:.4f} < {min_val}")
+            passed = False
+
+    # Regression check vs baseline Production model
+    try:
+        baseline_versions = client.get_latest_versions("cv-model", stages=[baseline_stage])
+        if baseline_versions:
+            baseline_run = client.get_run(baseline_versions[0].run_id)
+            baseline_map  = baseline_run.data.metrics.get("val/mAP", 0.0)
+            candidate_map = metrics.get("val/mAP", 0.0)
+            delta = candidate_map - baseline_map
+            min_delta = thresholds["min_improvement_over_baseline"]
+            ok = delta >= -thresholds["regression_thresholds"]["val/mAP"]
+            results["regression_check"] = {
+                "baseline_mAP": baseline_map, "candidate_mAP": candidate_map,
+                "delta": delta, "passed": ok
+            }
+            if not ok:
+                print(f"FAIL regression: mAP dropped by {abs(delta):.4f}")
+                passed = False
+    except Exception as e:
+        print(f"WARN: Could not compare to baseline: {e}")
+
+    json.dump({"passed": passed, "details": results}, open(output_path, "w"), indent=2)
+    print(f"Gate result: {'PASSED ✓' if passed else 'FAILED ✗'}")
+
+    # Write GitHub Actions output
+    with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+        f.write(f"passed={'true' if passed else 'false'}\n")
+
+    sys.exit(0 if passed else 1)
+```
+
+---
+
+## Data & Artifact Versioning
+
+### DVC + MLFlow Integration
+
+Data versioning is as important as code versioning for CV. Use DVC for data, MLFlow for model artifacts — and link them explicitly.
+
+```{.python filename="src/training/data_utils.py"}
+import subprocess, hashlib
+
+def get_data_hash(data_dir: str) -> str:
+    """Compute SHA256 of the DVC lock file for this dataset."""
+    lock = Path(data_dir).parent / "dvc.lock"
+    return hashlib.sha256(lock.read_bytes()).hexdigest()[:12]
+
+# Log the DVC commit hash alongside the model
+with mlflow.start_run():
+    dvc_hash = subprocess.check_output(
+        ["dvc", "data", "status", "--json"]
+    ).decode().strip()
+    mlflow.set_tag("data.dvc_hash", get_data_hash("data/processed"))
+    mlflow.log_artifact("data.dvc", "data_version")    # log the .dvc pointer file
+```
+
+### Artifact Storage Hierarchy
+
+Organise S3/artifact storage so old experiments are easy to find and prune:
+
+```{mermaid}
+%%| label: fig-s3-layout
+%%| fig-cap: "S3 artifact storage hierarchy under MLFlow"
+%%| echo: false
+
+flowchart TD
+    BUCKET["🪣 s3://your-bucket/mlflow/"]
+    EXP["{experiment_id}/"]
+    RUN["{run_id}/"]
+    ART["artifacts/"]
+    MET["metrics/\nMLFlow metric files\nauto-managed"]
+
+    MODEL["model/\nPyTorch · ONNX weights"]
+    EVAL["eval/\nConfusion matrices\nPR curves"]
+    CONFIG["config/\nFull config snapshot"]
+    DATA["data_version/\nDVC pointer file"]
+
+    BUCKET --> EXP
+    EXP --> RUN
+    RUN --> ART
+    RUN --> MET
+    ART --> MODEL
+    ART --> EVAL
+    ART --> CONFIG
+    ART --> DATA
+
+    style BUCKET fill:#fff3cd,stroke:#856404
+    style MODEL  fill:#cce5ff,stroke:#004085
+    style EVAL   fill:#d4edda,stroke:#28a745
+    style CONFIG fill:#e2d9f3,stroke:#6f42c1
+    style DATA   fill:#f8d7da,stroke:#721c24
+```
+
+::: {.callout-warning}
+## Artifact Retention
+Set artifact retention policies at the **storage level** (S3 lifecycle rules, GCS Object Lifecycle). Don't delete from the MLFlow UI — that only removes metadata and leaves orphaned binaries in object storage.
+:::
+
+---
+
+## CV-Specific Quality Gates
+
+Beyond mAP, production CV systems require domain-specific checks that generic ML pipelines miss.
+
+### Per-Class Performance Gate
+
+A model that improves aggregate mAP but collapses a safety-critical class should be blocked.
+
+```{.python filename="scripts/per_class_gate.py"}
+def check_per_class_thresholds(run_id: str, min_per_class_ap: float = 0.60):
+    client = mlflow.tracking.MlflowClient()
+    run    = client.get_run(run_id)
+
+    # Expect per-class AP logged as "class/{classname}/AP"
+    class_aps = {
+        k.replace("class/", "").replace("/AP", ""): v
+        for k, v in run.data.metrics.items()
+        if k.startswith("class/") and k.endswith("/AP")
+    }
+
+    failing = {cls: ap for cls, ap in class_aps.items() if ap < min_per_class_ap}
+    if failing:
+        print("Per-class failures:")
+        for cls, ap in failing.items():
+            print(f"  {cls}: AP={ap:.3f} < {min_per_class_ap}")
+        return False
+    return True
+```
+
+### Inference Latency Gate
+
+Log latency during evaluation, not just accuracy — a 2× slower model is often a deployment blocker regardless of mAP.
+
+```{.python filename="src/evaluation/latency.py"}
+import time, torch
+
+def benchmark_inference(model, input_size=(1, 3, 640, 640), n_warmup=10, n_iters=100, device="cuda"):
+    model.eval()
+    dummy = torch.randn(*input_size).to(device)
+
+    # Warm up
+    for _ in range(n_warmup):
+        with torch.no_grad():
+            model(dummy)
+
+    torch.cuda.synchronize()
+    times = []
+    for _ in range(n_iters):
+        t0 = time.perf_counter()
+        with torch.no_grad():
+            model(dummy)
+        torch.cuda.synchronize()
+        times.append((time.perf_counter() - t0) * 1000)
+
+    import numpy as np
+    mlflow.log_metrics({
+        "latency/mean_ms": np.mean(times),
+        "latency/p95_ms":  np.percentile(times, 95),
+        "latency/p99_ms":  np.percentile(times, 99),
+    })
+```
+
+### Distribution Shift Detection Gate (Pre-Deploy)
+
+Before deploying to production, validate the candidate model on a held-out dataset that represents recent production traffic — not just the original test split.
+
+```{.yaml filename="In evaluate.yml — production distribution check"}
+- name: Check distribution shift robustness
+  run: |
+    python scripts/eval_production_sample.py \
+      --run-id ${{ inputs.run_id }} \
+      --dataset-path data/production_sample/latest \
+      --min-mAP 0.65          # Lower threshold for noisy production data
+```
+
+---
+
+## Monitoring & Drift Detection in Production
+
+Closing the loop between production and CI is what separates "deployed" from "operational."
+
+### Scheduled Drift Detection Workflow
+
+```{.yaml filename=".github/workflows/drift_monitor.yml"}
+name: Production Drift Monitor
+
+on:
+  schedule:
+    - cron: "0 6 * * *"     # Daily at 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  detect-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-mlflow
+        with:
+          mlflow-tracking-uri: ${{ secrets.MLFLOW_TRACKING_URI }}
+          mlflow-s3-bucket:    ${{ secrets.MLFLOW_S3_BUCKET }}
+
+      - name: Sample production predictions
+        run: python scripts/sample_production_logs.py --n 1000 --output prod_sample.parquet
+
+      - name: Run drift detection
+        id: drift
+        run: |
+          python scripts/detect_drift.py \
+            --production-sample prod_sample.parquet \
+            --reference-dataset data/processed/latest \
+            --model-stage Production \
+            --output drift_report.json
+
+      - name: Alert if drift detected
+        if: ${{ steps.drift.outputs.drift_detected == 'true' }}
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {"text": "⚠️ Production drift detected. mAP degraded by ${{ steps.drift.outputs.map_delta }}. Consider re-training."}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Log drift metrics to MLFlow
+        run: python scripts/log_drift_to_mlflow.py --report drift_report.json
+```
+
+### Log What Matters in Serving
+
+In your inference service, emit metrics that MLFlow (or your monitoring stack) can consume:
+
+```{.python filename="src/serving/monitored_model.py"}
+import mlflow, time
+
+class MonitoredCVModel:
+    def __init__(self, model_name="cv-model", stage="Production"):
+        self.model = mlflow.pyfunc.load_model(f"models:/{model_name}/{stage}")
+        self.run_id = mlflow.tracking.MlflowClient() \
+            .get_latest_versions(model_name, [stage])[0].run_id
+
+    def predict(self, image_batch):
+        t0 = time.perf_counter()
+        result = self.model.predict(image_batch)
+        latency = (time.perf_counter() - t0) * 1000
+
+        # Emit to your metrics sink (Prometheus, CloudWatch, etc.)
+        emit_metric("inference.latency_ms",  latency)
+        emit_metric("inference.batch_size",  len(image_batch))
+        emit_metric("inference.low_confidence_ratio",
+                    (result.max(axis=1) < 0.5).mean())
+
+        return result
+```
+
+---
+
+## Security & Secrets Management
+
+### Secrets Strategy
+
+| Secret | Where | Notes |
+|---|---|---|
+| `MLFLOW_TRACKING_URI` | GitHub Environment secret | Scope to `training` and `deploy` environments only |
+| `MLFLOW_TRACKING_TOKEN` | GitHub Environment secret | Use short-lived tokens, rotate monthly |
+| `DVC_AWS_KEY / SECRET` | GitHub Actions secret | Read-only IAM role — never write access from CI |
+| `SLACK_WEBHOOK_URL` | GitHub Actions secret | Use per-channel webhooks, not workspace tokens |
+| Model serving credentials | External secret manager | Inject at deploy time, never in repo |
+
+: Secrets placement strategy {.striped .hover}
+
+### Prevent Secrets from Leaking into MLFlow
+
+It's easy to accidentally log an entire config dict that contains credentials. Guard against it:
+
+```{.python filename="src/training/safe_logging.py"}
+SENSITIVE_KEYS = {"api_key", "password", "token", "secret", "aws_access_key"}
+
+def safe_log_params(config: dict):
+    """Log params, redacting any sensitive keys."""
+    safe = {
+        k: "[REDACTED]" if any(s in k.lower() for s in SENSITIVE_KEYS) else v
+        for k, v in flatten_dict(config).items()
+    }
+    mlflow.log_params(safe)
+```
+
+### Permissions Hardening in Workflows
+
+```{.yaml filename="Applies to every workflow file"}
+permissions:
+  contents: read            # Never write unless you explicitly need it
+  id-token: write           # Only if using OIDC for cloud auth
+  actions: read
+```
+
+::: {.callout-important}
+## Least-Privilege Default
+Apply `permissions` at the workflow level as the default, then override per-job only where escalation is genuinely needed. Omitting this block grants broad default permissions in many GitHub org configurations.
+:::
+
+---
+
+## Rollback Strategy
+
+Production CV models need a documented, tested rollback path — not a post-incident improvisation.
+
+### Automated Rollback Trigger
+
+```{.yaml filename=".github/workflows/rollback.yml"}
+name: Rollback Production Model
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Reason for rollback"
+        required: true
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment: production-rollback    # Requires approval from on-call engineer
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-mlflow
+        with:
+          mlflow-tracking-uri: ${{ secrets.MLFLOW_TRACKING_URI }}
+          mlflow-s3-bucket:    ${{ secrets.MLFLOW_S3_BUCKET }}
+
+      - name: Rollback to last Archived model
+        run: |
+          python scripts/rollback_model.py \
+            --model-name cv-model \
+            --reason     "${{ inputs.reason }}" \
+            --initiated-by "${{ github.actor }}"
+
+      - name: Notify team
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {"text": "🔄 *Production rollback executed* by ${{ github.actor }}\nReason: ${{ inputs.reason }}"}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+```
+
+```{.python filename="scripts/rollback_model.py"}
+def rollback(model_name: str, reason: str, initiated_by: str):
+    client = MlflowClient()
+
+    # Find last Archived version
+    archived = client.get_latest_versions(model_name, stages=["Archived"])
+    if not archived:
+        raise ValueError("No Archived version to roll back to")
+
+    rollback_version = sorted(archived, key=lambda v: int(v.version))[-1]
+
+    # Demote current Production to Archived
+    current_prod = client.get_latest_versions(model_name, stages=["Production"])
+    for v in current_prod:
+        client.transition_model_version_stage(model_name, v.version, "Archived")
+        client.set_model_version_tag(model_name, v.version, "rolled_back_reason", reason)
+
+    # Restore Archived to Production
+    client.transition_model_version_stage(model_name, rollback_version.version, "Production")
+    client.set_model_version_tag(model_name, rollback_version.version,
+                                  "rollback_by", initiated_by)
+    print(f"Rolled back to version {rollback_version.version} ✓")
+```
+
+---
+
+## Anti-Patterns to Avoid
+
+These are the most common mistakes teams make when first building CV CI/CD pipelines.
+
+::: {.callout-caution collapse="true"}
+## Training inside a GitHub Actions runner without a self-hosted GPU
+GitHub-hosted runners have no GPU. Training a real CV model on them will either time out (6-hour limit) or cost a fortune via expensive compute APIs. Always route training to self-hosted GPU runners or cloud job runners (e.g., AWS Batch, GCP Vertex).
+:::
+
+::: {.callout-caution collapse="true"}
+## Logging model weights without a signature
+A model in the registry with no input/output schema is a liability. You lose automatic schema validation in serving and make it impossible to safely automate inference-time assertions.
+:::
+
+::: {.callout-caution collapse="true"}
+## Using `latest` as a data version tag in training
+`latest` is a moving target. Tag your DVC data versions with explicit identifiers and commit hashes so any run can be reproduced months later.
+:::
+
+::: {.callout-caution collapse="true"}
+## Skipping per-class metrics in quality gates
+Aggregate mAP can improve while a low-frequency class (e.g., a rare defect type) collapses. Always gate on per-class metrics for any safety- or business-critical class.
+:::
+
+::: {.callout-caution collapse="true"}
+## Hardcoding metric thresholds in workflow YAML
+Thresholds in YAML files require a code change to update, create noisy diffs, and are hard to track historically. Keep thresholds in versioned config files loaded by quality gate scripts.
+:::
+
+::: {.callout-caution collapse="true"}
+## Not testing the rollback path
+Rollback procedures that have never been executed will fail under pressure. Run a rollback drill in staging at least once per quarter.
+:::
+
+::: {.callout-caution collapse="true"}
+## Logging to MLFlow from matrix jobs without run naming
+Parallel matrix jobs that all call `mlflow.start_run()` without unique `run_name` values create a registry of indistinguishable runs. Always embed `github.sha`, `matrix.*`, and a timestamp into the run name.
+:::
+
+---
+
+## Reference Snippets Cheatsheet
+
+```{.bash filename="MLFlow CLI Quick Reference"}
+# Start a local MLFlow server for development
+mlflow server \
+  --backend-store-uri sqlite:///mlflow.db \
+  --default-artifact-root ./mlruns \
+  --host 0.0.0.0 --port 5000
+
+# Launch a reproducible run via MLProject
+mlflow run . -P config_path=configs/base.yaml -P data_version=v1.3.0
+
+# Compare two runs from CLI
+mlflow runs compare --run-ids <run_a> <run_b>
+
+# List Production model versions
+mlflow models list --name cv-model
+
+# Promote a model version to Production
+mlflow models transition-create \
+  --model-name cv-model \
+  --version 12 \
+  --stage Production
+
+# Serve a model locally for testing
+mlflow models serve -m "models:/cv-model/Staging" -p 8080 --no-conda
+```
+
+```{.python filename="Minimal GitHub Actions context in MLFlow tags"}
+mlflow.set_tags({
+    "ci.sha":        os.environ.get("GITHUB_SHA", "local"),
+    "ci.run_id":     os.environ.get("GITHUB_RUN_ID", "local"),
+    "ci.run_number": os.environ.get("GITHUB_RUN_NUMBER", "0"),
+    "ci.actor":      os.environ.get("GITHUB_ACTOR", "local"),
+    "ci.workflow":   os.environ.get("GITHUB_WORKFLOW", "local"),
+    "ci.ref":        os.environ.get("GITHUB_REF", "local"),
+})
+```
+
+```{.yaml filename="Self-hosted GPU runner label convention"}
+# Always pin GPU type for reproducible benchmarks
+runs-on: [self-hosted, linux, gpu, t4]
+```
+
+---
+
+::: {.callout-note}
+## Version Note
+Covers MLFlow 2.x and GitHub Actions runner v2.x
+:::
