@@ -390,7 +390,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#sec-serving" id="toc-sec-serving" class="nav-link" data-scroll-target="#sec-serving">Model Serving &amp; Deployment</a>
   <ul class="collapse">
-  <li><a href="#export-to-onnx-and-log-as-artefact" id="toc-export-to-onnx-and-log-as-artefact" class="nav-link" data-scroll-target="#export-to-onnx-and-log-as-artefact">Export to ONNX and Log as Artefact</a></li>
+  <li><a href="#export-to-onnx-and-log-as-artifact" id="toc-export-to-onnx-and-log-as-artifact" class="nav-link" data-scroll-target="#export-to-onnx-and-log-as-artifact">Export to ONNX and Log as artifact</a></li>
   <li><a href="#load-production-models-by-stage-not-by-run-id" id="toc-load-production-models-by-stage-not-by-run-id" class="nav-link" data-scroll-target="#load-production-models-by-stage-not-by-run-id">Load Production Models by Stage, Not by Run ID</a></li>
   <li><a href="#log-inference-latency-as-a-metric" id="toc-log-inference-latency-as-a-metric" class="nav-link" data-scroll-target="#log-inference-latency-as-a-metric">Log Inference Latency as a Metric</a></li>
   </ul></li>
@@ -404,7 +404,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#seed-everything" id="toc-seed-everything" class="nav-link" data-scroll-target="#seed-everything">Seed Everything</a></li>
   <li><a href="#record-hardware-and-framework-versions" id="toc-record-hardware-and-framework-versions" class="nav-link" data-scroll-target="#record-hardware-and-framework-versions">Record Hardware and Framework Versions</a></li>
-  <li><a href="#store-model-cards-as-artefacts" id="toc-store-model-cards-as-artefacts" class="nav-link" data-scroll-target="#store-model-cards-as-artefacts">Store Model Cards as Artefacts</a></li>
+  <li><a href="#store-model-cards-as-artifacts" id="toc-store-model-cards-as-artifacts" class="nav-link" data-scroll-target="#store-model-cards-as-artifacts">Store Model Cards as artifacts</a></li>
   </ul></li>
   <li><a href="#sec-performance" id="toc-sec-performance" class="nav-link" data-scroll-target="#sec-performance">Performance &amp; Scalability</a>
   <ul class="collapse">
@@ -438,6 +438,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="flow.png" class="img-fluid"></p>
 <section id="sec-experiment-tracking" class="level2">
 <h2 class="anchored" data-anchor-id="sec-experiment-tracking">Experiment Tracking</h2>
+<p>This guide demonstrates how to achieve operational excellence using MLFlow in Production.</p>
+<hr>
 <div class="callout callout-style-simple callout-note">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
@@ -591,7 +593,7 @@ Warning
 </section>
 <section id="custom-pyfuncs-for-prepost-processing" class="level3">
 <h3 class="anchored" data-anchor-id="custom-pyfuncs-for-prepost-processing">Custom PyFuncs for Pre/Post-Processing</h3>
-<p>Wrap preprocessing (resize, normalise, augment) and postprocessing (NMS, softmax, decode boxes) into the model artefact itself using <code>mlflow.pyfunc</code>. This avoids serving-time pipeline drift.</p>
+<p>Wrap preprocessing (resize, normalise, augment) and postprocessing (NMS, softmax, decode boxes) into the model artifact itself using <code>mlflow.pyfunc</code>. This avoids serving-time pipeline drift.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CVModelWrapper(mlflow.pyfunc.PythonModel):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> load_context(<span class="va">self</span>, context):</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> torch</span>
@@ -626,7 +628,7 @@ Warning
 <div id="tbl-artifacts" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-artifacts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;2: CV-specific artefacts and when to log them
+Table&nbsp;2: CV-specific artifacts and when to log them
 </figcaption>
 <div aria-describedby="tbl-artifacts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
@@ -894,8 +896,8 @@ Table&nbsp;3: Task-specific metrics for common CV tasks
 </section>
 <section id="sec-serving" class="level2">
 <h2 class="anchored" data-anchor-id="sec-serving">Model Serving &amp; Deployment</h2>
-<section id="export-to-onnx-and-log-as-artefact" class="level3">
-<h3 class="anchored" data-anchor-id="export-to-onnx-and-log-as-artefact">Export to ONNX and Log as Artefact</h3>
+<section id="export-to-onnx-and-log-as-artifact" class="level3">
+<h3 class="anchored" data-anchor-id="export-to-onnx-and-log-as-artifact">Export to ONNX and Log as artifact</h3>
 <p>For production inference, ONNX enables hardware-agnostic deployment (TensorRT, OpenVINO, ONNX Runtime).</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1040,8 +1042,8 @@ Table&nbsp;3: Task-specific metrics for common CV tasks
 <span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"num_gpus"</span>: torch.cuda.device_count(),</span>
 <span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="store-model-cards-as-artefacts" class="level3">
-<h3 class="anchored" data-anchor-id="store-model-cards-as-artefacts">Store Model Cards as Artefacts</h3>
+<section id="store-model-cards-as-artifacts" class="level3">
+<h3 class="anchored" data-anchor-id="store-model-cards-as-artifacts">Store Model Cards as artifacts</h3>
 <p>Document each registered model version with a model card (intended use, limitations, training data, fairness notes).</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>model_card <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="st"># Model Card: cv-resnet50-classifier v3</span></span>
@@ -1164,7 +1166,7 @@ Table&nbsp;4: Backend storage options by team scale
 <li><label><input type="checkbox">Experiment name reflects the research objective</label></li>
 <li><label><input type="checkbox">All hyperparameters logged (including implicit/augmentation params)</label></li>
 <li><label><input type="checkbox">Git commit SHA tagged</label></li>
-<li><label><input type="checkbox">Training config YAML logged as artefact</label></li>
+<li><label><input type="checkbox">Training config YAML logged as artifact</label></li>
 <li><label><input type="checkbox">Dataset version/hash logged</label></li>
 <li><label><input type="checkbox">Model logged with signature and input example</label></li>
 <li><label><input type="checkbox">Evaluation metrics logged per epoch + summary</label></li>
