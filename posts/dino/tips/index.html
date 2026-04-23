@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Krishnatheja Vanka">
+<meta name="dcterms.date" content="2026-04-23">
+
+<title>TIPSv2: Advancing Vision-Language Pretraining with Enhanced Patch-Text Alignment – Krishnatheja Vanka’s Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../favicon.ico" rel="icon">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-db7551fb198f90e53e140817f36f545d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-941aa739f4f6ead0e06d988344f7e38f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-db7551fb198f90e53e140817f36f545d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles/styles.css">
+</head>
+
+<body class="floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Krishnatheja Vanka’s Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/theja-vanka"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-page-right">
+      <h1 class="title">TIPSv2: Advancing Vision-Language Pretraining with Enhanced Patch-Text Alignment</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">code</div>
+                <div class="quarto-category">tutorial</div>
+                <div class="quarto-category">intermediate</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-page-right">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Krishnatheja Vanka </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 23, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#tipsv2-advancing-vision-language-pretraining-with-enhanced-patch-text-alignment" id="toc-tipsv2-advancing-vision-language-pretraining-with-enhanced-patch-text-alignment" class="nav-link active" data-scroll-target="#tipsv2-advancing-vision-language-pretraining-with-enhanced-patch-text-alignment">TIPSv2: Advancing Vision-Language Pretraining with Enhanced Patch-Text Alignment</a>
+  <ul class="collapse">
+  <li><a href="#introduction-and-motivation" id="toc-introduction-and-motivation" class="nav-link" data-scroll-target="#introduction-and-motivation">Introduction and Motivation</a></li>
+  <li><a href="#background-the-tips-lineage" id="toc-background-the-tips-lineage" class="nav-link" data-scroll-target="#background-the-tips-lineage">Background: The TIPS Lineage</a>
+  <ul class="collapse">
+  <li><a href="#what-tips-v1-did" id="toc-what-tips-v1-did" class="nav-link" data-scroll-target="#what-tips-v1-did">What TIPS (v1) Did</a></li>
+  <li><a href="#what-tipsv2-builds-upon" id="toc-what-tipsv2-builds-upon" class="nav-link" data-scroll-target="#what-tipsv2-builds-upon">What TIPSv2 Builds Upon</a></li>
+  </ul></li>
+  <li><a href="#the-core-problem-dense-patch-text-misalignment" id="toc-the-core-problem-dense-patch-text-misalignment" class="nav-link" data-scroll-target="#the-core-problem-dense-patch-text-misalignment">The Core Problem: Dense Patch-Text Misalignment</a>
+  <ul class="collapse">
+  <li><a href="#understanding-patch-level-representations" id="toc-understanding-patch-level-representations" class="nav-link" data-scroll-target="#understanding-patch-level-representations">Understanding Patch-Level Representations</a></li>
+  <li><a href="#why-this-matters-in-practice" id="toc-why-this-matters-in-practice" class="nav-link" data-scroll-target="#why-this-matters-in-practice">Why This Matters in Practice</a></li>
+  <li><a href="#prior-approaches-and-their-limits" id="toc-prior-approaches-and-their-limits" class="nav-link" data-scroll-target="#prior-approaches-and-their-limits">Prior Approaches and Their Limits</a></li>
+  </ul></li>
+  <li><a href="#a-surprising-discovery-the-distillation-phenomenon" id="toc-a-surprising-discovery-the-distillation-phenomenon" class="nav-link" data-scroll-target="#a-surprising-discovery-the-distillation-phenomenon">A Surprising Discovery: The Distillation Phenomenon</a>
+  <ul class="collapse">
+  <li><a href="#the-observation" id="toc-the-observation" class="nav-link" data-scroll-target="#the-observation">The Observation</a></li>
+  <li><a href="#why-does-this-happen" id="toc-why-does-this-happen" class="nav-link" data-scroll-target="#why-does-this-happen">Why Does This Happen?</a></li>
+  <li><a href="#the-design-insight" id="toc-the-design-insight" class="nav-link" data-scroll-target="#the-design-insight">The Design Insight</a></li>
+  </ul></li>
+  <li><a href="#tipsv2-architecture-and-model-family" id="toc-tipsv2-architecture-and-model-family" class="nav-link" data-scroll-target="#tipsv2-architecture-and-model-family">TIPSv2 Architecture and Model Family</a>
+  <ul class="collapse">
+  <li><a href="#vision-transformer-backbone" id="toc-vision-transformer-backbone" class="nav-link" data-scroll-target="#vision-transformer-backbone">Vision Transformer Backbone</a></li>
+  <li><a href="#training-hierarchy" id="toc-training-hierarchy" class="nav-link" data-scroll-target="#training-hierarchy">Training Hierarchy</a></li>
+  <li><a href="#text-encoder-and-projection-heads" id="toc-text-encoder-and-projection-heads" class="nav-link" data-scroll-target="#text-encoder-and-projection-heads">Text Encoder and Projection Heads</a></li>
+  </ul></li>
+  <li><a href="#key-innovation-1-ibot-extending-the-self-supervised-loss" id="toc-key-innovation-1-ibot-extending-the-self-supervised-loss" class="nav-link" data-scroll-target="#key-innovation-1-ibot-extending-the-self-supervised-loss">Key Innovation 1 — iBOT++: Extending the Self-Supervised Loss</a>
+  <ul class="collapse">
+  <li><a href="#background-ibot-and-masked-image-modeling" id="toc-background-ibot-and-masked-image-modeling" class="nav-link" data-scroll-target="#background-ibot-and-masked-image-modeling">Background: iBOT and Masked Image Modeling</a></li>
+  <li><a href="#the-limitation-of-masking-only-supervision" id="toc-the-limitation-of-masking-only-supervision" class="nav-link" data-scroll-target="#the-limitation-of-masking-only-supervision">The Limitation of Masking-Only Supervision</a></li>
+  <li><a href="#ibot-all-tokens-contribute" id="toc-ibot-all-tokens-contribute" class="nav-link" data-scroll-target="#ibot-all-tokens-contribute">iBOT++: All Tokens Contribute</a></li>
+  <li><a href="#quantitative-impact-of-ibot" id="toc-quantitative-impact-of-ibot" class="nav-link" data-scroll-target="#quantitative-impact-of-ibot">Quantitative Impact of iBOT++</a></li>
+  <li><a href="#why-this-works-connecting-to-the-distillation-insight" id="toc-why-this-works-connecting-to-the-distillation-insight" class="nav-link" data-scroll-target="#why-this-works-connecting-to-the-distillation-insight">Why This Works: Connecting to the Distillation Insight</a></li>
+  </ul></li>
+  <li><a href="#key-innovation-2-head-only-ema-efficient-teacher-student-training" id="toc-key-innovation-2-head-only-ema-efficient-teacher-student-training" class="nav-link" data-scroll-target="#key-innovation-2-head-only-ema-efficient-teacher-student-training">Key Innovation 2 — Head-Only EMA: Efficient Teacher-Student Training</a>
+  <ul class="collapse">
+  <li><a href="#the-standard-ema-teacher-in-self-supervised-learning" id="toc-the-standard-ema-teacher-in-self-supervised-learning" class="nav-link" data-scroll-target="#the-standard-ema-teacher-in-self-supervised-learning">The Standard EMA Teacher in Self-Supervised Learning</a></li>
+  <li><a href="#the-head-only-ema-strategy" id="toc-the-head-only-ema-strategy" class="nav-link" data-scroll-target="#the-head-only-ema-strategy">The Head-Only EMA Strategy</a></li>
+  <li><a href="#benefits-of-head-only-ema" id="toc-benefits-of-head-only-ema" class="nav-link" data-scroll-target="#benefits-of-head-only-ema">Benefits of Head-Only EMA</a></li>
+  <li><a href="#connection-to-distillation" id="toc-connection-to-distillation" class="nav-link" data-scroll-target="#connection-to-distillation">Connection to Distillation</a></li>
+  </ul></li>
+  <li><a href="#key-innovation-3-multi-granularity-captions-richer-text-supervision" id="toc-key-innovation-3-multi-granularity-captions-richer-text-supervision" class="nav-link" data-scroll-target="#key-innovation-3-multi-granularity-captions-richer-text-supervision">Key Innovation 3 — Multi-Granularity Captions: Richer Text Supervision</a>
+  <ul class="collapse">
+  <li><a href="#the-problem-with-standard-image-text-pairs" id="toc-the-problem-with-standard-image-text-pairs" class="nav-link" data-scroll-target="#the-problem-with-standard-image-text-pairs">The Problem with Standard Image-Text Pairs</a></li>
+  <li><a href="#three-levels-of-textual-granularity" id="toc-three-levels-of-textual-granularity" class="nav-link" data-scroll-target="#three-levels-of-textual-granularity">Three Levels of Textual Granularity</a></li>
+  <li><a href="#caption-sampling-strategy" id="toc-caption-sampling-strategy" class="nav-link" data-scroll-target="#caption-sampling-strategy">Caption Sampling Strategy</a></li>
+  <li><a href="#why-multi-granularity-captions-improve-patch-text-alignment" id="toc-why-multi-granularity-captions-improve-patch-text-alignment" class="nav-link" data-scroll-target="#why-multi-granularity-captions-improve-patch-text-alignment">Why Multi-Granularity Captions Improve Patch-Text Alignment</a></li>
+  </ul></li>
+  <li><a href="#pretraining-objectives-putting-it-all-together" id="toc-pretraining-objectives-putting-it-all-together" class="nav-link" data-scroll-target="#pretraining-objectives-putting-it-all-together">Pretraining Objectives: Putting It All Together</a>
+  <ul class="collapse">
+  <li><a href="#contrastive-image-text-alignment-loss" id="toc-contrastive-image-text-alignment-loss" class="nav-link" data-scroll-target="#contrastive-image-text-alignment-loss">Contrastive Image-Text Alignment Loss</a></li>
+  <li><a href="#ibot-self-supervised-loss" id="toc-ibot-self-supervised-loss" class="nav-link" data-scroll-target="#ibot-self-supervised-loss">iBOT++ Self-Supervised Loss</a></li>
+  <li><a href="#combined-loss-function" id="toc-combined-loss-function" class="nav-link" data-scroll-target="#combined-loss-function">Combined Loss Function</a></li>
+  </ul></li>
+  <li><a href="#evaluation-protocol-9-tasks-20-datasets" id="toc-evaluation-protocol-9-tasks-20-datasets" class="nav-link" data-scroll-target="#evaluation-protocol-9-tasks-20-datasets">Evaluation Protocol: 9 Tasks, 20 Datasets</a>
+  <ul class="collapse">
+  <li><a href="#global-image-text-tasks-7-evaluations" id="toc-global-image-text-tasks-7-evaluations" class="nav-link" data-scroll-target="#global-image-text-tasks-7-evaluations">Global Image-Text Tasks (7 Evaluations)</a></li>
+  <li><a href="#dense-image-understanding-tasks-9-evaluations" id="toc-dense-image-understanding-tasks-9-evaluations" class="nav-link" data-scroll-target="#dense-image-understanding-tasks-9-evaluations">Dense Image Understanding Tasks (9 Evaluations)</a></li>
+  <li><a href="#evaluation-regime-frozen-features" id="toc-evaluation-regime-frozen-features" class="nav-link" data-scroll-target="#evaluation-regime-frozen-features">Evaluation Regime: Frozen Features</a></li>
+  </ul></li>
+  <li><a href="#experimental-results-and-benchmarks" id="toc-experimental-results-and-benchmarks" class="nav-link" data-scroll-target="#experimental-results-and-benchmarks">Experimental Results and Benchmarks</a>
+  <ul class="collapse">
+  <li><a href="#dense-understanding-segmentation" id="toc-dense-understanding-segmentation" class="nav-link" data-scroll-target="#dense-understanding-segmentation">Dense Understanding: Segmentation</a></li>
+  <li><a href="#global-tasks-classification-and-retrieval" id="toc-global-tasks-classification-and-retrieval" class="nav-link" data-scroll-target="#global-tasks-classification-and-retrieval">Global Tasks: Classification and Retrieval</a></li>
+  <li><a href="#depth-estimation" id="toc-depth-estimation" class="nav-link" data-scroll-target="#depth-estimation">Depth Estimation</a></li>
+  <li><a href="#summary-best-or-second-best-across-the-board" id="toc-summary-best-or-second-best-across-the-board" class="nav-link" data-scroll-target="#summary-best-or-second-best-across-the-board">Summary: Best or Second-Best Across the Board</a></li>
+  </ul></li>
+  <li><a href="#comparison-with-prior-work" id="toc-comparison-with-prior-work" class="nav-link" data-scroll-target="#comparison-with-prior-work">Comparison with Prior Work</a>
+  <ul class="collapse">
+  <li><a href="#vs.-clip-siglip" id="toc-vs.-clip-siglip" class="nav-link" data-scroll-target="#vs.-clip-siglip">vs.&nbsp;CLIP / SigLIP</a></li>
+  <li><a href="#vs.-dinov2" id="toc-vs.-dinov2" class="nav-link" data-scroll-target="#vs.-dinov2">vs.&nbsp;DINOv2</a></li>
+  <li><a href="#vs.-silc" id="toc-vs.-silc" class="nav-link" data-scroll-target="#vs.-silc">vs.&nbsp;SILC</a></li>
+  <li><a href="#vs.-pe-core-vit-g" id="toc-vs.-pe-core-vit-g" class="nav-link" data-scroll-target="#vs.-pe-core-vit-g">vs.&nbsp;PE-core ViT-G</a></li>
+  <li><a href="#vs.-tips-v1" id="toc-vs.-tips-v1" class="nav-link" data-scroll-target="#vs.-tips-v1">vs.&nbsp;TIPS (v1)</a></li>
+  </ul></li>
+  <li><a href="#practical-applications-and-downstream-tasks" id="toc-practical-applications-and-downstream-tasks" class="nav-link" data-scroll-target="#practical-applications-and-downstream-tasks">Practical Applications and Downstream Tasks</a>
+  <ul class="collapse">
+  <li><a href="#zero-shot-semantic-segmentation" id="toc-zero-shot-semantic-segmentation" class="nav-link" data-scroll-target="#zero-shot-semantic-segmentation">Zero-Shot Semantic Segmentation</a></li>
+  <li><a href="#multimodal-retrieval-and-search" id="toc-multimodal-retrieval-and-search" class="nav-link" data-scroll-target="#multimodal-retrieval-and-search">Multimodal Retrieval and Search</a></li>
+  <li><a href="#monocular-depth-estimation" id="toc-monocular-depth-estimation" class="nav-link" data-scroll-target="#monocular-depth-estimation">Monocular Depth Estimation</a></li>
+  <li><a href="#foundation-for-multimodal-large-language-models" id="toc-foundation-for-multimodal-large-language-models" class="nav-link" data-scroll-target="#foundation-for-multimodal-large-language-models">Foundation for Multimodal Large Language Models</a></li>
+  <li><a href="#zero-shot-visual-question-answering" id="toc-zero-shot-visual-question-answering" class="nav-link" data-scroll-target="#zero-shot-visual-question-answering">Zero-Shot Visual Question Answering</a></li>
+  <li><a href="#referring-expression-comprehension" id="toc-referring-expression-comprehension" class="nav-link" data-scroll-target="#referring-expression-comprehension">Referring Expression Comprehension</a></li>
+  </ul></li>
+  <li><a href="#model-weights-and-usage" id="toc-model-weights-and-usage" class="nav-link" data-scroll-target="#model-weights-and-usage">Model Weights and Usage</a>
+  <ul class="collapse">
+  <li><a href="#publicly-released-models" id="toc-publicly-released-models" class="nav-link" data-scroll-target="#publicly-released-models">Publicly Released Models</a></li>
+  <li><a href="#code-repository" id="toc-code-repository" class="nav-link" data-scroll-target="#code-repository">Code Repository</a></li>
+  <li><a href="#example-usage-huggingface" id="toc-example-usage-huggingface" class="nav-link" data-scroll-target="#example-usage-huggingface">Example Usage (HuggingFace)</a></li>
+  <li><a href="#zero-shot-segmentation-example" id="toc-zero-shot-segmentation-example" class="nav-link" data-scroll-target="#zero-shot-segmentation-example">Zero-Shot Segmentation Example</a></li>
+  </ul></li>
+  <li><a href="#broader-impact-and-limitations" id="toc-broader-impact-and-limitations" class="nav-link" data-scroll-target="#broader-impact-and-limitations">Broader Impact and Limitations</a>
+  <ul class="collapse">
+  <li><a href="#positive-impacts" id="toc-positive-impacts" class="nav-link" data-scroll-target="#positive-impacts">Positive Impacts</a></li>
+  <li><a href="#potential-concerns" id="toc-potential-concerns" class="nav-link" data-scroll-target="#potential-concerns">Potential Concerns</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#references-and-further-reading" id="toc-references-and-further-reading" class="nav-link" data-scroll-target="#references-and-further-reading">References and Further Reading</a>
+  <ul class="collapse">
+  <li><a href="#primary-sources" id="toc-primary-sources" class="nav-link" data-scroll-target="#primary-sources">Primary Sources</a></li>
+  <li><a href="#related-work" id="toc-related-work" class="nav-link" data-scroll-target="#related-work">Related Work</a></li>
+  <li><a href="#survey-and-context-reading" id="toc-survey-and-context-reading" class="nav-link" data-scroll-target="#survey-and-context-reading">Survey and Context Reading</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
+
+
+
+
+
+
+<section id="tipsv2-advancing-vision-language-pretraining-with-enhanced-patch-text-alignment" class="level1">
+<h1>TIPSv2: Advancing Vision-Language Pretraining with Enhanced Patch-Text Alignment</h1>
+<p><img src="tips.png" class="img-fluid"></p>
+<section id="introduction-and-motivation" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-and-motivation">Introduction and Motivation</h2>
+<p>Vision-language models (VLMs) have become a cornerstone of modern computer vision and multimodal AI. Systems like CLIP, SigLIP, ALIGN, and their descendants have demonstrated remarkable capability at associating images with textual descriptions, enabling zero-shot classification, cross-modal retrieval, and a growing ecosystem of downstream multimodal tasks. However, despite their strong global image-text alignment abilities, these models share a common and often underappreciated weakness: <strong>they fail to align individual image patches with the corresponding textual concepts</strong>.</p>
+<p>This limitation is not merely academic. In applications such as semantic segmentation, object detection, depth estimation, visual question answering, and referring expression comprehension, the model must understand <em>where</em> in an image a concept lives, not merely <em>whether</em> a concept is present. A model that can recognize “a dog” in a scene but cannot precisely localize the dog’s spatial extent in the feature space is fundamentally limited for such dense understanding tasks.</p>
+<p><strong>TIPSv2</strong> — short for the second generation of <em>Text-Image Pretraining with Spatial Awareness</em> — is a foundational vision-language model family developed by Google DeepMind that directly and systematically addresses this challenge. Accepted at CVPR 2026, TIPSv2 introduces three carefully designed innovations — <strong>iBOT++</strong>, <strong>Head-only EMA</strong>, and <strong>Multi-Granularity Captions</strong> — that together yield dramatic improvements in dense patch-text alignment without sacrificing global representation quality. The result is a model family that achieves state-of-the-art performance across a remarkably broad suite of tasks, including zero-shot semantic segmentation, monocular depth estimation, image-text retrieval, and standard image classification.</p>
+<p>What makes TIPSv2 particularly compelling is that its central innovations were not conceived in a vacuum. They arose from a counter-intuitive empirical observation uncovered during controlled experiments with knowledge distillation — a finding that then inspired the core design of the pretraining objective.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Accepted at CVPR 2026</strong> | arXiv: <a href="https://arxiv.org/abs/2604.12012">2604.12012</a> | Project Page: <a href="https://gdm-tipsv2.github.io/">gdm-tipsv2.github.io</a> | Code: <a href="https://github.com/google-deepmind/tips">google-deepmind/tips</a></p>
+</div>
+</div>
+<hr>
+</section>
+<section id="background-the-tips-lineage" class="level2">
+<h2 class="anchored" data-anchor-id="background-the-tips-lineage">Background: The TIPS Lineage</h2>
+<p>To appreciate TIPSv2 fully, it is essential to understand its predecessor, <strong>TIPS (Text-Image Pretraining with Spatial Awareness)</strong>, which was published at <strong>ICLR 2025</strong>.</p>
+<section id="what-tips-v1-did" class="level3">
+<h3 class="anchored" data-anchor-id="what-tips-v1-did">What TIPS (v1) Did</h3>
+<p>The original TIPS model identified a fundamental problem with standard contrastive vision-language pretraining: models trained with objectives like CLIP’s InfoNCE loss operate at the level of global image embeddings, aggregating all spatial information into a single vector. While this is excellent for global classification and retrieval, the resulting patch-level features are not aligned with text in any explicit way — they tend to be entangled and spatially incoherent.</p>
+<p>TIPS addressed this in two main ways:</p>
+<p><strong>Synthetic Caption Replacement.</strong> Rather than training on raw, noisy web-scraped image-caption pairs, TIPS replaced these captions with synthetically generated textual descriptions produced by capable captioning models. These synthetic captions are semantically richer, more spatially descriptive, and significantly less noisy than typical alt-text from the web.</p>
+<p><strong>Combining Contrastive and Masked Image Modeling.</strong> TIPS combined CLIP-style contrastive learning (for global image-text alignment) with masked image modeling (MIM) in the style of iBOT (Image BERT Pre-Training with Online Tokenizer). The MIM component encourages the model to develop spatially coherent patch representations, since it must reconstruct masked patches from the remaining visible context.</p>
+<p>Together, these two ideas yielded a model validated on a comprehensive suite of 9 tasks and 20 datasets, displaying strong performance that matched or exceeded other recent vision encoders — particularly on dense spatial understanding tasks.</p>
+</section>
+<section id="what-tipsv2-builds-upon" class="level3">
+<h3 class="anchored" data-anchor-id="what-tipsv2-builds-upon">What TIPSv2 Builds Upon</h3>
+<p>TIPSv2 inherits the foundational ideas of TIPS but goes significantly further. Rather than simply scaling up or tuning existing components, the TIPSv2 team performed careful analysis that led to three orthogonal, complementary innovations. Each innovation is principled and theoretically motivated, and the ablations demonstrate that each contributes meaningfully to the final performance.</p>
+<hr>
+</section>
+</section>
+<section id="the-core-problem-dense-patch-text-misalignment" class="level2">
+<h2 class="anchored" data-anchor-id="the-core-problem-dense-patch-text-misalignment">The Core Problem: Dense Patch-Text Misalignment</h2>
+<section id="understanding-patch-level-representations" class="level3">
+<h3 class="anchored" data-anchor-id="understanding-patch-level-representations">Understanding Patch-Level Representations</h3>
+<p>In Vision Transformer (ViT) based architectures, an image is divided into a grid of non-overlapping patches (e.g., 14×14 pixel patches, giving 256 patch tokens for a 224×224 image at ViT-B/14 resolution). These patch tokens, along with a <code>[CLS]</code> token representing the global image embedding, are processed by self-attention layers to produce final representations.</p>
+<p>In a globally-trained model like CLIP, the <code>[CLS]</code> token embedding is explicitly trained to align with text embeddings via contrastive loss. The individual patch tokens, however, receive no direct text supervision.</p>
+</section>
+<section id="why-this-matters-in-practice" class="level3">
+<h3 class="anchored" data-anchor-id="why-this-matters-in-practice">Why This Matters in Practice</h3>
+<p>The consequence of patch-text misalignment is measurable. When one visualizes the feature similarity maps of CLIP patch tokens with respect to text queries, the resulting maps tend to be diffuse and spatially incoherent.</p>
+<p>This directly limits performance on:</p>
+<ul>
+<li><strong>Semantic segmentation</strong> — requires associating region-level features with class names</li>
+<li><strong>Object detection</strong> — requires localizing objects within a spatial grid</li>
+<li><strong>Depth estimation</strong> — requires per-pixel feature quality and coherence</li>
+<li><strong>Open-vocabulary dense prediction</strong> — requires generalizable patch-level semantics</li>
+</ul>
+</section>
+<section id="prior-approaches-and-their-limits" class="level3">
+<h3 class="anchored" data-anchor-id="prior-approaches-and-their-limits">Prior Approaches and Their Limits</h3>
+<p>Several prior works have attempted to improve spatial understanding in vision-language models:</p>
+<ul>
+<li><strong>DINOv2</strong> introduced self-supervised pretraining with excellent spatial features but lacks text alignment, limiting its utility for language-grounded tasks.</li>
+<li><strong>SILC</strong> and related works combine self-supervised and image-text objectives but with limited patch-level text supervision.</li>
+<li><strong>RegionCLIP, CLIPSelf, MaskCLIP</strong> propose post-hoc or fine-tuning-based approaches to improve patch-level features, but do not address the fundamental gap at pretraining.</li>
+</ul>
+<p>TIPSv2’s contribution is to solve this problem <strong>directly during pretraining</strong>, in a principled way that is computationally tractable and scalable.</p>
+<hr>
+</section>
+</section>
+<section id="a-surprising-discovery-the-distillation-phenomenon" class="level2">
+<h2 class="anchored" data-anchor-id="a-surprising-discovery-the-distillation-phenomenon">A Surprising Discovery: The Distillation Phenomenon</h2>
+<section id="the-observation" class="level3">
+<h3 class="anchored" data-anchor-id="the-observation">The Observation</h3>
+<p>A central motivation for TIPSv2’s design choices is an unexpected empirical discovery made during exploratory experiments with knowledge distillation. The TIPSv2 authors trained student models to distill representations from a large teacher model (ViT-g) at the <strong>patch level</strong> — the student was trained to reproduce the teacher’s patch token representations, not just the global <code>[CLS]</code> embedding.</p>
+<p>The result was striking: <strong>the patch-level text alignment of the distilled student model substantially surpassed that of the teacher model</strong>.</p>
+<p>This is a counter-intuitive finding. Naively, one would expect distillation to produce a student that approximates but does not exceed the teacher. Yet patch-level distillation acted as a powerful regularizer that forced the student to develop more semantically coherent, text-aligned patch representations than the teacher ever had.</p>
+</section>
+<section id="why-does-this-happen" class="level3">
+<h3 class="anchored" data-anchor-id="why-does-this-happen">Why Does This Happen?</h3>
+<p>The authors’ interpretation is that patch-level distillation imposes a strong constraint: the student must make every patch token predictive and consistent. The distillation loss penalizes any patch token that is not representationally coherent with the corresponding patch in the teacher’s embedding space. Combined with the text supervision inherited from the teacher, this pushes the student’s patch representations toward semantic clusters that correspond to recognizable visual concepts.</p>
+<p>In essence, patch-level distillation acts like a <strong>spatial regularizer</strong> that promotes the emergence of text-aligned, spatially coherent patch features.</p>
+</section>
+<section id="the-design-insight" class="level3">
+<h3 class="anchored" data-anchor-id="the-design-insight">The Design Insight</h3>
+<p>This discovery raised an obvious and actionable question: if patch-level distillation produces better patch-text alignment than the teacher itself, can we design a pretraining objective that mimics this effect <strong>without</strong> requiring a separate distillation stage?</p>
+<p>The answer is <strong>yes</strong>, and this insight is the genesis of <strong>iBOT++</strong>, TIPSv2’s first and most impactful innovation.</p>
+<hr>
+</section>
+</section>
+<section id="tipsv2-architecture-and-model-family" class="level2">
+<h2 class="anchored" data-anchor-id="tipsv2-architecture-and-model-family">TIPSv2 Architecture and Model Family</h2>
+<section id="vision-transformer-backbone" class="level3">
+<h3 class="anchored" data-anchor-id="vision-transformer-backbone">Vision Transformer Backbone</h3>
+<p>TIPSv2 uses the Vision Transformer (ViT) architecture as its image encoder across all model sizes:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 35%">
+<col style="width: 65%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>ViT-B/14</strong></td>
+<td>Base-sized model with 14×14 patch size (<code>tipsv2-b14</code>)</td>
+</tr>
+<tr class="even">
+<td><strong>ViT-L/14</strong></td>
+<td>Large-sized model with 14×14 patch size</td>
+</tr>
+<tr class="odd">
+<td><strong>ViT-g/14</strong></td>
+<td>Giant-sized model, the largest and highest-performing variant</td>
+</tr>
+<tr class="even">
+<td><strong>SO-400m</strong></td>
+<td>Sigmoid Loss–optimized 400M parameter variant</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="training-hierarchy" class="level3">
+<h3 class="anchored" data-anchor-id="training-hierarchy">Training Hierarchy</h3>
+<p>The model family is trained in two stages:</p>
+<p><strong>Stage 1: Direct Pretraining of ViT-g.</strong> The giant model is pretrained from scratch using the full TIPSv2 objective (iBOT++, Head-only EMA, and Multi-Granularity Captions). This serves as the base teacher model.</p>
+<p><strong>Stage 2: Patch-Level Distillation for Smaller Models.</strong> The ViT-B, ViT-L, and SO-400m models are trained via patch-level knowledge distillation from the ViT-g teacher — deliberately exploiting the alignment improvement originally discovered.</p>
+</section>
+<section id="text-encoder-and-projection-heads" class="level3">
+<h3 class="anchored" data-anchor-id="text-encoder-and-projection-heads">Text Encoder and Projection Heads</h3>
+<p>TIPSv2 employs a text encoder trained alongside the image encoder using contrastive objectives. Both image and text encoders attach lightweight MLP projection heads that map representations to the shared embedding space. The design of these projection heads is central to the Head-only EMA strategy.</p>
+<hr>
+</section>
+</section>
+<section id="key-innovation-1-ibot-extending-the-self-supervised-loss" class="level2">
+<h2 class="anchored" data-anchor-id="key-innovation-1-ibot-extending-the-self-supervised-loss">Key Innovation 1 — iBOT++: Extending the Self-Supervised Loss</h2>
+<section id="background-ibot-and-masked-image-modeling" class="level3">
+<h3 class="anchored" data-anchor-id="background-ibot-and-masked-image-modeling">Background: iBOT and Masked Image Modeling</h3>
+<p>iBOT (Image BERT Pre-Training with Online Tokenizer) is a self-supervised pretraining technique for ViTs that combines masked image modeling with online tokenization. In standard iBOT:</p>
+<ol type="1">
+<li>A random subset of patches is <strong>masked</strong> (replaced with a learnable mask token).</li>
+<li>The model is trained to predict the representations of masked patches, using a momentum-updated teacher as the target.</li>
+<li>The <code>[CLS]</code> token is aligned across two augmented views via a self-supervised classification loss (DINO-style).</li>
+</ol>
+<p>The key signal comes <strong>exclusively from masked patches</strong> — visible patches do not directly contribute to the MIM loss.</p>
+</section>
+<section id="the-limitation-of-masking-only-supervision" class="level3">
+<h3 class="anchored" data-anchor-id="the-limitation-of-masking-only-supervision">The Limitation of Masking-Only Supervision</h3>
+<p>This masking-only paradigm has an implicit inefficiency: at any given training step, the majority of patches (those not masked) are not contributing to the patch-level self-supervised objective. Given the distillation discovery, this is a missed opportunity — enforcing patch-level representation consistency even for visible patches dramatically improves patch-text alignment.</p>
+</section>
+<section id="ibot-all-tokens-contribute" class="level3">
+<h3 class="anchored" data-anchor-id="ibot-all-tokens-contribute">iBOT++: All Tokens Contribute</h3>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>iBOT++</strong> extends the patch-level self-supervised loss to <strong>ALL patch tokens</strong> — both masked and unmasked — rather than only to masked patches.</p>
+</div>
+</div>
+<p>At each training step, the iBOT++ loss computes a representation consistency target for every patch in the image, using the momentum teacher as the target generator. This means even visible patches must align with the teacher’s patch embeddings.</p>
+<p>This change:</p>
+<ul>
+<li>Forces semantically coherent, consistent patch representations across all spatial locations</li>
+<li>Propagates dense patch-level gradients at every step</li>
+<li>Mimics the effect of patch-level distillation within the pretraining loop</li>
+<li>Produces dramatically smoother, more spatially coherent feature maps</li>
+</ul>
+</section>
+<section id="quantitative-impact-of-ibot" class="level3">
+<h3 class="anchored" data-anchor-id="quantitative-impact-of-ibot">Quantitative Impact of iBOT++</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The addition of iBOT++ improved zero-shot semantic segmentation performance by <strong>+14.1 mIoU</strong> — a large gain by any standard.</p>
+</div>
+</div>
+<p>Qualitative visualizations confirm this: iBOT++ models produce attention maps and PCA-based feature visualizations that clearly delineate object boundaries, textures, and semantic regions far more distinctly than standard iBOT-trained counterparts.</p>
+</section>
+<section id="why-this-works-connecting-to-the-distillation-insight" class="level3">
+<h3 class="anchored" data-anchor-id="why-this-works-connecting-to-the-distillation-insight">Why This Works: Connecting to the Distillation Insight</h3>
+<p>The connection to the distillation discovery is direct. In distillation, all patch positions receive a loss signal. iBOT++ replicates this regime by applying the MIM-style loss to all positions. The momentum teacher plays the role of the large pre-trained teacher in the distillation setup, while teacher and student evolve jointly during pretraining via EMA updates.</p>
+<hr>
+</section>
+</section>
+<section id="key-innovation-2-head-only-ema-efficient-teacher-student-training" class="level2">
+<h2 class="anchored" data-anchor-id="key-innovation-2-head-only-ema-efficient-teacher-student-training">Key Innovation 2 — Head-Only EMA: Efficient Teacher-Student Training</h2>
+<section id="the-standard-ema-teacher-in-self-supervised-learning" class="level3">
+<h3 class="anchored" data-anchor-id="the-standard-ema-teacher-in-self-supervised-learning">The Standard EMA Teacher in Self-Supervised Learning</h3>
+<p>In methods like DINO and iBOT, the teacher network is maintained as an exponential moving average (EMA) of the student’s parameters:</p>
+<p><span class="math display">\[\theta_t \leftarrow \lambda \cdot \theta_t + (1 - \lambda) \cdot \theta_s\]</span></p>
+<p>where <span class="math inline">\(\lambda\)</span> is a momentum coefficient (typically <span class="math inline">\(\approx 0.999\)</span>).</p>
+<p>This results in a stable teacher that provides high-quality targets. <strong>However</strong>, maintaining a full teacher network doubles the memory footprint and significantly increases training time.</p>
+</section>
+<section id="the-head-only-ema-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="the-head-only-ema-strategy">The Head-Only EMA Strategy</h3>
+<p>TIPSv2 introduces a more efficient variant: <strong>Head-only EMA</strong>. The key enabling observation is that TIPSv2 has <strong>text supervision</strong>, which fundamentally changes training dynamics compared to purely self-supervised approaches.</p>
+<p>With text supervision, the contrastive image-text alignment loss provides a powerful anchor that prevents collapse — even without a full-backbone EMA. The language signal enforces that representations must remain semantically meaningful and discriminative.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In <strong>Head-only EMA</strong>, the EMA update is applied only to the <strong>projection heads</strong> (lightweight MLP heads), while the teacher encoder is set equal to the student encoder at each step.</p>
+</div>
+</div>
+<p>In effect: - The teacher backbone <strong>is</strong> the student backbone (no separate copy needed for the encoder) - Only the much smaller projection heads maintain EMA-updated parameters</p>
+</section>
+<section id="benefits-of-head-only-ema" class="level3">
+<h3 class="anchored" data-anchor-id="benefits-of-head-only-ema">Benefits of Head-Only EMA</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Benefit</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Memory Efficiency</strong></td>
+<td>Eliminates the EMA teacher backbone copy; saves tens of GB of GPU memory for ViT-g models</td>
+</tr>
+<tr class="even">
+<td><strong>Training Throughput</strong></td>
+<td>~<strong>42% reduction in trainable parameters</strong> during training; meaningfully improved throughput</td>
+</tr>
+<tr class="odd">
+<td><strong>Performance Retention</strong></td>
+<td>Performance is comparable to full EMA, demonstrating that text supervision prevents collapse</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="connection-to-distillation" class="level3">
+<h3 class="anchored" data-anchor-id="connection-to-distillation">Connection to Distillation</h3>
+<p>Head-only EMA is also conceptually motivated by the distillation setting: in patch-level distillation, the teacher encoder is completely fixed. Head-only EMA approximates this in spirit — encoder-level EMA is eliminated, and only the projection heads maintain temporal momentum smoothing.</p>
+<hr>
+</section>
+</section>
+<section id="key-innovation-3-multi-granularity-captions-richer-text-supervision" class="level2">
+<h2 class="anchored" data-anchor-id="key-innovation-3-multi-granularity-captions-richer-text-supervision">Key Innovation 3 — Multi-Granularity Captions: Richer Text Supervision</h2>
+<section id="the-problem-with-standard-image-text-pairs" class="level3">
+<h3 class="anchored" data-anchor-id="the-problem-with-standard-image-text-pairs">The Problem with Standard Image-Text Pairs</h3>
+<p>Most large-scale VLMs are trained on web-sourced captions that are short, noisy alt-text strings describing only the most salient element (e.g., “a cat”) without spatial or relational detail. The original TIPS model already demonstrated that <strong>synthetic captions</strong> significantly improve representation quality.</p>
+<p>TIPSv2 takes this further with a multi-granularity approach.</p>
+</section>
+<section id="three-levels-of-textual-granularity" class="level3">
+<h3 class="anchored" data-anchor-id="three-levels-of-textual-granularity">Three Levels of Textual Granularity</h3>
+<p>During TIPSv2 pretraining, each image is paired with captions at three distinct granularity levels:</p>
+<p><strong>Short captions (web-scale).</strong> Brief, general descriptions of overall image content. Provide coarse global semantic signal and help the model learn broad visual-semantic associations.</p>
+<p><strong>Medium-length detailed captions (PaliGemma-generated).</strong> Descriptions generated by PaliGemma naming more objects, describing attributes (color, shape, texture, size), and capturing spatial relationships. Provide a richer intermediate-level signal.</p>
+<p><strong>Long, comprehensive captions (Gemini-generated).</strong> Highly detailed, multi-sentence descriptions covering fine-grained attributes, scene context, inter-object relationships, spatial layout, and subtle semantic details. The richest and most informative level.</p>
+</section>
+<section id="caption-sampling-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="caption-sampling-strategy">Caption Sampling Strategy</h3>
+<p>A key design choice is the <strong>random sampling strategy</strong>: during training, for each image, the model randomly samples from the available caption granularities. This introduces diversity, prevents overfitting to any single caption style, and teaches the model to be robust to varying levels of textual specificity.</p>
+</section>
+<section id="why-multi-granularity-captions-improve-patch-text-alignment" class="level3">
+<h3 class="anchored" data-anchor-id="why-multi-granularity-captions-improve-patch-text-alignment">Why Multi-Granularity Captions Improve Patch-Text Alignment</h3>
+<p>When a long, detailed caption describes <em>“a red fire hydrant near the curb, partially obscured by autumn leaves, with a yellow parking sign to its left,”</em> the model must develop image representations that encode these spatial and attribute details to align with the caption. This directly pushes patch representations toward being semantically informative about their local visual content.</p>
+<hr>
+</section>
+</section>
+<section id="pretraining-objectives-putting-it-all-together" class="level2">
+<h2 class="anchored" data-anchor-id="pretraining-objectives-putting-it-all-together">Pretraining Objectives: Putting It All Together</h2>
+<p>TIPSv2’s pretraining combines multiple objectives into a single training loss.</p>
+<section id="contrastive-image-text-alignment-loss" class="level3">
+<h3 class="anchored" data-anchor-id="contrastive-image-text-alignment-loss">Contrastive Image-Text Alignment Loss</h3>
+<p>The foundational objective is a <strong>CLIP-style contrastive loss</strong> (or SigLIP-style sigmoid loss for the SO-400m variant) between global image embeddings and text embeddings:</p>
+<ul>
+<li>The image encoder produces a <code>[CLS]</code> token embedding for each image.</li>
+<li>The text encoder produces an embedding for each caption.</li>
+<li>A cross-modal contrastive loss (InfoNCE or sigmoid binary cross-entropy) aligns matched pairs and pushes apart mismatched pairs.</li>
+</ul>
+</section>
+<section id="ibot-self-supervised-loss" class="level3">
+<h3 class="anchored" data-anchor-id="ibot-self-supervised-loss">iBOT++ Self-Supervised Loss</h3>
+<p>The iBOT++ patch-level loss operates alongside the contrastive loss:</p>
+<ol type="1">
+<li>Two augmented views of each image are passed through the student encoder.</li>
+<li>A momentum-updated teacher (with head-only EMA on projection heads) produces target representations.</li>
+<li>For <strong>every</strong> patch token in both views, a distribution prediction loss is computed.</li>
+<li>A <code>[CLS]</code>-level self-supervised classification loss (DINO-style) is also applied.</li>
+</ol>
+</section>
+<section id="combined-loss-function" class="level3">
+<h3 class="anchored" data-anchor-id="combined-loss-function">Combined Loss Function</h3>
+<p>The final training loss is a weighted combination:</p>
+<p><span class="math display">\[\mathcal{L}_{\text{total}} = \alpha \cdot \mathcal{L}_{\text{contrastive}} + \beta \cdot \mathcal{L}_{\text{iBOT++}}\]</span></p>
+<p>where <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are hyperparameters balancing global alignment and dense patch-level alignment.</p>
+<hr>
+</section>
+</section>
+<section id="evaluation-protocol-9-tasks-20-datasets" class="level2">
+<h2 class="anchored" data-anchor-id="evaluation-protocol-9-tasks-20-datasets">Evaluation Protocol: 9 Tasks, 20 Datasets</h2>
+<p>One of TIPSv2’s distinguishing features is the scope and rigor of its evaluation.</p>
+<section id="global-image-text-tasks-7-evaluations" class="level3">
+<h3 class="anchored" data-anchor-id="global-image-text-tasks-7-evaluations">Global Image-Text Tasks (7 Evaluations)</h3>
+<ul>
+<li><strong>Zero-shot image classification</strong> (ImageNet) — standard measure of global semantic recognition</li>
+<li><strong>Image-text retrieval</strong> — matching images to captions and vice versa (COCO, Flickr30k)</li>
+<li><strong>Image captioning</strong> (DOCCI) — generating or retrieving descriptive captions</li>
+</ul>
+</section>
+<section id="dense-image-understanding-tasks-9-evaluations" class="level3">
+<h3 class="anchored" data-anchor-id="dense-image-understanding-tasks-9-evaluations">Dense Image Understanding Tasks (9 Evaluations)</h3>
+<ul>
+<li><strong>Zero-shot semantic segmentation</strong> — identifying and delineating semantic regions without task-specific fine-tuning (PASCAL VOC, ADE20k, COCO-Stuff, Pascal Context)</li>
+<li><strong>Semantic segmentation with linear probing</strong> — evaluating patch features with a linear classifier</li>
+<li><strong>Depth estimation</strong> (NYUv2) — monocular depth prediction from a single image with frozen features</li>
+<li><strong>Open-vocabulary dense prediction</strong> — generalizing segmentation to unseen categories</li>
+</ul>
+</section>
+<section id="evaluation-regime-frozen-features" class="level3">
+<h3 class="anchored" data-anchor-id="evaluation-regime-frozen-features">Evaluation Regime: Frozen Features</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Most benchmarks are conducted with <strong>frozen encoder features</strong> — weights are not fine-tuned on the downstream task. This is the hardest and most informative evaluation regime for foundation models.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="experimental-results-and-benchmarks" class="level2">
+<h2 class="anchored" data-anchor-id="experimental-results-and-benchmarks">Experimental Results and Benchmarks</h2>
+<section id="dense-understanding-segmentation" class="level3">
+<h3 class="anchored" data-anchor-id="dense-understanding-segmentation">Dense Understanding: Segmentation</h3>
+<p>TIPSv2 achieves <strong>state-of-the-art performance on all four zero-shot semantic segmentation benchmarks</strong> evaluated:</p>
+<ul>
+<li><strong>iBOT++ alone</strong> improves zero-shot segmentation by <strong>+14.1 mIoU</strong> vs.&nbsp;the standard iBOT baseline.</li>
+<li>TIPSv2 outperforms both <strong>SILC</strong> and <strong>DINOv2</strong> across all four segmentation datasets.</li>
+<li>Performance on PASCAL VOC and COCO-Stuff shows cleanly delineated semantic boundaries.</li>
+</ul>
+</section>
+<section id="global-tasks-classification-and-retrieval" class="level3">
+<h3 class="anchored" data-anchor-id="global-tasks-classification-and-retrieval">Global Tasks: Classification and Retrieval</h3>
+<ul>
+<li>Achieves best or second-best performance in <strong>5 out of 7 global evaluations</strong>.</li>
+<li>On COCO image-text retrieval and DOCCI captioning, <strong>TIPSv2 outperforms models with 56% more parameters</strong>.</li>
+<li>Zero-shot ImageNet classification remains strong — dense alignment improvements do not compromise global discriminability.</li>
+</ul>
+</section>
+<section id="depth-estimation" class="level3">
+<h3 class="anchored" data-anchor-id="depth-estimation">Depth Estimation</h3>
+<p>On NYUv2 monocular depth estimation with frozen features, TIPSv2 achieves best or second-best results, validating that spatially coherent patch representations also encode meaningful metric depth information.</p>
+</section>
+<section id="summary-best-or-second-best-across-the-board" class="level3">
+<h3 class="anchored" data-anchor-id="summary-best-or-second-best-across-the-board">Summary: Best or Second-Best Across the Board</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Category</th>
+<th>Performance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Global evaluations</td>
+<td>Best or 2nd-best in <strong>5 of 7</strong></td>
+</tr>
+<tr class="even">
+<td>Dense understanding evaluations</td>
+<td>Best or 2nd-best in <strong>7 of 9</strong></td>
+</tr>
+<tr class="odd">
+<td>Zero-shot segmentation benchmarks</td>
+<td><strong>State-of-the-art on all 4</strong></td>
+</tr>
+</tbody>
+</table>
+<p>This breadth of strong performance across qualitatively different task types is unusual — most models specialize at either global alignment (CLIP) or dense tasks (DINOv2). TIPSv2 achieves strong results on both families simultaneously.</p>
+<hr>
+</section>
+</section>
+<section id="comparison-with-prior-work" class="level2">
+<h2 class="anchored" data-anchor-id="comparison-with-prior-work">Comparison with Prior Work</h2>
+<section id="vs.-clip-siglip" class="level3">
+<h3 class="anchored" data-anchor-id="vs.-clip-siglip">vs.&nbsp;CLIP / SigLIP</h3>
+<p><strong>CLIP</strong> and <strong>SigLIP</strong> excel at image classification and image-text retrieval but have limited spatial awareness due to their purely global training objective. TIPSv2 significantly outperforms them on dense tasks while remaining competitive on global tasks.</p>
+</section>
+<section id="vs.-dinov2" class="level3">
+<h3 class="anchored" data-anchor-id="vs.-dinov2">vs.&nbsp;DINOv2</h3>
+<p><strong>DINOv2</strong> is known for excellent patch-level representations and strong dense task performance. However, DINOv2 has no text alignment — it cannot support cross-modal retrieval or language-grounded zero-shot classification. TIPSv2 surpasses DINOv2 on zero-shot segmentation while also performing strongly on text-grounded tasks that DINOv2 cannot natively address.</p>
+</section>
+<section id="vs.-silc" class="level3">
+<h3 class="anchored" data-anchor-id="vs.-silc">vs.&nbsp;SILC</h3>
+<p><strong>SILC</strong> combines self-supervised and image-text learning objectives, making it a close conceptual relative of TIPS and TIPSv2. TIPSv2 outperforms SILC on dense segmentation benchmarks, demonstrating that iBOT++ and multi-granularity captions provide meaningful gains.</p>
+</section>
+<section id="vs.-pe-core-vit-g" class="level3">
+<h3 class="anchored" data-anchor-id="vs.-pe-core-vit-g">vs.&nbsp;PE-core ViT-G</h3>
+<p><strong>PE-core</strong> (Perception Encoder) ViT-G is a much larger vision-language model. Despite its greater capacity, TIPSv2 outperforms PE-core ViT-G on COCO and DOCCI evaluations — a striking result given that PE-core has roughly 56% more parameters.</p>
+</section>
+<section id="vs.-tips-v1" class="level3">
+<h3 class="anchored" data-anchor-id="vs.-tips-v1">vs.&nbsp;TIPS (v1)</h3>
+<p>TIPSv2 improves upon TIPS on virtually all benchmarks, with the most pronounced gains on dense tasks. iBOT++ accounts for the bulk of the dense task improvement, multi-granularity captions primarily improve global text-image tasks, and head-only EMA improves training efficiency without sacrificing performance.</p>
+<hr>
+</section>
+</section>
+<section id="practical-applications-and-downstream-tasks" class="level2">
+<h2 class="anchored" data-anchor-id="practical-applications-and-downstream-tasks">Practical Applications and Downstream Tasks</h2>
+<section id="zero-shot-semantic-segmentation" class="level3">
+<h3 class="anchored" data-anchor-id="zero-shot-semantic-segmentation">Zero-Shot Semantic Segmentation</h3>
+<p>TIPSv2’s strong patch-text alignment makes it directly applicable to open-vocabulary semantic segmentation without task-specific fine-tuning. By computing cosine similarity between patch embeddings and text embeddings of class names, one can generate segmentation maps that correctly delineate semantic regions.</p>
+</section>
+<section id="multimodal-retrieval-and-search" class="level3">
+<h3 class="anchored" data-anchor-id="multimodal-retrieval-and-search">Multimodal Retrieval and Search</h3>
+<p>The strong global image-text alignment makes TIPSv2 suitable as a backbone for large-scale multimodal search engines. Applications range from e-commerce visual search to scientific image database querying.</p>
+</section>
+<section id="monocular-depth-estimation" class="level3">
+<h3 class="anchored" data-anchor-id="monocular-depth-estimation">Monocular Depth Estimation</h3>
+<p>The spatially coherent patch features encode metric depth information surprisingly well, enabling monocular depth estimation with simple linear probing. Applications include robotics, augmented reality, and 3D scene understanding.</p>
+</section>
+<section id="foundation-for-multimodal-large-language-models" class="level3">
+<h3 class="anchored" data-anchor-id="foundation-for-multimodal-large-language-models">Foundation for Multimodal Large Language Models</h3>
+<p>High-quality vision encoders are a critical component of MLLMs such as PaLI, LLaVA, InstructBLIP, and Gemini. TIPSv2’s combination of strong global text alignment and rich patch-level semantics makes it an excellent candidate as a visual backbone for MLLMs.</p>
+</section>
+<section id="zero-shot-visual-question-answering" class="level3">
+<h3 class="anchored" data-anchor-id="zero-shot-visual-question-answering">Zero-Shot Visual Question Answering</h3>
+<p>By leveraging the rich spatial semantics of TIPSv2 patch representations, downstream VQA models can more accurately localize relevant regions in response to questions requiring spatial reasoning.</p>
+</section>
+<section id="referring-expression-comprehension" class="level3">
+<h3 class="anchored" data-anchor-id="referring-expression-comprehension">Referring Expression Comprehension</h3>
+<p>TIPSv2’s multi-granularity caption training directly prepares the model for fine-grained grounded comprehension such as “the second person from the left wearing a red hat.”</p>
+<hr>
+</section>
+</section>
+<section id="model-weights-and-usage" class="level2">
+<h2 class="anchored" data-anchor-id="model-weights-and-usage">Model Weights and Usage</h2>
+<section id="publicly-released-models" class="level3">
+<h3 class="anchored" data-anchor-id="publicly-released-models">Publicly Released Models</h3>
+<p>The TIPSv2 team has released pre-trained model weights via Hugging Face:</p>
+<ul>
+<li><strong><code>google/tipsv2-b14</code></strong> — ViT-B/14 model, distilled from ViT-g teacher</li>
+<li>Additional model sizes (ViT-L, ViT-g) are available via the <a href="https://gdm-tipsv2.github.io/">project page</a></li>
+</ul>
+</section>
+<section id="code-repository" class="level3">
+<h3 class="anchored" data-anchor-id="code-repository">Code Repository</h3>
+<p>Full training and evaluation code is at <a href="https://github.com/google-deepmind/tips">github.com/google-deepmind/tips</a>, covering both TIPSv2 (CVPR 2026) and TIPS (ICLR 2025), including pretraining code, distillation pipeline, evaluation scripts, and pre-trained checkpoints.</p>
+</section>
+<section id="example-usage-huggingface" class="level3">
+<h3 class="anchored" data-anchor-id="example-usage-huggingface">Example Usage (HuggingFace)</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoModel, AutoProcessor</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load model and processor</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> AutoModel.from_pretrained(<span class="st">"google/tipsv2-b14"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>processor <span class="op">=</span> AutoProcessor.from_pretrained(<span class="st">"google/tipsv2-b14"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Encode an image</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> Image.<span class="bu">open</span>(<span class="st">"example.jpg"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>inputs <span class="op">=</span> processor(images<span class="op">=</span>image, return_tensors<span class="op">=</span><span class="st">"pt"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> model.get_image_features(<span class="op">**</span>inputs)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Get patch-level representations (exclude [CLS] token)</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>patch_features <span class="op">=</span> outputs.last_hidden_state[:, <span class="dv">1</span>:, :]</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Get global [CLS] representation</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>cls_feature <span class="op">=</span> outputs.last_hidden_state[:, <span class="dv">0</span>, :]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="zero-shot-segmentation-example" class="level3">
+<h3 class="anchored" data-anchor-id="zero-shot-segmentation-example">Zero-Shot Segmentation Example</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoModel, AutoTokenizer, AutoProcessor</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> AutoModel.from_pretrained(<span class="st">"google/tipsv2-b14"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>processor <span class="op">=</span> AutoProcessor.from_pretrained(<span class="st">"google/tipsv2-b14"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> AutoTokenizer.from_pretrained(<span class="st">"google/tipsv2-b14"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Class names for zero-shot segmentation</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>class_names <span class="op">=</span> [<span class="st">"sky"</span>, <span class="st">"tree"</span>, <span class="st">"road"</span>, <span class="st">"car"</span>, <span class="st">"person"</span>, <span class="st">"building"</span>]</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Encode class names as text</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>text_inputs <span class="op">=</span> tokenizer(class_names, padding<span class="op">=</span><span class="va">True</span>, return_tensors<span class="op">=</span><span class="st">"pt"</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    text_features <span class="op">=</span> model.get_text_features(<span class="op">**</span>text_inputs)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    text_features <span class="op">=</span> F.normalize(text_features, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Encode image and get patch features</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> Image.<span class="bu">open</span>(<span class="st">"scene.jpg"</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>img_inputs <span class="op">=</span> processor(images<span class="op">=</span>image, return_tensors<span class="op">=</span><span class="st">"pt"</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    img_outputs <span class="op">=</span> model.get_image_features(<span class="op">**</span>img_inputs)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    patch_features <span class="op">=</span> img_outputs.last_hidden_state[:, <span class="dv">1</span>:, :]  <span class="co"># (1, N_patches, D)</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    patch_features <span class="op">=</span> F.normalize(patch_features, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute similarity map: (N_patches, N_classes)</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>similarity <span class="op">=</span> torch.einsum(<span class="st">"bpd,cd-&gt;bpc"</span>, patch_features, text_features.unsqueeze(<span class="dv">0</span>))</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>segmentation_map <span class="op">=</span> similarity.argmax(dim<span class="op">=-</span><span class="dv">1</span>)  <span class="co"># (batch, N_patches)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+</section>
+<section id="broader-impact-and-limitations" class="level2">
+<h2 class="anchored" data-anchor-id="broader-impact-and-limitations">Broader Impact and Limitations</h2>
+<section id="positive-impacts" class="level3">
+<h3 class="anchored" data-anchor-id="positive-impacts">Positive Impacts</h3>
+<p>TIPSv2’s strong patch-text alignment capabilities have the potential to significantly advance:</p>
+<ul>
+<li><strong>Accessibility technology</strong> — more accurate image descriptions for visually impaired users</li>
+<li><strong>Medical imaging</strong> — precise region-level understanding without expensive annotation</li>
+<li><strong>Scientific image analysis</strong> — automated understanding of spatial patterns in microscopy, satellite imagery, etc.</li>
+<li><strong>Robotics and embodied AI</strong> — spatially grounded understanding for manipulation and navigation</li>
+<li><strong>Efficient AI</strong> — the head-only EMA strategy reduces training resource requirements</li>
+</ul>
+</section>
+<section id="potential-concerns" class="level3">
+<h3 class="anchored" data-anchor-id="potential-concerns">Potential Concerns</h3>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Like all large vision-language models, TIPSv2 inherits risks associated with this class of systems.</p>
+</div>
+</div>
+<p><strong>Bias and fairness.</strong> Models trained on web-scale data may encode societal biases. The use of synthetic captions from PaliGemma and Gemini could propagate or transform existing biases.</p>
+<p><strong>Privacy.</strong> Large models trained on web-scraped image-text pairs may have memorized aspects of training data.</p>
+<p><strong>Misuse.</strong> Highly capable vision-language encoders can be components of surveillance systems or other dual-use applications.</p>
+</section>
+<section id="limitations" class="level3">
+<h3 class="anchored" data-anchor-id="limitations">Limitations</h3>
+<p><strong>Dense task performance vs.&nbsp;task-specific models.</strong> While TIPSv2 achieves impressive zero-shot and frozen-feature performance, fully fine-tuned task-specific models (Mask2Former, DepthAnything) typically outperform frozen foundation models on their specific benchmarks.</p>
+<p><strong>Text encoder scope.</strong> TIPSv2’s text encoder is not a large language model — its language understanding is bounded by what can be learned from paired image-text training.</p>
+<p><strong>Compute requirements at scale.</strong> Despite the efficiency gains from head-only EMA, training ViT-g scale models with the full pretraining objective still requires significant computational resources.</p>
+<hr>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>TIPSv2 represents a carefully engineered and empirically grounded advance in vision-language pretraining. By tracing its design choices back to a single surprising empirical observation — that patch-level distillation produces better patch-text alignment than the teacher model itself — the paper develops a coherent set of three complementary innovations:</p>
+<p><strong>iBOT++</strong> extends self-supervised patch-level loss to all tokens, delivering +14.1 mIoU gains on zero-shot segmentation alone.</p>
+<p><strong>Head-only EMA</strong> leverages the text supervision signal to eliminate the need for a full-backbone EMA teacher, reducing training parameter counts by ~42% and improving throughput without sacrificing performance.</p>
+<p><strong>Multi-Granularity Captions</strong> provides richer, spatially-detailed text supervision by mixing short, medium, and long synthetic captions from PaliGemma and Gemini.</p>
+<p>Together, these innovations produce a model family that achieves state-of-the-art performance on all four zero-shot segmentation benchmarks, best or second-best on the majority of its 20-dataset evaluation suite, and strong global image-text alignment — often matching or surpassing models with significantly more parameters.</p>
+<p>TIPSv2 is a testament to the value of careful empirical investigation: sometimes the best improvements come not from scaling compute or data, but from understanding <em>why</em> a model works the way it does, and designing training procedures that deliberately cultivate the mechanisms responsible for success.</p>
+<hr>
+</section>
+<section id="references-and-further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="references-and-further-reading">References and Further Reading</h2>
+<section id="primary-sources" class="level3">
+<h3 class="anchored" data-anchor-id="primary-sources">Primary Sources</h3>
+<ul>
+<li><strong>TIPSv2 Paper:</strong> Cao, B., et al.&nbsp;“TIPSv2: Advancing Vision-Language Pretraining with Enhanced Patch-Text Alignment.” <em>CVPR 2026</em>. <a href="https://arxiv.org/abs/2604.12012">arXiv:2604.12012</a></li>
+<li><strong>TIPS (v1) Paper:</strong> “TIPS: Text-Image Pretraining with Spatial Awareness.” <em>ICLR 2025</em>. <a href="https://arxiv.org/abs/2410.16512">arXiv:2410.16512</a></li>
+<li><strong>TIPSv2 Project Page:</strong> <a href="https://gdm-tipsv2.github.io/">gdm-tipsv2.github.io</a></li>
+<li><strong>GitHub (TIPS + TIPSv2):</strong> <a href="https://github.com/google-deepmind/tips">github.com/google-deepmind/tips</a></li>
+<li><strong>HuggingFace Model Hub:</strong> <a href="https://huggingface.co/google/tipsv2-b14">google/tipsv2-b14</a></li>
+</ul>
+</section>
+<section id="related-work" class="level3">
+<h3 class="anchored" data-anchor-id="related-work">Related Work</h3>
+<ul>
+<li><strong>CLIP:</strong> Radford, A., et al.&nbsp;“Learning Transferable Visual Models From Natural Language Supervision.” <em>ICML 2021</em>.</li>
+<li><strong>SigLIP:</strong> Zhai, X., et al.&nbsp;“Sigmoid Loss for Language Image Pre-Training.” <em>ICCV 2023</em>.</li>
+<li><strong>DINOv2:</strong> Oquab, M., et al.&nbsp;“DINOv2: Learning Robust Visual Features without Supervision.” <em>TMLR 2023</em>.</li>
+<li><strong>iBOT:</strong> Zhou, J., et al.&nbsp;“iBOT: Image BERT Pre-Training with Online Tokenizer.” <em>ICLR 2022</em>.</li>
+<li><strong>DINO:</strong> Caron, M., et al.&nbsp;“Emerging Properties in Self-Supervised Vision Transformers.” <em>ICCV 2021</em>.</li>
+<li><strong>SILC:</strong> Naeem, M.F., et al.&nbsp;“SILC: Improving Vision Language Pretraining with Self-Distillation.” 2023.</li>
+<li><strong>PaliGemma:</strong> Google DeepMind’s vision-language model used for medium-granularity caption generation.</li>
+</ul>
+</section>
+<section id="survey-and-context-reading" class="level3">
+<h3 class="anchored" data-anchor-id="survey-and-context-reading">Survey and Context Reading</h3>
+<ul>
+<li><strong>Vision Transformer (ViT):</strong> Dosovitskiy, A., et al.&nbsp;“An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale.” <em>ICLR 2021</em>.</li>
+<li><strong>Masked Autoencoders:</strong> He, K., et al.&nbsp;“Masked Autoencoders Are Scalable Vision Learners.” <em>CVPR 2022</em>.</li>
+<li><strong>Vision-Language Pretraining Survey:</strong> <a href="https://paperswithcode.com/task/vision-language-pre-training">Papers With Code — Vision-Language Pre-Training</a>.</li>
+</ul>
+
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/theja-vanka\.github\.io\/blogs\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© 2025 Krishnatheja Vanka</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
