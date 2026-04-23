@@ -40,53 +40,38 @@ These principles drive every recommendation in this guide.
 
 Organizing your monorepo consistently makes workflow triggers predictable and avoids accidental pipeline skips.
 
-```{mermaid}
-%%| label: fig-project-layout
-%%| fig-cap: "Monorepo structure for a CV CI/CD pipeline"
-%%| echo: false
+```
+repo root/
+├── .github/
+│   ├── workflows/
+│   │   ├── ci.yml          # On every PR
+│   │   ├── train.yml       # Merge to main / manual
+│   │   ├── evaluate.yml    # Post-training gate
+│   │   └── deploy.yml      # Registry stage promotion
+│   └── actions/
+│       └── setup-mlflow/   # Reusable composite action
+├── src/
+│   ├── data/               # Loading, augmentation, versioning
+│   ├── models/             # Architecture definitions
+│   ├── training/           # Loops, callbacks
+│   ├── evaluation/         # Metrics, visualisations
+│   └── serving/            # Inference wrapper
+├── configs/
+│   ├── base.yaml           # Shared hyperparameters
+│   ├── experiment/         # Hydra overrides
+│   └── deployment/         # Serving config per env
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── smoke/              # Fast inference checks
+├── mlflow/
+│   └── MLproject           # Reproducible runs
+├── scripts/
+│   ├── register_model.py
+│   ├── compare_runs.py
+│   └── promote_model.py
+└── Makefile
 
-flowchart TD
-    ROOT["📁 repo root"]
-
-    ROOT --> GH["📁 .github/"]
-    ROOT --> SRC["📁 src/"]
-    ROOT --> CFG["📁 configs/"]
-    ROOT --> TST["📁 tests/"]
-    ROOT --> MLF["📁 mlflow/"]
-    ROOT --> SCR["📁 scripts/"]
-    ROOT --> MK["📄 Makefile"]
-
-    GH --> WF["📁 workflows/"]
-    GH --> ACT["📁 actions/setup-mlflow/\nReusable composite action"]
-    WF --> CI["ci.yml\nOn every PR"]
-    WF --> TR["train.yml\nMerge to main / manual"]
-    WF --> EV["evaluate.yml\nPost-training gate"]
-    WF --> DP["deploy.yml\nRegistry stage promotion"]
-
-    SRC --> DA["data/\nLoading, augmentation, versioning"]
-    SRC --> MO["models/\nArchitecture definitions"]
-    SRC --> TRA["training/\nLoops, callbacks"]
-    SRC --> EVA["evaluation/\nMetrics, visualisations"]
-    SRC --> SE["serving/\nInference wrapper"]
-
-    CFG --> BY["base.yaml\nShared hyperparameters"]
-    CFG --> EX["experiment/\nHydra overrides"]
-    CFG --> DE["deployment/\nServing config per env"]
-
-    TST --> UN["unit/"]
-    TST --> IN["integration/"]
-    TST --> SM["smoke/\nFast inference checks"]
-
-    MLF --> MP["MLproject\nReproducible runs"]
-
-    SCR --> RM["register_model.py"]
-    SCR --> CM["compare_runs.py"]
-    SCR --> PM["promote_model.py"]
-
-    style CI fill:#d4edda,stroke:#28a745
-    style TR fill:#cce5ff,stroke:#004085
-    style EV fill:#fff3cd,stroke:#856404
-    style DP fill:#f8d7da,stroke:#721c24
 ```
 
 ::: {.callout-important}
@@ -220,20 +205,20 @@ Design workflows around **what changed** and **who initiated** the change, not j
 %%| echo: false
 
 flowchart TD
-    PR["🔀 Pull Request\nopened / updated"]
+    PR["🔀 Pull Request opened / updated"]
     MERGE["✅ Merge to main"]
-    MANUAL["🖱️ Manual dispatch\nworkflow_dispatch"]
-    WEBHOOK["🔔 MLFlow webhook /\nRegistry event"]
+    MANUAL["🖱️ Manual dispatch workflow_dispatch"]
+    WEBHOOK["🔔 MLFlow webhook / Registry event"]
 
-    PR --> CI["ci.yml\nlint · unit tests\nsmoke inference · config validation"]
+    PR --> CI["ci.yml lint · unit tests smoke inference · config validation"]
 
-    MERGE --> TRAIN["train.yml\nfull training job\nlogs to MLFlow"]
-    TRAIN -->|on success| EVAL["evaluate.yml\nquality gates\nmodel comparison"]
-    EVAL -->|on pass| REG["📋 Opens PR to promote\nmodel in registry"]
+    MERGE --> TRAIN["train.yml full training job logs to MLFlow"]
+    TRAIN -->|on success| EVAL["evaluate.yml quality gates model comparison"]
+    EVAL -->|on pass| REG["📋 Opens PR to promote model in registry"]
 
-    MANUAL --> TRAIN2["train.yml\nre-train with custom params\n(experiments)"]
+    MANUAL --> TRAIN2["train.yml re-train with custom params (experiments)"]
 
-    WEBHOOK --> DEPLOY["deploy.yml\ndeploy 'Production'-staged\nmodel to serving infra"]
+    WEBHOOK --> DEPLOY["deploy.yml deploy 'Production'-staged model to serving infra"]
 
     style CI fill:#d4edda,stroke:#28a745
     style TRAIN fill:#cce5ff,stroke:#004085
@@ -531,16 +516,16 @@ Use MLFlow's registry stages as a formal promotion pipeline: `None → Staging �
 %%| echo: false
 
 flowchart TD
-    RUN["🏋️ Training Run\n(GitHub Actions · GPU runner)"]
-    STAGING["📦 Staging\nregistered candidate model"]
-    PRODUCTION["🚀 Production\nserving live traffic"]
-    ARCHIVED["🗄️ Archived\nretained for rollback"]
+    RUN["🏋️ Training Run (GitHub Actions · GPU runner)"]
+    STAGING["📦 Staging registered candidate model"]
+    PRODUCTION["🚀 Production serving live traffic"]
+    ARCHIVED["🗄️ Archived retained for rollback"]
 
-    RUN -->|"quality gate passed\nautomated by evaluate.yml"| STAGING
-    STAGING -->|"manual approval in GitHub Environments\nOR integration tests pass\nautomated by deploy.yml"| PRODUCTION
-    PRODUCTION -->|"deprecate after N days\nor on next promotion"| ARCHIVED
+    RUN -->|"quality gate passed automated by evaluate.yml"| STAGING
+    STAGING -->|"manual approval in GitHub Environments OR integration tests pass automated by deploy.yml"| PRODUCTION
+    PRODUCTION -->|"deprecate after N days or on next promotion"| ARCHIVED
 
-    ARCHIVED -.->|"rollback path\nrollback.yml"| PRODUCTION
+    ARCHIVED -.->|"rollback path rollback.yml"| PRODUCTION
 
     style RUN      fill:#cce5ff,stroke:#004085
     style STAGING  fill:#fff3cd,stroke:#856404
@@ -635,7 +620,7 @@ def check_gate(run_id, baseline_stage, thresholds_path, output_path):
 
     # Write GitHub Actions output
     with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-        f.write(f"passed={'true' if passed else 'false'}\n")
+        f.write(f"passed={'true' if passed else 'false'} ")
 
     sys.exit(0 if passed else 1)
 ```
@@ -679,12 +664,12 @@ flowchart TD
     EXP["{experiment_id}/"]
     RUN["{run_id}/"]
     ART["artifacts/"]
-    MET["metrics/\nMLFlow metric files\nauto-managed"]
+    MET["metrics/ MLFlow metric files auto-managed"]
 
-    MODEL["model/\nPyTorch · ONNX weights"]
-    EVAL["eval/\nConfusion matrices\nPR curves"]
-    CONFIG["config/\nFull config snapshot"]
-    DATA["data_version/\nDVC pointer file"]
+    MODEL["model/ PyTorch · ONNX weights"]
+    EVAL["eval/ Confusion matrices PR curves"]
+    CONFIG["config/ Full config snapshot"]
+    DATA["data_version/ DVC pointer file"]
 
     BUCKET --> EXP
     EXP --> RUN
@@ -949,7 +934,7 @@ jobs:
         uses: slackapi/slack-github-action@v1
         with:
           payload: |
-            {"text": "🔄 *Production rollback executed* by ${{ github.actor }}\nReason: ${{ inputs.reason }}"}
+            {"text": "🔄 *Production rollback executed* by ${{ github.actor }} Reason: ${{ inputs.reason }}"}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
