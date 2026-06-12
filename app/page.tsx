@@ -10,6 +10,7 @@ export const metadata = {
 export default function HomePage() {
   const posts = getAllPosts();
   const categories = getAllCategories();
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
@@ -28,7 +29,7 @@ export default function HomePage() {
             <div className="shrink-0 relative">
               <div className="absolute -inset-1.5 bg-gradient-to-br from-blue-500 to-violet-600 rounded-full opacity-50 blur-sm" />
               <Image
-                src="/profile.jpg"
+                src={`${basePath}/profile.jpg`}
                 alt="Krishnatheja Vanka"
                 width={88}
                 height={88}

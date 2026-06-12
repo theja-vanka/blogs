@@ -100,7 +100,8 @@ async function copyImages($, container, sourceDir, slugPath) {
     const destPath = path.join(destDir, basename);
     try {
       await fs.copy(srcPath, destPath, { overwrite: true });
-      $(el).attr("src", `/posts/${slugPath}/${basename}`);
+      // Relative path — resolves correctly regardless of basePath (GitHub Pages or local)
+      $(el).attr("src", basename);
     } catch {
       // Image not found — keep original src
     }
