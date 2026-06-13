@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="pt-20">{children}</main>
           <footer className="border-t border-slate-200 dark:border-slate-800 mt-24 py-8">
             <div className="max-w-6xl mx-auto px-6 text-center text-sm text-slate-500 dark:text-slate-400">
-              © {new Date().getFullYear()} Krishnatheja Vanka · Built with Next.js &amp; Quarto
+              © {new Date().getFullYear()} Krishnatheja Vanka
             </div>
           </footer>
         </ThemeProvider>

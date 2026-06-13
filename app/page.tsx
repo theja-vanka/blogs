@@ -4,7 +4,7 @@ import BlogListing from "@/components/BlogListing";
 
 export const metadata = {
   title: "Blog",
-  description: "Technical writing on ML, Python, and deployment by Krishnatheja Vanka.",
+  description: "Applied Scientist and Machine Learning Engineer writing about ML research, model deployment, and production systems.",
 };
 
 export default function HomePage() {
@@ -47,12 +47,13 @@ export default function HomePage() {
               </h1>
 
               <p className="text-[13px] font-semibold uppercase tracking-widest mb-4 bg-gradient-to-r from-blue-600 to-violet-600 dark:from-blue-400 dark:to-violet-400 bg-clip-text text-transparent">
-                ML Engineer · Python · Deployment
+                Applied Scientist · Machine Learning Engineer
               </p>
 
               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-w-xl mb-6">
-                Writing about machine learning systems, Python tooling, and production deployment workflows.
-                Complex ideas distilled into practical, actionable guides.
+                Working at the intersection of research and production — training models, building ML systems,
+                and closing the gap between experiment and deployment. Writing practical guides on applied ML,
+                scientific computing, and the engineering decisions that make research actually ship.
               </p>
 
               {/* Stats + links */}

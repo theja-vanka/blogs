@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { getPost, getAllSlugs } from "@/lib/posts";
 import { formatDate } from "@/lib/utils";
@@ -22,17 +23,43 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) return {};
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  const siteUrl = `https://theja-vanka.github.io${basePath}`;
   return {
     title: post.title,
     description: post.description || undefined,
     authors: [{ name: post.author }],
+    openGraph: {
+      title: post.title,
+      description: post.description || undefined,
+      type: "article",
+      url: `${siteUrl}/posts/${post.slugPath}/`,
+      images: [{ url: `${siteUrl}/profile.jpg` }],
+      publishedTime: post.date,
+      authors: [post.author],
+    },
+    twitter: {
+      card: "summary",
+      title: post.title,
+      description: post.description || undefined,
+    },
   };
+}
+
+function absolutifyImages(content: string, basePath: string, slugPath: string): string {
+  return content.replace(
+    /(<img[^>]*\ssrc=")(?!https?:|\/|data:)([^"]+)"/g,
+    `$1${basePath}/posts/${slugPath}/$2"`
+  );
 }
 
 export default async function PostPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) notFound();
+
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  const content = absolutifyImages(post.content, basePath, post.slugPath);
 
   return (
     <>
@@ -59,10 +86,6 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">Published</p>
             <p className="text-slate-700 dark:text-slate-300">{formatDate(post.date)}</p>
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">Reading time</p>
-            <p className="text-slate-700 dark:text-slate-300">{post.readingTime} min</p>
           </div>
           {post.categories.length > 0 && (
             <div>
@@ -103,13 +126,13 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
         <article>
           <div
             className="post-content prose prose-slate dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: content }}
           />
         </article>
 
         {/* Back link */}
         <div className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800">
-          <a
+          <Link
             href="/"
             className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5"
           >
@@ -117,7 +140,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
               <path d="m15 18-6-6 6-6" />
             </svg>
             All posts
-          </a>
+          </Link>
         </div>
       </div>
     </>
