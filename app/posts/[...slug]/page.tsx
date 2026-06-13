@@ -1,19 +1,24 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
-import { getPost, getAllSlugs } from "@/lib/posts";
+import { getPost, getAllSlugs, getRelatedPosts, getAdjacentPosts } from "@/lib/posts";
 import { formatDate } from "@/lib/utils";
 import CategoryBadge from "@/components/CategoryBadge";
 import TOC from "@/components/TOC";
+import MobileTOC from "@/components/MobileTOC";
 import ReadingProgress from "@/components/ReadingProgress";
 import MermaidRenderer from "@/components/MermaidRenderer";
 import MathJaxRenderer from "@/components/MathJaxRenderer";
 import CodeCopyButtons from "@/components/CodeCopyButtons";
 import TabsetRenderer from "@/components/TabsetRenderer";
+import ShareButtons from "@/components/ShareButtons";
+import BackToTop from "@/components/BackToTop";
+import ImageLightbox from "@/components/ImageLightbox";
+import HeadingAnchors from "@/components/HeadingAnchors";
+import ReadingModeToggle from "@/components/ReadingModeToggle";
 
-interface Params {
-  slug: string[];
-}
+interface Params { slug: string[] }
 
 export async function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }));
@@ -59,24 +64,33 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
   if (!post) notFound();
 
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  const siteUrl = `https://theja-vanka.github.io${basePath}`;
+  const postUrl = `${siteUrl}/posts/${post.slugPath}/`;
   const content = absolutifyImages(post.content, basePath, post.slugPath);
+
+  const related = getRelatedPosts(post.slugPath);
+  const { prev, next } = getAdjacentPosts(post.slugPath);
 
   return (
     <>
-      <ReadingProgress />
+      <ReadingProgress readingTime={post.readingTime} />
       <CodeCopyButtons />
+      <HeadingAnchors />
       <TabsetRenderer />
+      <BackToTop />
+      <ImageLightbox />
+      <ReadingModeToggle />
       {post.hasMermaid && <MermaidRenderer />}
       {post.hasMath && <MathJaxRenderer />}
 
-      {/* TOC — fixed outside the container, visible only on 2xl+ where there is room */}
+      {/* Desktop TOC — left sidebar, 2xl+ only */}
       {post.headings.length > 0 && (
         <aside className="hidden 2xl:block fixed top-24 left-0 max-h-[calc(100vh-6rem)] overflow-y-auto z-10 toc-sidebar">
           <TOC headings={post.headings} />
         </aside>
       )}
 
-      {/* Metadata sidebar — right margin, visible only on 2xl+ */}
+      {/* Metadata sidebar — right, 2xl+ only */}
       <aside className="hidden 2xl:block fixed top-24 right-0 max-h-[calc(100vh-6rem)] overflow-y-auto z-10 meta-sidebar">
         <div className="space-y-5 text-sm">
           <div>
@@ -92,17 +106,22 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Categories</p>
               <div className="flex flex-wrap gap-1.5">
                 {post.categories.map((c) => (
-                  <CategoryBadge key={c} category={c} />
+                  <CategoryBadge key={c} category={c} href={`/?category=${encodeURIComponent(c)}`} />
                 ))}
               </div>
             </div>
           )}
+          <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">Share</p>
+            <ShareButtons title={post.title} url={postUrl} />
+          </div>
         </div>
       </aside>
 
       <div className="max-w-6xl mx-auto px-6 py-12">
+
         {/* Post header */}
-        <header className="mb-10">
+        <header className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-slate-100 leading-tight mb-4">
             {post.title}
           </h1>
@@ -122,7 +141,10 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
           </div>
         </header>
 
-        {/* Article — full container width, no flex sibling */}
+        {/* Mobile TOC */}
+        {post.headings.length > 0 && <MobileTOC headings={post.headings} />}
+
+        {/* Article */}
         <article>
           <div
             className="post-content prose prose-slate dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none"
@@ -130,8 +152,8 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
           />
         </article>
 
-        {/* Back link */}
-        <div className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800">
+        {/* Back link + share */}
+        <div className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
           <Link
             href="/"
             className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5"
@@ -141,7 +163,72 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
             </svg>
             All posts
           </Link>
+          <ShareButtons title={post.title} url={postUrl} />
         </div>
+
+        {/* Prev / Next navigation */}
+        {(prev || next) && (
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {prev ? (
+              <Link
+                href={`/posts/${prev.slugPath}/`}
+                className="group flex flex-col gap-1 p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all"
+              >
+                <span className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                  Newer
+                </span>
+                <span className="text-sm font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">{prev.title}</span>
+              </Link>
+            ) : <div />}
+
+            {next ? (
+              <Link
+                href={`/posts/${next.slugPath}/`}
+                className="group flex flex-col gap-1 p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all sm:text-right"
+              >
+                <span className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1 sm:justify-end">
+                  Older
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </span>
+                <span className="text-sm font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">{next.title}</span>
+              </Link>
+            ) : <div />}
+          </div>
+        )}
+
+        {/* Related posts */}
+        {related.length > 0 && (
+          <div className="mt-16">
+            <div className="flex items-center gap-4 mb-6">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 shrink-0">Related posts</h2>
+              <div className="flex-1 h-px bg-gradient-to-r from-slate-200 via-slate-200/50 to-transparent dark:from-slate-700 dark:via-slate-700/50" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {related.map((r) => (
+                <Link
+                  key={r.slugPath}
+                  href={`/posts/${r.slugPath}/`}
+                  className="group flex flex-col gap-2 p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-lg transition-all"
+                >
+                  {r.coverImage && (
+                    <div className="relative h-28 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 mb-1">
+                      <Image src={r.coverImage} alt={r.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-snug">
+                    {r.title}
+                  </span>
+                  <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 mt-auto">
+                    <span>{formatDate(r.date)}</span>
+                    <span>·</span>
+                    <span>{r.readingTime} min</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

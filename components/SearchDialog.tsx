@@ -22,6 +22,7 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchItem[]>([]);
   const [fuse, setFuse] = useState<Fuse<SearchItem> | null>(null);
+  const [recentItems, setRecentItems] = useState<SearchItem[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -32,6 +33,7 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
     fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/search-index.json`)
       .then((r) => r.json())
       .then((data: SearchItem[]) => {
+        setRecentItems(data.slice(0, 5));
         setFuse(
           new Fuse(data, {
             keys: [
@@ -201,6 +203,37 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
         <div className="px-4 py-10 text-center text-sm text-slate-400">
           No results for <span className="font-medium text-slate-600 dark:text-slate-300">&ldquo;{query}&rdquo;</span>
         </div>
+      ) : recentItems.length > 0 ? (
+        <>
+          <p className="px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            Recent posts
+          </p>
+          <ul className="py-1.5">
+            {recentItems.map((item, i) => (
+              <li key={item.id}>
+                <button
+                  onClick={() => navigate(item)}
+                  onMouseEnter={() => setSelectedIndex(i)}
+                  className={`w-full text-left flex items-start gap-3 px-4 py-2.5 transition-colors ${
+                    i === selectedIndex
+                      ? "bg-blue-50 dark:bg-blue-950/50"
+                      : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                  }`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0 text-slate-300 dark:text-slate-600">
+                    <polyline points="12 8 12 12 14 14"/><circle cx="12" cy="12" r="10"/>
+                  </svg>
+                  <div className="flex flex-col gap-0.5 min-w-0">
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">{item.title}</span>
+                    {item.categories && (
+                      <span className="text-xs text-blue-500 dark:text-blue-400">{item.categories.replace(/,\s*/g, " · ")}</span>
+                    )}
+                  </div>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
       ) : (
         <div className="px-4 py-10 text-center text-sm text-slate-400">Type to search across all posts</div>
       )}

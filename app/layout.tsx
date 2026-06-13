@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     locale: "en_US",
   },
   twitter: { card: "summary" },
+  alternates: {
+    types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

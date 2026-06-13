@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const colors: Record<string, string> = {
   advanced:     "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
   beginner:     "bg-green-100  text-green-700  dark:bg-green-900/30  dark:text-green-300",
@@ -9,11 +11,22 @@ const colors: Record<string, string> = {
   tutorial:     "bg-cyan-100   text-cyan-700   dark:bg-cyan-900/30   dark:text-cyan-300",
 };
 
-export default function CategoryBadge({ category, small }: { category: string; small?: boolean }) {
+interface Props {
+  category: string;
+  small?: boolean;
+  href?: string;
+}
+
+export default function CategoryBadge({ category, small, href }: Props) {
   const cls = colors[category] ?? "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300";
-  return (
-    <span className={`inline-block rounded-full font-medium ${small ? "text-[11px] px-2 py-0.5" : "text-xs px-2.5 py-0.5"} ${cls}`}>
-      {category}
-    </span>
-  );
+  const base = `inline-block rounded-full font-medium ${small ? "text-[11px] px-2 py-0.5" : "text-xs px-2.5 py-0.5"} ${cls}`;
+
+  if (href) {
+    return (
+      <Link href={href} className={`${base} hover:opacity-80 transition-opacity`}>
+        {category}
+      </Link>
+    );
+  }
+  return <span className={base}>{category}</span>;
 }

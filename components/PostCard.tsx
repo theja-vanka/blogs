@@ -15,6 +15,11 @@ const categoryGradient: Record<string, string> = {
   tutorial:     "from-cyan-400 to-blue-500",
 };
 
+function isNew(date: string) {
+  if (!date) return false;
+  return Date.now() - new Date(date).getTime() < 30 * 24 * 60 * 60 * 1000;
+}
+
 export default function PostCard({ post }: { post: PostMeta }) {
   const primaryCat = post.categories[0];
   const gradient = (primaryCat && categoryGradient[primaryCat]) ?? "from-blue-500 to-violet-500";
@@ -36,6 +41,11 @@ export default function PostCard({ post }: { post: PostMeta }) {
           />
         ) : (
           <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
+        )}
+        {isNew(post.date) && (
+          <span className="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500 text-white shadow-sm">
+            New
+          </span>
         )}
       </div>
 

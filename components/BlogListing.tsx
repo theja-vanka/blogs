@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import type { PostMeta } from "@/lib/types";
 import PostCard from "./PostCard";
 
@@ -28,6 +28,13 @@ export default function BlogListing({ posts, categories }: Props) {
   const [page, setPage] = useState(1);
   const topRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const cat = new URLSearchParams(window.location.search).get("category");
+    if (cat && posts.some((p) => p.categories.includes(cat))) {
+      setActive(cat);
+    }
+  }, [posts]);
+
   const filtered = useMemo(
     () => (active === "all" ? posts : posts.filter((p) => p.categories.includes(active))),
     [posts, active]
@@ -52,6 +59,10 @@ export default function BlogListing({ posts, categories }: Props) {
   function selectCategory(cat: string) {
     setActive(cat);
     setPage(1);
+    const url = new URL(window.location.href);
+    if (cat === "all") url.searchParams.delete("category");
+    else url.searchParams.set("category", cat);
+    window.history.replaceState({}, "", url.toString());
   }
 
   function selectSort(s: SortKey) {
@@ -61,37 +72,45 @@ export default function BlogListing({ posts, categories }: Props) {
 
   return (
     <div ref={topRef}>
-      {/* Category filter + sort */}
-      <div className="flex flex-wrap items-start gap-3 mb-8">
-        <div className="flex flex-wrap gap-2 flex-1">
-          {["all", ...categories].map((cat) => {
-            const count = cat === "all" ? posts.length : posts.filter((p) => p.categories.includes(cat)).length;
-            const isActive = active === cat;
-            return (
-              <button
-                key={cat}
-                onClick={() => selectCategory(cat)}
-                className={`inline-flex items-center gap-1.5 text-sm rounded-full px-4 py-1.5 font-medium transition-all duration-150 ${
-                  isActive
-                    ? "bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-md shadow-blue-500/25 scale-[1.02]"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-transparent hover:border-slate-300 dark:hover:border-slate-600"
-                }`}
-              >
-                {cat === "all" ? "All" : cat}
-                <span className={`text-xs rounded-full px-1.5 py-0.5 font-mono leading-none ${
-                  isActive
-                    ? "bg-white/20 text-white"
-                    : "bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400"
-                }`}>
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+      {/* Category pills — full width, wraps freely */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {["all", ...categories].map((cat) => {
+          const count = cat === "all" ? posts.length : posts.filter((p) => p.categories.includes(cat)).length;
+          const isActive = active === cat;
+          const label = cat === "all" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1);
+          return (
+            <button
+              key={cat}
+              onClick={() => selectCategory(cat)}
+              className={`inline-flex items-center gap-1.5 text-sm rounded-full px-3.5 py-1.5 font-medium transition-all duration-150 ${
+                isActive
+                  ? "bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-md shadow-blue-500/20"
+                  : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600"
+              }`}
+            >
+              {label}
+              <span className={`text-[11px] font-mono leading-none rounded-full px-1.5 py-0.5 ${
+                isActive
+                  ? "bg-white/20 text-white"
+                  : "bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400"
+              }`}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
-        {/* Sort controls */}
-        <div className="flex items-center gap-1 shrink-0 bg-slate-100 dark:bg-slate-800 rounded-full p-1">
+      {/* Toolbar row: article count left, sort right */}
+      <div className="flex items-center justify-between mb-6 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+        <p className="text-xs text-slate-400 dark:text-slate-500">
+          <span className="font-semibold text-slate-600 dark:text-slate-300">{sorted.length}</span>{" "}
+          {sorted.length === 1 ? "article" : "articles"}
+          {active !== "all" && (
+            <> in <span className="text-slate-500 dark:text-slate-400">{active.charAt(0).toUpperCase() + active.slice(1)}</span></>
+          )}
+        </p>
+        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 rounded-full p-1">
           {(["newest", "oldest", "shortest"] as SortKey[]).map((s) => (
             <button
               key={s}
@@ -108,7 +127,7 @@ export default function BlogListing({ posts, categories }: Props) {
         </div>
       </div>
 
-      {/* Grid */}
+      {/* Posts */}
       {sorted.length === 0 ? (
         <p className="text-slate-500 dark:text-slate-400 py-16 text-center">No posts in this category.</p>
       ) : (
@@ -174,7 +193,7 @@ export default function BlogListing({ posts, categories }: Props) {
       {/* Page indicator */}
       {totalPages > 1 && (
         <p className="text-center text-xs text-slate-400 dark:text-slate-600 mt-3">
-          Page {page} of {totalPages} · {sorted.length} articles
+          Page {page} of {totalPages}
         </p>
       )}
     </div>
