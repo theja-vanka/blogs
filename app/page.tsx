@@ -21,6 +21,8 @@ export default function HomePage() {
 
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="relative mb-16 rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-700/50 bg-gradient-to-br from-white via-blue-50/50 to-violet-50/40 dark:from-slate-900 dark:via-blue-950/30 dark:to-slate-900 shadow-sm">
+        {/* Dot-grid texture */}
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, rgba(148,163,184,0.25) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
         {/* Decorative orbs */}
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-400/15 dark:bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-violet-400/15 dark:bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -126,13 +128,12 @@ export default function HomePage() {
             href={`${basePath}/feed.xml`}
             target="_blank"
             rel="noreferrer"
-            className="shrink-0 inline-flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
-            title="Subscribe via RSS"
+            className="shrink-0 inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border border-orange-200 dark:border-orange-800/60 bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-colors"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
               <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20C4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/>
             </svg>
-            RSS
+            Subscribe
           </a>
         </div>
 

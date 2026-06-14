@@ -91,6 +91,9 @@ export default function PostCard({ post }: { post: PostMeta }) {
           </svg>
         </div>
       </div>
+
+      {/* Category-colored bottom bar */}
+      <div className={`h-0.5 w-full bg-gradient-to-r ${gradient} opacity-60 group-hover:opacity-100 transition-opacity duration-200`} />
     </Link>
   );
 }

@@ -228,6 +228,13 @@ async function main() {
     return tb - ta;
   });
 
+  // Preserve featured flags from the existing index so re-imports don't wipe them
+  try {
+    const existing = await fs.readJSON(path.join(CONTENT_DIR, "_index.json"));
+    const featuredSlugs = new Set(existing.filter((p) => p.featured).map((p) => p.slugPath));
+    allPosts.forEach((p) => { if (featuredSlugs.has(p.slugPath)) p.featured = true; });
+  } catch {}
+
   await fs.outputJSON(path.join(CONTENT_DIR, "_index.json"), allPosts, { spaces: 2 });
 
   // Search index (title + description + categories only — no full content)

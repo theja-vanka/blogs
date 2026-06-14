@@ -10,12 +10,16 @@ const SITE_URL =
 export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getAllPosts();
 
-  const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${SITE_URL}/posts/${post.slugPath}/`,
-    lastModified: post.date ? new Date(post.date) : new Date(),
-    changeFrequency: "monthly",
-    priority: 0.8,
-  }));
+  const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const postEntries: MetadataRoute.Sitemap = posts.map((post) => {
+    const isRecent = post.date && new Date(post.date).getTime() > thirtyDaysAgo;
+    return {
+      url: `${SITE_URL}/posts/${post.slugPath}/`,
+      lastModified: post.date ? new Date(post.date) : new Date(),
+      changeFrequency: isRecent ? "weekly" : "monthly",
+      priority: isRecent ? 0.9 : 0.8,
+    };
+  });
 
   return [
     { url: `${SITE_URL}/`, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },

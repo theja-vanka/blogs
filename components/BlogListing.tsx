@@ -3,6 +3,7 @@
 import { useRef, useState, useMemo, useEffect } from "react";
 import type { PostMeta } from "@/lib/types";
 import PostCard from "./PostCard";
+import FeaturedCard from "./FeaturedCard";
 
 const POSTS_PER_PAGE = 9;
 type SortKey = "newest" | "oldest" | "shortest";
@@ -35,10 +36,17 @@ export default function BlogListing({ posts, categories }: Props) {
     }
   }, [posts]);
 
-  const filtered = useMemo(
-    () => (active === "all" ? posts : posts.filter((p) => p.categories.includes(active))),
-    [posts, active]
+  const featuredPosts = useMemo(() => posts.filter((p) => p.featured), [posts]);
+
+  const visibleFeatured = useMemo(
+    () => active === "all" ? featuredPosts : featuredPosts.filter((p) => p.categories.includes(active)),
+    [featuredPosts, active]
   );
+
+  const filtered = useMemo(() => {
+    const base = active === "all" ? posts : posts.filter((p) => p.categories.includes(active));
+    return base.filter((p) => !p.featured);
+  }, [posts, active]);
 
   const sorted = useMemo(() => {
     const arr = [...filtered];
@@ -48,6 +56,7 @@ export default function BlogListing({ posts, categories }: Props) {
     return arr;
   }, [filtered, sort]);
 
+  const totalCount = visibleFeatured.length + sorted.length;
   const totalPages = Math.ceil(sorted.length / POSTS_PER_PAGE);
   const paginated = sorted.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 
@@ -72,7 +81,28 @@ export default function BlogListing({ posts, categories }: Props) {
 
   return (
     <div ref={topRef}>
-      {/* Category pills — full width, wraps freely */}
+
+      {/* ── Featured section ─────────────────────────────────────────── */}
+      {visibleFeatured.length > 0 && (
+        <div className="mb-10">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none" className="text-amber-500">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Featured</span>
+            </div>
+            <div className="flex-1 h-px bg-gradient-to-r from-amber-200 via-amber-100 to-transparent dark:from-amber-900/60 dark:via-amber-900/20 dark:to-transparent" />
+          </div>
+          <div className="flex flex-col gap-4">
+            {visibleFeatured.map((post) => (
+              <FeaturedCard key={post.slugPath} post={post} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Category pills ───────────────────────────────────────────── */}
       <div className="flex flex-wrap gap-2 mb-4">
         {["all", ...categories].map((cat) => {
           const count = cat === "all" ? posts.length : posts.filter((p) => p.categories.includes(cat)).length;
@@ -101,11 +131,11 @@ export default function BlogListing({ posts, categories }: Props) {
         })}
       </div>
 
-      {/* Toolbar row: article count left, sort right */}
+      {/* ── Toolbar ──────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between mb-6 pt-3 border-t border-slate-100 dark:border-slate-800/80">
         <p className="text-xs text-slate-400 dark:text-slate-500">
-          <span className="font-semibold text-slate-600 dark:text-slate-300">{sorted.length}</span>{" "}
-          {sorted.length === 1 ? "article" : "articles"}
+          <span className="font-semibold text-slate-600 dark:text-slate-300">{totalCount}</span>{" "}
+          {totalCount === 1 ? "article" : "articles"}
           {active !== "all" && (
             <> in <span className="text-slate-500 dark:text-slate-400">{active.charAt(0).toUpperCase() + active.slice(1)}</span></>
           )}
@@ -127,21 +157,20 @@ export default function BlogListing({ posts, categories }: Props) {
         </div>
       </div>
 
-      {/* Posts */}
-      {sorted.length === 0 ? (
+      {/* ── Posts grid ───────────────────────────────────────────────── */}
+      {sorted.length === 0 && visibleFeatured.length === 0 ? (
         <p className="text-slate-500 dark:text-slate-400 py-16 text-center">No posts in this category.</p>
-      ) : (
+      ) : sorted.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
           {paginated.map((post) => (
             <PostCard key={post.slugPath} post={post} />
           ))}
         </div>
-      )}
+      ) : null}
 
-      {/* Pagination */}
+      {/* ── Pagination ───────────────────────────────────────────────── */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-1 mt-12">
-          {/* Prev */}
           <button
             onClick={() => goTo(page - 1)}
             disabled={page === 1}
@@ -153,13 +182,10 @@ export default function BlogListing({ posts, categories }: Props) {
             Prev
           </button>
 
-          {/* Page numbers */}
           <div className="flex items-center gap-1">
             {pageNumbers(page, totalPages).map((p, i) =>
               p === "…" ? (
-                <span key={`ellipsis-${i}`} className="w-9 text-center text-slate-400 dark:text-slate-600 text-sm select-none">
-                  …
-                </span>
+                <span key={`ellipsis-${i}`} className="w-9 text-center text-slate-400 dark:text-slate-600 text-sm select-none">…</span>
               ) : (
                 <button
                   key={p}
@@ -176,7 +202,6 @@ export default function BlogListing({ posts, categories }: Props) {
             )}
           </div>
 
-          {/* Next */}
           <button
             onClick={() => goTo(page + 1)}
             disabled={page === totalPages}
@@ -190,7 +215,6 @@ export default function BlogListing({ posts, categories }: Props) {
         </div>
       )}
 
-      {/* Page indicator */}
       {totalPages > 1 && (
         <p className="text-center text-xs text-slate-400 dark:text-slate-600 mt-3">
           Page {page} of {totalPages}

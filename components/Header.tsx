@@ -13,6 +13,13 @@ export default function Header() {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         setSearchOpen(true);
+        return;
+      }
+      const tag = (e.target as HTMLElement).tagName;
+      const editable = tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement).isContentEditable;
+      if (e.key === "/" && !editable && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        setSearchOpen(true);
       }
     };
     window.addEventListener("keydown", handler);
@@ -59,6 +66,20 @@ export default function Header() {
             <span className="flex-1 text-left">Search…</span>
             <kbd className="flex items-center rounded border border-slate-300 dark:border-slate-600 px-1 text-[10px] font-mono leading-none h-4">⌘K</kbd>
           </button>
+
+          {/* RSS subscribe */}
+          <a
+            href={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/feed.xml`}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Subscribe via RSS"
+            title="Subscribe via RSS"
+            className="flex items-center justify-center w-8 h-8 rounded-full text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20C4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/>
+            </svg>
+          </a>
 
           {/* GitHub icon */}
           <a
