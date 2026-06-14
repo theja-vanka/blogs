@@ -29,12 +29,19 @@ export default function BlogListing({ posts, categories }: Props) {
   const [page, setPage] = useState(1);
   const topRef = useRef<HTMLDivElement>(null);
 
+  // Sync state from URL after every render so that navigating to "/" (Blog/KV links)
+  // resets page and category even when the component doesn't remount.
   useEffect(() => {
-    const cat = new URLSearchParams(window.location.search).get("category");
-    if (cat && posts.some((p) => p.categories.includes(cat))) {
-      setActive(cat);
-    }
-  }, [posts]);
+    const params = new URLSearchParams(window.location.search);
+
+    const cat = params.get("category") ?? "all";
+    const validCat = (cat === "all" || posts.some((p) => p.categories.includes(cat))) ? cat : "all";
+    if (validCat !== active) setActive(validCat);
+
+    const p = parseInt(params.get("page") ?? "1", 10);
+    const safePage = isNaN(p) || p < 1 ? 1 : p;
+    if (safePage !== page) setPage(safePage);
+  });
 
   const featuredPosts = useMemo(() => posts.filter((p) => p.featured), [posts]);
 
@@ -62,6 +69,10 @@ export default function BlogListing({ posts, categories }: Props) {
 
   function goTo(p: number) {
     setPage(p);
+    const url = new URL(window.location.href);
+    if (p === 1) url.searchParams.delete("page");
+    else url.searchParams.set("page", String(p));
+    window.history.replaceState({}, "", url.toString());
     topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -71,12 +82,16 @@ export default function BlogListing({ posts, categories }: Props) {
     const url = new URL(window.location.href);
     if (cat === "all") url.searchParams.delete("category");
     else url.searchParams.set("category", cat);
+    url.searchParams.delete("page");
     window.history.replaceState({}, "", url.toString());
   }
 
   function selectSort(s: SortKey) {
     setSort(s);
     setPage(1);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("page");
+    window.history.replaceState({}, "", url.toString());
   }
 
   return (
@@ -85,15 +100,6 @@ export default function BlogListing({ posts, categories }: Props) {
       {/* ── Featured section ─────────────────────────────────────────── */}
       {visibleFeatured.length > 0 && (
         <div className="mb-10">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="flex items-center gap-1.5">
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none" className="text-amber-500">
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-              </svg>
-              <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Featured</span>
-            </div>
-            <div className="flex-1 h-px bg-gradient-to-r from-amber-200 via-amber-100 to-transparent dark:from-amber-900/60 dark:via-amber-900/20 dark:to-transparent" />
-          </div>
           <div className="flex flex-col gap-4">
             {visibleFeatured.map((post) => (
               <FeaturedCard key={post.slugPath} post={post} />

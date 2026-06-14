@@ -44,21 +44,13 @@ export default function FeaturedCard({ post }: { post: PostMeta }) {
       <div className="flex flex-col justify-between p-6 sm:p-8 flex-1 min-w-0">
         <div className="flex flex-col gap-3">
           {/* Badges */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-              </svg>
-              Featured
-            </span>
-            {post.categories.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {post.categories.slice(0, 3).map((c) => (
-                  <CategoryBadge key={c} category={c} small />
-                ))}
-              </div>
-            )}
-          </div>
+          {post.categories.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {post.categories.slice(0, 3).map((c) => (
+                <CategoryBadge key={c} category={c} small />
+              ))}
+            </div>
+          )}
 
           {/* Title */}
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors leading-snug line-clamp-2">

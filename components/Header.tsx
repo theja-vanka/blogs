@@ -31,7 +31,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-4 left-1/2 -translate-x-1/2 z-40 w-max">
+      <header className="site-header fixed top-4 left-1/2 -translate-x-1/2 z-40 w-max">
         <div className="flex items-center gap-1 px-2 py-1.5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-full border border-slate-200/80 dark:border-slate-700/60 shadow-[0_4px_24px_rgba(0,0,0,0.07)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)]">
           {/* Logo avatar */}
           <Link

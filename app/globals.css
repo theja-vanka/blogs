@@ -8,12 +8,6 @@
   --font-mono: var(--font-mono), ui-monospace, "JetBrains Mono", "Fira Code", monospace;
 }
 
-/* ─── Display font for headings ──────────────────────────────────── */
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-}
-
 /* ─── Base ───────────────────────────────────────────────────────── */
 
 html {
@@ -52,6 +46,7 @@ html.dark {
 
 body {
   @apply bg-white text-slate-900 antialiased;
+  overflow-x: clip; /* prevent any child element from causing horizontal page scroll */
 }
 
 .dark body {
@@ -165,6 +160,13 @@ body {
   border: none;
   font-size: inherit;
   font-family: inherit;
+}
+
+/* Plain pre/code blocks (no syntax highlighting, e.g. tree structures) —
+   Tailwind prose sets pre code to a light color for dark backgrounds;
+   override to keep readable on our transparent-background light-mode blocks. */
+.post-content pre code {
+  color: var(--code-text);
 }
 
 /* Hide Quarto's per-line anchor links */
@@ -288,6 +290,11 @@ body {
 
 /* ─── Post content — figures, tables, callouts ───────────────────── */
 
+.post-content {
+  min-width: 0;       /* allow shrinking inside flex/grid parents */
+  overflow-wrap: break-word; /* break long URLs/identifiers rather than overflow */
+}
+
 .post-content figure { margin: 1.5rem auto; text-align: center; }
 
 .post-content figcaption {
@@ -302,11 +309,12 @@ body {
 
 .post-content table {
   display: block;          /* enables overflow-x on the element itself */
+  width: fit-content;
   max-width: 100%;
   overflow-x: auto;
   font-size: 0.875rem;
   border-collapse: collapse;
-  margin: 1.5rem 0;
+  margin: 1.5rem auto;
 }
 .post-content colgroup col { width: auto !important; } /* neutralise Quarto's fixed col widths */
 .post-content th   { text-align: left; font-weight: 600; padding: 0.5rem 1rem; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
@@ -516,6 +524,8 @@ body {
   background: transparent !important;
   border-radius: 0 !important;
   border: none !important;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 /* Neutralise prose's own code background so our variables take over */
@@ -807,9 +817,16 @@ dialog::backdrop {
 
 /* ─── Quarto: collapsible callouts ───────────────────────────────── */
 
-/* Bootstrap collapse shim — show by default; JS toggles .open class */
-.post-content .callout-collapse > .callout-body-container { display: block; }
-.post-content .callout-collapse.collapsed > .callout-body-container { display: none; }
+/* Bootstrap collapse shim — show by default; JS toggles .open class.
+   Tailwind's `collapse` utility sets visibility:collapse which hides content
+   while preserving space, so we must override both display and visibility. */
+.post-content .callout-collapse {
+  display: block !important;
+  visibility: visible !important;
+}
+.post-content .callout-collapse.collapsed {
+  display: none !important;
+}
 
 /* Toggle caret button */
 .post-content .callout-btn-toggle {
@@ -871,7 +888,7 @@ dialog::backdrop {
 
 /* ─── Focus / reading mode ───────────────────────────────────────── */
 
-.reading-mode header { display: none !important; }
+.reading-mode .site-header { display: none !important; }
 .reading-mode .toc-sidebar { display: none !important; }
 .reading-mode .meta-sidebar { display: none !important; }
 .reading-mode #reading-progress { display: none !important; }
