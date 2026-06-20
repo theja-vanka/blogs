@@ -31,7 +31,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="site-header fixed top-4 left-1/2 -translate-x-1/2 z-40 w-max">
+      <header className="site-header fixed top-4 left-1/2 -translate-x-1/2 z-40 w-max max-w-[calc(100vw-1rem)]">
         <div className="flex items-center gap-1 px-2 py-1.5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-full border border-slate-200/80 dark:border-slate-700/60 shadow-[0_4px_24px_rgba(0,0,0,0.07)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)]">
           {/* Logo avatar */}
           <Link
@@ -54,17 +54,17 @@ export default function Header() {
           {/* Divider */}
           <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1 shrink-0" />
 
-          {/* Search bar */}
+          {/* Search bar — icon-only on mobile, full pill on sm+ */}
           <button
             onClick={openSearch}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full text-slate-400 dark:text-slate-500 bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 transition-colors text-sm min-w-[160px]"
+            className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-full text-slate-400 dark:text-slate-500 bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 transition-colors text-sm sm:min-w-[160px]"
             aria-label="Search (⌘K)"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
               <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
             </svg>
-            <span className="flex-1 text-left">Search…</span>
-            <kbd className="flex items-center rounded border border-slate-300 dark:border-slate-600 px-1 text-[10px] font-mono leading-none h-4">⌘K</kbd>
+            <span className="hidden sm:block flex-1 text-left">Search…</span>
+            <kbd className="hidden sm:flex items-center rounded border border-slate-300 dark:border-slate-600 px-1 text-[10px] font-mono leading-none h-4">⌘K</kbd>
           </button>
 
           {/* RSS subscribe */}

@@ -128,6 +128,13 @@ async function main() {
     process.exit(1);
   }
 
+  // Read featured flags before wiping content dir
+  let featuredSlugs = new Set();
+  try {
+    const existing = await fs.readJSON(path.join(CONTENT_DIR, "_index.json"));
+    featuredSlugs = new Set(existing.filter((p) => p.featured).map((p) => p.slugPath));
+  } catch {}
+
   // Clean previous content
   await fs.emptyDir(CONTENT_DIR);
   await fs.ensureDir(PUBLIC_POSTS);
@@ -228,12 +235,8 @@ async function main() {
     return tb - ta;
   });
 
-  // Preserve featured flags from the existing index so re-imports don't wipe them
-  try {
-    const existing = await fs.readJSON(path.join(CONTENT_DIR, "_index.json"));
-    const featuredSlugs = new Set(existing.filter((p) => p.featured).map((p) => p.slugPath));
-    allPosts.forEach((p) => { if (featuredSlugs.has(p.slugPath)) p.featured = true; });
-  } catch {}
+  // Re-apply featured flags saved before the wipe
+  allPosts.forEach((p) => { if (featuredSlugs.has(p.slugPath)) p.featured = true; });
 
   await fs.outputJSON(path.join(CONTENT_DIR, "_index.json"), allPosts, { spaces: 2 });
 
