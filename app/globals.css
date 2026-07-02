@@ -614,23 +614,71 @@ mjx-container:not([display="true"]) > svg {
 
 
 .toc-link {
-  @apply block text-xs py-0.5 pl-3 border-l-2 border-transparent text-slate-400 hover:text-slate-700 transition-colors;
+  display: block;
+  padding: 0.25rem 0.5rem 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  border-left: 2px solid #e2e8f0;
+  color: #64748b;
+  text-decoration: none;
+  border-radius: 0 4px 4px 0;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.toc-link:hover {
+  color: #1e293b;
+  background: #f1f5f9;
+  border-left-color: #94a3b8;
 }
 
 .dark .toc-link {
-  @apply text-slate-500 hover:text-slate-300;
+  border-left-color: #1e293b;
+  color: #64748b;
+}
+
+.dark .toc-link:hover {
+  color: #cbd5e1;
+  background: #1e293b;
+  border-left-color: #475569;
 }
 
 .toc-link.toc-active {
-  @apply border-blue-500 text-blue-600 font-medium;
+  border-left-color: #3b82f6;
+  color: #2563eb;
+  font-weight: 600;
+  background: #eff6ff;
 }
 
 .dark .toc-link.toc-active {
-  @apply text-blue-400;
+  border-left-color: #3b82f6;
+  color: #60a5fa;
+  background: rgb(59 130 246 / 0.1);
 }
 
 .toc-link-h3 {
-  @apply pl-6;
+  padding-left: 1.25rem;
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.dark .toc-link-h3 {
+  color: #475569;
+}
+
+.toc-link-h3:hover {
+  color: #334155;
+}
+
+.dark .toc-link-h3:hover {
+  color: #94a3b8;
+}
+
+.toc-link-h3.toc-active {
+  color: #3b82f6;
+}
+
+.dark .toc-link-h3.toc-active {
+  color: #60a5fa;
 }
 
 /* ─── Post metadata sidebar (right margin) ───────────────────────── */

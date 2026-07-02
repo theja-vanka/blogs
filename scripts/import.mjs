@@ -24,6 +24,7 @@ const QUARTO_DOCS = process.env.QUARTO_DOCS_PATH
   ? path.resolve(ROOT, process.env.QUARTO_DOCS_PATH)
   : path.resolve(ROOT, "../blogs/docs/posts");
 const QUARTO_ROOT = path.resolve(QUARTO_DOCS, ".."); // docs/ root (has favicon, profile.jpg)
+const QUARTO_SRC  = path.resolve(QUARTO_DOCS, "../../posts"); // .qmd source files
 const CONTENT_DIR = path.resolve(ROOT, "content/posts");
 const PUBLIC_POSTS = path.resolve(ROOT, "public/posts");
 
@@ -119,6 +120,24 @@ function cleanContent($, container) {
   container.find("h1").first().remove();
 }
 
+// Read series frontmatter from the .qmd source file that corresponds to an HTML file.
+// Returns { seriesId, seriesOrder } or null if no series field is set.
+async function readQmdSeries(relHtmlPath) {
+  const qmdRel = relHtmlPath.replace(/\/index\.html$/, "/index.qmd").replace(/\.html$/, ".qmd");
+  try {
+    const content = await fs.readFile(path.join(QUARTO_SRC, qmdRel), "utf-8");
+    const fm = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+    if (!fm) return null;
+    const yaml = fm[1];
+    const sid = yaml.match(/^series:\s*["']?([^"'\r\n]+)["']?\s*$/m);
+    if (!sid) return null;
+    const ord = yaml.match(/^series-order:\s*(\d+)\s*$/m);
+    return { seriesId: sid[1].trim(), seriesOrder: ord ? parseInt(ord[1], 10) : 999 };
+  } catch {
+    return null;
+  }
+}
+
 // ─── main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -143,6 +162,7 @@ async function main() {
   console.log(`\nFound ${htmlFiles.length} HTML files in ${QUARTO_DOCS}\n`);
 
   const allPosts = [];
+  const seriesMap = new Map(); // seriesId → [{slugPath, seriesOrder}]
 
   for (const relPath of htmlFiles) {
     const absolutePath = path.join(QUARTO_DOCS, relPath);
@@ -224,6 +244,13 @@ async function main() {
 
     await fs.outputJSON(path.join(CONTENT_DIR, slugToFileName(slugPath)), post);
 
+    // Collect series membership from .qmd frontmatter
+    const qmdSeries = await readQmdSeries(relPath);
+    if (qmdSeries) {
+      if (!seriesMap.has(qmdSeries.seriesId)) seriesMap.set(qmdSeries.seriesId, []);
+      seriesMap.get(qmdSeries.seriesId).push({ slugPath, seriesOrder: qmdSeries.seriesOrder });
+    }
+
     allPosts.push({ slug: slugParts, slugPath, title, author, date, description, categories, readingTime, wordCount });
     console.log(`  ✓  ${slugPath}`);
   }
@@ -249,6 +276,32 @@ async function main() {
     slug: p.slugPath,
   }));
   await fs.outputJSON(path.resolve(ROOT, "public/search-index.json"), searchIndex, { spaces: 2 });
+
+  // ── Series auto-build from .qmd frontmatter ──────────────────────────────
+  // Posts with `series: <id>` and optional `series-order: <n>` in their YAML
+  // are grouped automatically. Existing manual series entries are preserved;
+  // only the `posts` array is updated for series detected from frontmatter.
+  if (seriesMap.size > 0) {
+    const SERIES_FILE = path.join(ROOT, "content/series.json");
+    let existingSeries = [];
+    try { existingSeries = await fs.readJSON(SERIES_FILE); } catch {}
+
+    const existingMap = new Map(existingSeries.map((s) => [s.id, s]));
+
+    for (const [seriesId, entries] of seriesMap) {
+      entries.sort((a, b) => a.seriesOrder - b.seriesOrder);
+      const posts = entries.map((e) => e.slugPath);
+      if (existingMap.has(seriesId)) {
+        existingMap.get(seriesId).posts = posts;
+      } else {
+        const title = seriesId.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+        existingMap.set(seriesId, { id: seriesId, title, description: "", posts });
+      }
+    }
+
+    await fs.outputJSON(SERIES_FILE, Array.from(existingMap.values()), { spaces: 2 });
+    console.log(`  ✓  series.json updated (${seriesMap.size} series from frontmatter)`);
+  }
 
   // ── Root site assets ──────────────────────────────────────────────────────
   const rootAssets = [

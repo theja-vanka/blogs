@@ -36,7 +36,7 @@ export default function TOC({ headings }: Props) {
 
   return (
     <nav aria-label="Table of contents" className="text-xs">
-      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-600 mb-2 pl-3">
         On this page
       </p>
       <ul className="space-y-0.5">
