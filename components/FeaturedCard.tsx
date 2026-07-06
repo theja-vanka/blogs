@@ -16,6 +16,7 @@ const categoryGradient: Record<string, string> = {
 };
 
 export default function FeaturedCard({ post }: { post: PostMeta }) {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   const primaryCat = post.categories[0];
   const gradient = (primaryCat && categoryGradient[primaryCat]) ?? "from-blue-500 to-violet-500";
 
@@ -28,7 +29,7 @@ export default function FeaturedCard({ post }: { post: PostMeta }) {
       <div className="relative h-52 sm:h-auto sm:w-2/5 shrink-0 overflow-hidden bg-slate-100 dark:bg-slate-800">
         {post.coverImage ? (
           <Image
-            src={post.coverImage}
+            src={`${basePath}${post.coverImage}`}
             alt={post.title}
             fill
             sizes="(max-width: 640px) 100vw, 40vw"

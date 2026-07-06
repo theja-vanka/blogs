@@ -277,7 +277,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
                 >
                   {r.coverImage && (
                     <div className="relative h-28 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 mb-1">
-                      <Image src={r.coverImage} alt={r.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <Image src={`${basePath}${r.coverImage}`} alt={r.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                   )}
                   <span className="text-sm font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-snug">
