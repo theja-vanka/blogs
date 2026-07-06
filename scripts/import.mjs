@@ -226,6 +226,16 @@ async function main() {
     const { wordCount, readingTime } = estimateReadingTime(main.text());
     const content = main.html() || "";
 
+    // Pick the first local image as the cover thumbnail
+    let coverImage = null;
+    main.find("img[src]").each((_, el) => {
+      if (coverImage) return;
+      const src = $(el).attr("src") || "";
+      if (!src.startsWith("http") && !src.startsWith("data:")) {
+        coverImage = `/posts/${slugPath}/${src}`;
+      }
+    });
+
     const post = {
       slug: slugParts,
       slugPath,
@@ -236,6 +246,7 @@ async function main() {
       categories,
       readingTime,
       wordCount,
+      ...(coverImage ? { coverImage } : {}),
       headings,
       hasMermaid,
       hasMath,
@@ -251,7 +262,7 @@ async function main() {
       seriesMap.get(qmdSeries.seriesId).push({ slugPath, seriesOrder: qmdSeries.seriesOrder });
     }
 
-    allPosts.push({ slug: slugParts, slugPath, title, author, date, description, categories, readingTime, wordCount });
+    allPosts.push({ slug: slugParts, slugPath, title, author, date, description, categories, readingTime, wordCount, ...(coverImage ? { coverImage } : {}) });
     console.log(`  ✓  ${slugPath}`);
   }
 
