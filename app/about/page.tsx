@@ -2,9 +2,26 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  `https://theja-vanka.github.io${process.env.NEXT_PUBLIC_BASE_PATH || ""}`;
+
 export const metadata: Metadata = {
   title: "About",
-  description: "Applied Scientist and Machine Learning Engineer — Krishnatheja Vanka.",
+  description: "Applied Scientist and ML Engineer specialising in computer vision, PyTorch, and production ML systems — Krishnatheja Vanka.",
+  alternates: { canonical: `${SITE_URL}/about/` },
+  openGraph: {
+    title: "About — Krishnatheja Vanka",
+    description: "Applied Scientist and ML Engineer specialising in computer vision, PyTorch, and production ML systems.",
+    url: `${SITE_URL}/about/`,
+    type: "profile",
+    images: [{ url: `${SITE_URL}/profile.jpg`, width: 400, height: 400, alt: "Krishnatheja Vanka" }],
+  },
+  twitter: {
+    title: "About — Krishnatheja Vanka",
+    description: "Applied Scientist and ML Engineer specialising in computer vision, PyTorch, and production ML systems.",
+    images: [`${SITE_URL}/profile.jpg`],
+  },
 };
 
 const SKILLS = [
@@ -23,7 +40,26 @@ const WRITING_TOPICS = [
 export default function AboutPage() {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Krishnatheja Vanka",
+    jobTitle: "Applied Scientist & Machine Learning Engineer",
+    url: SITE_URL,
+    image: `${SITE_URL}/profile.jpg`,
+    sameAs: [
+      "https://github.com/theja-vanka",
+      "https://www.linkedin.com/in/krishnatheja-vanka/",
+    ],
+    knowsAbout: [
+      "Machine Learning", "Computer Vision", "PyTorch", "MLOps",
+      "Distributed Training", "ONNX", "CUDA", "Python",
+    ],
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
     <div className="max-w-3xl mx-auto px-6 py-16">
 
       {/* ── Header ───────────────────────────────────────────────── */}
@@ -140,5 +176,6 @@ export default function AboutPage() {
         </Link>
       </div>
     </div>
+    </>
   );
 }

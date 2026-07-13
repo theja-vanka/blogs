@@ -3,6 +3,10 @@ import Link from "next/link";
 import { getAllPosts, getAllCategories } from "@/lib/posts";
 import PostCard from "@/components/PostCard";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  `https://theja-vanka.github.io${process.env.NEXT_PUBLIC_BASE_PATH || ""}`;
+
 interface Params { name: string }
 
 export function generateStaticParams() {
@@ -12,9 +16,24 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { name } = await params;
   const label = name.charAt(0).toUpperCase() + name.slice(1);
+  const url = `${SITE_URL}/category/${encodeURIComponent(name)}/`;
+  const description = `All posts tagged "${name}" — practical ML engineering articles by Krishnatheja Vanka.`;
   return {
     title: label,
-    description: `All posts tagged "${name}" — Krishnatheja Vanka`,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${label} — Krishnatheja Vanka`,
+      description,
+      url,
+      type: "website",
+      images: [{ url: `${SITE_URL}/profile.jpg`, width: 400, height: 400, alt: "Krishnatheja Vanka" }],
+    },
+    twitter: {
+      title: `${label} — Krishnatheja Vanka`,
+      description,
+      images: [`${SITE_URL}/profile.jpg`],
+    },
   };
 }
 

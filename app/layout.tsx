@@ -13,11 +13,11 @@ const SITE_URL =
 
 export const metadata: Metadata = {
   title: { default: "Krishnatheja Vanka", template: "%s | Krishnatheja Vanka" },
-  description: "Technical writing on ML, Python, and deployment — by Krishnatheja Vanka.",
+  description: "Applied Scientist and ML Engineer writing practical deep-dives on model architectures, PyTorch training, MLOps, and deployment — DINO, Mamba, YOLO, KAN, ViT, and more.",
   authors: [{ name: "Krishnatheja Vanka" }],
+  creator: "Krishnatheja Vanka",
   metadataBase: new URL(SITE_URL),
   alternates: {
-    canonical: SITE_URL,
     types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
   },
   openGraph: {
@@ -26,7 +26,10 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [{ url: `${SITE_URL}/profile.jpg`, width: 400, height: 400, alt: "Krishnatheja Vanka" }],
   },
-  twitter: { card: "summary_large_image" },
+  twitter: {
+    card: "summary_large_image",
+    creator: "@theja_vanka",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

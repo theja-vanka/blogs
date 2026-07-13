@@ -2,9 +2,26 @@ import Image from "next/image";
 import { getAllPosts, getAllCategories } from "@/lib/posts";
 import BlogListing from "@/components/BlogListing";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  `https://theja-vanka.github.io${process.env.NEXT_PUBLIC_BASE_PATH || ""}`;
+
 export const metadata = {
   title: "Blog",
-  description: "Applied Scientist and Machine Learning Engineer writing about ML research, model deployment, and production systems.",
+  description: "Applied Scientist and ML Engineer writing practical deep-dives on model architectures, PyTorch training, MLOps, and deployment.",
+  alternates: { canonical: `${SITE_URL}/` },
+  openGraph: {
+    title: "Krishnatheja Vanka — ML Engineering Blog",
+    description: "Practical deep-dives on model architectures, PyTorch training, MLOps, and deployment.",
+    url: `${SITE_URL}/`,
+    type: "website" as const,
+    images: [{ url: `${SITE_URL}/profile.jpg`, width: 400, height: 400, alt: "Krishnatheja Vanka" }],
+  },
+  twitter: {
+    title: "Krishnatheja Vanka — ML Engineering Blog",
+    description: "Practical deep-dives on model architectures, PyTorch training, MLOps, and deployment.",
+    images: [`${SITE_URL}/profile.jpg`],
+  },
 };
 
 const SKILLS = ["Python", "PyTorch", "Computer Vision", "MLOps", "CUDA", "ONNX", "AWS"];
@@ -16,7 +33,27 @@ export default function HomePage() {
   const totalMinutes = posts.reduce((sum, p) => sum + p.readingTime, 0);
   const totalHours = Math.round(totalMinutes / 60);
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Krishnatheja Vanka",
+    url: SITE_URL,
+    description: "Applied Scientist and ML Engineer writing practical deep-dives on model architectures, PyTorch training, MLOps, and deployment.",
+    author: {
+      "@type": "Person",
+      name: "Krishnatheja Vanka",
+      url: SITE_URL,
+      sameAs: [
+        "https://github.com/theja-vanka",
+        "https://www.linkedin.com/in/krishnatheja-vanka/",
+      ],
+    },
+    inLanguage: "en-US",
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
     <div className="max-w-6xl mx-auto px-6 py-12">
 
       {/* ── Hero ─────────────────────────────────────────────── */}
@@ -153,5 +190,6 @@ export default function HomePage() {
         )}
       </section>
     </div>
+    </>
   );
 }

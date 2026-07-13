@@ -2,11 +2,12 @@ import fs from "fs";
 import path from "path";
 import { getAllPosts } from "./posts";
 
-interface Series {
+export interface Series {
   id: string;
   title: string;
   description?: string;
   posts: string[];
+  coverImage?: string;
 }
 
 export interface PostSeriesContext {
@@ -14,6 +15,8 @@ export interface PostSeriesContext {
   partIndex: number;
   totalParts: number;
   titles: Record<string, string>;
+  descriptions: Record<string, string>;
+  readingTimes: Record<string, number>;
 }
 
 const SERIES_FILE = path.join(process.cwd(), "content/series.json");
@@ -31,16 +34,28 @@ function getSeries(): Series[] {
   return _series;
 }
 
+export function getAllSeries(): Series[] {
+  return getSeries();
+}
+
 export function getSeriesForPost(slugPath: string): PostSeriesContext | null {
   const series = getSeries();
   const found = series.find((s) => s.posts.includes(slugPath));
   if (!found) return null;
 
   const partIndex = found.posts.indexOf(slugPath);
-  const postMap = Object.fromEntries(getAllPosts().map((p) => [p.slugPath, p.title]));
+  const allPosts = getAllPosts();
+  const postMap = Object.fromEntries(allPosts.map((p) => [p.slugPath, p]));
+
   const titles: Record<string, string> = {};
+  const descriptions: Record<string, string> = {};
+  const readingTimes: Record<string, number> = {};
+
   found.posts.forEach((sp) => {
-    titles[sp] = postMap[sp] ?? sp;
+    const p = postMap[sp];
+    titles[sp] = p?.title ?? sp;
+    descriptions[sp] = p?.description ?? "";
+    readingTimes[sp] = p?.readingTime ?? 0;
   });
 
   return {
@@ -48,5 +63,7 @@ export function getSeriesForPost(slugPath: string): PostSeriesContext | null {
     partIndex,
     totalParts: found.posts.length,
     titles,
+    descriptions,
+    readingTimes,
   };
 }

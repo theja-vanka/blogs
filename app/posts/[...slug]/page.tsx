@@ -87,30 +87,48 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
     ? `https://theja-vanka.github.io${post.coverImage}`
     : `${siteUrl}/profile.jpg`;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.description || undefined,
-    url: postUrl,
-    datePublished: post.date,
-    image: ogImage,
-    author: {
-      "@type": "Person",
-      name: post.author,
-      url: siteUrl,
-      sameAs: [
-        "https://github.com/theja-vanka",
-        "https://www.linkedin.com/in/krishnatheja-vanka/",
+  const primaryCategory = post.categories.find(
+    (c) => !["beginner", "intermediate", "advanced"].includes(c)
+  ) ?? post.categories[0];
+
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.description || undefined,
+      url: postUrl,
+      datePublished: post.date,
+      image: ogImage,
+      wordCount: post.wordCount || undefined,
+      articleSection: primaryCategory || undefined,
+      author: {
+        "@type": "Person",
+        name: post.author,
+        url: siteUrl,
+        sameAs: [
+          "https://github.com/theja-vanka",
+          "https://www.linkedin.com/in/krishnatheja-vanka/",
+        ],
+      },
+      publisher: { "@type": "Person", name: post.author, url: siteUrl },
+      keywords: post.categories.join(", ") || undefined,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Blog", item: `${siteUrl}/` },
+        ...(primaryCategory ? [{ "@type": "ListItem", position: 2, name: primaryCategory, item: `${siteUrl}/category/${encodeURIComponent(primaryCategory)}/` }] : []),
+        { "@type": "ListItem", position: primaryCategory ? 3 : 2, name: post.title, item: postUrl },
       ],
     },
-    publisher: { "@type": "Person", name: post.author, url: siteUrl },
-    keywords: post.categories.join(", ") || undefined,
-  };
+  ];
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd[0]) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd[1]) }} />
       <ReadingProgress readingTime={post.readingTime} />
       <PostKeyboardNav prevSlug={prev?.slugPath} nextSlug={next?.slugPath} />
       <CodeCopyButtons />
@@ -194,6 +212,62 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
             dangerouslySetInnerHTML={{ __html: content }}
           />
         </article>
+
+        {/* Next in series CTA */}
+        {seriesCtx && seriesCtx.partIndex < seriesCtx.totalParts - 1 && (() => {
+          const nextSlug = seriesCtx.series.posts[seriesCtx.partIndex + 1];
+          const nextTitle = seriesCtx.titles[nextSlug];
+          const nextDesc = seriesCtx.descriptions[nextSlug];
+          const nextTime = seriesCtx.readingTimes[nextSlug];
+          return (
+            <div className="mt-16">
+              <Link
+                href={`/posts/${nextSlug}/`}
+                className="group block rounded-2xl border border-blue-200/70 dark:border-blue-900/50 bg-gradient-to-br from-blue-50/60 to-indigo-50/40 dark:from-blue-950/30 dark:to-indigo-950/20 overflow-hidden hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-xl hover:shadow-blue-100/60 dark:hover:shadow-blue-950/40 transition-all duration-200"
+              >
+                <div className="flex flex-col sm:flex-row">
+                  {seriesCtx.series.coverImage && (
+                    <div className="relative h-36 sm:h-auto sm:w-40 shrink-0 overflow-hidden bg-blue-100 dark:bg-blue-950">
+                      <Image
+                        src={`${basePath}${seriesCtx.series.coverImage}`}
+                        alt={seriesCtx.series.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 10rem"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  )}
+                  <div className="flex flex-col justify-between p-5 sm:p-6 flex-1 min-w-0">
+                    <div className="flex flex-col gap-2">
+                      <p className="text-[11px] font-semibold uppercase tracking-widest text-blue-500 dark:text-blue-400">
+                        Up next in {seriesCtx.series.title} · Part {seriesCtx.partIndex + 2} of {seriesCtx.totalParts}
+                      </p>
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors leading-snug line-clamp-2">
+                        {nextTitle}
+                      </h3>
+                      {nextDesc && (
+                        <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">
+                          {nextDesc}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between mt-4 pt-3 border-t border-blue-100 dark:border-blue-900/50">
+                      {nextTime > 0 && (
+                        <span className="text-xs text-slate-400 dark:text-slate-500">{nextTime} min read</span>
+                      )}
+                      <span className="ml-auto inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 dark:text-blue-400 group-hover:gap-2.5 transition-all duration-150">
+                        Continue reading
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          );
+        })()}
 
         {/* Back link + share */}
         <div className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
