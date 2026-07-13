@@ -278,13 +278,23 @@ async function main() {
 
   await fs.outputJSON(path.join(CONTENT_DIR, "_index.json"), allPosts, { spaces: 2 });
 
-  // Search index (title + description + categories only — no full content)
-  const searchIndex = allPosts.map((p, i) => ({
-    id: i,
-    title: p.title,
-    description: p.description,
-    categories: p.categories.join(", "),
-    slug: p.slugPath,
+  // Search index — includes stripped body excerpt for full-text search
+  const searchIndex = await Promise.all(allPosts.map(async (p, i) => {
+    let body = "";
+    try {
+      const postJson = await fs.readJSON(path.join(CONTENT_DIR, slugToFileName(p.slugPath)));
+      const { load } = await import("cheerio");
+      const $ = load(postJson.content || "");
+      body = $.text().replace(/\s+/g, " ").trim().slice(0, 500);
+    } catch {}
+    return {
+      id: i,
+      title: p.title,
+      description: p.description,
+      categories: p.categories.join(", "),
+      slug: p.slugPath,
+      body,
+    };
   }));
   await fs.outputJSON(path.resolve(ROOT, "public/search-index.json"), searchIndex, { spaces: 2 });
 

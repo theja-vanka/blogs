@@ -15,9 +15,18 @@ const categoryGradient: Record<string, string> = {
   tutorial:     "from-cyan-400 to-blue-500",
 };
 
+const DIFFICULTY_LEVELS = new Set(["beginner", "intermediate", "advanced"]);
+const DIFFICULTY_STYLES: Record<string, string> = {
+  beginner:     "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+  intermediate: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+  advanced:     "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+};
+
 export default function FeaturedCard({ post }: { post: PostMeta }) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-  const primaryCat = post.categories[0];
+  const difficulty = post.categories.find((c) => DIFFICULTY_LEVELS.has(c));
+  const topicCats = post.categories.filter((c) => !DIFFICULTY_LEVELS.has(c));
+  const primaryCat = topicCats[0] ?? post.categories[0];
   const gradient = (primaryCat && categoryGradient[primaryCat]) ?? "from-blue-500 to-violet-500";
 
   return (
@@ -45,13 +54,17 @@ export default function FeaturedCard({ post }: { post: PostMeta }) {
       <div className="flex flex-col justify-between p-6 sm:p-8 flex-1 min-w-0">
         <div className="flex flex-col gap-3">
           {/* Badges */}
-          {post.categories.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {post.categories.slice(0, 3).map((c) => (
-                <CategoryBadge key={c} category={c} small />
-              ))}
-            </div>
-          )}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {difficulty && (
+              <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${DIFFICULTY_STYLES[difficulty]}`}>
+                <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
+                {difficulty}
+              </span>
+            )}
+            {topicCats.slice(0, 2).map((c) => (
+              <CategoryBadge key={c} category={c} small href={`/category/${encodeURIComponent(c)}/`} />
+            ))}
+          </div>
 
           {/* Title */}
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors leading-snug line-clamp-2">

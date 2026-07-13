@@ -43,11 +43,14 @@ export default function Header() {
 
           {/* Nav links */}
           <nav className="flex items-center text-sm text-slate-600 dark:text-slate-300">
-            <Link
-              href="/"
-              className="px-3 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
-            >
+            <Link href="/" className="px-3 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
               Blog
+            </Link>
+            <Link href="/series/" className="hidden sm:block px-3 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
+              Series
+            </Link>
+            <Link href="/about/" className="hidden sm:block px-3 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
+              About
             </Link>
           </nav>
 
