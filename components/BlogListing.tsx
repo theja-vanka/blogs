@@ -8,6 +8,13 @@ import FeaturedCard from "./FeaturedCard";
 const POSTS_PER_PAGE = 9;
 type SortKey = "newest" | "oldest" | "shortest";
 
+const DIFFICULTY_SET = new Set(["beginner", "intermediate", "advanced"]);
+const DIFFICULTY_DOT: Record<string, string> = {
+  beginner: "bg-emerald-500",
+  intermediate: "bg-amber-500",
+  advanced: "bg-rose-500",
+};
+
 interface Props {
   posts: PostMeta[];
   categories: string[];
@@ -24,36 +31,75 @@ function pageNumbers(current: number, total: number): (number | "…")[] {
 }
 
 export default function BlogListing({ posts, categories }: Props) {
-  const [active, setActive] = useState("all");
+  const topicCats = categories.filter((c) => !DIFFICULTY_SET.has(c));
+  const levelCats = categories.filter((c) => DIFFICULTY_SET.has(c));
+
+  const [activeTopic, setActiveTopic] = useState<string | null>(null);
+  const [activeLevel, setActiveLevel] = useState<string | null>(null);
   const [sort, setSort] = useState<SortKey>("newest");
   const [page, setPage] = useState(1);
   const topRef = useRef<HTMLDivElement>(null);
 
-  // Sync state from URL after every render so that navigating to "/" (Blog/KV links)
-  // resets page and category even when the component doesn't remount.
+  // Sync from URL on every render so navigating to "/" resets filters.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-
-    const cat = params.get("category") ?? "all";
-    const validCat = (cat === "all" || posts.some((p) => p.categories.includes(cat))) ? cat : "all";
-    if (validCat !== active) setActive(validCat);
-
+    const topic = params.get("topic");
+    const level = params.get("level");
+    if ((topic ?? null) !== activeTopic) setActiveTopic(topic);
+    if ((level ?? null) !== activeLevel) setActiveLevel(level);
     const p = parseInt(params.get("page") ?? "1", 10);
     const safePage = isNaN(p) || p < 1 ? 1 : p;
     if (safePage !== page) setPage(safePage);
   });
 
+  function updateUrl(topic: string | null, level: string | null, p = 1) {
+    const url = new URL(window.location.href);
+    topic ? url.searchParams.set("topic", topic) : url.searchParams.delete("topic");
+    level ? url.searchParams.set("level", level) : url.searchParams.delete("level");
+    p === 1 ? url.searchParams.delete("page") : url.searchParams.set("page", String(p));
+    window.history.replaceState({}, "", url.toString());
+  }
+
+  function selectTopic(t: string | null) {
+    setActiveTopic(t);
+    setPage(1);
+    updateUrl(t, activeLevel);
+  }
+
+  function selectLevel(l: string | null) {
+    setActiveLevel(l);
+    setPage(1);
+    updateUrl(activeTopic, l);
+  }
+
+  function clearFilters() {
+    setActiveTopic(null);
+    setActiveLevel(null);
+    setPage(1);
+    updateUrl(null, null);
+  }
+
+  const hasFilter = activeTopic !== null || activeLevel !== null;
+
   const featuredPosts = useMemo(() => posts.filter((p) => p.featured), [posts]);
 
-  const visibleFeatured = useMemo(
-    () => active === "all" ? featuredPosts : featuredPosts.filter((p) => p.categories.includes(active)),
-    [featuredPosts, active]
+  const visibleFeatured = useMemo(() =>
+    featuredPosts.filter((p) => {
+      if (activeTopic && !p.categories.includes(activeTopic)) return false;
+      if (activeLevel && !p.categories.includes(activeLevel)) return false;
+      return true;
+    }),
+    [featuredPosts, activeTopic, activeLevel]
   );
 
   const filtered = useMemo(() => {
-    const base = active === "all" ? posts : posts.filter((p) => p.categories.includes(active));
-    return base.filter((p) => !p.featured);
-  }, [posts, active]);
+    return posts.filter((p) => {
+      if (p.featured) return false;
+      if (activeTopic && !p.categories.includes(activeTopic)) return false;
+      if (activeLevel && !p.categories.includes(activeLevel)) return false;
+      return true;
+    });
+  }, [posts, activeTopic, activeLevel]);
 
   const sorted = useMemo(() => {
     const arr = [...filtered];
@@ -74,16 +120,6 @@ export default function BlogListing({ posts, categories }: Props) {
     else url.searchParams.set("page", String(p));
     window.history.replaceState({}, "", url.toString());
     topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function selectCategory(cat: string) {
-    setActive(cat);
-    setPage(1);
-    const url = new URL(window.location.href);
-    if (cat === "all") url.searchParams.delete("category");
-    else url.searchParams.set("category", cat);
-    url.searchParams.delete("page");
-    window.history.replaceState({}, "", url.toString());
   }
 
   function selectSort(s: SortKey) {
@@ -108,42 +144,83 @@ export default function BlogListing({ posts, categories }: Props) {
         </div>
       )}
 
-      {/* ── Category pills ───────────────────────────────────────────── */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {["all", ...categories].map((cat) => {
-          const count = cat === "all" ? posts.length : posts.filter((p) => p.categories.includes(cat)).length;
-          const isActive = active === cat;
-          const label = cat === "all" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1);
-          return (
+      {/* ── Filter card ──────────────────────────────────────────────── */}
+      <div className="flex flex-col gap-3 mb-6 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+
+        {/* Topic row */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[0.65rem] font-bold tracking-[0.1em] uppercase text-slate-400 dark:text-slate-500 w-14 shrink-0">
+            Topic
+          </span>
+          <button
+            onClick={() => selectTopic(null)}
+            className={`px-3 py-1 rounded-full text-[0.72rem] font-semibold border transition-all duration-150 ${
+              activeTopic === null
+                ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent"
+                : "bg-transparent text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+            }`}
+          >
+            All
+          </button>
+          {topicCats.map((cat) => (
             <button
               key={cat}
-              onClick={() => selectCategory(cat)}
-              className={`inline-flex items-center gap-1.5 text-sm rounded-full px-3.5 py-1.5 font-medium transition-all duration-150 ${
-                isActive
-                  ? "bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-md shadow-blue-500/20"
-                  : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600"
+              onClick={() => selectTopic(activeTopic === cat ? null : cat)}
+              className={`px-3 py-1 rounded-full text-[0.72rem] font-semibold border transition-all duration-150 ${
+                activeTopic === cat
+                  ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent"
+                  : "bg-transparent text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
               }`}
             >
-              {label}
-              <span className={`text-[11px] font-mono leading-none rounded-full px-1.5 py-0.5 ${
-                isActive
-                  ? "bg-white/20 text-white"
-                  : "bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400"
-              }`}>
-                {count}
-              </span>
+              {cat.charAt(0).toUpperCase() + cat.slice(1)}
             </button>
-          );
-        })}
+          ))}
+        </div>
+
+        {/* Divider */}
+        <div className="h-px bg-slate-100 dark:bg-slate-800" />
+
+        {/* Level row */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[0.65rem] font-bold tracking-[0.1em] uppercase text-slate-400 dark:text-slate-500 w-14 shrink-0">
+            Level
+          </span>
+          <button
+            onClick={() => selectLevel(null)}
+            className={`px-3 py-1 rounded-full text-[0.72rem] font-semibold border transition-all duration-150 ${
+              activeLevel === null
+                ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent"
+                : "bg-transparent text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+            }`}
+          >
+            All
+          </button>
+          {levelCats.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => selectLevel(activeLevel === cat ? null : cat)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[0.72rem] font-semibold border transition-all duration-150 ${
+                activeLevel === cat
+                  ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent"
+                  : "bg-transparent text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+              }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${DIFFICULTY_DOT[cat] ?? "bg-slate-400"} shrink-0`} />
+              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ── Toolbar ──────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between mb-6 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+      <div className="flex items-center justify-between mb-6">
         <p className="text-xs text-slate-400 dark:text-slate-500">
           <span className="font-semibold text-slate-600 dark:text-slate-300">{totalCount}</span>{" "}
           {totalCount === 1 ? "article" : "articles"}
-          {active !== "all" && (
-            <> in <span className="text-slate-500 dark:text-slate-400">{active.charAt(0).toUpperCase() + active.slice(1)}</span></>
+          {hasFilter && (
+            <button onClick={clearFilters} className="ml-2 underline underline-offset-2 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+              Clear filters
+            </button>
           )}
         </p>
         <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 rounded-full p-1">
