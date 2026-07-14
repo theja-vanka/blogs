@@ -10,18 +10,18 @@ const SITE_URL =
 
 export const metadata: Metadata = {
   title: "Series",
-  description: "30 multi-part learning paths covering ML architectures, PyTorch training, MLOps, and deployment — from theory to working code.",
+  description: "30 multi-part series paths covering ML architectures, PyTorch training, MLOps, and deployment — from theory to working code.",
   alternates: { canonical: `${SITE_URL}/series/` },
   openGraph: {
-    title: "Learning Paths — Krishnatheja Vanka",
-    description: "30 multi-part learning paths covering ML architectures, PyTorch training, MLOps, and deployment — from theory to working code.",
+    title: "Series Paths — Krishnatheja Vanka",
+    description: "30 multi-part series paths covering ML architectures, PyTorch training, MLOps, and deployment — from theory to working code.",
     url: `${SITE_URL}/series/`,
     type: "website",
     images: [{ url: `${SITE_URL}/profile.jpg`, width: 400, height: 400, alt: "Krishnatheja Vanka" }],
   },
   twitter: {
-    title: "Learning Paths — Krishnatheja Vanka",
-    description: "30 multi-part learning paths covering ML architectures, PyTorch training, MLOps, and deployment.",
+    title: "Series Paths — Krishnatheja Vanka",
+    description: "30 multi-part series paths covering ML architectures, PyTorch training, MLOps, and deployment.",
     images: [`${SITE_URL}/profile.jpg`],
   },
 };
@@ -89,7 +89,7 @@ export default function SeriesPage() {
   const collectionJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Learning Paths",
+    name: "Series Paths",
     description: "Multi-part guides on ML architectures, training, and deployment.",
     url: `${SITE_URL}/series/`,
     author: { "@type": "Person", name: "Krishnatheja Vanka", url: SITE_URL },
@@ -116,7 +116,7 @@ export default function SeriesPage() {
 
         <div className="relative max-w-6xl mx-auto px-6 pt-14 pb-12">
           <p className="text-[0.7rem] font-bold tracking-[0.14em] uppercase text-blue-600 dark:text-blue-400 mb-3">
-            Learning Paths
+            Series Paths
           </p>
           <h1 className="text-4xl sm:text-5xl font-bold leading-tight text-slate-900 dark:text-slate-100 mb-4">
             Every series,<br className="hidden sm:block" /> start to finish.

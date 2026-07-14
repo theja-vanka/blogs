@@ -132,7 +132,7 @@ export default async function SeriesDetailPage({ params }: { params: Promise<{ i
           </nav>
 
           <p className="text-[0.65rem] font-bold tracking-[0.14em] uppercase text-blue-400 mb-2">
-            Learning Path · {parts.length} parts
+            Series Path · {parts.length} parts
           </p>
           <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-3">
             {series.title}

@@ -24,17 +24,60 @@ export const metadata: Metadata = {
   },
 };
 
-const SKILLS = [
-  "Python", "PyTorch", "Computer Vision", "MLOps",
-  "CUDA", "ONNX", "AWS", "Distributed Training",
+const SKILL_GROUPS = [
+  {
+    label: "Frameworks",
+    color: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-900",
+    skills: ["PyTorch", "ONNX", "PyTorch Lightning", "HuggingFace"],
+  },
+  {
+    label: "Languages",
+    color: "text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 border-violet-200 dark:border-violet-900",
+    skills: ["Python", "CUDA", "Rust", "SQL"],
+  },
+  {
+    label: "Infrastructure",
+    color: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900",
+    skills: ["AWS", "Kubeflow", "MLflow", "Docker", "LitServe"],
+  },
+  {
+    label: "Specialties",
+    color: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-900",
+    skills: ["Computer Vision", "Distributed Training", "Quantization", "Edge Deployment"],
+  },
 ];
 
 const WRITING_TOPICS = [
-  { label: "Model Architectures", desc: "ViT, Mamba, KAN, DenseNet, YOLO and more" },
-  { label: "Training at Scale", desc: "Distributed training, AMP, quantization, CUDA" },
-  { label: "MLOps & Deployment", desc: "MLflow, Kubeflow, LitServe, ONNX, edge devices" },
-  { label: "Foundational Models", desc: "CLIP, BLIP-2, VLMs, stable diffusion, DINO" },
-  { label: "Python for ML", desc: "Functional tools, concurrency, Rust extensions" },
+  {
+    label: "Model Architectures",
+    desc: "ViT, Mamba, KAN, DenseNet, YOLO and more — from the paper to the implementation.",
+    icon: "M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v10m0 0h10m-10 0H5m0 0v4a2 2 0 0 0 2 2h4M19 13v4a2 2 0 0 1-2 2h-4",
+    accent: "from-blue-500 to-cyan-500",
+  },
+  {
+    label: "Training at Scale",
+    desc: "Distributed training, AMP, quantization, CUDA kernels, and profiling for speed.",
+    icon: "M13 10V3L4 14h7v7l9-11h-7z",
+    accent: "from-amber-500 to-orange-500",
+  },
+  {
+    label: "MLOps & Deployment",
+    desc: "MLflow, Kubeflow, LitServe, ONNX, edge devices — taking models to production.",
+    icon: "M3 15a4 4 0 0 0 4 4h9a5 5 0 0 0 1.82-9.64A7 7 0 0 0 3.55 12.5 4 4 0 0 0 3 15z",
+    accent: "from-emerald-500 to-teal-500",
+  },
+  {
+    label: "Foundational Models",
+    desc: "CLIP, BLIP-2, VLMs, stable diffusion, DINO — how the big models actually work.",
+    icon: "M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm1-11v4l3 2-1 1.7-4-2.5V9z",
+    accent: "from-violet-500 to-purple-500",
+  },
+  {
+    label: "Python for ML",
+    desc: "Functional tools, concurrency, Rust extensions — the language features that matter.",
+    icon: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4",
+    accent: "from-rose-500 to-pink-500",
+  },
 ];
 
 export default function AboutPage() {
@@ -60,100 +103,143 @@ export default function AboutPage() {
   return (
     <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
-    <div className="max-w-3xl mx-auto px-6 py-16">
 
-      {/* ── Header ───────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row items-start gap-8 mb-12">
-        <div className="shrink-0 relative">
-          <div className="absolute -inset-1.5 bg-gradient-to-br from-blue-500 to-violet-600 rounded-full opacity-50 blur-sm" />
-          <Image
-            src={`${basePath}/profile.jpg`}
-            alt="Krishnatheja Vanka"
-            width={100}
-            height={100}
-            className="relative rounded-full ring-2 ring-white dark:ring-slate-900 shadow-2xl"
-            priority
-          />
-        </div>
+    {/* ── Hero ─────────────────────────────────────────────────── */}
+    <div className="relative overflow-hidden bg-slate-950">
+      {/* Dot grid */}
+      <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, rgba(148,163,184,0.12) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
+      {/* Orbs */}
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-10 left-1/4 w-64 h-64 bg-violet-600/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-16 right-1/3 w-72 h-72 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Bottom fade */}
+      <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white dark:from-slate-950 to-transparent pointer-events-none" />
 
-        <div className="flex-1 min-w-0">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-1">
-            Krishnatheja Vanka
-          </h1>
-          <p className="text-sm font-semibold uppercase tracking-widest mb-3 bg-gradient-to-r from-blue-600 to-violet-600 dark:from-blue-400 dark:to-violet-400 bg-clip-text text-transparent">
-            Applied Scientist · Machine Learning Engineer
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <a
-              href="https://github.com/theja-vanka"
-              target="_blank" rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/>
-              </svg>
-              GitHub
-            </a>
-            <a
-              href="https://www.linkedin.com/in/krishnatheja-vanka/"
-              target="_blank" rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-              </svg>
-              LinkedIn
-            </a>
-            <a
-              href={`${basePath}/feed.xml`}
-              target="_blank" rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-orange-200 dark:border-orange-800 bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20C4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/>
-              </svg>
-              RSS
-            </a>
+      <div className="relative max-w-4xl mx-auto px-6 pt-14 pb-20">
+        <div className="flex flex-col sm:flex-row items-center sm:items-end gap-8">
+
+          {/* Profile image */}
+          <div className="shrink-0 relative">
+            <div className="absolute -inset-2.5 bg-gradient-to-br from-blue-500 to-violet-600 rounded-full opacity-50 blur-lg" />
+            <Image
+              src={`${basePath}/profile.jpg`}
+              alt="Krishnatheja Vanka"
+              width={128}
+              height={128}
+              className="relative rounded-full ring-2 ring-white/10 shadow-2xl"
+              priority
+            />
+          </div>
+
+          {/* Name + title + links */}
+          <div className="flex-1 min-w-0 text-center sm:text-left">
+            <h1 className="text-4xl sm:text-5xl font-bold text-white leading-tight mb-2">
+              Krishnatheja Vanka
+            </h1>
+            <p className="text-sm font-semibold uppercase tracking-[0.15em] mb-5 bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
+              Applied Scientist · Machine Learning Engineer
+            </p>
+            <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+              <a
+                href="https://github.com/theja-vanka"
+                target="_blank" rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/10 transition-all"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/>
+                </svg>
+                GitHub
+              </a>
+              <a
+                href="https://www.linkedin.com/in/krishnatheja-vanka/"
+                target="_blank" rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/10 transition-all"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                LinkedIn
+              </a>
+              <a
+                href={`${basePath}/feed.xml`}
+                target="_blank" rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs px-3.5 py-1.5 rounded-full bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 hover:text-orange-200 border border-orange-500/20 transition-all"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20C4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/>
+                </svg>
+                RSS
+              </a>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+
+    {/* ── Content ──────────────────────────────────────────────── */}
+    <div className="max-w-4xl mx-auto px-6 py-14 space-y-16">
 
       {/* ── Bio ──────────────────────────────────────────────────── */}
-      <section className="mb-12 prose prose-slate dark:prose-invert max-w-none">
-        <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-          I work at the intersection of research and production — training models, building ML systems,
-          and closing the gap between experiment and deployment. My focus is applied computer vision:
-          getting research ideas to actually ship in production environments.
-        </p>
-        <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-          This blog is where I write down what I learn — practical guides on model architectures,
-          training at scale, deployment pipelines, and the engineering decisions that make research usable.
-          I try to write the articles I wish had existed when I was figuring something out.
-        </p>
+      <section>
+        <p className="text-[0.7rem] font-bold tracking-[0.12em] uppercase text-slate-400 dark:text-slate-600 mb-5">About</p>
+        <div className="grid sm:grid-cols-[1fr_auto] gap-8 items-start">
+          <div className="space-y-4 text-[0.95rem] text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p>
+              I work at the intersection of research and production — training models, building ML systems,
+              and closing the gap between experiment and deployment. My focus is applied computer vision:
+              getting research ideas to actually ship in production environments.
+            </p>
+            <p>
+              This blog is where I write down what I learn — practical guides on model architectures,
+              training at scale, deployment pipelines, and the engineering decisions that make research usable.
+              I try to write the articles I wish had existed when I was figuring something out.
+            </p>
+          </div>
+          {/* Decorative accent */}
+          <div className="hidden sm:flex flex-col gap-2 pt-1">
+            {["Research", "Production", "Vision", "PyTorch"].map((tag) => (
+              <span key={tag} className="text-[0.65rem] font-bold tracking-[0.1em] uppercase text-slate-300 dark:text-slate-700 text-right">{tag}</span>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* ── Skills ───────────────────────────────────────────────── */}
-      <section className="mb-12">
-        <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4">Stack</h2>
-        <div className="flex flex-wrap gap-2">
-          {SKILLS.map((s) => (
-            <span key={s} className="text-sm px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 font-mono">
-              {s}
-            </span>
+      {/* ── Stack ────────────────────────────────────────────────── */}
+      <section>
+        <p className="text-[0.7rem] font-bold tracking-[0.12em] uppercase text-slate-400 dark:text-slate-600 mb-5">Stack</p>
+        <div className="grid sm:grid-cols-2 gap-5">
+          {SKILL_GROUPS.map((group) => (
+            <div key={group.label} className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+              <p className="text-[0.65rem] font-bold tracking-[0.1em] uppercase text-slate-400 dark:text-slate-600 mb-3">{group.label}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {group.skills.map((s) => (
+                  <span key={s} className={`text-xs font-mono px-2.5 py-1 rounded-md border ${group.color}`}>
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </section>
 
       {/* ── Writing topics ───────────────────────────────────────── */}
-      <section className="mb-12">
-        <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4">What I write about</h2>
-        <div className="flex flex-col gap-3">
+      <section>
+        <p className="text-[0.7rem] font-bold tracking-[0.12em] uppercase text-slate-400 dark:text-slate-600 mb-5">What I write about</p>
+        <div className="grid sm:grid-cols-2 gap-4">
           {WRITING_TOPICS.map((t) => (
-            <div key={t.label} className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-              <div className="mt-0.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t.label}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t.desc}</p>
+            <div
+              key={t.label}
+              className="flex items-start gap-4 p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md transition-all duration-200"
+            >
+              <div className={`shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br ${t.accent} flex items-center justify-center shadow-sm`}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={t.icon}/>
+                </svg>
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">{t.label}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{t.desc}</p>
               </div>
             </div>
           ))}
@@ -161,20 +247,25 @@ export default function AboutPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Link
-          href="/"
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium bg-gradient-to-r from-blue-600 to-violet-600 text-white hover:opacity-90 transition-opacity shadow-md"
-        >
-          Browse all posts
-        </Link>
-        <Link
-          href="/series/"
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-        >
-          Browse series
-        </Link>
-      </div>
+      <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-slate-900 dark:to-blue-950/20 p-8 text-center">
+        <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Ready to dive in?</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">Browse 100+ articles or pick a series path and go start to finish.</p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold bg-gradient-to-r from-blue-600 to-violet-600 text-white hover:opacity-90 transition-opacity shadow-md shadow-blue-500/25"
+          >
+            Browse all posts
+          </Link>
+          <Link
+            href="/series/"
+            className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 transition-all"
+          >
+            Explore series paths
+          </Link>
+        </div>
+      </section>
+
     </div>
     </>
   );
