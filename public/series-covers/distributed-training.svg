@@ -19,7 +19,9 @@
       .title { font: 500 56px Inter, ui-sans-serif, system-ui, sans-serif; fill: #F8FAFC; letter-spacing: 0; }
       .caption { font: 400 24px Inter, ui-sans-serif, system-ui, sans-serif; fill: #9FB0C7; }
       .mono { font: 500 34px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fill: #F8FAFC; }
-      .mark { font: 500 190px Inter, ui-sans-serif, system-ui, sans-serif; fill: #F8FAFC; opacity: .055; letter-spacing: 0; }
+      .mini { font: 500 18px Inter, ui-sans-serif, system-ui, sans-serif; fill: #E5EDF8; }
+      .diagram { font: 500 22px Inter, ui-sans-serif, system-ui, sans-serif; fill: #D8E2F1; opacity: .86; }
+      .code { font: 500 24px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fill: #D8E2F1; opacity: .88; }
     </style>
   </defs>
   <rect width="1200" height="630" fill="url(#bg-distributed-training)"/>
@@ -27,33 +29,27 @@
   <rect x="0" y="0" width="1200" height="630" fill="url(#glow-b-distributed-training)" opacity=".28" transform="translate(330 190) scale(.95 .78)"/>
   <path d="M0 508 C190 438, 310 584, 488 506 C690 418, 820 472, 1200 350 L1200 630 L0 630 Z" fill="#FFFFFF" opacity=".035"/>
   <path d="M0 548 C230 480, 375 608, 570 525 C735 455, 920 535, 1200 438" stroke="#FFFFFF" stroke-opacity=".08" stroke-width="2" fill="none"/>
-  <text x="812" y="392" text-anchor="middle" class="mark">DT</text>
   <g opacity=".85">
-    <path d="M680 126 C900 86, 930 180, 1088 144" stroke="#22C55E" stroke-width="3.5" opacity=".55" fill="none"/>
-<path d="M716 168 C900 128, 930 222, 1046 186" stroke="#22C55E" stroke-width="3.5" opacity=".55" fill="none"/>
-<path d="M680 210 C900 170, 930 264, 1004 228" stroke="#22C55E" stroke-width="3.5" opacity=".55" fill="none"/>
-<path d="M716 252 C900 212, 930 306, 1088 270" stroke="#22C55E" stroke-width="3.5" opacity=".55" fill="none"/>
-<path d="M680 294 C900 254, 930 348, 1046 312" stroke="#22C55E" stroke-width="3.5" opacity=".55" fill="none"/>
-<path d="M716 336 C900 296, 930 390, 1004 354" stroke="#22C55E" stroke-width="3.5" opacity=".55" fill="none"/>
-<path d="M680 378 C900 338, 930 432, 1088 396" stroke="#22C55E" stroke-width="3.5" opacity=".55" fill="none"/>
-<path d="M716 420 C900 380, 930 474, 1046 438" stroke="#22C55E" stroke-width="3.5" opacity=".55" fill="none"/>
-<path d="M680 462 C900 422, 930 516, 1004 480" stroke="#22C55E" stroke-width="3.5" opacity=".55" fill="none"/>
-<circle cx="725" cy="154" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="803" cy="154" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="881" cy="154" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="959" cy="154" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="1037" cy="154" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="725" cy="248" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="803" cy="248" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="881" cy="248" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="959" cy="248" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="1037" cy="248" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="725" cy="342" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="803" cy="342" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="881" cy="342" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="959" cy="342" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="1037" cy="342" r="8" fill="#60A5FA" opacity=".85"/>
-<circle cx="725" cy="436" r="8" fill="#60A5FA" opacity=".85"/>
+    <path d="M730 165 L940 165" stroke="#22C55E" stroke-width="2" stroke-linecap="round" opacity=".23" fill="none"/>
+<path d="M730 165 L730 365" stroke="#22C55E" stroke-width="2" stroke-linecap="round" opacity=".23" fill="none"/>
+<path d="M730 165 L940 365" stroke="#22C55E" stroke-width="2" stroke-linecap="round" opacity=".23" fill="none"/>
+<path d="M730 165 L1045 265" stroke="#22C55E" stroke-width="2" stroke-linecap="round" opacity=".23" fill="none"/>
+<path d="M940 165 L730 365" stroke="#22C55E" stroke-width="2" stroke-linecap="round" opacity=".23" fill="none"/>
+<path d="M940 165 L940 365" stroke="#22C55E" stroke-width="2" stroke-linecap="round" opacity=".23" fill="none"/>
+<path d="M940 165 L1045 265" stroke="#22C55E" stroke-width="2" stroke-linecap="round" opacity=".23" fill="none"/>
+<path d="M730 365 L940 365" stroke="#22C55E" stroke-width="2" stroke-linecap="round" opacity=".23" fill="none"/>
+<path d="M730 365 L1045 265" stroke="#22C55E" stroke-width="2" stroke-linecap="round" opacity=".23" fill="none"/>
+<path d="M940 365 L1045 265" stroke="#22C55E" stroke-width="2" stroke-linecap="round" opacity=".23" fill="none"/>
+<rect x="675" y="129" width="110" height="72" rx="16" fill="#60A5FA" opacity=".18"/>
+<text x="730" y="173" text-anchor="middle" class="mini">GPU</text>
+<rect x="885" y="129" width="110" height="72" rx="16" fill="#60A5FA" opacity=".18"/>
+<text x="940" y="173" text-anchor="middle" class="mini">GPU</text>
+<rect x="675" y="329" width="110" height="72" rx="16" fill="#60A5FA" opacity=".18"/>
+<text x="730" y="373" text-anchor="middle" class="mini">GPU</text>
+<rect x="885" y="329" width="110" height="72" rx="16" fill="#60A5FA" opacity=".18"/>
+<text x="940" y="373" text-anchor="middle" class="mini">GPU</text>
+<rect x="990" y="229" width="110" height="72" rx="16" fill="#60A5FA" opacity=".18"/>
+<text x="1045" y="273" text-anchor="middle" class="mini">GPU</text>
   </g>
   <rect x="30" y="28" width="1140" height="574" rx="36" fill="none" stroke="#FFFFFF" stroke-opacity=".10" stroke-width="2"/>
   <g transform="translate(78 70)">

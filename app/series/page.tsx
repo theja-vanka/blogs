@@ -46,7 +46,7 @@ const TOPIC_GROUPS: { label: string; ids: string[] }[] = [
   },
   {
     label: "Foundation & Generative",
-    ids: ["mamba", "nas", "kan", "convkan", "vlm", "clip", "stable-diffusion", "attention", "moe"],
+    ids: ["mamba", "nas", "kan", "convkan", "vlm", "clip", "diffusion-models", "stable-diffusion", "attention", "moe"],
   },
   {
     label: "Training & Optimization",
@@ -209,7 +209,7 @@ export default function SeriesPage() {
                         {/* Footer CTA */}
                         <div className="px-5 py-3 border-t border-slate-100 dark:border-slate-800">
                           <span className="inline-flex items-center gap-1.5 text-[0.75rem] font-semibold text-blue-600 dark:text-blue-400 group-hover:gap-2.5 transition-all duration-150">
-                            View curriculum
+                            View series
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M5 12h14M12 5l7 7-7 7"/>
                             </svg>
