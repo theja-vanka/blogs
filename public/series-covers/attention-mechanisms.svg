@@ -1,27 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
     <linearGradient id="bg-attention-mechanisms" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="0%" stop-color="#18181B"/>
       <stop offset="58%" stop-color="#111827"/>
       <stop offset="100%" stop-color="#020617"/>
     </linearGradient>
     <radialGradient id="glow-a-attention-mechanisms" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#F97316" stop-opacity=".65"/>
-      <stop offset="100%" stop-color="#F97316" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#FB7185" stop-opacity=".65"/>
+      <stop offset="100%" stop-color="#FB7185" stop-opacity="0"/>
     </radialGradient>
     <radialGradient id="glow-b-attention-mechanisms" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#67E8F9" stop-opacity=".42"/>
-      <stop offset="100%" stop-color="#67E8F9" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#FACC15" stop-opacity=".42"/>
+      <stop offset="100%" stop-color="#FACC15" stop-opacity="0"/>
     </radialGradient>
     <style>
       .brand { font: 500 25px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #D8E2F1; letter-spacing: .4px; }
-      .chip { font: 500 24px Inter, ui-sans-serif, system-ui, sans-serif; fill: #E5EDF8; }
       .title { font: 500 56px Inter, ui-sans-serif, system-ui, sans-serif; fill: #F8FAFC; letter-spacing: 0; }
       .caption { font: 400 24px Inter, ui-sans-serif, system-ui, sans-serif; fill: #9FB0C7; }
       .mono { font: 500 34px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fill: #F8FAFC; }
-      .mini { font: 500 18px Inter, ui-sans-serif, system-ui, sans-serif; fill: #E5EDF8; }
-      .diagram { font: 500 22px Inter, ui-sans-serif, system-ui, sans-serif; fill: #D8E2F1; opacity: .86; }
-      .code { font: 500 24px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fill: #D8E2F1; opacity: .88; }
     </style>
   </defs>
   <rect width="1200" height="630" fill="url(#bg-attention-mechanisms)"/>
@@ -30,51 +26,43 @@
   <path d="M0 508 C190 438, 310 584, 488 506 C690 418, 820 472, 1200 350 L1200 630 L0 630 Z" fill="#FFFFFF" opacity=".035"/>
   <path d="M0 548 C230 480, 375 608, 570 525 C735 455, 920 535, 1200 438" stroke="#FFFFFF" stroke-opacity=".08" stroke-width="2" fill="none"/>
   <g opacity=".85">
-    <rect x="705" y="160" width="90" height="48" rx="12" fill="#F97316" opacity=".18"/>
-<text x="750" y="192" text-anchor="middle" class="mini">Q</text>
-<rect x="705" y="238" width="90" height="48" rx="12" fill="#F97316" opacity=".18"/>
-<text x="750" y="270" text-anchor="middle" class="mini">K</text>
-<rect x="705" y="316" width="90" height="48" rx="12" fill="#F97316" opacity=".18"/>
-<text x="750" y="348" text-anchor="middle" class="mini">V</text>
-<rect x="885" y="160" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.10"/>
-<rect x="885" y="194" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.15"/>
-<rect x="885" y="228" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.20"/>
-<rect x="885" y="262" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.25"/>
-<rect x="885" y="296" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.10"/>
-<rect x="919" y="160" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.15"/>
-<rect x="919" y="194" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.20"/>
-<rect x="919" y="228" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.25"/>
-<rect x="919" y="262" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.10"/>
-<rect x="919" y="296" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.15"/>
-<rect x="953" y="160" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.20"/>
-<rect x="953" y="194" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.25"/>
-<rect x="953" y="228" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.10"/>
-<rect x="953" y="262" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.15"/>
-<rect x="953" y="296" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.20"/>
-<rect x="987" y="160" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.25"/>
-<rect x="987" y="194" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.10"/>
-<rect x="987" y="228" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.15"/>
-<rect x="987" y="262" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.20"/>
-<rect x="987" y="296" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.25"/>
-<rect x="1021" y="160" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.10"/>
-<rect x="1021" y="194" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.15"/>
-<rect x="1021" y="228" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.20"/>
-<rect x="1021" y="262" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.25"/>
-<rect x="1021" y="296" width="24" height="24" rx="5" fill="#67E8F9" opacity="0.10"/>
+    <rect x="705" y="160" width="90" height="48" rx="12" fill="#FB7185" opacity=".18"/>
+<rect x="728" y="178" width="44" height="12" rx="6" fill="#FACC15" opacity=".35"/>
+<rect x="705" y="238" width="90" height="48" rx="12" fill="#FB7185" opacity=".18"/>
+<rect x="728" y="256" width="44" height="12" rx="6" fill="#FACC15" opacity=".35"/>
+<rect x="705" y="316" width="90" height="48" rx="12" fill="#FB7185" opacity=".18"/>
+<rect x="728" y="334" width="44" height="12" rx="6" fill="#FACC15" opacity=".35"/>
+<rect x="885" y="160" width="24" height="24" rx="5" fill="#FACC15" opacity="0.10"/>
+<rect x="885" y="194" width="24" height="24" rx="5" fill="#FACC15" opacity="0.15"/>
+<rect x="885" y="228" width="24" height="24" rx="5" fill="#FACC15" opacity="0.20"/>
+<rect x="885" y="262" width="24" height="24" rx="5" fill="#FACC15" opacity="0.25"/>
+<rect x="885" y="296" width="24" height="24" rx="5" fill="#FACC15" opacity="0.10"/>
+<rect x="919" y="160" width="24" height="24" rx="5" fill="#FACC15" opacity="0.15"/>
+<rect x="919" y="194" width="24" height="24" rx="5" fill="#FACC15" opacity="0.20"/>
+<rect x="919" y="228" width="24" height="24" rx="5" fill="#FACC15" opacity="0.25"/>
+<rect x="919" y="262" width="24" height="24" rx="5" fill="#FACC15" opacity="0.10"/>
+<rect x="919" y="296" width="24" height="24" rx="5" fill="#FACC15" opacity="0.15"/>
+<rect x="953" y="160" width="24" height="24" rx="5" fill="#FACC15" opacity="0.20"/>
+<rect x="953" y="194" width="24" height="24" rx="5" fill="#FACC15" opacity="0.25"/>
+<rect x="953" y="228" width="24" height="24" rx="5" fill="#FACC15" opacity="0.10"/>
+<rect x="953" y="262" width="24" height="24" rx="5" fill="#FACC15" opacity="0.15"/>
+<rect x="953" y="296" width="24" height="24" rx="5" fill="#FACC15" opacity="0.20"/>
+<rect x="987" y="160" width="24" height="24" rx="5" fill="#FACC15" opacity="0.25"/>
+<rect x="987" y="194" width="24" height="24" rx="5" fill="#FACC15" opacity="0.10"/>
+<rect x="987" y="228" width="24" height="24" rx="5" fill="#FACC15" opacity="0.15"/>
+<rect x="987" y="262" width="24" height="24" rx="5" fill="#FACC15" opacity="0.20"/>
+<rect x="987" y="296" width="24" height="24" rx="5" fill="#FACC15" opacity="0.25"/>
+<rect x="1021" y="160" width="24" height="24" rx="5" fill="#FACC15" opacity="0.10"/>
+<rect x="1021" y="194" width="24" height="24" rx="5" fill="#FACC15" opacity="0.15"/>
+<rect x="1021" y="228" width="24" height="24" rx="5" fill="#FACC15" opacity="0.20"/>
+<rect x="1021" y="262" width="24" height="24" rx="5" fill="#FACC15" opacity="0.25"/>
+<rect x="1021" y="296" width="24" height="24" rx="5" fill="#FACC15" opacity="0.10"/>
   </g>
   <rect x="30" y="28" width="1140" height="574" rx="36" fill="none" stroke="#FFFFFF" stroke-opacity=".10" stroke-width="2"/>
   <g transform="translate(78 70)">
-    <rect width="58" height="58" rx="17" fill="#F97316" opacity=".95"/>
+    <rect width="58" height="58" rx="17" fill="#FB7185" opacity=".95"/>
     <text x="29" y="39" text-anchor="middle" class="mono">KV</text>
     <text x="78" y="37" class="brand">Krishnatheja Vanka / Series</text>
-  </g>
-  <g transform="translate(78 392)">
-    <rect x="0" y="0" width="154" height="46" rx="23" fill="#FFFFFF" opacity=".09"/>
-    <circle cx="26" cy="23" r="7" fill="#F97316"/>
-    <text x="46" y="31" class="chip">2 parts</text>
-    <rect x="174" y="0" width="140" height="46" rx="23" fill="#FFFFFF" opacity=".09"/>
-    <circle cx="200" cy="23" r="7" fill="#67E8F9"/>
-    <text x="220" y="31" class="chip">~15 min</text>
   </g>
   <text x="78" y="218" class="title">Attention Mechanisms</text>
   <text x="80" y="338" class="caption">Multi-part guide from concept to implementation</text>

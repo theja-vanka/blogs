@@ -61,11 +61,11 @@ export default function PostCard({ post }: { post: PostMeta }) {
 
       {/* Card body */}
       <div className="flex flex-col gap-2.5 p-5 flex-1">
-        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug line-clamp-2">
+        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug line-clamp-2 min-h-[2.75rem]">
           {post.title}
         </h2>
 
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5 min-h-[1.5rem]">
           {difficulty && (
             <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${DIFFICULTY_STYLES[difficulty]}`}>
               <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
@@ -77,11 +77,9 @@ export default function PostCard({ post }: { post: PostMeta }) {
           ))}
         </div>
 
-        {post.description && (
-          <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2 flex-1">
-            {post.description}
-          </p>
-        )}
+        <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2 flex-1 min-h-[2.75rem]">
+          {post.description}
+        </p>
 
         <div className="flex items-center justify-between mt-auto pt-1">
           <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
