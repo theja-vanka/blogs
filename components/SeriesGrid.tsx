@@ -169,8 +169,8 @@ export default function SeriesGrid({
                     <span className="absolute top-2.5 right-2.5 bg-black/55 backdrop-blur-sm text-white text-[0.65rem] font-bold tracking-[0.06em] uppercase px-2 py-1 rounded-full">
                       {s.partsCount} {s.partsCount === 1 ? "part" : "parts"}
                     </span>
-                    {/* Difficulty badge — top left */}
-                    <span className={`absolute top-2.5 left-2.5 inline-flex items-center gap-1 bg-black/55 backdrop-blur-sm text-white text-[0.62rem] font-semibold px-2 py-1 rounded-full ring-1 ${diffMeta.ring}`}>
+                    {/* Difficulty badge — bottom left */}
+                    <span className={`absolute bottom-2.5 left-2.5 inline-flex items-center gap-1 bg-black/55 backdrop-blur-sm text-white text-[0.62rem] font-semibold px-2 py-1 rounded-full ring-1 ${diffMeta.ring}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${diffMeta.dot}`} />
                       {diffMeta.label}
                     </span>

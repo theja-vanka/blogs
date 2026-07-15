@@ -32,7 +32,7 @@ function pageNumbers(current: number, total: number): (number | "…")[] {
 
 export default function BlogListing({ posts, categories }: Props) {
   const topicCats = categories.filter((c) => !DIFFICULTY_SET.has(c));
-  const levelCats = categories.filter((c) => DIFFICULTY_SET.has(c));
+  const levelCats = ["beginner", "intermediate", "advanced"].filter((c) => categories.includes(c));
 
   const [activeTopic, setActiveTopic] = useState<string | null>(null);
   const [activeLevel, setActiveLevel] = useState<string | null>(null);
