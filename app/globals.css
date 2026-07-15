@@ -13,6 +13,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 6rem;
+  overflow-x: clip; /* belt-and-suspenders with body rule */
   /* Firefox */
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
@@ -84,7 +85,8 @@ body {
   width: 100%;
   margin: 2rem 0;
   border-radius: 0;
-  overflow: hidden;
+  overflow-y: hidden;
+  overflow-x: auto; /* allow code block to scroll horizontally rather than spill */
   background: var(--code-bg);
 }
 
@@ -546,25 +548,33 @@ mjx-container {
   vertical-align: middle;
 }
 
+/* Scale down equations on mobile so they fit without clipping */
+@media (max-width: 640px) {
+  mjx-container {
+    font-size: 80%;
+  }
+}
+
 /* Display (block) equations */
 mjx-container[display="true"] {
   display: block;
   width: 100%;
   margin: 1.5rem 0;
+  overflow-x: auto; /* scroll wide equations rather than overflow the page */
 }
 
 /* Center the SVG itself — works like centering an image */
 mjx-container[display="true"] > svg {
   display: block;
   margin: 0 auto;
-  max-width: 100%;
-  height: auto;
+  max-width: 100% !important; /* !important overrides MathJax inline style="width:Xem" */
+  height: auto !important;
 }
 
 /* Inline SVG: scale to fit if very wide */
 mjx-container:not([display="true"]) > svg {
-  max-width: 100%;
-  height: auto;
+  max-width: 100% !important;
+  height: auto !important;
   vertical-align: middle;
 }
 
