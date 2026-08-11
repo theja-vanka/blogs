@@ -35,7 +35,7 @@ export default function Header() {
         <div className="flex items-center gap-1 px-2 py-1.5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-full border border-slate-200/80 dark:border-slate-700/60 shadow-[0_4px_24px_rgba(0,0,0,0.07)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)]">
           {/* Logo avatar */}
           <Link
-            href="/"
+            href="/about/"
             className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs shrink-0 mr-1"
           >
             KV
@@ -46,11 +46,8 @@ export default function Header() {
             <Link href="/" className="px-3 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
               Blog
             </Link>
-            <Link href="/series/" className="hidden sm:block px-3 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
+            <Link href="/series/" className="px-3 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
               Series
-            </Link>
-            <Link href="/about/" className="hidden sm:block px-3 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
-              About
             </Link>
           </nav>
 
