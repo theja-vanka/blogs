@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { getPost, getAllSlugs, getRelatedPosts, getAdjacentPosts } from "@/lib/posts";
-import { formatDate } from "@/lib/utils";
+import { formatDate, ensureImageAlt } from "@/lib/utils";
 import CategoryBadge from "@/components/CategoryBadge";
 import TOC from "@/components/TOC";
 import MobileTOC from "@/components/MobileTOC";
@@ -21,6 +21,10 @@ import SeriesBanner from "@/components/SeriesBanner";
 import PostKeyboardNav from "@/components/PostKeyboardNav";
 import { getSeriesForPost } from "@/lib/series";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  `https://theja-vanka.github.io${process.env.NEXT_PUBLIC_BASE_PATH || ""}`;
+
 interface Params { slug: string[] }
 
 export async function generateStaticParams() {
@@ -31,12 +35,10 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) return {};
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-  const siteUrl = `https://theja-vanka.github.io${basePath}`;
-  const postUrl = `${siteUrl}/posts/${post.slugPath}/`;
+  const postUrl = `${SITE_URL}/posts/${post.slugPath}/`;
   const ogImage = post.coverImage
-    ? `https://theja-vanka.github.io${post.coverImage}`
-    : `${siteUrl}/profile.jpg`;
+    ? `${SITE_URL}${post.coverImage}`
+    : `${SITE_URL}/profile.jpg`;
 
   return {
     title: post.title,
@@ -75,17 +77,16 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
   if (!post) notFound();
 
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-  const siteUrl = `https://theja-vanka.github.io${basePath}`;
-  const postUrl = `${siteUrl}/posts/${post.slugPath}/`;
-  const content = absolutifyImages(post.content, basePath, post.slugPath);
+  const postUrl = `${SITE_URL}/posts/${post.slugPath}/`;
+  const content = ensureImageAlt(absolutifyImages(post.content, basePath, post.slugPath), post.title);
 
   const related = getRelatedPosts(post.slugPath);
   const { prev, next } = getAdjacentPosts(post.slugPath);
   const seriesCtx = getSeriesForPost(post.slugPath);
 
   const ogImage = post.coverImage
-    ? `https://theja-vanka.github.io${post.coverImage}`
-    : `${siteUrl}/profile.jpg`;
+    ? `${SITE_URL}${post.coverImage}`
+    : `${SITE_URL}/profile.jpg`;
 
   const primaryCategory = post.categories.find(
     (c) => !["beginner", "intermediate", "advanced"].includes(c)
@@ -105,21 +106,21 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
       author: {
         "@type": "Person",
         name: post.author,
-        url: siteUrl,
+        url: SITE_URL,
         sameAs: [
           "https://github.com/theja-vanka",
           "https://www.linkedin.com/in/krishnatheja-vanka/",
         ],
       },
-      publisher: { "@type": "Person", name: post.author, url: siteUrl },
+      publisher: { "@type": "Person", name: post.author, url: SITE_URL },
       keywords: post.categories.join(", ") || undefined,
     },
     {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Blog", item: `${siteUrl}/` },
-        ...(primaryCategory ? [{ "@type": "ListItem", position: 2, name: primaryCategory, item: `${siteUrl}/category/${encodeURIComponent(primaryCategory)}/` }] : []),
+        { "@type": "ListItem", position: 1, name: "Blog", item: `${SITE_URL}/` },
+        ...(primaryCategory ? [{ "@type": "ListItem", position: 2, name: primaryCategory, item: `${SITE_URL}/category/${encodeURIComponent(primaryCategory)}/` }] : []),
         { "@type": "ListItem", position: primaryCategory ? 3 : 2, name: post.title, item: postUrl },
       ],
     },

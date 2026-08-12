@@ -46,9 +46,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!series) return {};
   const url = `${SITE_URL}/series/${id}/`;
   // Social crawlers don't know the viewer's theme preference, so pick a fixed variant.
-  const ogImage = series.coverImageDark ?? series.coverImageLight
-    ? `https://theja-vanka.github.io${series.coverImageDark ?? series.coverImageLight}`
-    : `${SITE_URL}/profile.jpg`;
+  const coverImage = series.coverImageDark ?? series.coverImageLight;
+  const ogImage = coverImage ? `${SITE_URL}${coverImage}` : `${SITE_URL}/profile.jpg`;
   return {
     title: series.title,
     description: series.description,

@@ -1,4 +1,5 @@
 import { getAllPosts, getPost } from "@/lib/posts";
+import { ensureImageAlt } from "@/lib/utils";
 
 export const dynamic = "force-static";
 
@@ -6,12 +7,10 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
   `https://theja-vanka.github.io${process.env.NEXT_PUBLIC_BASE_PATH || ""}`;
 
-const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
-
 function absolutifyImages(content: string, slugPath: string): string {
   return content.replace(
     /(<img[^>]*\ssrc=")(?!https?:|\/|data:)([^"]+)"/g,
-    `$1https://theja-vanka.github.io${BASE_PATH}/posts/${slugPath}/$2"`
+    `$1${SITE_URL}/posts/${slugPath}/$2"`
   );
 }
 
@@ -21,7 +20,7 @@ export function GET() {
   const items = posts
     .map((p) => {
       const full = getPost(p.slug);
-      const content = full ? absolutifyImages(full.content, p.slugPath) : "";
+      const content = full ? ensureImageAlt(absolutifyImages(full.content, p.slugPath), p.title) : "";
       const cats = p.categories.map((c) => `      <category>${c}</category>`).join("\n");
       return `    <item>
       <title><![CDATA[${p.title}]]></title>
