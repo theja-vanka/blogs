@@ -2,7 +2,7 @@
   {
     "id": 0,
     "title": "VL-Cache: A Technical Walkthrough",
-    "description": "",
+    "description": "Sparsity- and Modality-Aware KV Cache Compression for Vision-Language Model Inference Acceleration",
     "categories": "research, advanced",
     "slug": "deployment/vl-cache",
     "body": "NoteAbout this guide This is a verbose, section-by-section technical walkthrough of “VL-Cache: Sparsity and Modality-Aware KV Cache Compression for Vision-Language Model Inference Acceleration” (Tu, Vashchilenko, Lu, and Xu; arXiv:2410.23317v1, submitted 29 Oct 2024, cs.CV). Original PDF: arxiv.org/pdf/2410.23317 Abstract page: arxiv.org/abs/2410.23317 All charts and heatmaps below (Figures 1, 2, 3, 5, 6, 8, 9) are the original raster images extracted directly from the paper’s PDF and linked fro"
@@ -10,7 +10,7 @@
   {
     "id": 1,
     "title": "Parameter-Efficient Fine-Tuning Methods for Pretrained Language Models: A Critical Review and Assessment",
-    "description": "",
+    "description": "A section-by-section walkthrough of arXiv:2312.12148v1",
     "categories": "research, advanced",
     "slug": "model-training/peft",
     "body": "Note Source paper: arXiv:2312.12148v1 — submitted 19 December 2023. Index terms: Parameter-efficient, fine-tuning, pretrained language model, large language model, memory usage. How this document was built. The prose below follows the paper’s own structure and quotes it directly (in quotation marks) wherever a claim is taken verbatim; unquoted text is explanation added for clarity. Figures 1–3 in the original paper are diagrams (an evolution timeline, a taxonomy tree, and three architecture diag"
@@ -18,7 +18,7 @@
   {
     "id": 2,
     "title": "A Beginner’s Guide to Metric Visualization",
-    "description": "",
+    "description": "From TensorBoard to MLflow",
     "categories": "code, mlops, beginner",
     "slug": "model-training/beginner-metrics",
     "body": "Introduction When you train a machine learning model, numbers fly by in your terminal: loss, accuracy, learning rate, gradient norms. Staring at scrolling text is a terrible way to understand whether your model is actually learning. You need pictures — loss curves that trend downward, histograms that show whether your gradients are exploding or vanishing, and dashboards that let you compare one experiment against another. This guide walks through the two most common tools for this job: TensorBoa"
@@ -26,7 +26,7 @@
   {
     "id": 3,
     "title": "3D Gaussian Splatting for Real-Time Radiance Field Rendering",
-    "description": "",
+    "description": "A Deep Technical Guide to Kerbl et al. (SIGGRAPH 2023)",
     "categories": "research, advanced",
     "slug": "3-d-models/gaussian-splatting",
     "body": "NoteSource Paper: arXiv:2308.04079 · Project page & code · DOI: 10.1145/3592433. Authors: Bernhard Kerbl, Georgios Kopanas, Thomas Leimkühler, George Drettakis (Inria / Université Côte d’Azur / MPI). Published in ACM Transactions on Graphics 42(4), July 2023. TL;DR 3D Gaussian Splatting (3DGS) is a method for novel-view synthesis: given photos of a static scene plus the camera poses recovered by Structure-from-Motion, it builds a 3D representation you can render from any new viewpoint. Its headl"
@@ -34,7 +34,7 @@
   {
     "id": 4,
     "title": "Segment Anything (SAM)",
-    "description": "",
+    "description": "A researcher-oriented walkthrough of arXiv:2304.02643 (Kirillov et al., Meta AI / FAIR, 2023)",
     "categories": "research, intermediate",
     "slug": "models/sam",
     "body": "NoteSource arXiv: 2304.02643 · PDF: https://arxiv.org/pdf/2304.02643 HTML source (ar5iv): https://ar5iv.labs.arxiv.org/html/2304.02643 Project & demo: https://segment-anything.com Figures are linked to their ar5iv-hosted originals. Sections 9.3–11 synthesize the paper’s later experiments and discussion, which continue beyond the truncated HTML capture; consult the official PDF for exact appendix tables and hyperparameters. Executive summary Segment Anything (SA) is a project — not merely a model"
@@ -42,7 +42,7 @@
   {
     "id": 5,
     "title": "Visual Instruction Tuning (LLaVA)",
-    "description": "",
+    "description": "Paper: Visual Instruction Tuning Authors: Haotian Liu¹, Chunyuan Li², Qingyang Wu³, Yong Jae Lee¹ ¹University of Wisconsin–Madison, ²Microsoft Research,…",
     "categories": "research, intermediate",
     "slug": "models/llava",
     "body": "Paper: Visual Instruction Tuning Authors: Haotian Liu¹, Chunyuan Li², Qingyang Wu³, Yong Jae Lee¹ ¹University of Wisconsin–Madison, ²Microsoft Research, ³Columbia University Venue: NeurIPS 2023 (Oral) arXiv: 2304.08485 (v1: 17 Apr 2023, v2: 11 Dec 2023) PDF: https://arxiv.org/pdf/2304.08485 Project page: https://llava-vl.github.io License: CC BY 4.0 This guide is a comprehensive, section-by-section walkthrough of the paper that introduced LLaVA (Large Language and Vision Assistant) — the first s"
@@ -50,7 +50,7 @@
   {
     "id": 6,
     "title": "Demystifying FLUX Architecture",
-    "description": "",
+    "description": "A Reader’s Guide to arXiv:2507.09595v1",
     "categories": "research, intermediate",
     "slug": "generative-ai/fluxv1",
     "body": "NoteAbout this document This is an unofficial reader’s guide reformatting the reverse-engineering report “Demystifying Flux Architecture” (arXiv:2507.09595, submitted 13 Jul 2025, CC BY 4.0). All architecture diagrams from the original paper have been redrawn as Mermaid flowcharts for native rendering and version control. Photographic and bar-chart figures (qualitative image comparisons, ELO score plots) are summarized in prose instead, since they don’t encode a process or architecture a flowcha"
@@ -58,7 +58,7 @@
   {
     "id": 7,
     "title": "High-Resolution Image Synthesis with Latent Diffusion Models",
-    "description": "",
+    "description": "A guide to Rombach et al. (2021), arXiv:2112.10752",
     "categories": "research, intermediate",
     "slug": "generative-ai/latent-diffusion",
     "body": "This is the paper that introduced Latent Diffusion Models (LDMs) — the architecture that underlies Stable Diffusion. Its core trick is deceptively simple: instead of running a diffusion model directly on RGB pixels, first compress the image into a small, perceptually equivalent latent space with an autoencoder, and run the (expensive, iterative) diffusion process there instead. This guide focuses on how and why that works, walking through the method in detail, with a lighter pass over the experi"
@@ -66,7 +66,7 @@
   {
     "id": 8,
     "title": "Denoising Diffusion Implicit Models (DDIM): A Verbose Guide",
-    "description": "",
+    "description": "Paper: Jiaming Song, Chenlin Meng, Stefano Ermon. Denoising Diffusion Implicit Models. ICLR 2021. arXiv:2010.02502",
     "categories": "research, intermediate",
     "slug": "generative-ai/ddim",
     "body": "Paper: Jiaming Song, Chenlin Meng, Stefano Ermon. Denoising Diffusion Implicit Models. ICLR 2021. arXiv:2010.02502 TL;DR Denoising Diffusion Probabilistic Models (DDPMs) generate excellent images but require simulating a long Markov chain (often \\(T=1000\\) steps) to produce a single sample, because the generative process is defined as the reverse of a fixed Markovian forward diffusion. This paper observes that the training objective used by DDPMs only depends on the marginals \\(q(x_t \\mid x_0)\\)"
@@ -74,7 +74,7 @@
   {
     "id": 9,
     "title": "Denoising Diffusion Probabilistic Models",
-    "description": "",
+    "description": "Paper: Jonathan Ho, Ajay Jain, Pieter Abbeel. Denoising Diffusion Probabilistic Models. NeurIPS 2020. arXiv: 2006.11239 · Code: hojonathanho/diffusion",
     "categories": "research, intermediate",
     "slug": "generative-ai/ddpm",
     "body": "Paper: Jonathan Ho, Ajay Jain, Pieter Abbeel. Denoising Diffusion Probabilistic Models. NeurIPS 2020. arXiv: 2006.11239 · Code: hojonathanho/diffusion This guide walks through the full technical content of the paper: the probabilistic setup, every derivation needed to arrive at the training objective, the training and sampling algorithms, the architecture, the experiments, and the paper’s interpretation of diffusion models as progressive lossy decoders. Why this paper matters Before DDPM, “diffu"
@@ -82,7 +82,7 @@
   {
     "id": 10,
     "title": "PyTorch Automatic Mixed Precision (AMP): A Comprehensive Guide",
-    "description": "",
+    "description": "Automatic Mixed Precision (AMP) is PyTorch’s mechanism for running selected parts of a model in lower-precision floating point formats (float16 or bfloat16)…",
     "categories": "code, tutorial, advanced",
     "slug": "model-training/automatic-mixed-precision",
     "body": "1. Introduction and Motivation Automatic Mixed Precision (AMP) is PyTorch’s mechanism for running selected parts of a model in lower-precision floating point formats (float16 or bfloat16) while keeping numerically sensitive operations in float32. The goal is to exploit the throughput advantages of reduced-precision matrix multiplication and convolution units on modern accelerators (Tensor Cores on NVIDIA GPUs, matrix units on AMD MI-series and Google TPUs) without the accuracy degradation that n"
@@ -98,7 +98,7 @@
   {
     "id": 12,
     "title": "BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models",
-    "description": "",
+    "description": "Paper: arXiv:2301.12597 (v3, 15 Jun 2023) Authors: Junnan Li, Dongxu Li, Silvio Savarese, Steven Hoi — Salesforce Research Code:…",
     "categories": "code, tutorial, beginner, foundation model",
     "slug": "foundation/blip",
     "body": "Paper: arXiv:2301.12597 (v3, 15 Jun 2023) Authors: Junnan Li, Dongxu Li, Silvio Savarese, Steven Hoi — Salesforce Research Code: github.com/salesforce/LAVIS/tree/main/projects/blip2 TL;DR BLIP-2 is a vision-language pre-training (VLP) recipe that gets state-of-the-art zero-shot results by not training a giant end-to-end multimodal model. Instead, it keeps a pre-trained image encoder and a pre-trained large language model (LLM) completely frozen, and trains only a small (188M-parameter) bridge mo"
@@ -106,7 +106,7 @@
   {
     "id": 13,
     "title": "Learning Transferable Visual Models From Natural Language Supervision (CLIP)",
-    "description": "",
+    "description": "Paper: Learning Transferable Visual Models From Natural Language Supervision Authors: Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh,…",
     "categories": "code, tutorial, beginner, foundation model",
     "slug": "foundation/clip",
     "body": "Paper: Learning Transferable Visual Models From Natural Language Supervision Authors: Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, Gretchen Krueger, Ilya Sutskever (OpenAI) Submitted: 26 Feb 2021 · arXiv: 2103.00020 · Code/weights: github.com/OpenAI/CLIP Common name: CLIP (Contrastive Language–Image Pre-training) A note on figures in this guide. The images below are not pixel-for-pixel scans of"
@@ -114,7 +114,7 @@
   {
     "id": 14,
     "title": "FlashAttention for Image Models",
-    "description": "",
+    "description": "Attention is the computational core of nearly every modern image model — Vision Transformers (ViT) for classification and representation learning, Diffusion…",
     "categories": "code, mlops, advanced",
     "slug": "deployment/flash-attention",
     "body": "1. Introduction Attention is the computational core of nearly every modern image model — Vision Transformers (ViT) for classification and representation learning, Diffusion Transformers (DiT) and U-Net-based diffusion models for image generation, and multimodal models like CLIP that align vision and language. Attention’s expressive power comes at a steep price: the standard implementation scales quadratically in both compute and memory with the number of tokens. For images, “tokens” usually mean"
@@ -138,7 +138,7 @@
   {
     "id": 17,
     "title": "Targeted Fine-Tuning from Model Mispredictions with Milvus",
-    "description": "",
+    "description": "This guide walks through the full pipeline for identifying images your model predicts incorrectly, storing and querying them using Milvus as the vector…",
     "categories": "code, mlops, advanced",
     "slug": "deployment/milvus-active-learning",
     "body": "Overview and Architecture This guide walks through the full pipeline for identifying images your model predicts incorrectly, storing and querying them using Milvus as the vector database, re-annotating them with correct labels, extending your training dataset, and fine-tuning the model so it learns from its own mistakes. Milvus plays a central role throughout: it stores dense float embeddings from your model’s penultimate layer alongside scalar metadata (ground truth label, predicted label, conf"
@@ -146,7 +146,7 @@
   {
     "id": 18,
     "title": "Training a Model with Milvus and PyTorch: A Comprehensive Guide",
-    "description": "",
+    "description": "This guide covers how to build a full machine learning pipeline that combines PyTorch for model training with Milvus as a vector database — a common…",
     "categories": "code, mlops, advanced",
     "slug": "deployment/milvus-train",
     "body": "Overview and Architecture This guide covers how to build a full machine learning pipeline that combines PyTorch for model training with Milvus as a vector database — a common architecture for embedding-based retrieval, semantic search, recommendation systems, and similarity learning. Why Combine Milvus and PyTorch? PyTorch is the de facto framework for training deep learning models. Milvus is a purpose-built vector database optimized for storing, indexing, and querying high-dimensional embedding"
@@ -154,7 +154,7 @@
   {
     "id": 19,
     "title": "A Verbose Guide to LeNet: The Pioneer of Convolutional Neural Networks",
-    "description": "",
+    "description": "LeNet is the name given to a series of convolutional neural network (CNN) architectures developed primarily by Yann LeCun, along with collaborators Léon…",
     "categories": "code, tutorial, beginner, foundation model",
     "slug": "foundation/lenet",
     "body": "Introduction and Historical Context LeNet is the name given to a series of convolutional neural network (CNN) architectures developed primarily by Yann LeCun, along with collaborators Léon Bottou, Yoshua Bengio, and Patrick Haffner, during their time at AT&T Bell Laboratories in the late 1980s and 1990s. The work culminated in the landmark 1998 paper: “Gradient-Based Learning Applied to Document Recognition” Yann LeCun, Léon Bottou, Yoshua Bengio, Patrick Haffner Proceedings of the IEEE, 86(11):"
@@ -162,7 +162,7 @@
   {
     "id": 20,
     "title": "AlexNet: A Comprehensive Guide",
-    "description": "",
+    "description": "AlexNet is a deep convolutional neural network (CNN) that fundamentally changed the landscape of computer vision and machine learning when it was introduced in…",
     "categories": "code, tutorial, beginner, foundation model",
     "slug": "foundation/alexnet",
     "body": "Introduction AlexNet is a deep convolutional neural network (CNN) that fundamentally changed the landscape of computer vision and machine learning when it was introduced in 2012. Designed by Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton at the University of Toronto, the network achieved a top-5 error rate of 15.3% on the ImageNet Large Scale Visual Recognition Challenge (ILSVRC-2012), compared to 26.2% achieved by the second-best entry. This ~11 percentage point gap was unprecedented and "
@@ -170,7 +170,7 @@
   {
     "id": 21,
     "title": "Training Computer Vision Models and Running Them with ONNX Runtime",
-    "description": "",
+    "description": "Computer vision is one of the most vibrant areas of applied machine learning. Whether you are building an image classifier, a real-time object detector, a…",
     "categories": "code, mlops, advanced",
     "slug": "deployment/onnx-cv",
     "body": "Introduction Computer vision is one of the most vibrant areas of applied machine learning. Whether you are building an image classifier, a real-time object detector, a segmentation model, or a pose estimator, the challenge after training is always the same: how do you efficiently deploy the model across diverse hardware—cloud GPUs, edge CPUs, mobile SoCs, FPGAs, or browsers—without rewriting your inference code for every target? ONNX (Open Neural Network Exchange) and ONNX Runtime solve this pro"
@@ -178,7 +178,7 @@
   {
     "id": 22,
     "title": "Building Neural Network Architectures Using Only ONNX",
-    "description": "",
+    "description": "ONNX (Open Neural Network Exchange) is most commonly known as an export target — a format you dump a PyTorch or TensorFlow model into for deployment. But ONNX…",
     "categories": "code, mlops, advanced",
     "slug": "deployment/onnx-model",
     "body": "Introduction ONNX (Open Neural Network Exchange) is most commonly known as an export target — a format you dump a PyTorch or TensorFlow model into for deployment. But ONNX is also a fully self-contained, expressive intermediate representation that you can build directly, without ever touching a training framework. This guide treats ONNX as a first-class construction language, not a second-class export artifact. Why would you want to build networks directly in ONNX? Portability without framework "
@@ -186,7 +186,7 @@
   {
     "id": 23,
     "title": "Milvus for Computer Vision: An In-Depth Guide",
-    "description": "",
+    "description": "I’ve spent a fair bit of time working on computer vision systems — the kind that start small, manageable, and almost deceptively simple, and then quietly…",
     "categories": "code, mlops, advanced",
     "slug": "deployment/milvus",
     "body": "Introduction I’ve spent a fair bit of time working on computer vision systems — the kind that start small, manageable, and almost deceptively simple, and then quietly spiral in scale until the infrastructure holding them together starts creaking at the seams. For a while I was getting by with fairly standard approaches: storing image embeddings in flat files, querying with NumPy, eventually graduating to something like FAISS. It worked. Until it didn’t. The turning point came when the dataset cr"
@@ -194,7 +194,7 @@
   {
     "id": 24,
     "title": "TIPSv2: Advancing Vision-Language Pretraining with Enhanced Patch-Text Alignment",
-    "description": "",
+    "description": "Vision-language models (VLMs) have become a cornerstone of modern computer vision and multimodal AI. Systems like CLIP, SigLIP, ALIGN, and their descendants…",
     "categories": "code, tutorial, intermediate",
     "slug": "models/dino/tips",
     "body": "Introduction and Motivation Vision-language models (VLMs) have become a cornerstone of modern computer vision and multimodal AI. Systems like CLIP, SigLIP, ALIGN, and their descendants have demonstrated remarkable capability at associating images with textual descriptions, enabling zero-shot classification, cross-modal retrieval, and a growing ecosystem of downstream multimodal tasks. However, despite their strong global image-text alignment abilities, these models share a common and often under"
@@ -210,7 +210,7 @@
   {
     "id": 26,
     "title": "MLflow Best Practices for Computer Vision (Deep Learning)",
-    "description": "",
+    "description": "Operational Excellence in Production Systems",
     "categories": "code, mlops, advanced",
     "slug": "deployment/mlflow-oe",
     "body": "Experiment Tracking This guide demonstrates how to achieve operational excellence using MLFlow in Production. Compatibility: MLflow ≥ 2.4 · PyTorch ≥ 2.0 · Python ≥ 3.10 Structure Experiments Hierarchically Organise experiments to mirror your project structure. Avoid dumping all runs into a single experiment. import mlflow # One experiment per model family or research objective mlflow.set_experiment(\"resnet-backbone-ablations\") mlflow.set_experiment(\"yolov8-object-detection-v2\") Use Nested Runs "
@@ -218,7 +218,7 @@
   {
     "id": 27,
     "title": "Grounding DINO Implementation Guide",
-    "description": "",
+    "description": "Grounding DINO is a state-of-the-art open-set object detection model that combines language understanding with visual detection. It can detect and localize…",
     "categories": "code, tutorial, intermediate",
     "slug": "models/dino/grounding-dino/implementation",
     "body": "Grounding DINO is a state-of-the-art open-set object detection model that combines language understanding with visual detection. It can detect and localize objects based on natural language descriptions, making it highly flexible for zero-shot object detection tasks. Key Features Open-vocabulary detection: Detect objects using free-form text descriptions Zero-shot capability: No need for task-specific fine-tuning High accuracy: Achieves strong performance on COCO and other benchmarks Flexible in"
@@ -226,7 +226,7 @@
   {
     "id": 28,
     "title": "Mathematics Behind Grounding DINO",
-    "description": "",
+    "description": "Grounding DINO (Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection) is a state-of-the-art open-set object detection model…",
     "categories": "code, tutorial, intermediate",
     "slug": "models/dino/grounding-dino/math",
     "body": "Grounding DINO (Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection) is a state-of-the-art open-set object detection model that combines vision and language modalities. It extends the DINO (DETR with Improved deNoising anchOr boxes) architecture to perform zero-shot object detection using natural language descriptions. Core Architecture Components Feature Extraction Image Encoder: Grounding DINO uses a backbone network (typically Swin Transformer) to extract vi"
@@ -234,7 +234,7 @@
   {
     "id": 29,
     "title": "Programming Languages in Computer Vision & Machine Learning",
-    "description": "",
+    "description": "When I look back at my career so far, it feels like a journey through different languages, each chapter shaping the way I think about solving problems.",
     "categories": "code, tutorial, intermediate",
     "slug": "news/ml-langs",
     "body": "When I look back at my career so far, it feels like a journey through different languages, each chapter shaping the way I think about solving problems. It all began with Java in collage. That was my first serious step into software development — a world of strong typing, object-oriented design, and enterprise-scale thinking. It gave me discipline in structure, patterns, and writing code that lasts. From there, I transitioned into JavaScript during my time at TopRankers. It was like entering a di"
@@ -242,7 +242,7 @@
   {
     "id": 30,
     "title": "SGLang: Comprehensive Guide to Structured Generation Language",
-    "description": "",
+    "description": "SGLang (Structured Generation Language) is a revolutionary framework that transforms how developers interact with large language models (LLMs) and…",
     "categories": "code, tutorial, intermediate",
     "slug": "deployment/sglang",
     "body": "NoteAbout This Guide This comprehensive guide covers SGLang (Structured Generation Language), a revolutionary framework that transforms how developers interact with large language models (LLMs) and vision-language models. SGLang achieves unprecedented performance improvements while maintaining programming simplicity and flexibility. Introduction SGLang (Structured Generation Language) is a revolutionary framework that transforms how developers interact with large language models (LLMs) and visio"
@@ -250,7 +250,7 @@
   {
     "id": 31,
     "title": "Complete Guide to Mamba Transformers: Implementation and Theory",
-    "description": "",
+    "description": "Mamba is a revolutionary architecture that addresses the quadratic complexity problem of traditional transformers through selective state space models (SSMs).…",
     "categories": "code, tutorial, intermediate",
     "slug": "models/mamba/mamba-code",
     "body": "Introduction to Mamba Mamba is a revolutionary architecture that addresses the quadratic complexity problem of traditional transformers through selective state space models (SSMs). Unlike transformers that use attention mechanisms, Mamba processes sequences with linear complexity while maintaining comparable or superior performance. Key Advantages Linear Complexity: \\(O(L)\\) instead of \\(O(L^2)\\) for sequence length \\(L\\) Selective Mechanism: Dynamic parameter adjustment based on input Hardware "
@@ -258,7 +258,7 @@
   {
     "id": 32,
     "title": "Mathematics Behind Mamba Transformers: A Complete Guide",
-    "description": "",
+    "description": "Mamba represents a breakthrough in sequence modeling that addresses the quadratic complexity limitation of traditional transformers. Built on State Space…",
     "categories": "research, advanced",
     "slug": "models/mamba/mamba-math",
     "body": "Introduction Mamba represents a breakthrough in sequence modeling that addresses the quadratic complexity limitation of traditional transformers. Built on State Space Models (SSMs), Mamba introduces a selective mechanism that allows the model to dynamically focus on relevant information while maintaining linear computational complexity with respect to sequence length. Important The key innovation lies in making the SSM parameters input-dependent, creating a selective state space that can efficie"
@@ -266,7 +266,7 @@
   {
     "id": 33,
     "title": "Mamba Transformers: Revolutionizing Sequence Modeling with Selective State Space Models",
-    "description": "",
+    "description": "Mamba represents a groundbreaking advancement in sequence modeling architecture, emerging as a compelling alternative to the dominant transformer paradigm.…",
     "categories": "code, research, advanced",
     "slug": "models/mamba/mamba-transformer",
     "body": "Introduction Mamba represents a groundbreaking advancement in sequence modeling architecture, emerging as a compelling alternative to the dominant transformer paradigm. Introduced in late 2023 by Albert Gu and Tri Dao, Mamba addresses fundamental limitations of transformers while maintaining their modeling capabilities. This selective state space model (SSM) offers linear scaling with sequence length, making it particularly attractive for processing long sequences that would be computationally p"
@@ -274,7 +274,7 @@
   {
     "id": 34,
     "title": "Complete Guide to Quantization and Pruning",
-    "description": "",
+    "description": "Model compression techniques are essential for deploying deep learning models in resource-constrained environments. Two of the most effective approaches are…",
     "categories": "code, research, advanced",
     "slug": "deployment/quantization",
     "body": "Introduction Model compression techniques are essential for deploying deep learning models in resource-constrained environments. Two of the most effective approaches are quantization and pruning, which can significantly reduce model size, memory usage, and inference time while maintaining acceptable performance. Why Model Compression Matters Model compression addresses several critical challenges in deep learning deployment: ImportantKey Benefits of Model Compression Memory Efficiency: Reduced m"
@@ -282,7 +282,7 @@
   {
     "id": 35,
     "title": "Complete Guide to Reinforcement Learning",
-    "description": "",
+    "description": "Reinforcement Learning (RL) is a paradigm of machine learning where an agent learns to make decisions by interacting with an environment to maximize cumulative…",
     "categories": "research, intermediate",
     "slug": "model-training/reinforced-learning/rl-basics",
     "body": "Introduction Reinforcement Learning (RL) is a paradigm of machine learning where an agent learns to make decisions by interacting with an environment to maximize cumulative rewards. Unlike supervised learning, where the correct answers are provided, or unsupervised learning, where patterns are discovered in data, reinforcement learning involves learning through trial and error based on feedback from the environment. The inspiration for RL comes from behavioral psychology and how animals learn th"
@@ -290,7 +290,7 @@
   {
     "id": 36,
     "title": "Complete Guide to DINOv3: Self-Supervised Vision Transformers",
-    "description": "",
+    "description": "DINOv3 represents a breakthrough in computer vision, offering the first truly universal vision backbone that achieves state-of-the-art performance across…",
     "categories": "code, research, advanced",
     "slug": "models/dino/dino-v3",
     "body": "Introduction DINOv3 represents a breakthrough in computer vision, offering the first truly universal vision backbone that achieves state-of-the-art performance across diverse visual tasks without requiring fine-tuning. Developed by Meta AI, DINOv3 scales self-supervised learning to unprecedented levels, training on 1.7 billion images with up to 7 billion parameters. NoteKey Innovation DINOv3’s ability to produce high-quality, transferable features that work across different domains and tasks str"
@@ -298,7 +298,7 @@
   {
     "id": 37,
     "title": "Vision-Language Models: Bridging Visual and Textual Understanding",
-    "description": "",
+    "description": "Vision-Language Models (VLMs) represent one of the most exciting frontiers in artificial intelligence, combining computer vision and natural language…",
     "categories": "code, beginner",
     "slug": "models/vision-language-models/vision-language-explained",
     "body": "Introduction Vision-Language Models (VLMs) represent one of the most exciting frontiers in artificial intelligence, combining computer vision and natural language processing to create systems that can understand and reason about both images and text simultaneously. These multimodal models are revolutionizing how machines interpret the world around us. What Are Vision-Language Models? Vision-Language Models are neural networks designed to process and understand both visual and textual information"
@@ -306,7 +306,7 @@
   {
     "id": 38,
     "title": "Fine-tuning Vision-Language Models: A Comprehensive Guide",
-    "description": "",
+    "description": "Vision-Language Models (VLMs) represent a significant advancement in artificial intelligence, combining computer vision and natural language processing to…",
     "categories": "code, tutorial, intermediate",
     "slug": "models/vision-language-models/vision-language-finetuning",
     "body": "Introduction Vision-Language Models (VLMs) represent a significant advancement in artificial intelligence, combining computer vision and natural language processing to understand and generate content that bridges visual and textual modalities. Fine-tuning these models for specific tasks and domains has become crucial for achieving optimal performance in real-world applications. This comprehensive guide explores the intricacies of fine-tuning VLMs, from theoretical foundations to practical implem"
@@ -314,7 +314,7 @@
   {
     "id": 39,
     "title": "LoRA for Vision-Language Models: A Comprehensive Guide",
-    "description": "",
+    "description": "Low-Rank Adaptation (LoRA) has emerged as a revolutionary technique for efficient fine-tuning of large language models, and its application to Vision-Language…",
     "categories": "code, tutorial, intermediate",
     "slug": "models/vision-language-models/vision-language-lora",
     "body": "Abstract Low-Rank Adaptation (LoRA) has emerged as a revolutionary technique for efficient fine-tuning of large language models, and its application to Vision-Language Models (VLMs) represents a significant advancement in multimodal AI. This comprehensive guide provides theoretical foundations, practical implementation strategies, and production deployment techniques for LoRA in VLMs, covering everything from basic concepts to advanced optimization methods. Introduction Vision-Language Models li"
@@ -322,7 +322,7 @@
   {
     "id": 40,
     "title": "ControlNet: Revolutionizing AI Image Generation with Precise Control",
-    "description": "",
+    "description": "ControlNet represents a groundbreaking advancement in the field of AI-generated imagery, providing unprecedented control over the output of diffusion models…",
     "categories": "research, intermediate",
     "slug": "generative-ai/control-net",
     "body": "Introduction ControlNet represents a groundbreaking advancement in the field of AI-generated imagery, providing unprecedented control over the output of diffusion models like Stable Diffusion. Developed by researchers at Stanford University and released in early 2023, ControlNet has fundamentally changed how artists, designers, and developers approach AI image generation by enabling precise spatial control while maintaining the creative power of the underlying diffusion model. Unlike traditional"
@@ -330,7 +330,7 @@
   {
     "id": 41,
     "title": "Stable Diffusion: A Complete Guide to Text-to-Image Generation",
-    "description": "",
+    "description": "Stable Diffusion represents a watershed moment in artificial intelligence and creative technology. Released in August 2022 by Stability AI in collaboration…",
     "categories": "research, intermediate",
     "slug": "generative-ai/stable-diffusion",
     "body": "Introduction Stable Diffusion represents a watershed moment in artificial intelligence and creative technology. Released in August 2022 by Stability AI in collaboration with the CompVis Group at Ludwig Maximilian University of Munich and Runway, this open-source text-to-image model democratized AI-powered image generation in unprecedented ways. Unlike its predecessors that required massive computational resources and were locked behind proprietary APIs, Stable Diffusion can run on consumer hardw"
@@ -338,7 +338,7 @@
   {
     "id": 42,
     "title": "Complete Guide to Stable Diffusion with ControlNet",
-    "description": "",
+    "description": "ControlNet is a neural network architecture that allows you to control Stable Diffusion image generation with additional input conditions like edge maps, depth…",
     "categories": "code, research, intermediate",
     "slug": "generative-ai/stable-diffusion-with-control-net",
     "body": "Introduction ControlNet is a neural network architecture that allows you to control Stable Diffusion image generation with additional input conditions like edge maps, depth maps, poses, and more. It provides precise control over the composition, structure, and layout of generated images while maintaining the creative power of diffusion models. Key Benefits Precise Control: Direct influence over image structure and composition Consistency: Maintain specific poses, edges, or layouts across generat"
@@ -346,7 +346,7 @@
   {
     "id": 43,
     "title": "DenseNet: A Code Guide",
-    "description": "",
+    "description": "DenseNet (Densely Connected Convolutional Networks) represents a paradigm shift in deep learning architecture design, introducing unprecedented connectivity…",
     "categories": "code, tutorial, intermediate",
     "slug": "models/dense-net/dense-net-code",
     "body": "Introduction DenseNet (Densely Connected Convolutional Networks) represents a paradigm shift in deep learning architecture design, introducing unprecedented connectivity patterns that revolutionize how information flows through neural networks. Proposed by Gao Huang, Zhuang Liu, Laurens van der Maaten, and Kilian Weinberger in 2017, DenseNet challenges the traditional sequential nature of convolutional neural networks by creating direct connections between every layer and all subsequent layers. "
@@ -354,7 +354,7 @@
   {
     "id": 44,
     "title": "DenseNet: Densely Connected Convolutional Networks",
-    "description": "",
+    "description": "DenseNet (Densely Connected Convolutional Networks) represents a significant advancement in deep learning architecture design, introduced by Gao Huang, Zhuang…",
     "categories": "research, intermediate",
     "slug": "models/dense-net/dense-net-summary",
     "body": "Introduction DenseNet (Densely Connected Convolutional Networks) represents a significant advancement in deep learning architecture design, introduced by Gao Huang, Zhuang Liu, Laurens van der Maaten, and Kilian Q. Weinberger in their 2017 paper “Densely Connected Convolutional Networks.” This architecture addresses fundamental challenges in training very deep neural networks while achieving remarkable efficiency and performance across various computer vision tasks. ImportantKey Innovation The c"
@@ -362,7 +362,7 @@
   {
     "id": 45,
     "title": "Complete MobileNet Code Guide",
-    "description": "",
+    "description": "MobileNet is a family of efficient neural network architectures designed specifically for mobile and embedded devices. The key innovation is the use of…",
     "categories": "code, research, intermediate",
     "slug": "models/mobile-net/mobile-net-code",
     "body": "Introduction MobileNet is a family of efficient neural network architectures designed specifically for mobile and embedded devices. The key innovation is the use of depthwise separable convolutions which dramatically reduce the number of parameters and computational cost while maintaining reasonable accuracy. Prerequisites and Setup ImportantRequirements Before diving into MobileNet implementation, ensure you have the following prerequisites: Software Requirements: Python 3.8+ PyTorch 1.12+ torc"
@@ -370,7 +370,7 @@
   {
     "id": 46,
     "title": "MobileNet: Efficient Neural Networks for Mobile Vision Applications",
-    "description": "",
+    "description": "MobileNet represents a revolutionary approach to deep learning architecture design, specifically optimized for mobile and embedded vision applications.…",
     "categories": "research, intermediate",
     "slug": "models/mobile-net/mobile-net-summary",
     "body": "Introduction MobileNet represents a revolutionary approach to deep learning architecture design, specifically optimized for mobile and embedded vision applications. Introduced by Google researchers in 2017, MobileNet addresses one of the most pressing challenges in deploying deep neural networks: achieving high accuracy while maintaining computational efficiency on resource-constrained devices. The traditional approach to neural network design focused primarily on accuracy, often at the expense "
@@ -378,7 +378,7 @@
   {
     "id": 47,
     "title": "GShard: Scaling Giant Neural Networks with Conditional Computation",
-    "description": "",
+    "description": "GShard represents a pivotal advancement in neural network scaling, introduced by Google Research in 2020. This innovative approach addresses one of the most…",
     "categories": "research, advanced",
     "slug": "model-training/g-shard",
     "body": "Introduction GShard represents a pivotal advancement in neural network scaling, introduced by Google Research in 2020. This innovative approach addresses one of the most pressing challenges in deep learning: how to scale neural networks to unprecedented sizes while maintaining computational efficiency. By leveraging sparsely-gated mixture-of-experts (MoE) and sophisticated parallelization strategies, GShard enables the training of models with trillions of parameters using conditional computation"
@@ -386,7 +386,7 @@
   {
     "id": 48,
     "title": "Mixture of Experts: A Deep Overview",
-    "description": "",
+    "description": "Mixture of Experts (MoE) represents a fundamental paradigm shift in machine learning architecture design, offering a scalable approach to building models that…",
     "categories": "research, advanced",
     "slug": "model-training/mixture-of-experts",
     "body": "Introduction Mixture of Experts (MoE) represents a fundamental paradigm shift in machine learning architecture design, offering a scalable approach to building models that can handle complex, heterogeneous tasks while maintaining computational efficiency. This architectural pattern has gained significant traction in recent years, particularly in the realm of large language models and neural networks, where the ability to scale model capacity without proportionally increasing computational costs "
@@ -394,7 +394,7 @@
   {
     "id": 49,
     "title": "Switch Transformer: Scaling Neural Networks with Sparsity",
-    "description": "",
+    "description": "The Switch Transformer represents a groundbreaking advancement in neural network architecture, introduced by Google Research in 2021. This innovative model…",
     "categories": "research, advanced",
     "slug": "models/switch-transformer",
     "body": "Introduction The Switch Transformer represents a groundbreaking advancement in neural network architecture, introduced by Google Research in 2021. This innovative model addresses one of the most pressing challenges in deep learning: how to scale neural networks to unprecedented sizes while maintaining computational efficiency. By leveraging the concept of sparsity and expert routing, Switch Transformer achieves remarkable performance improvements with fewer computational resources per token. Not"
@@ -402,7 +402,7 @@
   {
     "id": 50,
     "title": "Complete YOLO Object Detection Code Guide",
-    "description": "",
+    "description": "YOLO (You Only Look Once) is a state-of-the-art real-time object detection algorithm that revolutionized computer vision by treating object detection as a…",
     "categories": "code, tutorial, beginner",
     "slug": "models/you-only-look-once/yolo-code",
     "body": "1. Introduction to YOLO YOLO (You Only Look Once) is a state-of-the-art real-time object detection algorithm that revolutionized computer vision by treating object detection as a single regression problem. Unlike traditional methods that apply classifiers to different parts of an image, YOLO looks at the entire image once and predicts bounding boxes and class probabilities directly. Key Advantages: Speed: Real-time detection (30+ FPS) Global Context: Sees entire image during training and testing"
@@ -410,7 +410,7 @@
   {
     "id": 51,
     "title": "The Mathematics Behind YOLO: A Deep Dive into Object Detection",
-    "description": "",
+    "description": "You Only Look Once (YOLO) revolutionized object detection by treating it as a single regression problem, directly predicting bounding boxes and class…",
     "categories": "research, beginner",
     "slug": "models/you-only-look-once/yolo-math",
     "body": "Introduction You Only Look Once (YOLO) revolutionized object detection by treating it as a single regression problem, directly predicting bounding boxes and class probabilities from full images in one evaluation. Unlike traditional approaches that apply classifiers to different parts of an image, YOLO’s unified architecture enables real-time detection while maintaining high accuracy. Core Mathematical Framework Grid-Based Detection Paradigm YOLO divides an input image into an \\(S \\times S\\) grid"
@@ -418,7 +418,7 @@
   {
     "id": 52,
     "title": "YOLO (You Only Look Once): A Comprehensive Beginner’s Guide",
-    "description": "",
+    "description": "In the rapidly evolving world of computer vision and artificial intelligence, few innovations have been as transformative as YOLO (You Only Look Once). This…",
     "categories": "research, beginner",
     "slug": "models/you-only-look-once/yolo-summary",
     "body": "Introduction In the rapidly evolving world of computer vision and artificial intelligence, few innovations have been as transformative as YOLO (You Only Look Once). This revolutionary object detection algorithm has fundamentally changed how computers “see” and understand images, making real-time object detection accessible to developers, researchers, and businesses worldwide. YOLO represents a paradigm shift from traditional object detection methods, offering unprecedented speed without signific"
@@ -426,7 +426,7 @@
   {
     "id": 53,
     "title": "Neural Architecture Search: Complete Code Guide",
-    "description": "",
+    "description": "Neural Architecture Search (NAS) is an automated approach to designing neural network architectures. Instead of manually crafting network designs, NAS…",
     "categories": "code, tutorial, advanced",
     "slug": "models/neural-architecture-search/nas-code",
     "body": "Introduction Neural Architecture Search (NAS) is an automated approach to designing neural network architectures. Instead of manually crafting network designs, NAS algorithms explore the space of possible architectures to find optimal configurations for specific tasks. Why NAS Matters Automation: Reduces human effort in architecture design Performance: Can discover architectures that outperform human-designed ones Efficiency: Optimizes for specific constraints (latency, memory, energy) Scalabili"
@@ -434,7 +434,7 @@
   {
     "id": 54,
     "title": "The Mathematics Behind Neural Architecture Search",
-    "description": "",
+    "description": "Neural Architecture Search (NAS) represents one of the most sophisticated applications of automated machine learning, where algorithms autonomously design…",
     "categories": "research, advanced",
     "slug": "models/neural-architecture-search/nas-mathematics",
     "body": "Neural Architecture Search (NAS) represents one of the most sophisticated applications of automated machine learning, where algorithms autonomously design neural network architectures. This field combines optimization theory, probability, and deep learning to solve the fundamental question: what is the optimal neural network architecture for a given task? Problem Formulation The core mathematical challenge in NAS can be formulated as a bilevel optimization problem. Given a dataset \\(D = \\{(x_i, "
@@ -442,7 +442,7 @@
   {
     "id": 55,
     "title": "Neural Architecture Search: A Comprehensive Guide",
-    "description": "",
+    "description": "Neural Architecture Search (NAS) represents a paradigm shift in deep learning, moving from manual architecture design to automated discovery of optimal neural…",
     "categories": "research, advanced",
     "slug": "models/neural-architecture-search/nas-summary",
     "body": "Introduction Neural Architecture Search (NAS) represents a paradigm shift in deep learning, moving from manual architecture design to automated discovery of optimal neural network structures. This field has emerged as one of the most promising areas in machine learning, addressing the fundamental challenge of designing neural networks that are both effective and efficient for specific tasks. The traditional approach to neural network design relies heavily on human expertise, intuition, and exten"
@@ -450,7 +450,7 @@
   {
     "id": 56,
     "title": "Optuna for Deep Learning and Neural Architecture Search: A Comprehensive Guide",
-    "description": "",
+    "description": "Hyperparameter optimization is one of the most critical yet challenging aspects of deep learning. With the exponential growth in model complexity and the vast…",
     "categories": "code, tutorial, advanced",
     "slug": "models/neural-architecture-search/optuna-code",
     "body": "Introduction Hyperparameter optimization is one of the most critical yet challenging aspects of deep learning. With the exponential growth in model complexity and the vast hyperparameter search spaces, manual tuning becomes impractical. Optuna, developed by Preferred Networks, emerges as a powerful automatic hyperparameter optimization framework that addresses these challenges with sophisticated algorithms and intuitive APIs. This comprehensive guide explores how Optuna revolutionizes deep learn"
@@ -458,7 +458,7 @@
   {
     "id": 57,
     "title": "Complete Guide to Python’s functools Module",
-    "description": "",
+    "description": "The functools module in Python provides utilities for working with higher-order functions and operations on callable objects. It’s a powerful toolkit for…",
     "categories": "code, tutorial, beginner",
     "slug": "news/python/python-functools",
     "body": "The functools module in Python provides utilities for working with higher-order functions and operations on callable objects. It’s a powerful toolkit for functional programming patterns, performance optimization, and code organization. Introduction The functools module is part of Python’s standard library and provides essential tools for functional programming. It helps you create more efficient, reusable, and maintainable code by offering utilities for function manipulation, caching, and compos"
@@ -466,7 +466,7 @@
   {
     "id": 58,
     "title": "Complete Guide to Python’s itertools Module",
-    "description": "",
+    "description": "The itertools module is one of Python’s most powerful standard library modules for creating iterators and performing functional programming operations. It…",
     "categories": "code, tutorial, beginner",
     "slug": "news/python/python-itertools",
     "body": "Introduction The itertools module is one of Python’s most powerful standard library modules for creating iterators and performing functional programming operations. It provides a collection of tools for creating iterators that are building blocks for efficient loops and data processing pipelines. The itertools module provides three categories of iterators: Infinite iterators: Generate infinite sequences Finite iterators: Work with finite sequences Combinatorial iterators: Generate combinations a"
@@ -474,7 +474,7 @@
   {
     "id": 59,
     "title": "Python Multiprocessing and Multithreading: A Comprehensive Guide",
-    "description": "",
+    "description": "Python provides two primary approaches for concurrent execution: multithreading and multiprocessing. Understanding when and how to use each is crucial for…",
     "categories": "code, tutorial, beginner",
     "slug": "news/python/python-multi-star",
     "body": "Introduction Python provides two primary approaches for concurrent execution: multithreading and multiprocessing. Understanding when and how to use each is crucial for writing efficient Python applications. Multithreading: Multiple threads within a single process sharing memory space Multiprocessing: Multiple separate processes, each with its own memory space Understanding Concurrency vs Parallelism Concurrency Concurrency is about dealing with multiple tasks at once, but not necessarily executi"
@@ -482,7 +482,7 @@
   {
     "id": 60,
     "title": "Convolutional Kolmogorov-Arnold Networks: A Deep Dive into Next-Generation Neural Architectures",
-    "description": "",
+    "description": "Convolutional Kolmogorov-Arnold Networks (CKANs) represent a groundbreaking fusion of classical mathematical theory and modern deep learning architectures. By…",
     "categories": "code, tutorial, advanced",
     "slug": "models/convkan/ckan-guide",
     "body": "Introduction Convolutional Kolmogorov-Arnold Networks (CKANs) represent a groundbreaking fusion of classical mathematical theory and modern deep learning architectures. By integrating the Kolmogorov-Arnold representation theorem with convolutional neural networks, CKANs offer a novel approach to function approximation that challenges traditional activation function paradigms. Traditional neural networks rely on fixed activation functions (ReLU, sigmoid, tanh) applied to linear transformations. I"
@@ -490,7 +490,7 @@
   {
     "id": 61,
     "title": "The Mathematics Behind Convolutional Kolmogorov-Arnold Networks",
-    "description": "",
+    "description": "Convolutional Kolmogorov-Arnold Networks (CKANs) represent a revolutionary approach to neural network architecture that combines the theoretical foundations of…",
     "categories": "research, advanced",
     "slug": "models/convkan/ckan-math",
     "body": "Introduction Convolutional Kolmogorov-Arnold Networks (CKANs) represent a revolutionary approach to neural network architecture that combines the theoretical foundations of the Kolmogorov-Arnold representation theorem with the practical advantages of convolutional operations. Unlike traditional Convolutional Neural Networks (CNNs) that rely on fixed linear transformations followed by nonlinear activations, CKANs replace these components with learnable univariate functions, offering a more flexib"
@@ -498,7 +498,7 @@
   {
     "id": 62,
     "title": "Convolutional Kolmogorov-Arnold Networks vs Convolutional Neural Networks: A Comprehensive Analysis",
-    "description": "",
+    "description": "The landscape of deep learning has been revolutionized by Convolutional Neural Networks (CNNs), which have dominated computer vision tasks for over a decade.…",
     "categories": "research, advanced",
     "slug": "models/convkan/ckan-vs-cnn",
     "body": "Introduction The landscape of deep learning has been revolutionized by Convolutional Neural Networks (CNNs), which have dominated computer vision tasks for over a decade. However, a new paradigm has emerged that challenges the fundamental assumptions of traditional neural architectures: Convolutional Kolmogorov-Arnold Networks (Convolutional KANs). This innovative approach represents a significant departure from conventional neural network design, offering enhanced parameter efficiency, interpre"
@@ -506,7 +506,7 @@
   {
     "id": 63,
     "title": "Kolmogorov-Arnold Networks: Complete Implementation Guide",
-    "description": "",
+    "description": "Kolmogorov-Arnold Networks (KANs) represent a paradigm shift in neural network architecture, drawing inspiration from the mathematical foundations laid by…",
     "categories": "code, tutorial, advanced",
     "slug": "models/kan/kan-code",
     "body": "Introduction Kolmogorov-Arnold Networks (KANs) represent a paradigm shift in neural network architecture, drawing inspiration from the mathematical foundations laid by Andrey Kolmogorov and Vladimir Arnold in the 1950s. Unlike traditional Multi-Layer Perceptrons (MLPs) that place learnable parameters on nodes, KANs position learnable activation functions on edges, fundamentally changing how neural networks process and learn from data. Architecture Overview Traditional MLPs vs KANs Multi-Layer Pe"
@@ -514,7 +514,7 @@
   {
     "id": 64,
     "title": "The Mathematics Behind Kolmogorov-Arnold Networks",
-    "description": "",
+    "description": "Kolmogorov-Arnold Networks (KANs) represent a paradigm shift in neural network architecture, moving away from the traditional linear combinations of fixed…",
     "categories": "research, advanced",
     "slug": "models/kan/kan-math",
     "body": "Introduction Kolmogorov-Arnold Networks (KANs) represent a paradigm shift in neural network architecture, moving away from the traditional linear combinations of fixed activation functions toward networks that learn the activation functions themselves. This revolutionary approach is grounded in the profound mathematical insights of Andrey Kolmogorov and Vladimir Arnold, whose representation theorem provides the theoretical foundation for these networks. The Kolmogorov-Arnold Representation Theor"
@@ -522,7 +522,7 @@
   {
     "id": 65,
     "title": "Kolmogorov-Arnold Networks: Revolutionizing Neural Architecture Design",
-    "description": "",
+    "description": "Kolmogorov-Arnold Networks (KANs) represent a paradigm shift in neural network architecture design, moving away from the traditional Multi-Layer Perceptron…",
     "categories": "research, advanced",
     "slug": "models/kan/kans-guide",
     "body": "Introduction Kolmogorov-Arnold Networks (KANs) represent a paradigm shift in neural network architecture design, moving away from the traditional Multi-Layer Perceptron (MLP) approach that has dominated machine learning for decades. Named after mathematicians Andrey Kolmogorov and Vladimir Arnold, these networks are based on the Kolmogorov-Arnold representation theorem, which provides a mathematical foundation for representing multivariate continuous functions. Unlike traditional neural networks"
@@ -530,7 +530,7 @@
   {
     "id": 66,
     "title": "PyTorch 2.x Compilation Pipeline: From FX to Hardware",
-    "description": "",
+    "description": "PyTorch 2.x introduced a revolutionary compilation stack that transforms high-level Python code into highly optimized machine code. This guide explores the…",
     "categories": "mlops, code, advanced",
     "slug": "deployment/pytorch-to-end",
     "body": "Overview PyTorch 2.x introduced a revolutionary compilation stack that transforms high-level Python code into highly optimized machine code. This guide explores the complete pipeline: PyTorch → FX → Inductor → Backend (Triton/NvFuser/C++) → Hardware (GPU/CPU). The Big Picture The compilation pipeline transforms dynamic Python code into static, optimized kernels that run directly on hardware. PyTorch FX: Graph Capture What is FX? FX (Functional eXtensions) is PyTorch’s graph representation system"
@@ -538,7 +538,7 @@
   {
     "id": 67,
     "title": "Matryoshka Transformer: Complete Implementation Guide",
-    "description": "",
+    "description": "Matryoshka Transformers are a neural architecture that enables flexible computational budgets during inference by allowing early exits at different layers.…",
     "categories": "code, tutorial, advanced",
     "slug": "models/matryoshka/matryoshka-code",
     "body": "Introduction Matryoshka Transformers are a neural architecture that enables flexible computational budgets during inference by allowing early exits at different layers. Named after Russian nesting dolls, these models contain multiple “nested” representations of decreasing complexity, allowing you to trade off accuracy for speed based on your computational constraints. Key Concepts Core Ideas Nested Representations: Each layer can potentially serve as a final output Early Exits: Inference can sto"
@@ -546,7 +546,7 @@
   {
     "id": 68,
     "title": "The Mathematics Behind Matryoshka Transformers",
-    "description": "",
+    "description": "Matryoshka Transformers represent a significant advancement in adaptive neural network architectures, inspired by the Russian nesting dolls (Matryoshka dolls)…",
     "categories": "research, advanced",
     "slug": "models/matryoshka/matryoshka-math",
     "body": "Introduction Matryoshka Transformers represent a significant advancement in adaptive neural network architectures, inspired by the Russian nesting dolls (Matryoshka dolls) where smaller models are nested within larger ones. This architecture enables dynamic inference with variable computational costs while maintaining high performance across different resource constraints. Core Mathematical Framework 1. Nested Representation Learning The fundamental principle of Matryoshka Transformers lies in l"
@@ -554,7 +554,7 @@
   {
     "id": 69,
     "title": "Matryoshka Transformer for Vision Language Models",
-    "description": "",
+    "description": "The Matryoshka Transformer represents a significant advancement in the architecture of vision language models (VLMs), drawing inspiration from the nested…",
     "categories": "research, advanced",
     "slug": "models/matryoshka/matryoshka-transformer",
     "body": "Introduction The Matryoshka Transformer represents a significant advancement in the architecture of vision language models (VLMs), drawing inspiration from the nested structure of Russian Matryoshka dolls. This innovative approach addresses one of the fundamental challenges in multimodal AI: efficiently processing and integrating visual and textual information at multiple scales and resolutions. Named after the traditional Russian nesting dolls where each doll contains a smaller version of itsel"
@@ -562,7 +562,7 @@
   {
     "id": 70,
     "title": "Attention Mechanisms: Transformers vs Convolutional Neural Networks",
-    "description": "",
+    "description": "Attention mechanisms have revolutionized deep learning by enabling models to focus on relevant parts of the input data. While originally popularized in…",
     "categories": "research, intermediate",
     "slug": "models/attention-mechanisms/attention-article",
     "body": "Introduction Attention mechanisms have revolutionized deep learning by enabling models to focus on relevant parts of the input data. While originally popularized in Transformers, attention has also been successfully integrated into Convolutional Neural Networks (CNNs). This article explores the fundamental differences, applications, and trade-offs between attention mechanisms in these two architectural paradigms. Attention in Transformers Core Concept The attention mechanism in Transformers is b"
@@ -570,7 +570,7 @@
   {
     "id": 71,
     "title": "Attention Mechanisms: Transformers vs CNNs - Complete Code Guide",
-    "description": "",
+    "description": "Attention mechanisms have revolutionized deep learning by allowing models to focus on relevant parts of input data. While Transformers use self-attention as…",
     "categories": "code, tutorial, intermediate",
     "slug": "models/attention-mechanisms/attention-code",
     "body": "Introduction Attention mechanisms have revolutionized deep learning by allowing models to focus on relevant parts of input data. While Transformers use self-attention as their core mechanism, CNNs incorporate attention as an enhancement to their convolutional operations. Transformer Attention Multi-Head Self-Attention Implementation import torch import torch.nn as nn import torch.nn.functional as F import math class MultiHeadAttention(nn.Module): def __init__(self, d_model, num_heads, dropout=0."
@@ -578,7 +578,7 @@
   {
     "id": 72,
     "title": "CUDA Python: Accelerating Python Applications with GPU Computing",
-    "description": "",
+    "description": "CUDA Python brings the power of NVIDIA’s CUDA platform directly to Python developers, enabling massive parallel computing capabilities without leaving the…",
     "categories": "code, tutorial, advanced",
     "slug": "model-training/cuda-python",
     "body": "Introduction CUDA Python brings the power of NVIDIA’s CUDA platform directly to Python developers, enabling massive parallel computing capabilities without leaving the Python ecosystem. This comprehensive guide explores how to leverage GPU acceleration for computationally intensive tasks, from basic vector operations to complex machine learning algorithms. What is CUDA Python? CUDA Python is a collection of Python packages that provide direct access to CUDA from Python. It includes several key c"
@@ -586,7 +586,7 @@
   {
     "id": 73,
     "title": "Python Decorators: A Complete Guide with Useful Examples",
-    "description": "",
+    "description": "Python decorators are one of the most powerful and elegant features of the language. They allow you to modify or enhance the behavior of functions, methods, or…",
     "categories": "code, beginner",
     "slug": "news/python/python-decorators",
     "body": "Python decorators are one of the most powerful and elegant features of the language. They allow you to modify or enhance the behavior of functions, methods, or classes without permanently altering their structure. This article explores decorators from the ground up and presents several useful decorators you can implement in your projects. Understanding Decorators At its core, a decorator is a function that takes another function as an argument and returns a modified version of that function. Dec"
@@ -594,7 +594,7 @@
   {
     "id": 74,
     "title": "DeepSpeed with PyTorch: Complete Code Guide",
-    "description": "",
+    "description": "DeepSpeed is a deep learning optimization library that makes distributed training easy, efficient, and effective. It provides system innovations like ZeRO…",
     "categories": "code, tutorial, intermediate",
     "slug": "deployment/deepspeed",
     "body": "Introduction DeepSpeed is a deep learning optimization library that makes distributed training easy, efficient, and effective. It provides system innovations like ZeRO (Zero Redundancy Optimizer) to enable training massive models with trillions of parameters. Key benefits: Memory Efficiency: ZeRO reduces memory consumption by partitioning optimizer states, gradients, and model parameters Speed: Achieves high training throughput through optimized kernels and communication Scale: Enables training "
@@ -602,7 +602,7 @@
   {
     "id": 75,
     "title": "PyTorch Model Deployment on Edge Devices - Complete Code Guide",
-    "description": "",
+    "description": "This guide provides a comprehensive approach to deploying PyTorch models on edge devices. Key takeaways:",
     "categories": "code, tutorial, intermediate",
     "slug": "deployment/edge-device-deployment",
     "body": "Prerequisites # Install required packages pip install torch torchvision pip install torch-model-archiver pip install onnx onnxruntime pip install tensorflow # for TensorFlow Lite conversion 1. Model Optimization Quantization import torch import torch.quantization as quantization from torch.quantization import get_default_qconfig import torchvision.models as models # Load your trained model model = models.resnet18(pretrained=True) model.eval() # Post-training quantization (easiest method) def pos"
@@ -610,7 +610,7 @@
   {
     "id": 76,
     "title": "Distributed Training with PyTorch - Complete Code Guide",
-    "description": "",
+    "description": "Distributed training allows you to scale PyTorch models across multiple GPUs and machines, dramatically reducing training time for large models and datasets.…",
     "categories": "code, tutorial, intermediate",
     "slug": "model-training/distributed/distributed-pytorch-training",
     "body": "Introduction Distributed training allows you to scale PyTorch models across multiple GPUs and machines, dramatically reducing training time for large models and datasets. This guide covers practical implementation patterns from basic data parallelism to advanced distributed strategies. Core Concepts Key Terminology World Size: Total number of processes participating in training Rank: Unique identifier for each process (0 to world_size-1) Local Rank: Process identifier within a single node/machin"
@@ -618,7 +618,7 @@
   {
     "id": 77,
     "title": "Python Package Development with Rust - Complete Guide",
-    "description": "",
+    "description": "This guide covers creating Python packages with Rust backends using PyO3 and maturin. This approach combines Rust’s performance and safety with Python’s…",
     "categories": "tutorial, advanced",
     "slug": "news/python/rust-py-package",
     "body": "Overview This guide covers creating Python packages with Rust backends using PyO3 and maturin. This approach combines Rust’s performance and safety with Python’s ecosystem accessibility. TipWhy Rust + Python? Performance: Rust provides near C-level performance Safety: Memory safety without garbage collection Ecosystem: Access to Python’s vast library ecosystem Maintainability: Rust’s type system catches many bugs at compile time Prerequisites Before starting, ensure you have: Python 3.7+ install"
@@ -626,7 +626,7 @@
   {
     "id": 78,
     "title": "Getting Started with Rust: A Complete Guide",
-    "description": "",
+    "description": "Rust is a systems programming language that focuses on safety, speed, and concurrency. It prevents common programming errors like null pointer dereferences and…",
     "categories": "code, tutorial, intermediate",
     "slug": "news/python/rust-getting-started",
     "body": "What is Rust? Rust is a systems programming language that focuses on safety, speed, and concurrency. It prevents common programming errors like null pointer dereferences and buffer overflows at compile time, while delivering performance comparable to C and C++. Rust is ideal for system programming, web backends, command-line tools, network services, and anywhere you need both performance and reliability. Installation Installing Rust via Rustup The easiest way to install Rust is through rustup, t"
@@ -634,7 +634,7 @@
   {
     "id": 79,
     "title": "Hugging Face Accelerate vs PyTorch Lightning Fabric: A Deep Dive Comparison",
-    "description": "",
+    "description": "When you’re working with deep learning models that need to scale across multiple GPUs or even multiple machines, you’ll quickly encounter the complexity of…",
     "categories": "research, beginner",
     "slug": "model-training/distributed/accelerate-vs-fabric",
     "body": "Introduction When you’re working with deep learning models that need to scale across multiple GPUs or even multiple machines, you’ll quickly encounter the complexity of distributed training. Two libraries have emerged as popular solutions to simplify this challenge: Hugging Face Accelerate and PyTorch Lightning Fabric. While both aim to make distributed training more accessible, they take fundamentally different approaches to solving the problem. NoteKey Insight Think of these libraries as two d"
@@ -642,7 +642,7 @@
   {
     "id": 80,
     "title": "Hugging Face Accelerate Code Guide",
-    "description": "",
+    "description": "This comprehensive code guide covers everything you need to know about Hugging Face Accelerate, from basic setup to advanced features like DeepSpeed…",
     "categories": "code, tutorial, beginner",
     "slug": "model-training/distributed/hugging-face-accelerate",
     "body": "Overview This comprehensive code guide covers everything you need to know about Hugging Face Accelerate, from basic setup to advanced features like DeepSpeed integration. Accelerate simplifies distributed training and mixed precision training across multiple GPUs and nodes. Installation and Setup Installation pip install accelerate Configuration Run the configuration wizard to set up your training environment: accelerate config Or create a config file programmatically: from accelerate import Acc"
@@ -650,7 +650,7 @@
   {
     "id": 81,
     "title": "PyTorch Lightning Fabric Code Guide",
-    "description": "",
+    "description": "I’ve created a comprehensive code guide for PyTorch Lightning Fabric that covers everything from basic setup to advanced distributed training features",
     "categories": "code, tutorial, beginner",
     "slug": "model-training/distributed/pytorch-fabric",
     "body": "I’ve created a comprehensive code guide for PyTorch Lightning Fabric that covers everything from basic setup to advanced distributed training features Introduction Lightning Fabric is a lightweight PyTorch wrapper that provides essential training utilities without the overhead of the full Lightning framework. It’s perfect when you want more control over your training loop while still benefiting from distributed training, mixed precision, and other optimizations. Installation pip install lightnin"
@@ -658,7 +658,7 @@
   {
     "id": 82,
     "title": "PyTorch Collate Function Speed-Up Guide",
-    "description": "",
+    "description": "The collate function in PyTorch is a crucial component for optimizing data loading performance. It determines how individual samples are combined into batches,…",
     "categories": "code, tutorial, advanced",
     "slug": "model-training/pytorch-collate-gains",
     "body": "Introduction The collate function in PyTorch is a crucial component for optimizing data loading performance. It determines how individual samples are combined into batches, and custom implementations can significantly speed up training by reducing data preprocessing overhead and memory operations. Default vs Custom Collate Functions Default Behavior import torch from torch.utils.data import DataLoader, Dataset import time import numpy as np class SimpleDataset(Dataset): def __init__(self, size=1"
@@ -666,7 +666,7 @@
   {
     "id": 83,
     "title": "PyTorch Training and Inference Optimization Guide",
-    "description": "",
+    "description": "The guide includes practical code examples you can directly use in your projects, along with best practices and common pitfalls to avoid. Each section builds…",
     "categories": "code, tutorial, intermediate",
     "slug": "model-training/pytorch-optimizations",
     "body": "The guide includes practical code examples you can directly use in your projects, along with best practices and common pitfalls to avoid. Each section builds upon the previous ones, so you can implement these optimizations incrementally based on your specific needs and performance requirements. General Optimization Principles 1. Use the Right Data Types import torch # Use half precision when possible (reduces memory and increases speed) model = model.half() # Convert to float16 # Or use mixed pr"
@@ -674,7 +674,7 @@
   {
     "id": 84,
     "title": "Why I Choose PyTorch for Deep Learning",
-    "description": "",
+    "description": "When it comes to deep learning frameworks, the landscape offers several compelling options. TensorFlow, JAX, and PyTorch each have their strengths, but after…",
     "categories": "news",
     "slug": "news/why-pytorch",
     "body": "Introduction When it comes to deep learning frameworks, the landscape offers several compelling options. TensorFlow, JAX, and PyTorch each have their strengths, but after working extensively with multiple frameworks, PyTorch has become my go-to choice for deep learning projects. Here’s why this dynamic framework continues to win over researchers and practitioners alike. The Power of Dynamic Computation Graphs PyTorch’s defining feature is its dynamic computation graph, also known as “define-by-r"
@@ -682,7 +682,7 @@
   {
     "id": 85,
     "title": "Kubeflow: A Comprehensive Guide to Machine Learning on Kubernetes",
-    "description": "",
+    "description": "Kubeflow is an open-source machine learning platform designed to make deployments of machine learning workflows on Kubernetes simple, portable, and scalable.…",
     "categories": "tutorial, mlops, beginner",
     "slug": "deployment/kubeflow-explain",
     "body": "Introduction NoteKey Takeaway Kubeflow is an open-source machine learning platform designed to make deployments of machine learning workflows on Kubernetes simple, portable, and scalable. Kubeflow is an open-source machine learning platform designed to make deployments of machine learning workflows on Kubernetes simple, portable, and scalable. Originally developed by Google and now maintained by the Kubeflow community, it provides a comprehensive ecosystem for managing the entire machine learnin"
@@ -690,7 +690,7 @@
   {
     "id": 86,
     "title": "Kubeflow Deep Learning Guide with PyTorch",
-    "description": "",
+    "description": "Kubeflow is a machine learning toolkit for Kubernetes that makes deployments of ML workflows on Kubernetes simple, portable, and scalable. This guide focuses…",
     "categories": "code, mlops, intermediate",
     "slug": "deployment/kubeflow-pytorch",
     "body": "Introduction Kubeflow is a machine learning toolkit for Kubernetes that makes deployments of ML workflows on Kubernetes simple, portable, and scalable. This guide focuses on using Kubeflow with PyTorch for deep learning tasks. Key Kubeflow Components for Deep Learning: Training Operator: For distributed training jobs Katib: For hyperparameter tuning and neural architecture search KServe: For model serving and inference Pipelines: For ML workflow orchestration Notebooks: For interactive developme"
@@ -698,7 +698,7 @@
   {
     "id": 87,
     "title": "MLflow for PyTorch - Complete Guide",
-    "description": "",
+    "description": "MLflow is an open-source platform for managing the machine learning lifecycle, including experimentation, reproducibility, deployment, and model registry. This…",
     "categories": "code, mlops, beginner",
     "slug": "model-training/mlflow-pytorch",
     "body": "MLflow is an open-source platform for managing the machine learning lifecycle, including experimentation, reproducibility, deployment, and model registry. This guide covers how to integrate MLflow with PyTorch for comprehensive ML workflow management. ## Installation and Setup Install MLflow pip install mlflow pip install torch torchvision Start MLflow UI mlflow ui This starts the MLflow UI at http://localhost:5000 Basic Configuration import mlflow import mlflow.pytorch import torch import torch"
@@ -706,7 +706,7 @@
   {
     "id": 88,
     "title": "CLIP Code Guide: Complete Implementation and Usage",
-    "description": "",
+    "description": "CLIP (Contrastive Language-Image Pre-training) is a neural network architecture developed by OpenAI that learns visual concepts from natural language…",
     "categories": "code, tutorial, beginner",
     "slug": "models/clip-code",
     "body": "Introduction to CLIP CLIP (Contrastive Language-Image Pre-training) is a neural network architecture developed by OpenAI that learns visual concepts from natural language supervision. It can understand images in the context of natural language descriptions, enabling zero-shot classification and multimodal understanding. Key Features: Zero-shot image classification Text-image similarity computation Multimodal embeddings Transfer learning capabilities Architecture Overview CLIP consists of two mai"
@@ -714,7 +714,7 @@
   {
     "id": 89,
     "title": "Self-Supervised Learning: Training AI Without Labels",
-    "description": "",
+    "description": "Machine learning has traditionally relied on vast amounts of labeled data to train models effectively. However, acquiring high-quality labeled datasets is…",
     "categories": "research, beginner",
     "slug": "models/self-supervised-explained",
     "body": "Introduction Machine learning has traditionally relied on vast amounts of labeled data to train models effectively. However, acquiring high-quality labeled datasets is expensive, time-consuming, and often impractical for many real-world applications. Self-supervised learning has emerged as a revolutionary paradigm that addresses these challenges by learning meaningful representations from unlabeled data itself. What is Self-Supervised Learning? Self-supervised learning is a machine learning appr"
@@ -722,7 +722,7 @@
   {
     "id": 90,
     "title": "DINOv2 Student-Teacher Network Training Guide",
-    "description": "",
+    "description": "This guide provides a complete implementation for training a DINOv2 (DINO version 2) student-teacher network from scratch using PyTorch. DINOv2 is a…",
     "categories": "code, advanced",
     "slug": "models/dino/dino-v2-scratch",
     "body": "This guide provides a complete implementation for training a DINOv2 (DINO version 2) student-teacher network from scratch using PyTorch. DINOv2 is a self-supervised learning method that trains vision transformers without labels using a teacher-student distillation framework. Overview DINOv2 uses a student-teacher framework where: Teacher network: Provides stable targets (EMA of student weights) Student network: Learns to match teacher outputs Multi-crop strategy: Uses different image crops for r"
@@ -730,7 +730,7 @@
   {
     "id": 91,
     "title": "Student-Teacher Network Training Guide in PyTorch",
-    "description": "",
+    "description": "Student-teacher networks, also known as knowledge distillation, involve training a smaller “student” model to mimic the behavior of a larger, pre-trained…",
     "categories": "code, advanced",
     "slug": "models/student-teacher-vanilla",
     "body": "Overview Student-teacher networks, also known as knowledge distillation, involve training a smaller “student” model to mimic the behavior of a larger, pre-trained “teacher” model. This technique helps compress large models while maintaining performance. Key Concepts Knowledge Distillation Loss The student learns from both: Hard targets: Original ground truth labels Soft targets: Teacher’s probability distributions (softened with temperature) Temperature Scaling Higher temperature values create s"
@@ -738,7 +738,7 @@
   {
     "id": 92,
     "title": "LitServe Code Guide",
-    "description": "",
+    "description": "LitServe is a high-performance, flexible AI model serving framework designed to deploy machine learning models with minimal code. It provides automatic…",
     "categories": "code, mlops, beginner",
     "slug": "deployment/litserve-basics",
     "body": "LitServe is a high-performance, flexible AI model serving framework designed to deploy machine learning models with minimal code. It provides automatic batching, GPU acceleration, and easy scaling capabilities. Installation # Install LitServe pip install litserve # For GPU support pip install litserve[gpu] # For development dependencies pip install litserve[dev] Basic Usage 1. Creating Your First LitServe API import litserve as ls import torch from transformers import AutoTokenizer, AutoModelFor"
@@ -746,7 +746,7 @@
   {
     "id": 93,
     "title": "LitServe with MobileNetV2 - Complete Code Guide",
-    "description": "",
+    "description": "This guide demonstrates how to deploy a MobileNetV2 image classification model using LitServe for efficient, scalable inference.",
     "categories": "code, mlops, intermediate",
     "slug": "deployment/litserve-mobilenet",
     "body": "This guide demonstrates how to deploy a MobileNetV2 image classification model using LitServe for efficient, scalable inference. Installation # Install required packages pip install litserve torch torchvision pillow requests Basic Implementation Simple MobileNetV2 API # mobilenet_api.py import io import torch import torchvision.transforms as transforms from torchvision import models from PIL import Image import litserve as ls class MobileNetV2API(ls.LitAPI): def setup(self, device): \"\"\"Initializ"
@@ -754,7 +754,7 @@
   {
     "id": 94,
     "title": "Albumentations vs TorchVision Transforms: Complete Code Guide",
-    "description": "",
+    "description": "This guide compares two popular image augmentation libraries for PyTorch:",
     "categories": "code, tutorial, beginner",
     "slug": "model-training/albumentations-vs-torchvision",
     "body": "Overview This guide compares two popular image augmentation libraries for PyTorch: TorchVision Transforms: Built-in PyTorch library for basic image transformations Albumentations: Fast, flexible library with advanced augmentation techniques Installation # TorchVision (comes with PyTorch) pip install torch torchvision # Albumentations pip install albumentations Basic Setup and Imports import torch import torchvision.transforms as T from torchvision.transforms import functional as TF import albume"
@@ -762,7 +762,7 @@
   {
     "id": 95,
     "title": "MobileNetV2 PyTorch Docker Deployment Guide",
-    "description": "",
+    "description": "This guide walks you through deploying a pre-trained MobileNetV2 model using PyTorch and Docker, creating a REST API for image classification.",
     "categories": "code, mlops, intermediate",
     "slug": "deployment/mobilenet-deployment",
     "body": "This guide walks you through deploying a pre-trained MobileNetV2 model using PyTorch and Docker, creating a REST API for image classification. Project Structure mobilenetv2-pytorch-docker/ ├── app/ │ ├── __init__.py │ ├── main.py │ ├── model_handler.py │ └── utils.py ├── requirements.txt ├── Dockerfile ├── docker-compose.yml ├── .dockerignore └── README.md 1. Application Code app/main.py - FastAPI Application from fastapi import FastAPI, File, UploadFile, HTTPException from fastapi.responses imp"
@@ -770,7 +770,7 @@
   {
     "id": 96,
     "title": "PyTorch to PyTorch Lightning Migration Guide",
-    "description": "",
+    "description": "PyTorch Lightning is a lightweight wrapper around PyTorch that eliminates boilerplate code while maintaining full control over your models. It provides a…",
     "categories": "code, tutorial, advanced",
     "slug": "model-training/pytorch-to-pytorchlightning",
     "body": "Introduction PyTorch Lightning is a lightweight wrapper around PyTorch that eliminates boilerplate code while maintaining full control over your models. It provides a structured approach to organizing PyTorch code and includes built-in support for distributed training, logging, and experiment management. Why Migrate? Reduced Boilerplate: Lightning handles training loops, device management, and distributed training Better Organization: Standardized code structure improves readability and maintena"
@@ -778,7 +778,7 @@
   {
     "id": 97,
     "title": "Vision Transformers (ViT): A Simple Guide",
-    "description": "",
+    "description": "Vision Transformers (ViTs) represent a paradigm shift in computer vision, adapting the transformer architecture that revolutionized natural language processing…",
     "categories": "research, beginner",
     "slug": "models/vision-transformers-explained",
     "body": "Introduction Vision Transformers (ViTs) represent a paradigm shift in computer vision, adapting the transformer architecture that revolutionized natural language processing for image classification and other visual tasks. Instead of relying on convolutional neural networks (CNNs), ViTs treat images as sequences of patches, applying the self-attention mechanism to understand spatial relationships and visual features. Background: From CNNs to Transformers Traditional computer vision relied heavily"
@@ -786,7 +786,7 @@
   {
     "id": 98,
     "title": "Python 3.14: Key Improvements and New Features",
-    "description": "",
+    "description": "Python 3.14 introduces several significant improvements focused on performance, developer experience, and language capabilities. This guide covers the most…",
     "categories": "code, beginner",
     "slug": "news/python/python-pi-code",
     "body": "Python 3.14 introduces several significant improvements focused on performance, developer experience, and language capabilities. This guide covers the most important changes that will impact your code and development workflow. Performance Improvements Free-Threading (Experimental) Python 3.14 continues the experimental free-threading support introduced in 3.13, with significant improvements: # Enable free-threading with --disable-gil flag # Better performance for CPU-bound multi-threaded applica"
@@ -794,7 +794,7 @@
   {
     "id": 99,
     "title": "Python 3.14: The Next Evolution in Python Development",
-    "description": "",
+    "description": "Python continues its steady march forward with the anticipated release of Python 3.14, marking another significant milestone in the language’s evolution. As…",
     "categories": "news",
     "slug": "news/python/python-pi",
     "body": "Python continues its steady march forward with the anticipated release of Python 3.14, marking another significant milestone in the language’s evolution. As the Python Software Foundation maintains its annual release cycle, Python 3.14 represents the ongoing commitment to improving performance, developer experience, and language capabilities. Release Timeline and Development Following Python’s established release schedule, Python 3.14 continues the pattern of annual major releases that began wit"
@@ -802,7 +802,7 @@
   {
     "id": 100,
     "title": "DINOv2: A Deep Dive into Architecture and Training",
-    "description": "",
+    "description": "In 2023, Meta AI Research unveiled DINOv2 (Self-Distillation with No Labels v2), a breakthrough in self-supervised visual learning that produces remarkably…",
     "categories": "research, intermediate",
     "slug": "models/dino/dino-v2-explained",
     "body": "In 2023, Meta AI Research unveiled DINOv2 (Self-Distillation with No Labels v2), a breakthrough in self-supervised visual learning that produces remarkably versatile and robust visual features. This article provides a detailed exploration of DINOv2’s architecture and training methodology, explaining how it achieves state-of-the-art performance across diverse visual tasks without task-specific supervision. Architectural Foundation: Vision Transformers At the heart of DINOv2 is the Vision Transfor"
@@ -810,7 +810,7 @@
   {
     "id": 101,
     "title": "DINO: Emerging Properties in Self-Supervised Vision Transformers",
-    "description": "",
+    "description": "In 2021, Facebook AI Research (now Meta AI) introduced DINO (Self-Distillation with No Labels), a groundbreaking approach to self-supervised learning in…",
     "categories": "research, intermediate",
     "slug": "models/dino/dino-explained",
     "body": "Introduction In 2021, Facebook AI Research (now Meta AI) introduced DINO (Self-Distillation with No Labels), a groundbreaking approach to self-supervised learning in computer vision. Published in the paper “Emerging Properties in Self-Supervised Vision Transformers” by Mathilde Caron and colleagues, DINO represented a significant leap forward in learning visual representations without relying on labeled data. This article explores the key aspects of the original DINO research, its methodology, a"
@@ -818,7 +818,7 @@
   {
     "id": 102,
     "title": "DINOv2: Comprehensive Implementation Guide",
-    "description": "",
+    "description": "DINOv2 is a state-of-the-art self-supervised vision model developed by Meta AI Research that builds upon the original DINO (Self-Distillation with No Labels)…",
     "categories": "code, tutorial, beginner",
     "slug": "models/dino/dinov2",
     "body": "DINOv2 is a state-of-the-art self-supervised vision model developed by Meta AI Research that builds upon the original DINO (Self-Distillation with No Labels) framework. This guide will walk you through understanding, implementing, and leveraging DINOv2 for various computer vision tasks. Introduction to DINOv2 DINOv2 is a self-supervised learning method for vision that produces high-quality visual features without requiring labeled data. It extends the original DINO architecture with several impr"
@@ -826,7 +826,7 @@
   {
     "id": 103,
     "title": "Vision Transformer (ViT) Implementation Guide",
-    "description": "",
+    "description": "Vision Transformers (ViT) represent a significant paradigm shift in computer vision, applying the transformer architecture initially developed for NLP to image…",
     "categories": "code, tutorial, advanced",
     "slug": "models/vision-transformers",
     "body": "Vision Transformers (ViT) represent a significant paradigm shift in computer vision, applying the transformer architecture initially developed for NLP to image processing tasks. This guide walks through implementing a Vision Transformer from scratch using PyTorch. 1. Introduction to Vision Transformers Vision Transformers (ViT) were introduced in the paper “An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale” by Dosovitskiy et al. in 2020. The core idea is to treat an imag"
@@ -834,7 +834,7 @@
   {
     "id": 104,
     "title": "Active Learning Influence Selection: A Comprehensive Guide",
-    "description": "",
+    "description": "Active learning is a machine learning paradigm where the algorithm can interactively query an oracle (typically a human annotator) to label new data points.…",
     "categories": "code, research, advanced",
     "slug": "model-training/influence-selection",
     "body": "Introduction Active learning is a machine learning paradigm where the algorithm can interactively query an oracle (typically a human annotator) to label new data points. The key idea is to select the most informative samples to be labeled, reducing the overall labeling effort while maintaining or improving model performance. This guide focuses on influence selection methods used in active learning strategies. Fundamentals of Active Learning The Active Learning Loop The typical active learning pr"
@@ -842,7 +842,7 @@
   {
     "id": 105,
     "title": "Python Data Visualization: Matplotlib vs Seaborn vs Altair",
-    "description": "",
+    "description": "This guide compares three popular Python data visualization libraries: Matplotlib, Seaborn, and Altair (Vega-Altair). Each library has its own strengths,…",
     "categories": "code, tutorial, beginner",
     "slug": "deployment/data-visualization-tutorial",
     "body": "This guide compares three popular Python data visualization libraries: Matplotlib, Seaborn, and Altair (Vega-Altair). Each library has its own strengths, weaknesses, and ideal use cases. This comparison will help you choose the right tool for your specific visualization needs. Quick Reference Comparison Feature Matplotlib Seaborn Altair Release Year 2003 2013 2016 Foundation Standalone Built on Matplotlib Based on Vega-Lite Philosophy Imperative Statistical Declarative Abstraction Level Low Medi"
@@ -850,7 +850,7 @@
   {
     "id": 106,
     "title": "From Pandas to Polars",
-    "description": "",
+    "description": "As datasets grow in size and complexity, performance and efficiency become critical in data processing. While Pandas has long been the go-to library for data…",
     "categories": "code, tutorial, advanced",
     "slug": "deployment/pandas-to-polars",
     "body": "As datasets grow in size and complexity, performance and efficiency become critical in data processing. While Pandas has long been the go-to library for data manipulation in Python, it can struggle with speed and memory usage, especially on large datasets. Polars, a newer DataFrame library written in Rust, offers a faster, more memory-efficient alternative with support for lazy evaluation and multi-threading. This guide explores how to convert Pandas DataFrames to Polars, and highlights key diff"
@@ -858,7 +858,7 @@
   {
     "id": 107,
     "title": "PyTorch Lightning: A Comprehensive Guide",
-    "description": "",
+    "description": "PyTorch Lightning is a lightweight wrapper for PyTorch that helps organize code and reduce boilerplate while adding powerful features for research and…",
     "categories": "code, tutorial, advanced",
     "slug": "model-training/pytorch-lightning",
     "body": "PyTorch Lightning is a lightweight wrapper for PyTorch that helps organize code and reduce boilerplate while adding powerful features for research and production. This guide will walk you through the basics to advanced techniques. Introduction to PyTorch Lightning PyTorch Lightning separates research code from engineering code, making models more: Reproducible: The same code works across different hardware Readable: Standard project structure makes collaboration easier Scalable: Train on CPUs, G"
@@ -866,7 +866,7 @@
   {
     "id": 108,
     "title": "Welcome To My Blog",
-    "description": "",
+    "description": "I’m thrilled to kick off this blog dedicated to exploring the fascinating world of computer vision — a field where machines learn to see, interpret, and…",
     "categories": "news",
     "slug": "welcome",
     "body": "This is the first post in this blog. Hello and welcome! I’m thrilled to kick off this blog dedicated to exploring the fascinating world of computer vision — a field where machines learn to see, interpret, and understand the visual world around us. Whether you’re a seasoned AI researcher, an aspiring developer, or simply curious about how technology can “see,” you’ll find something valuable here. From image processing techniques to deep learning breakthroughs, from real-world applications to hand"
