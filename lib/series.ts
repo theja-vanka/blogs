@@ -7,7 +7,8 @@ export interface Series {
   title: string;
   description?: string;
   posts: string[];
-  coverImage?: string;
+  coverImageLight?: string;
+  coverImageDark?: string;
 }
 
 export interface PostSeriesContext {

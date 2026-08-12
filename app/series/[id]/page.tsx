@@ -9,7 +9,8 @@ interface Series {
   title: string;
   description?: string;
   posts: string[];
-  coverImage?: string;
+  coverImageLight?: string;
+  coverImageDark?: string;
 }
 
 interface PostMeta {
@@ -44,8 +45,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const series = readSeries().find((s) => s.id === id);
   if (!series) return {};
   const url = `${SITE_URL}/series/${id}/`;
-  const ogImage = series.coverImage
-    ? `https://theja-vanka.github.io${series.coverImage}`
+  // Social crawlers don't know the viewer's theme preference, so pick a fixed variant.
+  const ogImage = series.coverImageDark ?? series.coverImageLight
+    ? `https://theja-vanka.github.io${series.coverImageDark ?? series.coverImageLight}`
     : `${SITE_URL}/profile.jpg`;
   return {
     title: series.title,

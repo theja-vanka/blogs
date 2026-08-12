@@ -9,18 +9,18 @@ const SITE_URL =
 
 export const metadata: Metadata = {
   title: "Series",
-  description: "31 multi-part series paths covering ML architectures, PyTorch training, MLOps, and deployment — from theory to working code.",
+  description: "23 multi-part series paths covering ML architectures, PyTorch training, MLOps, and deployment — from theory to working code.",
   alternates: { canonical: `${SITE_URL}/series/` },
   openGraph: {
     title: "Series Paths — Krishnatheja Vanka",
-    description: "31 multi-part series paths covering ML architectures, PyTorch training, MLOps, and deployment — from theory to working code.",
+    description: "23 multi-part series paths covering ML architectures, PyTorch training, MLOps, and deployment — from theory to working code.",
     url: `${SITE_URL}/series/`,
     type: "website",
     images: [{ url: `${SITE_URL}/profile.jpg`, width: 400, height: 400, alt: "Krishnatheja Vanka" }],
   },
   twitter: {
     title: "Series Paths — Krishnatheja Vanka",
-    description: "31 multi-part series paths covering ML architectures, PyTorch training, MLOps, and deployment.",
+    description: "23 multi-part series paths covering ML architectures, PyTorch training, MLOps, and deployment.",
     images: [`${SITE_URL}/profile.jpg`],
   },
 };
@@ -30,7 +30,8 @@ interface Series {
   title: string;
   description?: string;
   posts: string[];
-  coverImage?: string;
+  coverImageLight?: string;
+  coverImageDark?: string;
 }
 
 interface PostMeta {
@@ -46,12 +47,12 @@ const TOPIC_GROUPS: { label: string; ids: string[]; color: string }[] = [
   {
     label: "Vision Models",
     color: "from-violet-500 to-purple-600",
-    ids: ["dino", "grounding-dino", "yolo", "matryoshka", "densenet", "mobilenet", "vit", "classic-cnn", "self-supervised"],
+    ids: ["dino", "object-detection", "matryoshka", "modern-cnn", "classic-cnn", "vision-transformers"],
   },
   {
     label: "Foundation & Generative",
     color: "from-blue-500 to-cyan-500",
-    ids: ["mamba", "nas", "kan", "convkan", "vlm", "clip", "diffusion-models", "stable-diffusion", "attention", "moe"],
+    ids: ["mamba", "nas", "kan", "vlm", "clip", "diffusion-models", "stable-diffusion", "moe"],
   },
   {
     label: "Training & Optimization",
@@ -61,12 +62,12 @@ const TOPIC_GROUPS: { label: string; ids: string[]; color: string }[] = [
   {
     label: "Deployment & Serving",
     color: "from-emerald-500 to-teal-500",
-    ids: ["kubeflow", "onnx", "litserve", "milvus", "inference-optimization"],
+    ids: ["mlops-serving", "milvus", "inference-optimization"],
   },
   {
     label: "Python & Tools",
     color: "from-rose-500 to-pink-500",
-    ids: ["rust-python", "python314", "python-ml"],
+    ids: ["python-ml", "ai-ml-news"],
   },
 ];
 
@@ -112,7 +113,8 @@ export default function SeriesPage() {
     id: s.id,
     title: s.title,
     description: s.description,
-    coverImage: s.coverImage,
+    coverImageLight: s.coverImageLight,
+    coverImageDark: s.coverImageDark,
     partsCount: s.posts.length,
     totalMinutes: s.posts.reduce((sum, slug) => sum + (postMap[slug]?.readingTime ?? 0), 0),
     difficulty: computeDifficulty(s, postMap),

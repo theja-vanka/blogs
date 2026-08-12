@@ -226,15 +226,26 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
                 className="group block rounded-2xl border border-blue-200/70 dark:border-blue-900/50 bg-gradient-to-br from-blue-50/60 to-indigo-50/40 dark:from-blue-950/30 dark:to-indigo-950/20 overflow-hidden hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-xl hover:shadow-blue-100/60 dark:hover:shadow-blue-950/40 transition-all duration-200"
               >
                 <div className="flex flex-col sm:flex-row">
-                  {seriesCtx.series.coverImage && (
+                  {(seriesCtx.series.coverImageLight || seriesCtx.series.coverImageDark) && (
                     <div className="relative h-36 sm:h-auto sm:w-40 shrink-0 overflow-hidden bg-blue-100 dark:bg-blue-950">
-                      <Image
-                        src={`${basePath}${seriesCtx.series.coverImage}`}
-                        alt={seriesCtx.series.title}
-                        fill
-                        sizes="(max-width: 640px) 100vw, 10rem"
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
+                      {seriesCtx.series.coverImageLight && (
+                        <Image
+                          src={`${basePath}${seriesCtx.series.coverImageLight}`}
+                          alt={seriesCtx.series.title}
+                          fill
+                          sizes="(max-width: 640px) 100vw, 10rem"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500 block dark:hidden"
+                        />
+                      )}
+                      {seriesCtx.series.coverImageDark && (
+                        <Image
+                          src={`${basePath}${seriesCtx.series.coverImageDark}`}
+                          alt={seriesCtx.series.title}
+                          fill
+                          sizes="(max-width: 640px) 100vw, 10rem"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500 hidden dark:block"
+                        />
+                      )}
                     </div>
                   )}
                   <div className="flex flex-col justify-between p-5 sm:p-6 flex-1 min-w-0">

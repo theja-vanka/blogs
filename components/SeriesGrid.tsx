@@ -8,7 +8,8 @@ export interface SeriesItem {
   id: string;
   title: string;
   description?: string;
-  coverImage?: string;
+  coverImageLight?: string;
+  coverImageDark?: string;
   partsCount: number;
   totalMinutes: number;
   difficulty: "beginner" | "intermediate" | "advanced";
@@ -153,14 +154,27 @@ export default function SeriesGrid({
 
                   {/* Cover */}
                   <div className="relative h-48 bg-slate-100 dark:bg-slate-800 overflow-hidden flex-shrink-0">
-                    {s.coverImage ? (
-                      <Image
-                        src={`${basePath}${s.coverImage}`}
-                        alt={s.title}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover group-hover:scale-[1.04] transition-transform duration-500"
-                      />
+                    {s.coverImageLight || s.coverImageDark ? (
+                      <>
+                        {s.coverImageLight && (
+                          <Image
+                            src={`${basePath}${s.coverImageLight}`}
+                            alt={s.title}
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            className="object-cover group-hover:scale-[1.04] transition-transform duration-500 block dark:hidden"
+                          />
+                        )}
+                        {s.coverImageDark && (
+                          <Image
+                            src={`${basePath}${s.coverImageDark}`}
+                            alt={s.title}
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            className="object-cover group-hover:scale-[1.04] transition-transform duration-500 hidden dark:block"
+                          />
+                        )}
+                      </>
                     ) : (
                       <div className={`absolute inset-0 bg-gradient-to-br ${s.topicColor}`} />
                     )}

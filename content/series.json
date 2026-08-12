@@ -2,26 +2,21 @@
   {
     "id": "dino",
     "title": "DINO Self-Supervised Learning",
-    "description": "From the original DINO to DINOv3 \u2014 theory, training, and implementation.",
+    "description": "Self-supervised vision learning from first principles through the DINO family — student-teacher training, DINOv1 to DINOv3, TIPS pretraining, and language-grounded detection.",
     "posts": [
+      "models/self-supervised-explained",
+      "models/student-teacher-vanilla",
       "models/dino/dino-explained",
       "models/dino/dinov2",
       "models/dino/dino-v2-explained",
       "models/dino/dino-v2-scratch",
       "models/dino/dino-v3",
-      "models/dino/tips"
-    ],
-    "coverImage": "/series-covers/dino-self-supervised-learning.png"
-  },
-  {
-    "id": "grounding-dino",
-    "title": "Grounding DINO",
-    "description": "Open-set object detection with language-guided grounding.",
-    "posts": [
+      "models/dino/tips",
       "models/dino/grounding-dino/math",
       "models/dino/grounding-dino/implementation"
     ],
-    "coverImage": "/series-covers/grounding-dino.png"
+    "coverImageLight": "/series-covers/light/dino.png",
+    "coverImageDark": "/series-covers/dark/dino.png"
   },
   {
     "id": "mamba",
@@ -32,7 +27,23 @@
       "models/mamba/mamba-math",
       "models/mamba/mamba-code"
     ],
-    "coverImage": "/series-covers/mamba-transformers.png"
+    "coverImageLight": "/series-covers/light/mamba.png",
+    "coverImageDark": "/series-covers/dark/mamba.png"
+  },
+  {
+    "id": "kan",
+    "title": "Kolmogorov-Arnold Networks",
+    "description": "KANs as a flexible alternative to MLPs, plus their convolutional extension — theory, math, and code.",
+    "posts": [
+      "models/kan/kans-guide",
+      "models/kan/kan-math",
+      "models/kan/kan-code",
+      "models/convkan/ckan-guide",
+      "models/convkan/ckan-math",
+      "models/convkan/ckan-vs-cnn"
+    ],
+    "coverImageLight": "/series-covers/light/kan.png",
+    "coverImageDark": "/series-covers/dark/kan.png"
   },
   {
     "id": "nas",
@@ -44,40 +55,21 @@
       "models/neural-architecture-search/nas-code",
       "models/neural-architecture-search/optuna-code"
     ],
-    "coverImage": "/series-covers/neural-architecture-search.png"
+    "coverImageLight": "/series-covers/light/nas.png",
+    "coverImageDark": "/series-covers/dark/nas.png"
   },
   {
-    "id": "kan",
-    "title": "Kolmogorov-Arnold Networks",
-    "description": "KANs as a flexible alternative to MLPs.",
-    "posts": [
-      "models/kan/kans-guide",
-      "models/kan/kan-math",
-      "models/kan/kan-code"
-    ],
-    "coverImage": "/series-covers/kolmogorov-arnold-networks.png"
-  },
-  {
-    "id": "convkan",
-    "title": "Convolutional KAN",
-    "description": "Applying KAN principles to convolutional neural networks.",
-    "posts": [
-      "models/convkan/ckan-guide",
-      "models/convkan/ckan-math",
-      "models/convkan/ckan-vs-cnn"
-    ],
-    "coverImage": "/series-covers/convolutional-kan.png"
-  },
-  {
-    "id": "yolo",
-    "title": "YOLO Object Detection",
-    "description": "YOLO from beginner's guide through math to full implementation.",
+    "id": "object-detection",
+    "title": "Object Detection & Segmentation",
+    "description": "Core detection and segmentation models — YOLO's real-time architecture from a beginner's guide through math to code, plus Meta's Segment Anything.",
     "posts": [
       "models/you-only-look-once/yolo-summary",
       "models/you-only-look-once/yolo-math",
-      "models/you-only-look-once/yolo-code"
+      "models/you-only-look-once/yolo-code",
+      "models/sam"
     ],
-    "coverImage": "/series-covers/yolo-object-detection.png"
+    "coverImageLight": "/series-covers/light/object-detection.png",
+    "coverImageDark": "/series-covers/dark/object-detection.png"
   },
   {
     "id": "matryoshka",
@@ -88,32 +80,48 @@
       "models/matryoshka/matryoshka-math",
       "models/matryoshka/matryoshka-code"
     ],
-    "coverImage": "/series-covers/matryoshka-transformers.png"
+    "coverImageLight": "/series-covers/light/matryoshka.png",
+    "coverImageDark": "/series-covers/dark/matryoshka.png"
   },
   {
     "id": "vlm",
     "title": "Vision-Language Models",
-    "description": "Understanding, fine-tuning, and applying VLMs with LoRA.",
+    "description": "Understanding, fine-tuning, and applying vision-language models — from BLIP-2 and LLaVA to LoRA fine-tuning and vision-language-action systems for robotics.",
     "posts": [
       "models/vision-language-models/vision-language-explained",
       "models/vision-language-models/vision-language-finetuning",
       "models/vision-language-models/vision-language-lora",
       "foundation/blip",
-      "model-training/peft"
+      "model-training/peft",
+      "models/llava",
+      "models/vla/vla-review/vla-review"
     ],
-    "coverImage": "/series-covers/vision-language-models.png"
+    "coverImageLight": "/series-covers/light/vlm.png",
+    "coverImageDark": "/series-covers/dark/vlm.png"
+  },
+  {
+    "id": "clip",
+    "title": "CLIP: Vision-Language Pretraining",
+    "description": "From the original CLIP paper to a full implementation.",
+    "posts": [
+      "foundation/clip",
+      "models/clip-code"
+    ],
+    "coverImageLight": "/series-covers/light/clip.png",
+    "coverImageDark": "/series-covers/dark/clip.png"
   },
   {
     "id": "diffusion-models",
     "title": "Diffusion Models",
-    "description": "From DDPM's foundational math through DDIM's fast sampling, latent diffusion models, and the FLUX architecture \u2014 how modern image generation actually works.",
+    "description": "From DDPM's foundational math through DDIM's fast sampling, latent diffusion models, and the FLUX architecture — how modern image generation actually works.",
     "posts": [
       "generative-ai/ddpm",
       "generative-ai/ddim",
       "generative-ai/latent-diffusion",
       "generative-ai/fluxv1"
     ],
-    "coverImage": "/series-covers/diffusion-models.png"
+    "coverImageLight": "/series-covers/light/diffusion.png",
+    "coverImageDark": "/series-covers/dark/diffusion.png"
   },
   {
     "id": "stable-diffusion",
@@ -124,37 +132,45 @@
       "generative-ai/control-net",
       "generative-ai/stable-diffusion-with-control-net"
     ],
-    "coverImage": "/series-covers/stable-diffusion-and-controlnet.png"
+    "coverImageLight": "/series-covers/light/stable-diffusion.png",
+    "coverImageDark": "/series-covers/dark/stable-diffusion.png"
   },
   {
-    "id": "densenet",
-    "title": "DenseNet",
-    "description": "Densely connected convolutional networks \u2014 theory and code.",
+    "id": "modern-cnn",
+    "title": "Modern CNN Architectures",
+    "description": "Efficient and densely-connected CNN designs — DenseNet's feature reuse and MobileNet's mobile-first efficiency, theory and code.",
     "posts": [
       "models/dense-net/dense-net-summary",
-      "models/dense-net/dense-net-code"
-    ],
-    "coverImage": "/series-covers/densenet.png"
-  },
-  {
-    "id": "mobilenet",
-    "title": "MobileNet",
-    "description": "Efficient neural networks for mobile vision \u2014 overview and implementation.",
-    "posts": [
+      "models/dense-net/dense-net-code",
       "models/mobile-net/mobile-net-summary",
       "models/mobile-net/mobile-net-code"
     ],
-    "coverImage": "/series-covers/mobilenet.png"
+    "coverImageLight": "/series-covers/light/modern-cnn.png",
+    "coverImageDark": "/series-covers/dark/modern-cnn.png"
   },
   {
-    "id": "vit",
-    "title": "Vision Transformers",
-    "description": "ViT from simple guide to full implementation.",
+    "id": "classic-cnn",
+    "title": "Classic CNN Architectures",
+    "description": "A chronological deep dive into the networks that defined modern computer vision.",
     "posts": [
+      "foundation/lenet",
+      "foundation/alexnet"
+    ],
+    "coverImageLight": "/series-covers/light/classic-cnn.png",
+    "coverImageDark": "/series-covers/dark/classic-cnn.png"
+  },
+  {
+    "id": "vision-transformers",
+    "title": "Vision Transformers & Attention",
+    "description": "How attention powers modern vision models — Transformers vs CNNs theory and code, then a full Vision Transformer guide and implementation.",
+    "posts": [
+      "models/attention-mechanisms/attention-article",
+      "models/attention-mechanisms/attention-code",
       "models/vision-transformers-explained",
       "models/vision-transformers"
     ],
-    "coverImage": "/series-covers/vision-transformers.png"
+    "coverImageLight": "/series-covers/light/vision-transformers.png",
+    "coverImageDark": "/series-covers/dark/vision-transformers.png"
   },
   {
     "id": "distributed",
@@ -167,38 +183,22 @@
       "model-training/distributed/accelerate-vs-fabric",
       "deployment/deepspeed"
     ],
-    "coverImage": "/series-covers/distributed-training.png"
+    "coverImageLight": "/series-covers/light/distributed.png",
+    "coverImageDark": "/series-covers/dark/distributed.png"
   },
   {
-    "id": "kubeflow",
-    "title": "Kubeflow for MLOps",
-    "description": "Machine learning pipelines on Kubernetes.",
+    "id": "mlops-serving",
+    "title": "MLOps & Model Serving",
+    "description": "Orchestrating and serving ML models in production — Kubeflow pipelines on Kubernetes and LitServe deployment with Docker.",
     "posts": [
       "deployment/kubeflow-explain",
-      "deployment/kubeflow-pytorch"
-    ],
-    "coverImage": "/series-covers/kubeflow-for-mlops.png"
-  },
-  {
-    "id": "onnx",
-    "title": "ONNX Deployment",
-    "description": "Build and deploy computer vision models with ONNX Runtime.",
-    "posts": [
-      "deployment/onnx-model",
-      "deployment/onnx-cv"
-    ],
-    "coverImage": "/series-covers/onnx-deployment.png"
-  },
-  {
-    "id": "litserve",
-    "title": "Model Serving with LitServe",
-    "description": "Deploy CV models with LitServe and Docker.",
-    "posts": [
+      "deployment/kubeflow-pytorch",
       "deployment/litserve-basics",
       "deployment/litserve-mobilenet",
       "deployment/mobilenet-deployment"
     ],
-    "coverImage": "/series-covers/model-serving-with-litserve.png"
+    "coverImageLight": "/series-covers/light/mlops-serving.png",
+    "coverImageDark": "/series-covers/dark/mlops-serving.png"
   },
   {
     "id": "mlflow",
@@ -209,7 +209,21 @@
       "deployment/mlflow-oe",
       "deployment/github-mlflow"
     ],
-    "coverImage": "/series-covers/mlflow-for-ml-tracking.png"
+    "coverImageLight": "/series-covers/light/mlflow.png",
+    "coverImageDark": "/series-covers/dark/mlflow.png"
+  },
+  {
+    "id": "milvus",
+    "title": "Milvus for Machine Learning",
+    "description": "Using Milvus as a vector database for computer vision, model training, and active learning — including influence-based sample selection.",
+    "posts": [
+      "deployment/milvus",
+      "deployment/milvus-train",
+      "deployment/milvus-active-learning",
+      "model-training/influence-selection"
+    ],
+    "coverImageLight": "/series-covers/light/milvus.png",
+    "coverImageDark": "/series-covers/dark/milvus.png"
   },
   {
     "id": "moe",
@@ -220,80 +234,44 @@
       "model-training/g-shard",
       "models/switch-transformer"
     ],
-    "coverImage": "/series-covers/mixture-of-experts.png"
+    "coverImageLight": "/series-covers/light/moe.png",
+    "coverImageDark": "/series-covers/dark/moe.png"
   },
   {
-    "id": "attention",
-    "title": "Attention Mechanisms",
-    "description": "Transformers vs CNNs \u2014 theory and complete code guide.",
+    "id": "inference-optimization",
+    "title": "Inference Optimization",
+    "description": "Make models faster at inference — quantization, edge deployment, compilation, efficient attention, structured generation, and ONNX Runtime.",
     "posts": [
-      "models/attention-mechanisms/attention-article",
-      "models/attention-mechanisms/attention-code"
+      "deployment/quantization",
+      "deployment/edge-device-deployment",
+      "deployment/pytorch-to-end",
+      "deployment/flash-attention",
+      "deployment/sglang",
+      "deployment/onnx-model",
+      "deployment/onnx-cv"
     ],
-    "coverImage": "/series-covers/attention-mechanisms.png"
-  },
-  {
-    "id": "rust-python",
-    "title": "Rust for Python Developers",
-    "description": "Get started with Rust and build Python extension packages.",
-    "posts": [
-      "news/python/rust-getting-started",
-      "news/python/rust-py-package"
-    ],
-    "coverImage": "/series-covers/rust-for-python-developers.png"
-  },
-  {
-    "id": "python314",
-    "title": "Python 3.14",
-    "description": "What's new and what's changed in Python 3.14.",
-    "posts": [
-      "news/python/python-pi",
-      "news/python/python-pi-code"
-    ],
-    "coverImage": "/series-covers/python-3-14.png"
-  },
-  {
-    "id": "milvus",
-    "title": "Milvus for Machine Learning",
-    "description": "Using Milvus as a vector database for computer vision, model training, and active learning.",
-    "posts": [
-      "deployment/milvus",
-      "deployment/milvus-train",
-      "deployment/milvus-active-learning"
-    ],
-    "coverImage": "/series-covers/milvus-for-machine-learning.png"
-  },
-  {
-    "id": "clip",
-    "title": "CLIP: Vision-Language Pretraining",
-    "description": "From the original CLIP paper to a full implementation.",
-    "posts": [
-      "foundation/clip",
-      "models/clip-code"
-    ],
-    "coverImage": "/series-covers/clip-vision-language-pretraining.png"
-  },
-  {
-    "id": "classic-cnn",
-    "title": "Classic CNN Architectures",
-    "description": "A chronological deep dive into the networks that defined modern computer vision.",
-    "posts": [
-      "foundation/lenet",
-      "foundation/alexnet"
-    ],
-    "coverImage": "/series-covers/classic-cnn-architectures.png"
+    "coverImageLight": "/series-covers/light/inference-optimization.png",
+    "coverImageDark": "/series-covers/dark/inference-optimization.png"
   },
   {
     "id": "python-ml",
     "title": "Python for ML Engineers",
-    "description": "Python language features every ML engineer should know \u2014 decorators, functools, itertools, and concurrency.",
+    "description": "Python language features, tooling, and Rust extensions every ML engineer should know — decorators, functools, itertools, concurrency, Python 3.14, Rust, data tooling, and metric visualization.",
     "posts": [
       "news/python/python-decorators",
       "news/python/python-functools",
       "news/python/python-itertools",
-      "news/python/python-multi-star"
+      "news/python/python-multi-star",
+      "news/python/python-pi",
+      "news/python/python-pi-code",
+      "news/python/rust-getting-started",
+      "news/python/rust-py-package",
+      "deployment/pandas-to-polars",
+      "deployment/data-visualization-tutorial",
+      "model-training/beginner-metrics"
     ],
-    "coverImage": "/series-covers/python-for-ml-engineers.png"
+    "coverImageLight": "/series-covers/light/python-ml.png",
+    "coverImageDark": "/series-covers/dark/python-ml.png"
   },
   {
     "id": "pytorch-lightning",
@@ -303,41 +281,34 @@
       "model-training/pytorch-lightning",
       "model-training/pytorch-to-pytorchlightning"
     ],
-    "coverImage": "/series-covers/pytorch-lightning.png"
+    "coverImageLight": "/series-covers/light/pytorch-lightning.png",
+    "coverImageDark": "/series-covers/dark/pytorch-lightning.png"
   },
   {
     "id": "pytorch-optimization",
     "title": "PyTorch Training Optimization",
-    "description": "Squeeze every bit of performance out of your PyTorch training \u2014 from data loading to AMP to custom CUDA.",
+    "description": "Squeeze every bit of performance out of your PyTorch training — data loading and augmentation, AMP, custom CUDA, and collate speed-ups.",
     "posts": [
       "model-training/pytorch-optimizations",
       "model-training/pytorch-collate-gains",
       "model-training/automatic-mixed-precision",
-      "model-training/cuda-python"
+      "model-training/cuda-python",
+      "model-training/albumentations-vs-torchvision"
     ],
-    "coverImage": "/series-covers/pytorch-training-optimization.png"
+    "coverImageLight": "/series-covers/light/pytorch-optimization.png",
+    "coverImageDark": "/series-covers/dark/pytorch-optimization.png"
   },
   {
-    "id": "inference-optimization",
-    "title": "Inference Optimization",
-    "description": "Make models faster at inference \u2014 quantization, edge deployment, compilation, and efficient attention.",
+    "id": "ai-ml-news",
+    "title": "AI & ML News & Reflections",
+    "description": "Commentary on the latest in computer vision and machine learning — conference takeaways, model reviews, language trends, and framework reflections.",
     "posts": [
-      "deployment/quantization",
-      "deployment/edge-device-deployment",
-      "deployment/pytorch-to-end",
-      "deployment/flash-attention",
-      "deployment/sglang"
+      "news/cvpr-2026",
+      "news/gemma",
+      "news/ml-langs",
+      "news/why-pytorch"
     ],
-    "coverImage": "/series-covers/inference-optimization.png"
-  },
-  {
-    "id": "self-supervised",
-    "title": "Self-Supervised Learning",
-    "description": "Training models without labels \u2014 from theory to student-teacher networks in PyTorch.",
-    "posts": [
-      "models/self-supervised-explained",
-      "models/student-teacher-vanilla"
-    ],
-    "coverImage": "/series-covers/self-supervised-learning.png"
+    "coverImageLight": "/series-covers/light/ai-ml-news.png",
+    "coverImageDark": "/series-covers/dark/ai-ml-news.png"
   }
 ]
