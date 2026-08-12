@@ -30,10 +30,11 @@ export default function FeaturedCard({ post }: { post: PostMeta }) {
   const gradient = (primaryCat && categoryGradient[primaryCat]) ?? "from-blue-500 to-violet-500";
 
   return (
-    <Link
-      href={`/posts/${post.slugPath}/`}
-      className="group flex flex-col sm:flex-row rounded-2xl border border-amber-200/60 dark:border-amber-900/40 bg-white dark:bg-slate-900 overflow-hidden hover:border-amber-300 dark:hover:border-amber-800 hover:shadow-2xl hover:shadow-amber-100/60 dark:hover:shadow-amber-950/30 hover:-translate-y-0.5 transition-all duration-300"
-    >
+    <div className="group relative flex flex-col sm:flex-row rounded-2xl border border-amber-200/60 dark:border-amber-900/40 bg-white dark:bg-slate-900 overflow-hidden hover:border-amber-300 dark:hover:border-amber-800 hover:shadow-2xl hover:shadow-amber-100/60 dark:hover:shadow-amber-950/30 hover:-translate-y-0.5 transition-all duration-300">
+      <Link href={`/posts/${post.slugPath}/`} className="absolute inset-0 z-0" aria-label={post.title}>
+        <span className="sr-only">{post.title}</span>
+      </Link>
+
       {/* Cover */}
       <div className="relative h-52 sm:h-auto sm:w-2/5 shrink-0 overflow-hidden bg-slate-100 dark:bg-slate-800">
         {post.coverImage ? (
@@ -62,7 +63,7 @@ export default function FeaturedCard({ post }: { post: PostMeta }) {
               </span>
             )}
             {topicCats.slice(0, 2).map((c) => (
-              <CategoryBadge key={c} category={c} small href={`/category/${encodeURIComponent(c)}/`} />
+              <CategoryBadge key={c} category={c} small href={`/category/${encodeURIComponent(c)}/`} className="relative z-10" />
             ))}
           </div>
 
@@ -94,6 +95,6 @@ export default function FeaturedCard({ post }: { post: PostMeta }) {
           </span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

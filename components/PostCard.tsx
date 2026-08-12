@@ -35,10 +35,11 @@ export default function PostCard({ post }: { post: PostMeta }) {
   const gradient = (primaryCat && categoryGradient[primaryCat]) ?? "from-blue-500 to-violet-500";
 
   return (
-    <Link
-      href={`/posts/${post.slugPath}/`}
-      className="group flex flex-col h-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xl hover:shadow-slate-200/60 dark:hover:shadow-slate-950/60 hover:-translate-y-1 transition-all duration-200"
-    >
+    <div className="group relative flex flex-col h-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xl hover:shadow-slate-200/60 dark:hover:shadow-slate-950/60 hover:-translate-y-1 transition-all duration-200">
+      <Link href={`/posts/${post.slugPath}/`} className="absolute inset-0 z-0" aria-label={post.title}>
+        <span className="sr-only">{post.title}</span>
+      </Link>
+
       {/* Cover image */}
       <div className="relative h-44 w-full shrink-0 overflow-hidden bg-slate-100 dark:bg-slate-800">
         {post.coverImage ? (
@@ -73,7 +74,7 @@ export default function PostCard({ post }: { post: PostMeta }) {
             </span>
           )}
           {topicCats.slice(0, 2).map((c) => (
-            <CategoryBadge key={c} category={c} small href={`/category/${encodeURIComponent(c)}/`} />
+            <CategoryBadge key={c} category={c} small href={`/category/${encodeURIComponent(c)}/`} className="relative z-10" />
           ))}
         </div>
 
@@ -106,6 +107,6 @@ export default function PostCard({ post }: { post: PostMeta }) {
 
       {/* Category-colored bottom bar */}
       <div className={`h-0.5 w-full bg-gradient-to-r ${gradient} opacity-60 group-hover:opacity-100 transition-opacity duration-200`} />
-    </Link>
+    </div>
   );
 }

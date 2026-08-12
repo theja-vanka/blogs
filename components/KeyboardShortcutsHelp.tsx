@@ -4,13 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const SHORTCUTS = [
-  { keys: ["/"], label: "Open search" },
-  { keys: ["⌘", "K"], label: "Open search" },
-  { keys: ["j"], label: "Go to older post" },
-  { keys: ["k"], label: "Go to newer post" },
-  { keys: ["g", "h"], label: "Go home" },
-  { keys: ["?"], label: "Show shortcuts" },
-  { keys: ["Esc"], label: "Close overlays" },
+  { combos: [["/"], ["⌘", "K"]], label: "Open search" },
+  { combos: [["j"]], label: "Go to older post" },
+  { combos: [["k"]], label: "Go to newer post" },
+  { combos: [["g", "h"]], label: "Go home" },
+  { combos: [["?"]], label: "Show shortcuts" },
+  { combos: [["Esc"]], label: "Close overlays" },
 ];
 
 export default function KeyboardShortcutsHelp() {
@@ -85,16 +84,21 @@ export default function KeyboardShortcutsHelp() {
         </button>
       </div>
       <ul className="py-3 px-2">
-        {SHORTCUTS.map(({ keys, label }) => (
+        {SHORTCUTS.map(({ combos, label }) => (
           <li key={label} className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50">
             <span className="text-sm text-slate-600 dark:text-slate-400">{label}</span>
-            <div className="flex items-center gap-1">
-              {keys.map((k, i) => (
-                <span key={i} className="flex items-center gap-1">
-                  <kbd className="inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1.5 rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-[11px] font-mono text-slate-600 dark:text-slate-400">
-                    {k}
-                  </kbd>
-                  {i < keys.length - 1 && <span className="text-[10px] text-slate-400">then</span>}
+            <div className="flex items-center gap-1.5">
+              {combos.map((keys, comboIndex) => (
+                <span key={comboIndex} className="flex items-center gap-1">
+                  {comboIndex > 0 && <span className="text-[10px] text-slate-400 mr-0.5">or</span>}
+                  {keys.map((k, i) => (
+                    <span key={i} className="flex items-center gap-1">
+                      <kbd className="inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1.5 rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-[11px] font-mono text-slate-600 dark:text-slate-400">
+                        {k}
+                      </kbd>
+                      {i < keys.length - 1 && <span className="text-[10px] text-slate-400">then</span>}
+                    </span>
+                  ))}
                 </span>
               ))}
             </div>

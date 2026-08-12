@@ -15,18 +15,19 @@ interface Props {
   category: string;
   small?: boolean;
   href?: string;
+  className?: string;
 }
 
-export default function CategoryBadge({ category, small, href }: Props) {
+export default function CategoryBadge({ category, small, href, className = "" }: Props) {
   const cls = colors[category] ?? "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300";
   const base = `inline-block rounded-full font-medium ${small ? "text-[11px] px-2 py-0.5" : "text-xs px-2.5 py-0.5"} ${cls}`;
 
   if (href) {
     return (
-      <Link href={href} className={`${base} hover:opacity-80 transition-opacity`}>
+      <Link href={href} className={`${base} hover:opacity-80 transition-opacity ${className}`}>
         {category}
       </Link>
     );
   }
-  return <span className={base}>{category}</span>;
+  return <span className={`${base} ${className}`}>{category}</span>;
 }
