@@ -66,6 +66,25 @@ function estimateReadingTime(text) {
   return { wordCount: words, readingTime: Math.max(1, Math.round(words / 200)) };
 }
 
+function extractExcerpt($, container, maxLen = 160) {
+  let excerpt = "";
+  container.find("p").each((_, el) => {
+    if (excerpt) return;
+    const $el = $(el);
+    // Skip callout boxes (source notes, warnings) and formula-heavy paragraphs —
+    // neither reads well as a one-line summary. Image-only <p> tags fall out
+    // naturally via the length check below.
+    if ($el.closest(".callout").length || $el.find(".math").length) return;
+    const text = $el.text().replace(/\s+/g, " ").trim();
+    if (text.length < 60) return;
+    excerpt = text;
+  });
+  if (!excerpt || excerpt.length <= maxLen) return excerpt;
+  const truncated = excerpt.slice(0, maxLen);
+  const lastSpace = truncated.lastIndexOf(" ");
+  return `${truncated.slice(0, lastSpace > 0 ? lastSpace : maxLen)}…`;
+}
+
 function extractHeadings($, container) {
   const headings = [];
   // Quarto uses data-anchor-id rather than id on heading elements.
@@ -197,10 +216,15 @@ async function main() {
       $("p.date").first().text().trim() ||
       "";
 
-    const description =
+    // Quarto only emits og:description/meta-description when the .qmd sets
+    // `description:` explicitly — most posts here use `subtitle:` instead, or
+    // neither. Fall back to the subtitle, then to the first real body
+    // paragraph (computed below, once `main` is cleaned up).
+    let description =
       $("meta[property='og:description']").attr("content") ||
       $("meta[name='description']").attr("content") ||
       $(".description.abstract-description p").first().text().trim() ||
+      $("p.subtitle").first().text().trim() ||
       "";
 
     const categories = [];
@@ -219,6 +243,8 @@ async function main() {
 
     cleanContent($, main);
     await copyImages($, main, sourceDir, slugPath);
+
+    if (!description) description = extractExcerpt($, main);
 
     const headings = extractHeadings($, main);
     const hasMermaid = main.find("pre.mermaid-js").length > 0;
