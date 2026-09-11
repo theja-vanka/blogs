@@ -6,7 +6,1580 @@
     <description>Applied Scientist and Machine Learning Engineer writing about ML research, model deployment, and production systems.</description>
     <language>en-us</language>
     <atom:link href="https://theja-vanka.github.io/blogs/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 24 Aug 2026 09:10:15 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 11 Sep 2026 10:45:30 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation]]></title>
+      <link>https://theja-vanka.github.io/blogs/posts/models/marigold-v2/marigold-v2-guide/</link>
+      <guid isPermaLink="true">https://theja-vanka.github.io/blogs/posts/models/marigold-v2/marigold-v2-guide/</guid>
+      <pubDate>Fri, 11 Sep 2026 00:00:00 GMT</pubDate>
+      <description><![CDATA[A technical deep dive into arXiv:2609.08084]]></description>
+      <category>research</category>
+      <category>intermediate</category>
+      <content:encoded><![CDATA[
+
+
+
+
+
+
+<section id="marigold-v2-revisiting-diffusion-transformers-for-monocular-depth-estimation" class="level1">
+
+<p><img src="https://theja-vanka.github.io/blogs/posts/models/marigold-v2/marigold-v2-guide/marigold.png" class="img-fluid" alt="Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation"></p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Paper
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong><a href="https://arxiv.org/abs/2609.08084">arXiv:2609.08084</a></strong> — <em>Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation</em></p>
+<p><strong>Authors:</strong> Igor Pavlovic, Thiemo Wandel, Anton Obukhov, Luca Bartolomei, Andrey Davydov, Fabio Tosi, Matteo Poggi, Sabine Süsstrunk, Dengxin Dai · <strong>Categories:</strong> cs.CV, cs.LG</p>
+<p><strong>Demo:</strong> <a href="https://hf.co/spaces/huawei-bayerlab/marigold-v2-web">hf.co/spaces/huawei-bayerlab/marigold-v2-web</a></p>
+</div>
+</div>
+<section id="provenance-and-confidence-notice" class="level2">
+<h2 class="anchored" data-anchor-id="provenance-and-confidence-notice" id="provenance-and-confidence-notice">Provenance and confidence notice</h2>
+<p>Read this first, because it changes how much weight to put on individual numbers below.</p>
+<p>This guide was assembled from the arXiv HTML rendering of the paper via a text-extraction pass, not from a page-by-page read of the PDF. That has consequences worth stating plainly:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Content</th>
+<th>Confidence</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Method formulation (§3), hyperparameters, loss structure</td>
+<td><strong>[Likely]</strong></td>
+<td>Consistently reported across extraction passes; equations and constants are specific enough to be transcription rather than invention</td>
+</tr>
+<tr class="even">
+<td>Headline claims (16–26% AbsRel improvement, single 32 GB GPU, base model identity)</td>
+<td><strong>[Certain]</strong></td>
+<td>Appear verbatim in the abstract and figure captions</td>
+</tr>
+<tr class="odd">
+<td>Table 1–4 numeric values</td>
+<td><strong>[Likely]</strong></td>
+<td>Structurally coherent and internally consistent, but transcribed by an extraction model. <strong>Spot-check before citing in your own work.</strong></td>
+</tr>
+<tr class="even">
+<td>Section 5 (other dense tasks) details</td>
+<td><strong>[Guessing]</strong></td>
+<td>The body of §5 was <strong>not</strong> recoverable. What appears below is bounded by subsection titles and the abstract’s general claim. Treated as a gap, not filled in.</td>
+</tr>
+<tr class="odd">
+<td>Optimizer, LR schedule, EMA, DINOv3 variant, iREPA layer index</td>
+<td><strong>NOT STATED / not recoverable</strong></td>
+<td>Flagged inline. Do not assume values.</td>
+</tr>
+</tbody>
+</table>
+<p>Where the paper does not state something, this guide says so rather than guessing.</p>
+<hr>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://theja-vanka.github.io/blogs/posts/models/marigold-v2/marigold-v2-guide/teaser_05.png" class="img-fluid figure-img" alt="Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation"></p>
+<figcaption><strong>Figure 1 (paper teaser).</strong> “We present Marigold V2, a model and a cost-effective fine-tuning protocol that repurposes an open-source image-editing diffusion transformer (Qwen-Image-Edit) into a state-of-the-art monocular depth estimator in less than a week on a single 32GB GPU… it faithfully reproduces sharp edges, fur, and hair-thin details, surpassing recent detail-oriented methods such as Pixel-Perfect Depth (PPD) and InfiniDepth, all while retaining the efficiency of a VAE-based model.”</figcaption>
+</figure>
+</div>
+</section>
+<section id="tldr" class="level2">
+<h2 class="anchored" data-anchor-id="tldr" id="tldr">1. TL;DR</h2>
+<p>Marigold V2 takes an off-the-shelf <strong>image-editing</strong> diffusion transformer — Qwen-Image-Edit-2509 — and converts it into a single-step monocular depth estimator that sets state of the art on the standard zero-shot affine-invariant benchmark suite, using <strong>one 32 GB GPU for about six days</strong>.</p>
+<p>Three ideas carry the result:</p>
+<ol type="1">
+<li><strong>QLoRA adaptation of a DiT</strong> (4-bit base weights, rank-128 adapters) makes a large DiT fine-tunable on a single GPU, where prior DiT-repurposing work needed 8–96 GPU-days.</li>
+<li><strong>iREPA-depth</strong> — representation alignment where the target features come from a frozen DINOv3 encoder applied to the <strong>ground-truth depth map</strong>, not the RGB input. This is the inversion that matters.</li>
+<li><strong>SinkLoss</strong> — an entropic optimal-transport (Sinkhorn) matching loss over small K×K blocks that lets predictions be <em>set-correct</em> rather than <em>pixel-correct</em>, deliberately decoupling the objective from ground-truth noise at thin structures.</li>
+</ol>
+<p>The result: 2.8 AbsRel on ETH3D (prior best 3.8), 5.4 on KITTI (prior best 6.5), and the best soft-edge-error scores against detail-specialist baselines (PPD, InfiniDepth).</p>
+<p><strong>The uncomfortable part first:</strong> the headline “16–26%” framing is measured against FE2E on the two datasets where the gain is largest. On NYUv2 the improvement over FE2E is 3.8 → 3.6 AbsRel (~5%), and π³ — an ICLR 2026 method trained on &gt;9M samples — is competitive or better on several columns. The honest claim is “state of the art <em>among methods trained on ~74K samples</em>, by a wide margin, and competitive with 100×-data methods.” The paper’s own table supports that reading; the abstract’s framing is the optimistic slice of it.</p>
+<hr>
+</section>
+<section id="the-problem-and-why-generative-priors-keep-getting-used-for-it" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem-and-why-generative-priors-keep-getting-used-for-it" id="the-problem-and-why-generative-priors-keep-getting-used-for-it">2. The problem, and why generative priors keep getting used for it</h2>
+<p>Monocular depth estimation asks for per-pixel depth from a single RGB image. It is <strong>ill-posed by construction</strong>: an infinite family of 3D scenes projects to the same 2D image. There is no geometric constraint to exploit the way stereo or multi-view does; the only way out is prior knowledge about how scenes are typically shaped.</p>
+<p>Deep learning reframed this as regression from appearance features. That works, but the paper identifies a structural ceiling:</p>
+<blockquote class="blockquote">
+<p>discriminative models “suffer significant drops in accuracy in corner cases that are underrepresented in the training distribution.”</p>
+</blockquote>
+<p>The root cause is <strong>data scarcity in the right modality</strong>. Ground-truth depth requires depth sensors or synthetic rendering. Both are limited:</p>
+<ul>
+<li>Sensor data carries noise and systematic failure on <strong>non-Lambertian, transparent, or reflective surfaces</strong> — exactly the surfaces that are hard.</li>
+<li>Synthetic data is clean in aggregate but, as the paper shows in Figure 4, is <em>not</em> clean at thin structures: HyperSim’s renderer uses stochastic sampling, so hair-thin geometry appears semi-transparent in RGB and ill-defined in the depth buffer.</li>
+</ul>
+<p>Generative diffusion models, by contrast, are trained on billion-scale image data and — the argument goes — internalize “a geometrically consistent representation of the world” as a side effect of learning to synthesize plausible images. The bet of the whole Marigold line is that this prior is worth more than 100× more depth labels.</p>
+<p>The bet has a known failure mode, which the paper is explicitly organized around:</p>
+<blockquote class="blockquote">
+<p>“loss of fine-grained details and oversmoothed boundaries in predicted depth maps”</p>
+</blockquote>
+<p>Every diffusion-derived depth estimator has fought this. Marigold V2’s two novel losses are both attacks on it.</p>
+<hr>
+</section>
+<section id="where-this-sits-in-the-literature" class="level2">
+<h2 class="anchored" data-anchor-id="where-this-sits-in-the-literature" id="where-this-sits-in-the-literature">3. Where this sits in the literature</h2>
+<section id="discriminative-monocular-depth" class="level3">
+<h3 class="anchored" data-anchor-id="discriminative-monocular-depth" id="discriminative-monocular-depth">3.1 Discriminative monocular depth</h3>
+<p>Three generations:</p>
+<ol type="1">
+<li><strong>Single-domain</strong> models trained with ground truth, self-supervision, or proxy annotations. No cross-dataset generalization.</li>
+<li><strong>Affine-invariant, mixed-dataset</strong> models — the MiDaS lineage — which achieve zero-shot cross-dataset transfer by giving up absolute scale and shift.</li>
+<li><strong>ViT + million-scale</strong> models: Depth Anything V1/V2, MoGe, MoGe-2, π³, spanning affine-invariant, universal metric, and video depth.</li>
+</ol>
+<p>These are strong. MoGe-2 and π³ appear in Table 1 and are not embarrassed by Marigold V2. The paper’s criticism is about <em>annotation supply and quality</em>, not about architecture.</p>
+</section>
+<section id="generative-priors" class="level3">
+<h3 class="anchored" data-anchor-id="generative-priors" id="generative-priors">3.2 Generative priors</h3>
+<p>The paper sorts prior work into three families:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Family</th>
+<th>Characteristic</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Multi-step diffusion preserved</td>
+<td>Highest quality, iterative refinement</td>
+<td>Expensive at inference</td>
+</tr>
+<tr class="even">
+<td>Single-pass distillation</td>
+<td>Trades quality for speed</td>
+<td>Cheap inference, detail loss</td>
+</tr>
+<tr class="odd">
+<td>Architecture departures</td>
+<td>Auxiliary inputs, extended VAE outputs</td>
+<td>Varies</td>
+</tr>
+</tbody>
+</table>
+<p>The historical arc: early work (Marigold V1, GeoWizard, DepthFM) built on <strong>Stable Diffusion’s convolutional U-Net</strong>. The generative community then migrated to <strong>Diffusion Transformers</strong> — PixArt-α, SD3, FLUX, Qwen — and repurposing became “costlier due to the higher complexity of DiTs.”</p>
+<p>The concrete cost numbers the paper cites are the motivation for the entire contribution:</p>
+<ul>
+<li><strong>DICEPTION:</strong> 96 GPU-days</li>
+<li><strong>Lotus-2:</strong> 8 GPUs</li>
+</ul>
+<blockquote class="blockquote">
+<p>Note that LoRA alone does <strong>not</strong> solve this. The paper is explicit that “parameter-efficient methods like LoRA don’t always reduce this burden.” The memory wall is the <em>frozen base weights in fp16/bf16</em>, not the optimizer state. This is why the <strong>Q</strong> in QLoRA is load-bearing here, not incidental.</p>
+</blockquote>
+</section>
+<section id="representation-alignment" class="level3">
+<h3 class="anchored" data-anchor-id="representation-alignment" id="representation-alignment">3.3 Representation alignment</h3>
+<p>REPA and iREPA showed that regularizing diffusion internals against a pretrained visual encoder improves “semantic fidelity and training convergence.” Applied to depth:</p>
+<ul>
+<li><strong>DepthMaster:</strong> aligns intermediate U-Net features with DINOv2 features <strong>of the input image</strong>.</li>
+<li><strong>Pixel-Perfect Depth:</strong> injects semantic representations via a Semantics-Prompted DiT.</li>
+</ul>
+<p>Marigold V2 inverts the target:</p>
+<blockquote class="blockquote">
+<p>iREPA-depth “draws its alignment target from a frozen DINOv3 encoder applied to the <strong>ground-truth depth map</strong> rather than the input image.”</p>
+</blockquote>
+<p>Two consequences, both stated by the authors:</p>
+<ol type="1">
+<li>It gives a “more direct supervisory signal for geometric reconstruction” — you are asking the DiT’s internals to look like the semantics <em>of the answer</em>, not of the question.</li>
+<li>It has <strong>no inference-time dependency</strong>. The DINOv3 encoder is a training-time-only object. DepthMaster-style RGB alignment likewise doesn’t need it at inference, but Semantics-Prompted approaches do; iREPA-depth stays free.</li>
+</ol>
+</section>
+<section id="detail-and-artifact-handling" class="level3">
+<h3 class="anchored" data-anchor-id="detail-and-artifact-handling" id="detail-and-artifact-handling">3.4 Detail and artifact handling</h3>
+<p>The paper’s survey of the detail problem, and why each prior fix is partial:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Approach</th>
+<th>Residual problem</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SharpDepth</td>
+<td>Distills boundary sharpness</td>
+<td>Predictions “remain over-smoothed”</td>
+</tr>
+<tr class="even">
+<td>InfiniDepth</td>
+<td>Neural implicit field, arbitrary-resolution query</td>
+<td>Resolution ≠ detail</td>
+</tr>
+<tr class="odd">
+<td>Lotus-2</td>
+<td>Predictor–sharpener design</td>
+<td>Requires multi-step inference</td>
+</tr>
+<tr class="even">
+<td>Pixel-Perfect Depth (PPD)</td>
+<td>Pixel-space diffusion</td>
+<td>Reduces flying pixels but “doesn’t recover fine detail”</td>
+</tr>
+</tbody>
+</table>
+<p>The claimed gap:</p>
+<blockquote class="blockquote">
+<p>“no existing approach jointly addresses detail preservation and robust supervision under noisy or ambiguous ground-truth within a single-step VAE-based generative framework”</p>
+</blockquote>
+<p>This is a narrow, defensible gap statement — note how many qualifiers it carries. It is not “nobody does detail”; it is “nobody does detail <em>and</em> noise-robustness <em>and</em> single-step <em>and</em> VAE-based, together.”</p>
+<hr>
+</section>
+</section>
+<section id="method" class="level2">
+<h2 class="anchored" data-anchor-id="method" id="method">4. Method</h2>
+<section id="the-pipeline-at-a-glance" class="level3">
+<h3 class="anchored" data-anchor-id="the-pipeline-at-a-glance" id="the-pipeline-at-a-glance">4.0 The pipeline at a glance</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://theja-vanka.github.io/blogs/posts/models/marigold-v2/marigold-v2-guide/method_v03.png" class="img-fluid figure-img" alt="Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation"></p>
+<figcaption><strong>Figure 2 (paper).</strong> “Marigold V2 training protocol. During Stage 1, only QLoRA adapter weights are fine-tuned, regularized by iREPA-depth, which already produces a strong model. Stage 2 refines it further by adding SinkLoss and unfreezing the VAE decoder. At inference, the deployed model requires just one forward pass through the VAE and the DiT.”</figcaption>
+</figure>
+</div>
+<p>Reconstructed as a flowchart:</p>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TB
+    subgraph S1["STAGE 1 — 160K steps, ~5 days"]
+        direction TB
+        I1["Input image I"] --&gt; VE1["VAE encoder ℰ_vae&lt;br/&gt;FROZEN"]
+        GT1["Normalized GT depth d&lt;br/&gt;(3-channel grayscale)"] --&gt; VE1
+        VE1 --&gt; ZI1["z_I = ℰ_vae(I)"]
+        VE1 --&gt; ZD1["z_d = ℰ_vae(d)"]
+        ZI1 --&gt; DIT1["DiT f_θ&lt;br/&gt;Qwen-Image-Edit-2509&lt;br/&gt;4-bit base + rank-128 LoRA&lt;br/&gt;TRAINABLE (adapters only)"]
+        ZD1 --&gt; VTGT["target velocity&lt;br/&gt;v = z_I − z_d"]
+        DIT1 --&gt; PRED1["f_θ(z_I, t=0.5)"]
+        PRED1 --&gt; LLAT["ℒ_latent = ‖f_θ(z_I,t) − v‖²₂"]
+        VTGT --&gt; LLAT
+        PRED1 --&gt; DEC1["VAE decoder 𝒟_vae&lt;br/&gt;FROZEN"]
+        DEC1 --&gt; DHAT1["d̂"]
+        DHAT1 --&gt; LPIX["ℒ_pix (L1)"]
+        DHAT1 --&gt; LGRAD["ℒ_grad (L1 on ∇x, ∇y)"]
+        DIT1 -.-&gt;|internal features| LIREPA["ℒ_iREPA"]
+        GT1 --&gt; DINO["DINOv3 encoder&lt;br/&gt;FROZEN&lt;br/&gt;applied to GT DEPTH"]
+        DINO --&gt; LIREPA
+    end
+
+    S1 ==&gt; CKPT["Stage-1 checkpoint&lt;br/&gt;(already SOTA-competitive)"]
+
+    subgraph S2["STAGE 2 — 30K steps, ~1 day"]
+        direction TB
+        CKPT2["Stage-1 weights"] --&gt; DIT2["DiT f_θ&lt;br/&gt;QLoRA adapters&lt;br/&gt;TRAINABLE"]
+        DIT2 --&gt; DEC2["VAE decoder 𝒟_vae&lt;br/&gt;UNFROZEN — TRAINABLE"]
+        DEC2 --&gt; DHAT2["d̂"]
+        DHAT2 --&gt; SINK["ℒ_SinkLoss&lt;br/&gt;Sinkhorn OT on 5×5 blocks"]
+        DIT2 -.-&gt;|internal features| LIREPA2["ℒ_iREPA (retained, λ=0.2)"]
+    end
+
+    CKPT ==&gt; S2
+    S2 ==&gt; FINAL["Marigold V2"]
+
+    style S1 fill:#e8f0fe,stroke:#4a6fa5
+    style S2 fill:#fdf0e8,stroke:#a56f4a
+    style FINAL fill:#e8f5e9,stroke:#4a8f5a
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>And the inference path, which is deliberately trivial — <strong>one VAE encode, one DiT forward, one VAE decode</strong>:</p>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    I["RGB image I"] --&gt; E["ℰ_vae"]
+    E --&gt; ZI["z_I"]
+    ZI --&gt; F["DiT f_θ&lt;br/&gt;single forward pass&lt;br/&gt;t = 0.5"]
+    F --&gt; V["predicted velocity"]
+    ZI --&gt; SUB(("−"))
+    V --&gt; SUB
+    SUB --&gt; ZD["ẑ_d = z_I − f_θ(z_I, t)"]
+    ZD --&gt; D["𝒟_vae"]
+    D --&gt; OUT["d̂ — affine-invariant log-depth"]
+
+    style F fill:#e8f0fe,stroke:#4a6fa5
+    style OUT fill:#e8f5e9,stroke:#4a8f5a
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>No iterative denoising. No ensembling over noise seeds (Marigold V1’s expensive trick). No DINOv3 at inference. This is the efficiency claim.</p>
+<hr>
+</section>
+<section id="depth-normalization" class="level3">
+<h3 class="anchored" data-anchor-id="depth-normalization" id="depth-normalization">4.1 Depth normalization</h3>
+<p>Metric depth <code>D</code> is mapped to an affine-invariant log-depth target <code>d</code>:</p>
+<p><span class="math display">\[
+d = 2\left[\frac{\log(D+\varepsilon) - d_{2}}{d_{98} - d_{2}} - \frac{1}{2}\right]
+\]</span></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(D\)</span></td>
+<td>Metric ground-truth depth</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\varepsilon\)</span></td>
+<td>Small constant preventing <span class="math inline">\(\log(0)\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(d_{2}, d_{98}\)</span></td>
+<td>2nd and 98th percentiles of <span class="math inline">\(\log(D+\varepsilon)\)</span> over <strong>valid pixels only</strong></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(d\)</span></td>
+<td>Normalized target, range <span class="math inline">\([-1, 1]\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Three design decisions are packed into this one line:</p>
+<ol type="1">
+<li><strong>Log space.</strong> Table 4 is the justification — log-depth beats both linear depth and disparity (4.72 vs 5.04 vs 5.28 AbsRel). This is not arbitrary: AbsRel is a <em>relative</em> error metric, so an L1 loss in log space is approximately an L1 loss on relative error, which aligns the training objective with the evaluation metric. Linear-depth L1 over-weights far pixels; disparity over-weights near ones.</li>
+<li><strong>Percentile clipping, not min/max.</strong> Using <span class="math inline">\(d_2\)</span>/<span class="math inline">\(d_{98}\)</span> rather than the extremes makes normalization robust to a handful of sensor outliers or sky pixels that would otherwise compress the entire usable range.</li>
+<li><strong>Affine invariance.</strong> Discarding absolute scale and shift is what makes cross-dataset training possible at all — HyperSim and vKITTI have incomparable depth ranges.</li>
+</ol>
+<p>Then a pragmatic trick:</p>
+<blockquote class="blockquote">
+<p>“The normalized depth map is encoded as a grayscale RGB image by replicating the same normalized depth value across the three color channels.”</p>
+</blockquote>
+<p>This is the key to reusing the pretrained VAE untouched. The VAE expects 3-channel images in <span class="math inline">\([-1,1]\)</span>; a replicated depth map is exactly that. No new encoder, no architectural surgery, and — importantly — the VAE’s learned priors about natural-image structure transfer to depth maps, which are themselves piecewise-smooth-with-sharp-edges in much the way images are.</p>
+<hr>
+</section>
+<section id="diffusion-transformer-adaptation" class="level3">
+<h3 class="anchored" data-anchor-id="diffusion-transformer-adaptation" id="diffusion-transformer-adaptation">4.2 Diffusion transformer adaptation</h3>
+<p><strong>Base model: Qwen-Image-Edit-2509.</strong></p>
+<p>This choice deserves a beat. It is an <em>image-editing</em> model, not a text-to-image model. An editing model is already trained on the conditional task “given this image, produce a related image” — structurally the same shape as “given this image, produce its depth map.” The conditioning pathway already exists and is already aligned to spatial correspondence with the input. That is a materially easier starting point than a T2I model, where the image-conditioning path has to be grafted on.</p>
+<p><strong>Components:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Component</th>
+<th>Role</th>
+<th>Stage 1</th>
+<th>Stage 2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\mathcal{E}_{vae}\)</span></td>
+<td>VAE encoder</td>
+<td>Frozen</td>
+<td>Frozen</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(f_\theta\)</span></td>
+<td>DiT backbone</td>
+<td>4-bit quantized base + <strong>trainable</strong> rank-128 LoRA</td>
+<td><strong>Trainable</strong> LoRA</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\mathcal{D}_{vae}\)</span></td>
+<td>VAE decoder</td>
+<td>Frozen</td>
+<td><strong>Unfrozen / trainable</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Forward formulation.</strong> Both image and depth are encoded into the shared latent space:</p>
+<p><span class="math display">\[
+z_I = \mathcal{E}_{vae}(I), \qquad z_d = \mathcal{E}_{vae}(d)
+\]</span></p>
+<p>The DiT is trained to regress the <strong>velocity</strong> between them:</p>
+<p><span class="math display">\[
+v = z_I - z_d
+\]</span></p>
+<p><span class="math display">\[
+\mathcal{L}_{latent} = \lVert f_\theta(z_I, t) - v \rVert_2^2
+\]</span></p>
+<p>at a <strong>fixed timestep <span class="math inline">\(t = 0.5\)</span></strong>.</p>
+<p>This is the crucial simplification, and it is worth being precise about what it means. In flow-matching / rectified-flow training you would sample <span class="math inline">\(t \sim \mathcal{U}[0,1]\)</span> and learn the velocity field along the whole trajectory, then integrate at inference. Here the model is trained at a single point on the trajectory and the “ODE integration” collapses to one Euler step of size 1:</p>
+<p><span class="math display">\[
+\hat{z}_d = z_I - f_\theta(z_I, t)
+\]</span></p>
+<p><span class="math display">\[
+\hat{d} = \mathcal{D}_{vae}(\hat{z}_d)
+\]</span></p>
+<p>So this is not really a diffusion model at inference. It is a <strong>deterministic feed-forward regressor that inherits diffusion-pretrained weights</strong>. The generative machinery is a weight-initialization and architecture story, not a sampling story. (This is a continuation of what Lotus and GenPercept established: for a deterministic dense-prediction target, the stochasticity of diffusion is a cost, not a benefit.)</p>
+<p><strong>Pixel-space auxiliary losses.</strong> Because the decode path is differentiable, supervision can be applied after decoding rather than only in latent space:</p>
+<p><span class="math display">\[
+\mathcal{L}_{pix} = \lVert \hat{d} - d \rVert_1
+\]</span></p>
+<p><span class="math display">\[
+\mathcal{L}_{grad} = \lVert \nabla_x \hat{d} - \nabla_x d \rVert_1 + \lVert \nabla_y \hat{d} - \nabla_y d \rVert_1
+\]</span></p>
+<p><span class="math inline">\(\mathcal{L}_{grad}\)</span> is the classic multi-scale-gradient idea: penalizing gradient mismatch directly supervises <em>edges</em>, which an L1-on-values loss under-weights (an edge is a tiny fraction of pixels). Its weight is <span class="math inline">\(\lambda_{grad} = 5.0\)</span> — <strong>five times</strong> the value losses — which tells you how much the authors are willing to pay for boundary fidelity.</p>
+<hr>
+</section>
+<section id="irepa-depth-semantic-regularization-from-the-answer-not-the-question" class="level3">
+<h3 class="anchored" data-anchor-id="irepa-depth-semantic-regularization-from-the-answer-not-the-question" id="irepa-depth-semantic-regularization-from-the-answer-not-the-question">4.3 iREPA-depth: semantic regularization from the answer, not the question</h3>
+<blockquote class="blockquote">
+<p>“We regularize the internal DiT representations using pretrained visual features, encouraging the model to also preserve semantically-meaningful structure.”</p>
+</blockquote>
+<p><strong>Mechanism:</strong> a frozen <strong>DINOv3</strong> encoder produces target features; the DiT’s internal representations are aligned to them.</p>
+<p><strong>The inversion:</strong> targets come from the <strong>ground-truth depth map</strong>, not the RGB image.</p>
+<p>The ablation is the argument. From Table 3 at 30K steps:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Configuration</th>
+<th>NYUv2</th>
+<th>KITTI</th>
+<th>ETH3D</th>
+<th>ScanNet</th>
+<th>DIODE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\mathcal{L}_{latent} + \mathcal{L}_{pix}\)</span></td>
+<td>4.70</td>
+<td>7.84</td>
+<td>4.32</td>
+<td>4.50</td>
+<td>6.22</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(+\ \mathcal{L}_{iREPA}^{rgb}\)</span></td>
+<td>4.50</td>
+<td>6.89</td>
+<td>3.64</td>
+<td>4.38</td>
+<td>5.72</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(+\ \mathcal{L}_{iREPA}^{depth}\)</span></td>
+<td><strong>4.36</strong></td>
+<td><strong>6.72</strong></td>
+<td><strong>3.62</strong></td>
+<td><strong>4.22</strong></td>
+<td><strong>5.55</strong></td>
+</tr>
+</tbody>
+</table>
+<p>iREPA-depth wins on <strong>all five</strong> datasets against iREPA-rgb. Not by much — ~1–3% relative — but monotonically, which is more convincing than a large win on one benchmark.</p>
+<p><strong>Why it should work.</strong> DINOv3 features of a depth map encode “what regions are coherent objects with coherent geometry.” Asking the DiT’s internals to match those features is asking it to have an internal object/surface decomposition <em>of the thing it is predicting</em>. RGB features encode object identity and texture — informative, but they also encode things depth should ignore (albedo, shadows, print on a surface), which is arguably why the RGB variant is measurably worse.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://theja-vanka.github.io/blogs/posts/models/marigold-v2/marigold-v2-guide/irepa_eth_rgb.png" class="img-fluid figure-img" alt="Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation"></p>
+<figcaption><strong>Figure 3 (paper).</strong> “Impact of semantic feature losses. Input image, baseline prediction, with LPIPS loss, with iREPA-depth loss. The iREPA-depth variant removes artifacts most efficiently and improves fine details.”</figcaption>
+</figure>
+</div>
+<p>LPIPS is the natural baseline here because it is also a pretrained-feature-space loss — the comparison isolates <em>which</em> feature space, not <em>whether</em> to use one.</p>
+<p><strong>Stage-1 total objective:</strong></p>
+<p><span class="math display">\[
+\mathcal{L}_{DiT} = \lambda_{latent}\mathcal{L}_{latent} + \lambda_{pix}\mathcal{L}_{pix} + \lambda_{grad}\mathcal{L}_{grad} + \lambda_{iREPA}\mathcal{L}_{iREPA}
+\]</span></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Coefficient</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\lambda_{latent}\)</span></td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\lambda_{pix}\)</span></td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\lambda_{grad}\)</span></td>
+<td><strong>5.0</strong></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\lambda_{iREPA}\)</span></td>
+<td>0.2</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p><strong>NOT STATED in the recoverable text:</strong> which DINOv3 variant (ViT-S/B/L/H), which DiT block the alignment is taken from, and what projection head maps DiT feature dimension to DINOv3 feature dimension. REPA-family work conventionally uses an early-to-middle block and a small MLP projector, but <strong>do not assume this</strong> — check the released code before reimplementing.</p>
+</blockquote>
+<hr>
+</section>
+<section id="sinkloss-refusing-to-fit-the-noise" class="level3">
+<h3 class="anchored" data-anchor-id="sinkloss-refusing-to-fit-the-noise" id="sinkloss-refusing-to-fit-the-noise">4.4 SinkLoss: refusing to fit the noise</h3>
+<p>This is the paper’s most interesting contribution, and the one most likely to transfer to other problems.</p>
+<section id="the-problem" class="level4">
+<h4 class="anchored" data-anchor-id="the-problem">The problem</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://theja-vanka.github.io/blogs/posts/models/marigold-v2/marigold-v2-guide/0098_input_rgb.png" class="img-fluid figure-img" alt="Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation"></p>
+<figcaption><strong>Figure 4 (paper).</strong> “A crop of a HyperSim sample in native resolution. Thin structures appear semi-transparent in RGB and are not well-defined in ground-truth depth due to stochastic sampling within the rendering pipeline.”</figcaption>
+</figure>
+</div>
+<p>Figure 4 shows a HyperSim crop at native resolution. The caption:</p>
+<blockquote class="blockquote">
+<p>“Thin structures appear semi-transparent in RGB and are not well-defined in ground-truth depth due to stochastic sampling within the rendering pipeline.”</p>
+</blockquote>
+<p>The authors then state the trap directly:</p>
+<blockquote class="blockquote">
+<p>“To achieve the best AbsRel and δ₁ scores, predictions would have to align perfectly with the ground truth <strong>and</strong> reproduce that noise.”</p>
+</blockquote>
+<p>Sit with that. At a hair-thin structure, the “correct” per-pixel answer in the label is partly a <strong>rendering artifact</strong>. A pixel-wise loss makes the model’s incentive to reproduce the artifact. You can either have a sharp, physically plausible prediction or a low pixel-wise loss — not both. Every prior detail-focused method has been fighting the optimizer over this.</p>
+</section>
+<section id="the-move" class="level4">
+<h4 class="anchored" data-anchor-id="the-move">The move</h4>
+<p><strong>Relax spatial correspondence within a small neighborhood.</strong> Tile the image into non-overlapping <strong>K×K blocks</strong> (K = 5). Within each block, allow the K² predicted values to be matched to the K² ground-truth values by an <em>optimal permutation</em> rather than the identity permutation.</p>
+<p>The model is then scored on whether it produced the <strong>right multiset of depth values in this neighborhood</strong>, not whether each value landed on exactly the right pixel. Sub-block spatial jitter — which is what rendering noise looks like — becomes free. Getting the <em>distribution</em> wrong — an over-smoothed blob where there should be a thin bright line — remains expensive.</p>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TB
+    A["Predicted d̂ and GT d"] --&gt; B["Tile into non-overlapping&lt;br/&gt;K×K blocks, K = 5"]
+    B --&gt; C["Per block: 25 predicted values,&lt;br/&gt;25 ground-truth values"]
+    C --&gt; D["Cost matrix&lt;br/&gt;C_ij = |d̂_i − d_j|&lt;br/&gt;(25 × 25)"]
+    D --&gt; E{"Validity mask&lt;br/&gt;m_i · m_j = 1 ?"}
+    E --&gt;|yes| F["C̃_ij = C_ij"]
+    E --&gt;|no| G["C̃_ij = B = 10⁶&lt;br/&gt;penalizes whole row AND column"]
+    F --&gt; H["Entropic OT:&lt;br/&gt;M = argmin ⟨M,C̃⟩ − τ·H(M)&lt;br/&gt;τ = 0.1, uniform marginals 1/K²"]
+    G --&gt; H
+    H --&gt; I["Sinkhorn–Knopp,&lt;br/&gt;5 iterations,&lt;br/&gt;log domain for stability"]
+    I --&gt; J["ℒ = Σ m_i m_j M_ij C_ij / Σ m_i m_j M_ij"]
+    J --&gt; K["Average over blocks&lt;br/&gt;with valid ground truth"]
+
+    style H fill:#e8f0fe,stroke:#4a6fa5
+    style K fill:#e8f5e9,stroke:#4a8f5a
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="the-formulation" class="level4">
+<h4 class="anchored" data-anchor-id="the-formulation">The formulation</h4>
+<p><strong>Cost matrix (Eq. 8).</strong> For predicted value <span class="math inline">\(i\)</span> and ground-truth value <span class="math inline">\(j\)</span> within a block:</p>
+<p><span class="math display">\[
+C_{ij} = \lvert \hat{d}_i - d_j \rvert
+\]</span></p>
+<p>Invalid pixels are handled by a masked variant:</p>
+<p><span class="math display">\[
+\tilde{C}_{ij} =
+\begin{cases}
+C_{ij} &amp; \text{if } m_i m_j = 1 \\
+B &amp; \text{otherwise}, \quad B \gg \max_{ij} C_{ij}
+\end{cases}
+\]</span></p>
+<p>with <span class="math inline">\(B = 10^6\)</span>. Setting the whole row <em>and</em> column to a prohibitive cost means the transport solver will route mass away from invalid pixels on both sides — invalid predictions don’t get matched to valid targets and vice versa.</p>
+<p><strong>Entropic optimal transport (Eq. 9):</strong></p>
+<p><span class="math display">\[
+M = \arg\min_{M \in \mathcal{U}} \langle M, \tilde{C} \rangle - \tau H(M)
+\]</span></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\mathcal{U}\)</span></td>
+<td>Transport polytope with uniform marginals: <span class="math inline">\(M\mathbf{1} = \mathbf{1}/K^2\)</span>, <span class="math inline">\(M^\top\mathbf{1} = \mathbf{1}/K^2\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(H(M) = -\sum_{ij} M_{ij}\log M_{ij}\)</span></td>
+<td>Shannon entropy of the transport plan</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\tau = 0.1\)</span></td>
+<td>Entropic regularization strength</td>
+</tr>
+</tbody>
+</table>
+<p>The entropy term is what makes this tractable and differentiable. Exact optimal transport over a 25×25 cost matrix is a linear program — solvable, but with no useful gradient (the solution is a vertex of the polytope; the argmin is piecewise constant). Adding <span class="math inline">\(-\tau H(M)\)</span> makes the objective strictly convex, the solution unique and interior, and — critically — the Sinkhorn–Knopp fixed point differentiable by unrolling.</p>
+<p><strong>The loss (Eq. 10):</strong></p>
+<p><span class="math display">\[
+\mathcal{L}_{SinkLoss} = \frac{\sum_{ij} m_i m_j M_{ij} C_{ij}}{\sum_{ij} m_i m_j M_{ij}}
+\]</span></p>
+<p>A mass-weighted mean transport cost over valid pairs, normalized so that blocks with many invalid pixels are not systematically down-weighted. Averaged over all blocks containing valid ground truth.</p>
+<p><strong>Hyperparameters:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(K\)</span></td>
+<td>5</td>
+<td>Block edge → 25×25 cost matrix, ±2 px of permitted jitter</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\tau\)</span></td>
+<td>0.1</td>
+<td>Entropic regularization</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(B\)</span></td>
+<td><span class="math inline">\(10^6\)</span></td>
+<td>Invalid-pixel penalty</td>
+</tr>
+<tr class="even">
+<td>Sinkhorn iterations</td>
+<td>5</td>
+<td>Very few — see below</td>
+</tr>
+<tr class="odd">
+<td>Computation</td>
+<td>Log domain</td>
+<td>Numerical stability</td>
+</tr>
+</tbody>
+</table>
+<p><strong>On the choice of 5 iterations.</strong> This is remarkably few; Sinkhorn is usually run to convergence (tens to hundreds of iterations). Two readings, both plausible: (a) at <span class="math inline">\(\tau = 0.1\)</span> on a 25×25 problem with uniform marginals, the plan is close enough after 5 sweeps that further iterations don’t change the gradient meaningfully; (b) it is a deliberate compute/memory budget, since the unrolled iterations must be held in the autograd graph for every block in the image. Either way, <strong>5 unrolled iterations per block per step</strong> is the real cost, and it is why SinkLoss is a Stage-2 refinement rather than a Stage-1 objective — running it for all 160K steps would be wasteful.</p>
+<p><strong>On K = 5.</strong> The block size is the single most important knob and it is a genuine tradeoff: larger K tolerates more label noise but also forgives real localization error. K = 5 permits roughly ±2 pixels of positional slop. That is the scale of the rendering artifacts in Figure 4 and small enough that a mislocalized object boundary is still penalized. Non-overlapping tiling also means the block grid is arbitrary relative to image content — a boundary falling on a tile edge gets no benefit. Overlapping blocks would fix this at real compute cost; the paper takes the cheap option.</p>
+</section>
+<section id="why-unfreeze-the-vae-decoder-in-stage-2" class="level4">
+<h4 class="anchored" data-anchor-id="why-unfreeze-the-vae-decoder-in-stage-2">Why unfreeze the VAE decoder in Stage 2</h4>
+<p>SinkLoss operates in <strong>pixel space</strong>, after decoding. If the VAE decoder is frozen, the decoder itself becomes the bottleneck on achievable sharpness — the DiT can produce a perfect latent and the frozen decoder will still band-limit it, because it was trained to reconstruct natural images, not depth maps.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://theja-vanka.github.io/blogs/posts/models/marigold-v2/marigold-v2-guide/sinkloss_impact_v3.png" class="img-fluid figure-img" alt="Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation"></p>
+<figcaption><strong>Figure 5 (paper).</strong> “Qualitative impact of SinkLoss and VAE decoder unfreezing. The Stage-1 checkpoint is compared against two continued-training variants with an unfrozen VAE decoder, with and without SinkLoss. SinkLoss substantially reduces flying pixels while preserving fine detail.”</figcaption>
+</figure>
+</div>
+<p>Figure 5’s caption confirms these were ablated as separate factors:</p>
+<blockquote class="blockquote">
+<p>“The Stage-1 checkpoint is compared against two continued-training variants with an unfrozen VAE decoder, with and without SinkLoss. SinkLoss substantially reduces flying pixels while preserving fine detail.”</p>
+</blockquote>
+<p>So the comparison isolates SinkLoss <em>given</em> an unfrozen decoder — decoder unfreezing alone is not credited with the improvement.</p>
+<p><strong>Stage-2 objective weights:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Coefficient</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\lambda_{iREPA}\)</span></td>
+<td>0.2 (retained from Stage 1)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\lambda_{SinkLoss}\)</span></td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p><strong>[Guessing]</strong> Whether <span class="math inline">\(\mathcal{L}_{latent}\)</span>, <span class="math inline">\(\mathcal{L}_{pix}\)</span>, <span class="math inline">\(\mathcal{L}_{grad}\)</span> are retained in Stage 2 is not stated in the recoverable text; only the two coefficients above are given. Dropping the pixel-wise terms entirely would be consistent with the motivation (they are the terms that force noise-fitting), but the paper does not say.</p>
+</blockquote>
+<hr>
+</section>
+</section>
+</section>
+<section id="training-setup" class="level2">
+<h2 class="anchored" data-anchor-id="training-setup" id="training-setup">5. Training setup</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aspect</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Base model</td>
+<td>Qwen-Image-Edit-2509</td>
+</tr>
+<tr class="even">
+<td>Adaptation</td>
+<td>QLoRA — 4-bit base quantization, rank-128 adapters</td>
+</tr>
+<tr class="odd">
+<td>Training data</td>
+<td>HyperSim (filtered to &lt;0.1% invalid pixels) + vKITTI</td>
+</tr>
+<tr class="even">
+<td>Sampling ratio</td>
+<td>90% HyperSim / 10% vKITTI per batch</td>
+</tr>
+<tr class="odd">
+<td>Resolution</td>
+<td>HyperSim 768×512; vKITTI 1216×352</td>
+</tr>
+<tr class="even">
+<td>Batch size</td>
+<td><strong>1</strong></td>
+</tr>
+<tr class="odd">
+<td>Gradient clipping</td>
+<td>Yes (value not stated)</td>
+</tr>
+<tr class="even">
+<td>Hardware</td>
+<td>Single 32 GB GPU</td>
+</tr>
+<tr class="odd">
+<td>Stage 1</td>
+<td>160,000 steps, ~5 days</td>
+</tr>
+<tr class="even">
+<td>Stage 2</td>
+<td>30,000 steps, ~1 day</td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td>~190K steps, ~6 days, ~74K training samples</td>
+</tr>
+<tr class="even">
+<td>Inference resolution</td>
+<td>Native, except ETH3D at 1008×672 upsampled to 2048×1360</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p><strong>NOT STATED:</strong> optimizer, learning rate, LR schedule, warmup, weight decay, EMA, whether test-time ensembling is used. These are material for reproduction. Get them from the released code.</p>
+</blockquote>
+<p><strong>Observations worth making:</strong></p>
+<p><strong>Batch size 1 with 190K steps</strong> is a memory-constrained choice, not a principled one. With rank-128 adapters and no gradient accumulation mentioned, gradient estimates are extremely noisy — which is probably why gradient clipping is called out explicitly and why the step count is so high. If you have more VRAM, accumulation is the first thing to try.</p>
+<p><strong>The 90/10 HyperSim/vKITTI mix</strong> is heavily indoor-synthetic. HyperSim is indoor scenes; vKITTI is synthetic driving. There is no real-world data in training at all, and no outdoor-natural data. That the model then tops KITTI (real driving) and ETH3D (real, mixed) zero-shot is the generative-prior argument working — but it also means the model has never seen a real sensor’s noise characteristics.</p>
+<p><strong>~74K training samples</strong> against Depth Anything V2’s 62.6M and π³’s &gt;9M. This is the number to keep in mind when reading Table 1.</p>
+<hr>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results" id="results">6. Results</h2>
+<section id="zero-shot-affine-invariant-depth-table-1" class="level3">
+<h3 class="anchored" data-anchor-id="zero-shot-affine-invariant-depth-table-1" id="zero-shot-affine-invariant-depth-table-1">6.1 Zero-shot affine-invariant depth (Table 1)</h3>
+<p>Metrics: <strong>AbsRel</strong> (mean absolute relative error, ↓) and <strong>δ₁</strong> (% of pixels within a 1.25× factor of ground truth, ↑). Evaluation uses <strong>RANSAC-based robust alignment</strong> to ground-truth metric depth before computing metrics, following the Pixel-Perfect Depth protocol.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Train data</th>
+<th>NYUv2 AbsRel↓</th>
+<th>NYUv2 δ₁↑</th>
+<th>KITTI AbsRel↓</th>
+<th>KITTI δ₁↑</th>
+<th>ETH3D AbsRel↓</th>
+<th>ETH3D δ₁↑</th>
+<th>ScanNet AbsRel↓</th>
+<th>ScanNet δ₁↑</th>
+<th>DIODE AbsRel↓</th>
+<th>DIODE δ₁↑</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Omnidata</td>
+<td>12.2M</td>
+<td>7.4</td>
+<td>94.5</td>
+<td>14.9</td>
+<td>83.5</td>
+<td>16.6</td>
+<td>77.8</td>
+<td>7.5</td>
+<td>93.6</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>DepthAnything V2 (62M)</td>
+<td>62.6M</td>
+<td>4.5</td>
+<td>97.9</td>
+<td>7.4</td>
+<td>94.6</td>
+<td>13.1</td>
+<td>86.5</td>
+<td>6.5</td>
+<td>97.2</td>
+<td>6.6</td>
+<td>95.2</td>
+</tr>
+<tr class="odd">
+<td>MoGe</td>
+<td>9M</td>
+<td>3.1</td>
+<td>98.3</td>
+<td>7.2</td>
+<td>95.1</td>
+<td>10.0</td>
+<td>89.6</td>
+<td>3.3</td>
+<td>98.3</td>
+<td>29.0</td>
+<td>70.0</td>
+</tr>
+<tr class="even">
+<td>MoGe-2</td>
+<td>8.9M</td>
+<td>3.1</td>
+<td>98.4</td>
+<td>6.9</td>
+<td>89.9</td>
+<td>5.0</td>
+<td>96.2</td>
+<td>3.1</td>
+<td>98.3</td>
+<td>9.6</td>
+<td>84.5</td>
+</tr>
+<tr class="odd">
+<td>π³ †</td>
+<td>&gt;9M</td>
+<td>2.9</td>
+<td>98.7</td>
+<td>5.9</td>
+<td>96.7</td>
+<td>2.9</td>
+<td>98.9</td>
+<td>2.1†</td>
+<td>99.1†</td>
+<td>4.4</td>
+<td>96.8</td>
+</tr>
+<tr class="even">
+<td>DiverseDepth</td>
+<td>320K</td>
+<td>11.7</td>
+<td>87.5</td>
+<td>19.0</td>
+<td>70.4</td>
+<td>22.8</td>
+<td>69.4</td>
+<td>10.9</td>
+<td>88.2</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>MiDaS</td>
+<td>2M</td>
+<td>11.1</td>
+<td>88.5</td>
+<td>23.6</td>
+<td>63.0</td>
+<td>18.4</td>
+<td>75.2</td>
+<td>12.1</td>
+<td>84.6</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>LeReS</td>
+<td>354K</td>
+<td>9.0</td>
+<td>91.6</td>
+<td>14.9</td>
+<td>78.4</td>
+<td>17.1</td>
+<td>77.7</td>
+<td>9.1</td>
+<td>91.7</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>DPT</td>
+<td>1.4M</td>
+<td>9.8</td>
+<td>90.3</td>
+<td>10.0</td>
+<td>90.1</td>
+<td>7.8</td>
+<td>94.6</td>
+<td>8.2</td>
+<td>93.4</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>HDN</td>
+<td>300K</td>
+<td>6.9</td>
+<td>94.8</td>
+<td>11.5</td>
+<td>86.7</td>
+<td>12.1</td>
+<td>83.3</td>
+<td>8.0</td>
+<td>93.9</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>DepthAnything V2 (54K)</td>
+<td>54K</td>
+<td>5.4</td>
+<td>97.2</td>
+<td>8.6</td>
+<td>92.8</td>
+<td>12.3</td>
+<td>88.4</td>
+<td>—</td>
+<td>—</td>
+<td>8.8</td>
+<td>93.7</td>
+</tr>
+<tr class="even">
+<td>Marigold Depth V1</td>
+<td>74K</td>
+<td>5.5</td>
+<td>96.4</td>
+<td>9.9</td>
+<td>91.6</td>
+<td>6.5</td>
+<td>96.0</td>
+<td>6.4</td>
+<td>95.1</td>
+<td>10.0</td>
+<td>90.7</td>
+</tr>
+<tr class="odd">
+<td>GeoWizard</td>
+<td>280K</td>
+<td>5.2</td>
+<td>96.6</td>
+<td>9.7</td>
+<td>92.1</td>
+<td>6.4</td>
+<td>96.1</td>
+<td>6.1</td>
+<td>95.3</td>
+<td>12.0</td>
+<td>89.8</td>
+</tr>
+<tr class="even">
+<td>DepthFM</td>
+<td>63K</td>
+<td>5.5</td>
+<td>96.3</td>
+<td>8.9</td>
+<td>91.3</td>
+<td>5.8</td>
+<td>96.2</td>
+<td>6.3</td>
+<td>95.4</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>GenPercept</td>
+<td>90K</td>
+<td>5.2</td>
+<td>96.6</td>
+<td>9.4</td>
+<td>92.3</td>
+<td>6.6</td>
+<td>95.7</td>
+<td>5.6</td>
+<td>96.5</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Lotus</td>
+<td>59K</td>
+<td>5.4</td>
+<td>96.8</td>
+<td>8.5</td>
+<td>92.2</td>
+<td>5.9</td>
+<td>97.0</td>
+<td>5.9</td>
+<td>95.7</td>
+<td>9.8</td>
+<td>92.4</td>
+</tr>
+<tr class="odd">
+<td>Lotus-2</td>
+<td>59K</td>
+<td>3.7</td>
+<td>97.6</td>
+<td>6.7</td>
+<td>94.1</td>
+<td>4.1</td>
+<td>98.6</td>
+<td>4.0</td>
+<td>97.2</td>
+<td>6.5</td>
+<td>95.5</td>
+</tr>
+<tr class="even">
+<td>PPD (512)</td>
+<td>54K</td>
+<td>4.3</td>
+<td>97.4</td>
+<td>8.0</td>
+<td>93.1</td>
+<td>4.5</td>
+<td>97.7</td>
+<td>4.5</td>
+<td>97.3</td>
+<td>7.0</td>
+<td>95.5</td>
+</tr>
+<tr class="odd">
+<td>PPD (1024)</td>
+<td>125K</td>
+<td>4.1</td>
+<td>97.7</td>
+<td>7.0</td>
+<td>95.5</td>
+<td>4.3</td>
+<td>98.0</td>
+<td>4.6</td>
+<td>97.2</td>
+<td>6.8</td>
+<td>95.9</td>
+</tr>
+<tr class="even">
+<td>InfiniDepth</td>
+<td>3.1M</td>
+<td>4.3</td>
+<td>97.6</td>
+<td>8.7</td>
+<td>92.3</td>
+<td>6.1</td>
+<td>95.4</td>
+<td>4.7</td>
+<td>96.9</td>
+<td>6.4</td>
+<td>95.8</td>
+</tr>
+<tr class="odd">
+<td>DepthMaster</td>
+<td>74K</td>
+<td>4.8</td>
+<td>97.0</td>
+<td>9.1</td>
+<td>91.1</td>
+<td>5.4</td>
+<td>97.4</td>
+<td>5.8</td>
+<td>95.6</td>
+<td>8.0</td>
+<td>94.3</td>
+</tr>
+<tr class="even">
+<td>FE2E</td>
+<td>71K</td>
+<td>3.8</td>
+<td>97.6</td>
+<td>6.5</td>
+<td>96.0</td>
+<td>3.8</td>
+<td>98.7</td>
+<td>4.3</td>
+<td>97.1</td>
+<td>5.6</td>
+<td>96.4</td>
+</tr>
+<tr class="odd">
+<td><strong>Marigold V2 (ours)</strong></td>
+<td><strong>74K</strong></td>
+<td><strong>3.6</strong></td>
+<td><strong>98.0</strong></td>
+<td><strong>5.4</strong></td>
+<td><strong>97.4</strong></td>
+<td><strong>2.8</strong></td>
+<td><strong>99.2</strong></td>
+<td><strong>3.7</strong></td>
+<td><strong>97.9</strong></td>
+<td><strong>5.2</strong></td>
+<td><strong>97.1</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reading this honestly:</strong></p>
+<ul>
+<li><strong>Against the ~74K-sample cohort</strong> (the fair comparison — Marigold V1, DepthFM, Lotus/Lotus-2, PPD, DepthMaster, FE2E), Marigold V2 wins every single column. That is a clean result.</li>
+<li><strong>The headline 16–26%.</strong> KITTI 6.5 → 5.4 vs FE2E is 17%. ETH3D 3.8 → 2.8 is 26%. NYUv2 is 3.8 → 3.6, about 5%. The abstract quotes the two best columns. Not misleading — it names KITTI and ETH3D explicitly — but do not generalize it.</li>
+<li><strong>π³ is the elephant.</strong> With &gt;9M training samples it beats Marigold V2 on NYUv2 (2.9 vs 3.6), KITTI δ₁ is close (96.7 vs 97.4 — Marigold wins), ETH3D is a near-tie (2.9 vs 2.8 — Marigold wins), ScanNet favors π³ (2.1†), DIODE favors π³ (4.4 vs 5.2). The dagger on π³’s ScanNet entry suggests a footnoted caveat (likely training-data overlap) that I could not recover. <strong>Marigold V2 is not uniformly SOTA across all methods; it is SOTA at its data scale and competitive well above it.</strong></li>
+<li><strong>MoGe’s DIODE collapse</strong> (29.0 AbsRel, 70.0 δ₁) is a nice illustration of the paper’s own framing about discriminative models and out-of-distribution corner cases.</li>
+<li><strong>Improvement is largest where scenes are hardest.</strong> ETH3D and KITTI — high dynamic range, outdoor, thin structures — improve most. NYUv2 and ScanNet — indoor, textured, already near-saturated — improve least. Consistent with the claim that the contributions target detail and boundary quality specifically.</li>
+</ul>
+</section>
+<section id="edge-aware-evaluation-table-2" class="level3">
+<h3 class="anchored" data-anchor-id="edge-aware-evaluation-table-2" id="edge-aware-evaluation-table-2">6.2 Edge-aware evaluation (Table 2)</h3>
+<p><strong>SEE_k (Soft Edge Error)</strong>: at depth discontinuities, the minimum absolute error between predicted disparity and <em>any</em> ground-truth disparity within a k×k patch. Lower is better.</p>
+<p>Note that SEE and SinkLoss share a philosophy — both permit local spatial slack. That is a real methodological caveat: the training objective is structurally aligned with this evaluation metric in a way that competitors’ objectives are not. It does not invalidate the result (SEE predates this paper and is a reasonable measure of boundary quality) but it is not an independent test either.</p>
+<p>Evaluated on the HyperSim test set:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>SEE3↓</th>
+<th>SEE5↓</th>
+<th>SEE7↓</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PPD</td>
+<td>0.404</td>
+<td>0.385</td>
+<td>0.371</td>
+</tr>
+<tr class="even">
+<td>InfiniDepth</td>
+<td>0.470</td>
+<td>0.451</td>
+<td>0.436</td>
+</tr>
+<tr class="odd">
+<td><strong>Marigold V2</strong></td>
+<td><strong>0.352</strong></td>
+<td><strong>0.333</strong></td>
+<td><strong>0.320</strong></td>
+</tr>
+</tbody>
+</table>
+<p>~13% better than PPD at k=3, and the margin holds across k. Only two baselines, both detail-specialists — a deliberately hard, narrow comparison.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://theja-vanka.github.io/blogs/posts/models/marigold-v2/marigold-v2-guide/dataset_comparison_v6.jpg" class="img-fluid figure-img" alt="Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation"></p>
+<figcaption><strong>Figure 6 (paper).</strong> “Qualitative comparison of state-of-the-art relative depth estimation methods across multiple datasets. Marigold V2 trained with iREPA-depth and SinkLoss preserves fine details while keeping flying pixels to a minimum.”</figcaption>
+</figure>
+</div>
+</section>
+<section id="ablations-table-3" class="level3">
+<h3 class="anchored" data-anchor-id="ablations-table-3" id="ablations-table-3">6.3 Ablations (Table 3)</h3>
+<p>Full Stage-1 ablation:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Configuration</th>
+<th>NYUv2 AbsRel↓</th>
+<th>NYUv2 δ₁↑</th>
+<th>KITTI AbsRel↓</th>
+<th>KITTI δ₁↑</th>
+<th>ETH3D AbsRel↓</th>
+<th>ETH3D δ₁↑</th>
+<th>ScanNet AbsRel↓</th>
+<th>ScanNet δ₁↑</th>
+<th>DIODE AbsRel↓</th>
+<th>DIODE δ₁↑</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\mathcal{L}_{latent}\)</span> (30K)</td>
+<td>4.53</td>
+<td>97.60</td>
+<td>7.26</td>
+<td>94.94</td>
+<td>4.25</td>
+<td>98.25</td>
+<td>4.59</td>
+<td>97.41</td>
+<td>6.82</td>
+<td>95.81</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(+\ \mathcal{L}_{pix}\)</span> (30K)</td>
+<td>4.70</td>
+<td>97.90</td>
+<td>7.84</td>
+<td>95.62</td>
+<td>4.32</td>
+<td>98.69</td>
+<td>4.50</td>
+<td>97.91</td>
+<td>6.22</td>
+<td>96.01</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(+\ \mathcal{L}_{iREPA}^{rgb}\)</span> (30K)</td>
+<td>4.50</td>
+<td>97.81</td>
+<td>6.89</td>
+<td>96.22</td>
+<td>3.64</td>
+<td>98.86</td>
+<td>4.38</td>
+<td>97.65</td>
+<td>5.72</td>
+<td>96.54</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(+\ \mathcal{L}_{iREPA}^{depth}\)</span> (30K)</td>
+<td>4.36</td>
+<td>98.01</td>
+<td>6.72</td>
+<td>96.38</td>
+<td>3.62</td>
+<td>98.90</td>
+<td>4.22</td>
+<td>97.91</td>
+<td>5.55</td>
+<td>96.82</td>
+</tr>
+<tr class="odd">
+<td>Stage 1, 160K (baseline)</td>
+<td>3.62</td>
+<td>98.01</td>
+<td>5.27</td>
+<td>97.39</td>
+<td>2.84</td>
+<td>99.08</td>
+<td>3.84</td>
+<td>97.88</td>
+<td>5.16</td>
+<td>97.07</td>
+</tr>
+<tr class="even">
+<td>Stage 1, 160K + iREPA-depth</td>
+<td>3.68</td>
+<td>98.03</td>
+<td>5.30</td>
+<td>97.43</td>
+<td><strong>2.68</strong></td>
+<td><strong>99.18</strong></td>
+<td><strong>3.81</strong></td>
+<td>97.82</td>
+<td><strong>5.02</strong></td>
+<td>97.02</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Three things to notice, one of them awkward:</strong></p>
+<ol type="1">
+<li><p><strong>Adding <span class="math inline">\(\mathcal{L}_{pix}\)</span> makes AbsRel <em>worse</em></strong> on NYUv2 (4.53 → 4.70), KITTI (7.26 → 7.84), and ETH3D (4.25 → 4.32), while improving δ₁ everywhere. A pixel-space L1 that hurts a pixel-space relative-error metric is counterintuitive; the most likely explanation is that L1 through a frozen decoder pulls toward decoder-reconstructible (i.e.&nbsp;smoother) outputs. It is included anyway, presumably because it is a prerequisite for <span class="math inline">\(\mathcal{L}_{grad}\)</span> and the Stage-2 pixel-space machinery.</p></li>
+<li><p><strong>Training length dominates every loss choice.</strong> 30K → 160K steps improves NYUv2 from 4.36 → 3.62 — a bigger delta than every loss ablation combined. This is the honest summary of Table 3: the losses give a few percent; the compute gives ~17%.</p></li>
+<li><p><strong>At 160K steps, iREPA-depth’s benefit is ambiguous.</strong> It <em>worsens</em> NYUv2 (3.62 → 3.68) and KITTI (5.27 → 5.30), and improves ETH3D (2.84 → 2.68), ScanNet (3.84 → 3.81), DIODE (5.16 → 5.02). The clean 5/5 sweep at 30K becomes 3/5 at convergence. The charitable reading — supported by Figure 3 — is that iREPA-depth buys <em>qualitative</em> detail and artifact removal that AbsRel does not measure. The skeptical reading is that its quantitative contribution largely washes out with sufficient training. <strong>Both readings are available from the paper’s own table</strong>, and the paper does not, in the recoverable text, address the regression.</p></li>
+</ol>
+</section>
+<section id="depth-parameterization-table-4" class="level3">
+<h3 class="anchored" data-anchor-id="depth-parameterization-table-4" id="depth-parameterization-table-4">6.4 Depth parameterization (Table 4)</h3>
+<p>Average across test sets, common training/eval configuration:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Representation</th>
+<th>AbsRel↓</th>
+<th>δ₁↑</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Linear depth</td>
+<td>5.04</td>
+<td>97.10</td>
+</tr>
+<tr class="even">
+<td>Disparity</td>
+<td>5.28</td>
+<td>97.15</td>
+</tr>
+<tr class="odd">
+<td><strong>Log depth</strong></td>
+<td><strong>4.72</strong></td>
+<td><strong>97.71</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Log depth wins on both metrics. A ~6% AbsRel gain for a change of variables — cheap, and the kind of detail that is easy to get wrong in a reimplementation.</p>
+<hr>
+</section>
+</section>
+<section id="other-dense-regression-tasks-section-5" class="level2">
+<h2 class="anchored" data-anchor-id="other-dense-regression-tasks-section-5" id="other-dense-regression-tasks-section-5">7. Other dense regression tasks (Section 5)</h2>
+<blockquote class="blockquote">
+<p><strong>Coverage gap.</strong> The body of Section 5 was not recoverable from the HTML rendering available to me. What follows is bounded by the subsection titles and the abstract’s general claim. <strong>No datasets, baselines, or numbers from Section 5 are reported here, because I could not verify any.</strong> Treat this section as a pointer to read in the paper, not as a summary of it.</p>
+</blockquote>
+<p>The paper reports that the protocol generalizes beyond depth to four additional dense-prediction tasks, and claims “state-of-the-art results when applied to other dense regression tasks.”</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>§5.x</th>
+<th>Task</th>
+<th>What it implies about the recipe</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5.1</td>
+<td>Depth completion</td>
+<td>Sparse depth must enter as an additional conditioning signal — a change to the input pathway, not just the target. How this is encoded is <strong>not recoverable</strong>.</td>
+</tr>
+<tr class="even">
+<td>5.2</td>
+<td>See-through depth</td>
+<td>Predicting geometry behind/through transparent surfaces. Directly targets the non-Lambertian failure mode called out in §2.1, and is the task where the generative prior should matter most.</td>
+</tr>
+<tr class="odd">
+<td>5.3</td>
+<td>Surface normal estimation</td>
+<td>A 3-channel target maps naturally onto the RGB-shaped VAE input — arguably a <em>better</em> fit than depth’s replicated-grayscale hack. Note that SinkLoss as formulated (<span class="math inline">\(C_{ij} = \lvert\hat{d}_i - d_j\rvert\)</span>) is scalar; a normal-map version needs a different cost (angular distance), and whether that was done is <strong>not stated</strong>.</td>
+</tr>
+<tr class="even">
+<td>5.4</td>
+<td>Albedo estimation</td>
+<td>Intrinsic image decomposition — not geometry at all. If this works, the claim is about the <em>protocol</em>, not about depth.</td>
+</tr>
+</tbody>
+</table>
+<p>The structural argument is sound: nothing in QLoRA adaptation, iREPA-style alignment, or block-wise OT matching is depth-specific. The evidence for it is in a section I could not read.</p>
+<hr>
+</section>
+<section id="practical-notes" class="level2">
+<h2 class="anchored" data-anchor-id="practical-notes" id="practical-notes">8. Practical notes</h2>
+<section id="using-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="using-the-model" id="using-the-model">8.1 Using the model</h3>
+<p>The demo is at <a href="https://hf.co/spaces/huawei-bayerlab/marigold-v2-web">hf.co/spaces/huawei-bayerlab/marigold-v2-web</a>.</p>
+<blockquote class="blockquote">
+<p><strong>NOT STATED</strong> in the recoverable text: whether code and weights are released, under what license, and at what repository. Check the project page before planning any work that depends on them.</p>
+</blockquote>
+<p>Sketch of what inference looks like, given the formulation in §4.2. <strong>Illustrative, not tested</strong> — the released API will differ:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ILLUSTRATIVE — not verified against a released implementation.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">@torch.no_grad</span>()</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict_depth(image, vae, dit, t<span class="op">=</span><span class="fl">0.5</span>):</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Single-step affine-invariant log-depth prediction.</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">    image: float tensor in [-1, 1], shape (B, 3, H, W)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">    returns: normalized log-depth in ~[-1, 1], shape (B, 1, H, W)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    z_I <span class="op">=</span> vae.encode(image).latent_dist.mode()</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># One forward pass at a fixed timestep. No iterative denoising.</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    v_hat <span class="op">=</span> dit(z_I, timestep<span class="op">=</span>t)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Single Euler step of size 1 along the learned velocity field.</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    z_d <span class="op">=</span> z_I <span class="op">-</span> v_hat</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    d_hat <span class="op">=</span> vae.decode(z_d).sample     <span class="co"># (B, 3, H, W), channels are replicas</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> d_hat.mean(dim<span class="op">=</span><span class="dv">1</span>, keepdim<span class="op">=</span><span class="va">True</span>)</span></code></pre></div></div>
+<p>Recovering metric depth requires inverting the normalization of §4.1, which needs scale and shift you do not have from a single image. That is what the RANSAC alignment in the evaluation protocol supplies:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ILLUSTRATIVE.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> to_metric(d_norm, d2, d98, eps<span class="op">=</span><span class="fl">1e-8</span>):</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Invert the affine-invariant log-depth normalization.</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">    d2, d98 are the log-depth percentiles — NOT recoverable from the</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">    prediction alone. In evaluation they come from RANSAC alignment</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">    against ground truth; in deployment they must come from another</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">    source (a sparse sensor, known scene scale, or a metric model).</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    log_d <span class="op">=</span> (d_norm <span class="op">/</span> <span class="fl">2.0</span> <span class="op">+</span> <span class="fl">0.5</span>) <span class="op">*</span> (d98 <span class="op">-</span> d2) <span class="op">+</span> d2</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.exp(log_d) <span class="op">-</span> eps</span></code></pre></div></div>
+<p><strong>This is the deployment caveat that matters.</strong> Marigold V2 is affine-invariant. It gives you <em>relative</em> geometry, excellently. It does not give you metres. For robotics or measurement you need a metric anchor — a few LiDAR returns, a known object size, or a separate metric model — and then the two-parameter fit.</p>
+</section>
+<section id="sinkloss-as-a-component-you-might-reuse" class="level3">
+<h3 class="anchored" data-anchor-id="sinkloss-as-a-component-you-might-reuse" id="sinkloss-as-a-component-you-might-reuse">8.2 SinkLoss, as a component you might reuse</h3>
+<p>The block-wise OT loss is the most portable idea in the paper. It applies wherever your labels are spatially noisy at fine scale but distributionally correct: segmentation boundaries, optical flow near occlusions, any sensor-derived dense target.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ILLUSTRATIVE reference implementation of the formulation in §3.4.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Hyperparameters follow the paper: K=5, tau=0.1, B=1e6, 5 iterations.</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sinkhorn_log(log_K, n_iters<span class="op">=</span><span class="dv">5</span>):</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Sinkhorn-Knopp in the log domain, uniform marginals 1/n."""</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> log_K.shape[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    log_mu <span class="op">=</span> torch.full(log_K.shape[:<span class="op">-</span><span class="dv">1</span>], <span class="op">-</span>torch.log(torch.tensor(<span class="bu">float</span>(n))),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                        device<span class="op">=</span>log_K.device)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    f <span class="op">=</span> torch.zeros_like(log_mu)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    g <span class="op">=</span> torch.zeros_like(log_mu)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_iters):</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        f <span class="op">=</span> log_mu <span class="op">-</span> torch.logsumexp(log_K <span class="op">+</span> g.unsqueeze(<span class="op">-</span><span class="dv">2</span>), dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        g <span class="op">=</span> log_mu <span class="op">-</span> torch.logsumexp(log_K <span class="op">+</span> f.unsqueeze(<span class="op">-</span><span class="dv">1</span>), dim<span class="op">=-</span><span class="dv">2</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> log_K <span class="op">+</span> f.unsqueeze(<span class="op">-</span><span class="dv">1</span>) <span class="op">+</span> g.unsqueeze(<span class="op">-</span><span class="dv">2</span>)   <span class="co"># log transport plan</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sink_loss(pred, target, mask, K<span class="op">=</span><span class="dv">5</span>, tau<span class="op">=</span><span class="fl">0.1</span>, big<span class="op">=</span><span class="fl">1e6</span>, n_iters<span class="op">=</span><span class="dv">5</span>):</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""pred/target/mask: (B, 1, H, W). mask is 1 for valid pixels."""</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Tile into non-overlapping K x K blocks -&gt; (B*nblocks, K*K)</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> blocks(x):</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> F.unfold(x, kernel_size<span class="op">=</span>K, stride<span class="op">=</span>K).transpose(<span class="dv">1</span>, <span class="dv">2</span>).reshape(<span class="op">-</span><span class="dv">1</span>, K <span class="op">*</span> K)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    p, t, m <span class="op">=</span> blocks(pred), blocks(target), blocks(mask)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    C <span class="op">=</span> (p.unsqueeze(<span class="op">-</span><span class="dv">1</span>) <span class="op">-</span> t.unsqueeze(<span class="op">-</span><span class="dv">2</span>)).<span class="bu">abs</span>()        <span class="co"># (N, K^2, K^2)</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    valid <span class="op">=</span> (m.unsqueeze(<span class="op">-</span><span class="dv">1</span>) <span class="op">*</span> m.unsqueeze(<span class="op">-</span><span class="dv">2</span>)) <span class="op">&gt;</span> <span class="fl">0.5</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    C_tilde <span class="op">=</span> torch.where(valid, C, torch.full_like(C, big))</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    log_M <span class="op">=</span> sinkhorn_log(<span class="op">-</span>C_tilde <span class="op">/</span> tau, n_iters<span class="op">=</span>n_iters)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    M <span class="op">=</span> log_M.exp()</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> M <span class="op">*</span> valid                                        <span class="co"># mask-weighted plan</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    num <span class="op">=</span> (w <span class="op">*</span> C).<span class="bu">sum</span>(dim<span class="op">=</span>(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>))</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    den <span class="op">=</span> w.<span class="bu">sum</span>(dim<span class="op">=</span>(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)).clamp_min(<span class="fl">1e-12</span>)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    has_gt <span class="op">=</span> valid.<span class="bu">any</span>(dim<span class="op">=</span>(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>))</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (num <span class="op">/</span> den)[has_gt].mean()</span></code></pre></div></div>
+<p>Two things to watch if you adopt this: memory is <span class="math inline">\(O(N_{blocks} \cdot K^4 \cdot n_{iters})\)</span> once unrolled for autograd — the reason K is small and iterations are few — and the non-overlapping grid means boundaries landing on a tile edge get no tolerance benefit.</p>
+</section>
+<section id="reproduction-checklist" class="level3">
+<h3 class="anchored" data-anchor-id="reproduction-checklist" id="reproduction-checklist">8.3 Reproduction checklist</h3>
+<p>If you are reimplementing, these are the details most likely to cost you a week:</p>
+<ul class="task-list">
+<li><label><input type="checkbox"><strong>Log-depth</strong>, not linear, not disparity (Table 4 — ~6% AbsRel)</label></li>
+<li><label><input type="checkbox"><strong>Percentile clipping at 2/98</strong>, over valid pixels only</label></li>
+<li><label><input type="checkbox"><strong>Replicate depth across 3 channels</strong> so the pretrained VAE is reusable unmodified</label></li>
+<li><label><input type="checkbox"><strong>Fixed <span class="math inline">\(t = 0.5\)</span></strong>; do not sample timesteps</label></li>
+<li><label><input type="checkbox"><strong>Velocity target <span class="math inline">\(v = z_I - z_d\)</span></strong>, not noise prediction</label></li>
+<li><label><input type="checkbox"><strong><span class="math inline">\(\lambda_{grad} = 5.0\)</span></strong> — 5× the value losses; this is not a typo</label></li>
+<li><label><input type="checkbox"><strong>iREPA target from GT depth</strong>, not from RGB</label></li>
+<li><label><input type="checkbox"><strong>Filter HyperSim to &lt;0.1% invalid pixels</strong>; 90/10 mix with vKITTI</label></li>
+<li><label><input type="checkbox"><strong>Freeze the VAE decoder in Stage 1, unfreeze in Stage 2</strong> — SinkLoss needs a trainable decoder to do anything</label></li>
+<li><label><input type="checkbox"><strong>Sinkhorn in the log domain</strong>; naive exp-space will produce NaNs at <span class="math inline">\(\tau = 0.1\)</span></label></li>
+<li><label><input type="checkbox"><strong>Gradient clipping</strong> — with batch size 1 this is not optional</label></li>
+<li><label><input type="checkbox">Unknown and must come from released code: <strong>optimizer, LR, schedule, warmup, EMA, DINOv3 variant, iREPA layer index and projector</strong></label></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="critical-assessment" class="level2">
+<h2 class="anchored" data-anchor-id="critical-assessment" id="critical-assessment">9. Critical assessment</h2>
+<section id="what-is-genuinely-strong" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-genuinely-strong" id="what-is-genuinely-strong">What is genuinely strong</h3>
+<p><strong>The cost story is the contribution.</strong> 96 GPU-days → 6 single-GPU-days, with <em>better</em> results, is the kind of result that changes who can do this work. It is also the claim easiest to verify and hardest to argue with.</p>
+<p><strong>SinkLoss is a real idea, not a trick.</strong> “Your labels are noisy at fine scale, so stop demanding pixel-exact agreement and demand distributional agreement in a small neighborhood instead” is a clean, transferable insight with a principled implementation. It correctly identifies that the metric and the objective were fighting each other, and resolves it in the objective rather than by relabeling.</p>
+<p><strong>The iREPA-depth inversion is a good, cheap idea</strong> with a clean ablation at 30K steps and no inference cost.</p>
+<p><strong>Choosing an image-editing base model</strong> rather than a T2I one is an underrated decision that probably contributes more than it gets credit for.</p>
+</section>
+<section id="what-to-hold-at-arms-length" class="level3">
+<h3 class="anchored" data-anchor-id="what-to-hold-at-arms-length" id="what-to-hold-at-arms-length">What to hold at arm’s length</h3>
+<p><strong>The 16–26% framing is the best two of five columns.</strong> The median improvement over FE2E is closer to 10%.</p>
+<p><strong>iREPA-depth’s contribution at convergence is not established.</strong> It regresses two of five datasets at 160K steps. The paper’s quantitative case for it rests on the 30K-step ablation; its case at full training is qualitative (Figure 3).</p>
+<p><strong>SEE and SinkLoss are philosophically aligned.</strong> Both permit local spatial slack. Winning SEE with an objective built on the same relaxation is weaker evidence than winning a metric that does not share the assumption.</p>
+<p><strong>No real-world training data at all.</strong> HyperSim + vKITTI are both synthetic. Zero-shot transfer to real benchmarks works, which is the point — but the model has never seen a real depth sensor’s noise, and the benchmark suite may not surface what that costs.</p>
+<p><strong>π³ exists.</strong> With ~120× the data it is better on several columns. “SOTA at this data scale” is the accurate claim.</p>
+<p><strong>Table 2 has two baselines.</strong> Defensible (they are the right two) but thin.</p>
+<p><strong>Reproducibility is gated on the code release.</strong> Optimizer, LR schedule, DINOv3 variant, and iREPA layer are all unstated in the paper, and all of them matter.</p>
+</section>
+<section id="open-questions" class="level3">
+<h3 class="anchored" data-anchor-id="open-questions" id="open-questions">Open questions</h3>
+<ol type="1">
+<li>Does SinkLoss transfer to real sensor noise (LiDAR dropout, ToF multipath) rather than only to rendering noise? The motivation generalizes; the evidence does not yet.</li>
+<li>What does the K-vs-tolerance curve look like? K=5 is asserted, never ablated in the recoverable text.</li>
+<li>Would overlapping blocks, or a random block-grid offset per step, remove the tile-boundary artifact cheaply?</li>
+<li>Does the single-step formulation cap achievable detail relative to a few-step variant? The paper does not report a multi-step ablation of its own model.</li>
+<li>How much of the gain comes from Qwen-Image-Edit specifically versus the losses? There is no base-model ablation.</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="one-paragraph-summary" class="level2">
+<h2 class="anchored" data-anchor-id="one-paragraph-summary" id="one-paragraph-summary">10. One-paragraph summary</h2>
+<p>Marigold V2 fine-tunes Qwen-Image-Edit-2509 into a single-step affine-invariant monocular depth estimator using QLoRA (4-bit base, rank-128 adapters), a fixed-timestep velocity-regression objective, and two novel losses: iREPA-depth, which aligns DiT internals to frozen DINOv3 features computed on the <em>ground-truth depth map</em>, and SinkLoss, an entropic-OT matching loss over 5×5 blocks that scores predictions on the local <em>multiset</em> of depth values rather than per-pixel agreement, deliberately decoupling training from rendering noise at thin structures. Trained in two stages — 160K steps with the decoder frozen, then 30K with it unfrozen and SinkLoss active — for about six days on a single 32 GB GPU and ~74K synthetic samples, it beats every comparably-sized-data method on all five standard benchmarks and leads detail-specialist baselines on soft-edge error. The efficiency result is the durable contribution; SinkLoss is the idea most worth stealing; the headline percentage is the optimistic slice of the table.</p>
+<hr>
+</section>
+<section id="sources" class="level2">
+<h2 class="anchored" data-anchor-id="sources" id="sources">Sources</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/2609.08084">Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation — arXiv:2609.08084</a></li>
+<li><a href="https://arxiv.org/html/2609.08084">HTML rendering of the paper</a></li>
+<li><a href="https://hf.co/spaces/huawei-bayerlab/marigold-v2-web">Project demo — Hugging Face Space</a></li>
+</ul>
+
+
+
+</section>
+</section>
+
+]]></content:encoded>
+    </item>
     <item>
       <title><![CDATA[Depth Anything V2]]></title>
       <link>https://theja-vanka.github.io/blogs/posts/models/depth-anything/</link>
