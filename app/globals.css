@@ -559,12 +559,24 @@ mjx-container {
 mjx-container[display="true"] {
   display: block;
   width: 100%;
+  max-width: 100%;
+  /* Tagged equations (\tag, numbered align) get an inline min-width from
+     MathJax, which would stretch the whole article column — neutralise it
+     here so the equation scrolls inside its own box instead. */
+  min-width: 0 !important;
   margin: 1.5rem 0;
   overflow-x: auto; /* scroll wide equations rather than overflow the page */
+  overflow-y: hidden;
+}
+
+/* Tagged equations: SVG is width="100%" with no viewBox, so it can't be
+   scaled — keep its natural min-width and let the container scroll. */
+mjx-container[display="true"][width="full"] > svg {
+  display: block;
 }
 
 /* Center the SVG itself — works like centering an image */
-mjx-container[display="true"] > svg {
+mjx-container[display="true"]:not([width="full"]) > svg {
   display: block;
   margin: 0 auto;
   max-width: 100% !important; /* !important overrides MathJax inline style="width:Xem" */
