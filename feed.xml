@@ -6,7 +6,2183 @@
     <description>Applied Scientist and Machine Learning Engineer writing about ML research, model deployment, and production systems.</description>
     <language>en-us</language>
     <atom:link href="https://theja-vanka.github.io/blogs/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 11 Sep 2026 10:45:30 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 15 Oct 2026 09:59:05 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[MobileNetV4: A Practitioner’s Deep-Dive]]></title>
+      <link>https://theja-vanka.github.io/blogs/posts/models/mobilenet-v4/mobilenetv4-guide/</link>
+      <guid isPermaLink="true">https://theja-vanka.github.io/blogs/posts/models/mobilenet-v4/mobilenetv4-guide/</guid>
+      <pubDate>Thu, 15 Oct 2026 00:00:00 GMT</pubDate>
+      <description><![CDATA[Universal models for the mobile ecosystem (Qin et al., 2024, arXiv:2404.10518v2)]]></description>
+      <category>code</category>
+      <category>research</category>
+      <category>beginner</category>
+      <content:encoded><![CDATA[
+
+
+
+
+
+
+<section id="mobilenetv4-a-practitioners-deep-dive" class="level1">
+
+<p><img src="https://theja-vanka.github.io/blogs/posts/models/mobilenet-v4/mobilenetv4-guide/mobilev4.png" class="img-fluid" alt="MobileNetV4: A Practitioner’s Deep-Dive"></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>About this guide
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This is an explanatory guide, written in my own words, to <em>MobileNetV4: Universal Models for the Mobile Ecosystem</em> <span class="citation" data-cites="qin2024mobilenetv4">[@qin2024mobilenetv4]</span>. It is aimed at someone who wants to <strong>understand, reimplement, or apply</strong> the ideas, not just skim the abstract.</p>
+</div>
+</div>
+<section id="sec-tldr" class="level2">
+<h2 class="anchored" data-anchor-id="sec-tldr" id="sec-tldr">TL;DR</h2>
+<p>MobileNetV4 (MNv4) is a family of image-classification backbones designed to sit on or near the accuracy/latency Pareto frontier on <strong>very different mobile hardware at once</strong>: phone CPUs, a Hexagon DSP, mobile GPUs, Apple’s Neural Engine, and Google’s EdgeTPU. The paper’s claim is “mostly Pareto optimal” across these, a deliberately hedged phrase.</p>
+<p>Five ingredients produce the result:</p>
+<ol type="1">
+<li><strong>A hardware-independent way to reason about latency</strong>: a Roofline model swept over many <em>ridge points</em>, instead of counting MACs.</li>
+<li><strong>Universal Inverted Bottleneck (UIB)</strong>: an inverted-bottleneck block with two <em>optional</em> depthwise convolutions. One searchable block unifies the classic IB, a ConvNeXt-style block, a ViT-style FFN, and a new “ExtraDW” variant.</li>
+<li><strong>Mobile MQA</strong>: multi-query attention with asymmetric spatial downsampling of keys/values, plus an Einsum re-ordering that removes transposes. Reported attention-block speedups are 39% or more on accelerators.</li>
+<li><strong>A refined NAS recipe</strong>: a two-stage TuNAS search, trained against an offline JFT-distillation dataset to reduce noise, for 750 epochs.</li>
+<li><strong>A stronger distillation recipe</strong>: dynamic dataset mixing plus class-balanced JFT data. With it, MNv4-Hybrid-Large reaches <strong>87.0%</strong> ImageNet-1k top-1 (with additional JFT pretraining, see <a href="#sec-distill" class="quarto-xref">Section&nbsp;1.9</a>) at 3.8 ms on a Pixel 8 EdgeTPU.</li>
+</ol>
+<div id="tbl-headline" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-headline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Headline numbers (from the paper’s Tables 6 and 9 and Sec. 8).
+</figcaption>
+<div aria-describedby="tbl-headline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Top-1 (IN-1k only)</th>
+<th>Params (M)</th>
+<th>MACs (G)</th>
+<th>Distilled top-1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>MNv4-Conv-S</td>
+<td>73.8</td>
+<td>3.8</td>
+<td>0.2</td>
+<td>75.5</td>
+</tr>
+<tr class="even">
+<td>MNv4-Conv-M</td>
+<td>79.9</td>
+<td>9.2</td>
+<td>1.0</td>
+<td>82.7</td>
+</tr>
+<tr class="odd">
+<td>MNv4-Hybrid-M</td>
+<td>80.7</td>
+<td>10.5</td>
+<td>1.2</td>
+<td>83.7</td>
+</tr>
+<tr class="even">
+<td>MNv4-Conv-L</td>
+<td>82.9</td>
+<td>31</td>
+<td>5.9</td>
+<td>85.9</td>
+</tr>
+<tr class="odd">
+<td>MNv4-Hybrid-L</td>
+<td>83.4</td>
+<td>35.9</td>
+<td>7.2</td>
+<td>86.6 (87.0 with JFT pretraining)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Three caveats up front
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>“Universal” means <em>mostly</em> Pareto-optimal on the devices tested, <strong>not</strong> every device. Hybrid models and ConvNeXt are DSP-incompatible, and hybrids were excluded from the CoreML comparison.</li>
+<li>The 39% MQA speedup is about the <strong>attention block’s</strong> latency, not the whole network (derivation in <a href="#sec-mqa" class="quarto-xref">Section&nbsp;1.5</a>).</li>
+<li>Baselines other than MobileNetV1–V3 use <em>their reported</em> accuracies, while MNv4 and the retrained V1–V3 use the new training recipe (see <a href="#sec-critique" class="quarto-xref">Section&nbsp;1.11</a>).</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="sec-context" class="level2">
+<h2 class="anchored" data-anchor-id="sec-context" id="sec-context">Motivation and context</h2>
+<p>On-device inference is attractive for latency, interactivity, and privacy, because data need not be streamed to a server. The difficulty is that a “mobile” model is deployed on a zoo of chips whose bottlenecks differ. A model hand-tuned for one phone CPU can be poor on an accelerator.</p>
+<p>The paper situates itself among four lines of prior work:</p>
+<ul>
+<li><strong>Mobile convnets</strong>: MobileNetV1 (depthwise-separable convs), V2 (inverted residuals and linear bottlenecks), GhostNet, MnasNet, MobileOne (re-parameterizable branches) <span class="citation" data-cites="howard2017mobilenets sandler2018mobilenetv2 vasu2023mobileone">[@howard2017mobilenets; @sandler2018mobilenetv2; @vasu2023mobileone]</span>.</li>
+<li><strong>Efficient hybrids</strong> (conv + attention): MobileViT, MobileFormer, FastViT, which adds attention only in the last stage <span class="citation" data-cites="vasu2023fastvit">[@vasu2023fastvit]</span>.</li>
+<li><strong>Efficient attention</strong>: linear-complexity approximations (EfficientViT), and downsampling Q/K/V or only K/V (EfficientFormerV2, CMT, NextViT).</li>
+<li><strong>Hardware-aware NAS</strong>: NetAdapt, MnasNet, FBNet, MobileNetV3, MobileNet MultiHardware <span class="citation" data-cites="howard2019searching chu2021multihardware">[@howard2019searching; @chu2021multihardware]</span>, Once-for-All.</li>
+</ul>
+<p>What is new is the <em>combination</em> of a hardware-agnostic analysis tool, one flexible searchable block, an accelerator-friendly attention block, and a better search and distillation recipe.</p>
+</section>
+<section id="sec-roofline" class="level2">
+<h2 class="anchored" data-anchor-id="sec-roofline" id="sec-roofline">Hardware-independent efficiency: the Roofline view</h2>
+<section id="why-macs-are-not-enough" class="level3">
+<h3 class="anchored" data-anchor-id="why-macs-are-not-enough" id="why-macs-are-not-enough">Why MACs are not enough</h3>
+<p>Many papers use MAC count as a latency proxy. That implicitly assumes memory is free. On accelerators, compute capability grows much faster than memory bandwidth, so many layers become <strong>memory-bound</strong>, and a model with fewer MACs can be slower.</p>
+</section>
+<section id="the-model" class="level3">
+<h3 class="anchored" data-anchor-id="the-model" id="the-model">The model</h3>
+<p>Following the classic Roofline model <span class="citation" data-cites="williams2009roofline">[@williams2009roofline]</span>, each layer <span class="math inline">\(i\)</span> has a compute time and a memory time, and the slower one determines its latency, because compute and memory overlap roughly in parallel:</p>
+<p><span id="eq-roofline"><span class="math display">\[
+\text{ModelTime}=\sum_i \max\big(\text{MACTime}_i,\ \text{MemTime}_i\big),\qquad
+\text{MACTime}_i=\frac{\text{LayerMACs}_i}{\text{PeakMACs}},\quad
+\text{MemTime}_i=\frac{\text{WeightBytes}_i+\text{ActivationBytes}_i}{\text{PeakMemBW}}
+\tag{1}\]</span></span></p>
+<p>A workload’s <strong>operational intensity</strong> (OI) is <span class="math inline">\(\text{LayerMACs}/(\text{WeightBytes}+\text{ActivationBytes})\)</span>. A hardware target is summarized by one number, its <strong>Ridge Point</strong>:</p>
+<p><span class="math display">\[
+\text{RP}=\frac{\text{PeakMACs}}{\text{PeakMemBW}}\quad[\text{MACs/byte}]
+\]</span></p>
+<p>A layer whose OI is below the RP is memory-bound on that hardware; above it, compute-bound.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Consequences the paper draws
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Counting MACs is the special case <strong>RP = 0</strong> (infinite bandwidth, so every <span class="math inline">\(\text{MemTime}_i=0\)</span>).</li>
+<li>Hardware with the same RP ranks networks the same way, so a sweep of RP from 0 to 500 MACs/byte covers future hardware too, as long as its RP falls in that range.</li>
+<li>Low-RP hardware (CPUs) is mostly compute-bound; high-RP hardware (accelerators) is mostly memory-bound.</li>
+</ul>
+</div>
+</div>
+<p>The paper’s footnotes add two caveats: the model assumes software implementation does not matter (so tricks with complex memory access, like pruning, look better on paper than on device), and a similar framework was proposed independently by Lavin.</p>
+</section>
+<section id="a-toy-example-not-from-the-paper" class="level3">
+<h3 class="anchored" data-anchor-id="a-toy-example-not-from-the-paper" id="a-toy-example-not-from-the-paper">A toy example (Not from the paper)</h3>
+<p>Let both chips have 3.2 GB/s memory bandwidth, but chip A has 100 GMAC/s (RP ≈ 31, CPU-like) and chip B has 1.39 TMAC/s (RP ≈ 434, accelerator-like). Take two layers: a big conv (200 M MACs, 1 MB traffic, OI = 200) and a final FC layer (1.28 M MACs, about 1.28 MB of weights, OI ≈ 1).</p>
+<div id="tbl-toy" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-toy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Toy roofline example (my own numbers, computed with <a href="#eq-roofline" class="quarto-xref">Equation&nbsp;1</a>).
+</figcaption>
+<div aria-describedby="tbl-toy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Layer</th>
+<th>Chip A (RP ≈ 31)</th>
+<th>Chip B (RP ≈ 434)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Big conv</td>
+<td>MACTime 2.00 ms, MemTime 0.31 ms → <strong>2.00 ms</strong> (compute-bound)</td>
+<td>MACTime 0.14 ms, MemTime 0.31 ms → <strong>0.31 ms</strong> (memory-bound)</td>
+</tr>
+<tr class="even">
+<td>Final FC</td>
+<td>MACTime 0.01 ms, MemTime 0.40 ms → <strong>0.40 ms</strong></td>
+<td>MACTime 0.001 ms, MemTime 0.40 ms → <strong>0.40 ms</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>The big conv speeds up about 6.5× on the accelerator while the FC layer does not speed up at all and becomes a larger share. This is the mechanism behind the paper’s design logic below.</p>
+</section>
+<section id="reading-fig.-2-and-fig.-3" class="level3">
+<h3 class="anchored" data-anchor-id="reading-fig.-2-and-fig.-3" id="reading-fig.-2-and-fig.-3">Reading Fig. 2 and Fig. 3</h3>
+<div id="fig-pareto" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pareto-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://theja-vanka.github.io/blogs/posts/models/mobilenet-v4/mobilenetv4-guide/fig1_pareto.png" class="img-fluid figure-img" alt="MobileNetV4: A Practitioner’s Deep-Dive">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pareto-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Fig. 1 of the paper: MNv4 models against other efficient families on six hardware targets (ImageNet-1k only training). The Pareto frontier is mostly dominated by MNv4.
+</figcaption>
+</figure>
+</div>
+<div id="fig-ridge" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ridge-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://theja-vanka.github.io/blogs/posts/models/mobilenet-v4/mobilenetv4-guide/fig2_ridge_points.png" class="img-fluid figure-img" alt="MobileNetV4: A Practitioner’s Deep-Dive">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ridge-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Fig. 2 of the paper: analytically predicted roofline latency vs accuracy at ridge points 0, 5, 50, and 500 MACs/byte. These predicted charts resemble the measured ones in <a href="#fig-pareto" class="quarto-xref">Figure&nbsp;1</a>.
+</figcaption>
+</figure>
+</div>
+<div id="fig-opcost" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-opcost-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://theja-vanka.github.io/blogs/posts/models/mobilenet-v4/mobilenetv4-guide/fig3_op_cost.png" class="img-fluid figure-img" alt="MobileNetV4: A Practitioner’s Deep-Dive">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-opcost-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Fig. 3 of the paper: per-layer roofline cost at a slow-CPU RP (top) vs accelerator RP (bottom). Large Conv2Ds dominate at low RP; FC layers and depthwise convs dominate at high RP.
+</figcaption>
+</figure>
+</div>
+<p>The take-aways are:</p>
+<ul>
+<li><strong>Large Conv2D layers</strong> are expensive at low RP but add cheap capacity at high RP.</li>
+<li><strong>FC layers and depthwise convs</strong> are cheap at low RP and expensive at high RP.</li>
+<li>MobileNetV1-1.5x and MobileNetV3-Large-1.5x illustrate the two extremes: V3 minimizes MACs at the cost of memory complexity (good on CPUs), V1 spends MACs for capacity (fine on accelerators).</li>
+</ul>
+</section>
+<section id="what-mnv4s-design-takes-from-this" class="level3">
+<h3 class="anchored" data-anchor-id="what-mnv4s-design-takes-from-this" id="what-mnv4s-design-takes-from-this">What MNv4’s design takes from this</h3>
+<p>MNv4 puts <strong>expensive, MAC-heavy conv layers at the start</strong> of the network (they matter for capacity, and cost only at low RP) and keeps <strong>the same large final FC layers in every variant</strong> (they matter for accuracy, and cost only at high RP). Because the two costs hurt on opposite hardware classes, no single device pays both at once. The consequence is that smaller variants carry a relatively heavier FC cost on high-RP hardware.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Validating the model against devices (Appendix F)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The authors fit a ridge point per device so that the roofline predictions best match measured latency, then compare rank correlation with measured latency against plain MAC counting.</p>
+</div>
+</div>
+<div id="tbl-corr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3: Correlation of predicted vs measured latency (Spearman).
+</figcaption>
+<div aria-describedby="tbl-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Execution target</th>
+<th>Fitted RP (MACs/B)</th>
+<th><span class="math inline">\(r_s\)</span> roofline</th>
+<th><span class="math inline">\(r_s\)</span> MACs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pixel 6 CPU (Int8)</td>
+<td>31.2</td>
+<td>0.973</td>
+<td>0.962</td>
+</tr>
+<tr class="even">
+<td>Samsung Galaxy S23 CPU (Int8)</td>
+<td>39.7</td>
+<td>0.962</td>
+<td>0.940</td>
+</tr>
+<tr class="odd">
+<td>Pixel 4 DSP (Int8)</td>
+<td>347.3</td>
+<td>0.962</td>
+<td>0.758</td>
+</tr>
+<tr class="even">
+<td>Pixel 8 EdgeTPU (Int8)</td>
+<td>433.8</td>
+<td>0.973</td>
+<td>0.857</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>The practical reading is that MAC counting is already a decent proxy on CPUs (<span class="math inline">\(r_s\)</span> of 0.94 to 0.96), but degrades on the DSP and EdgeTPU, where the roofline model stays above 0.96. Note this is a <strong>rank</strong> correlation across a handful of MobileNet-family models, which says nothing about absolute latency error.</p>
+<div id="fig-corr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://theja-vanka.github.io/blogs/posts/models/mobilenet-v4/mobilenetv4-guide/fig6_roofline_vs_measured.png" class="img-fluid figure-img" alt="MobileNetV4: A Practitioner’s Deep-Dive">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Fig. 6 of the paper: roofline-predicted (top) vs measured (bottom) latency/accuracy curves at the empirically fitted ridge points.
+</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="sec-uib" class="level2">
+<h2 class="anchored" data-anchor-id="sec-uib" id="sec-uib">Universal Inverted Bottleneck (UIB)</h2>
+<section id="the-idea" class="level3">
+<h3 class="anchored" data-anchor-id="the-idea" id="the-idea">The idea</h3>
+<p>The MobileNetV2 inverted bottleneck (IB) is <span class="citation" data-cites="sandler2018mobilenetv2">[@sandler2018mobilenetv2]</span>: 1×1 pointwise (PW) <strong>expand</strong> → depthwise (DW) conv → 1×1 PW <strong>project</strong>. UIB makes one change: it adds an <strong>optional DW before the expansion</strong> and makes the <strong>middle DW optional too</strong>. Two on/off switches give four combinations, and NAS picks per block which to use.</p>
+<div id="fig-uib" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-uib-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://theja-vanka.github.io/blogs/posts/models/mobilenet-v4/mobilenetv4-guide/fig4_uib_blocks.png" class="img-fluid figure-img" alt="MobileNetV4: A Practitioner’s Deep-Dive">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-uib-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Fig. 4 of the paper: the UIB block (left), its four instantiations (middle), and the alternative Fused IB (right). Blue = pointwise, orange = depthwise, purple = full Conv2D, gradient = optional depthwise.
+</figcaption>
+</figure>
+</div>
+<p>The same figure redrawn as a Mermaid diagram (my redraw of the paper’s figure, with the structure read off the image and from the paper’s architecture tables):</p>
+<div class="cell" data-eval="true" data-layout-align="cente">
+<div class="cell-output-display">
+<div id="fig-uib-mermaid" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-uib-mermaid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-uib-mermaid">flowchart LR
+  subgraph UIB["UIB (general form)"]
+    direction TB
+    u0([input]) --&gt; u1["DW K1 (optional)"] --&gt; u2["PW expand 1x1"] --&gt; u3["DW K2 (optional)"] --&gt; u4["PW project 1x1"] --&gt; u5([output])
+  end
+  subgraph EDW["ExtraDW (K1 and K2)"]
+    direction TB
+    e0([input]) --&gt; e1["DW K1"] --&gt; e2["PW expand"] --&gt; e3["DW K2"] --&gt; e4["PW project"] --&gt; e5([output])
+  end
+  subgraph IB["MobileNet IB (K2 only)"]
+    direction TB
+    i0([input]) --&gt; i2["PW expand"] --&gt; i3["DW K2"] --&gt; i4["PW project"] --&gt; i5([output])
+  end
+  subgraph CNX["ConvNeXt-like (K1 only)"]
+    direction TB
+    c0([input]) --&gt; c1["DW K1"] --&gt; c2["PW expand"] --&gt; c4["PW project"] --&gt; c5([output])
+  end
+  subgraph FFN["FFN (neither)"]
+    direction TB
+    f0([input]) --&gt; f2["PW expand"] --&gt; f4["PW project"] --&gt; f5([output])
+  end
+  subgraph FIB["Fused IB (alternative)"]
+    direction TB
+    g0([input]) --&gt; g2["kxk Conv2D expand"] --&gt; g4["PW project 1x1"] --&gt; g5([output])
+  end
+  UIB --&gt; EDW
+  UIB --&gt; IB
+  UIB --&gt; CNX
+  UIB --&gt; FFN
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-uib-mermaid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: UIB and its instantiations, redrawn as flowcharts (K1 = optional DW before expansion, K2 = optional DW between expansion and projection).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-four-instantiations" class="level3">
+<h3 class="anchored" data-anchor-id="the-four-instantiations" id="the-four-instantiations">The four instantiations</h3>
+<div id="tbl-uib" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-uib-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4: UIB instantiations.
+</figcaption>
+<div aria-describedby="tbl-uib-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Instantiation</th>
+<th>DW before expansion (K1)</th>
+<th>DW between (K2)</th>
+<th>What it buys you</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>IB</strong> (MobileNetV2)</td>
+<td>–</td>
+<td>✓</td>
+<td>Spatial mixing on the <em>expanded</em> (wide) activations: more capacity, higher cost</td>
+</tr>
+<tr class="even">
+<td><strong>ConvNeXt-like</strong></td>
+<td>✓</td>
+<td>–</td>
+<td>Cheaper spatial mixing, so larger kernels are affordable (mixing happens before expansion)</td>
+</tr>
+<tr class="odd">
+<td><strong>ExtraDW</strong> (new)</td>
+<td>✓</td>
+<td>✓</td>
+<td>Cheaply increases depth and receptive field; combines the benefits of ConvNeXt-like and IB</td>
+</tr>
+<tr class="even">
+<td><strong>FFN</strong></td>
+<td>–</td>
+<td>–</td>
+<td>Two pointwise convs with activation and norm: very accelerator-friendly, but best used alongside other blocks</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>The paper notes ExtraDW can be viewed as a MobileNetV1-style factorization of two standard convolutional blocks. At every stage UIB lets the network choose an ad-hoc spatial vs channel mixing trade-off, enlarge the receptive field where needed, and maximize compute utilization.</p>
+</section>
+<section id="why-this-stays-nas-friendly" class="level3">
+<h3 class="anchored" data-anchor-id="why-this-stays-nas-friendly" id="why-this-stays-nas-friendly">Why this stays NAS-friendly</h3>
+<p>The PW expansion and projection weights are <strong>shared</strong> across the candidate instantiations; only the DW ops are the searchable options. The paper reports that a SuperNet-based search then shares over 95% of the parameters between candidates, so the search space is manageable.</p>
+</section>
+<section id="fused-ib" class="level3">
+<h3 class="anchored" data-anchor-id="fused-ib" id="fused-ib">Fused IB</h3>
+<p>A <span class="math inline">\(k\times k\)</span> <strong>FusedIB</strong> replaces the expand-PW + DW pair with a single <span class="math inline">\(k\times k\)</span> full Conv2D followed by a 1×1 PW <span class="citation" data-cites="akin2022edgetpu">[@akin2022edgetpu]</span>. All MNv4 model <em>stems</em> use FusedIBs (Appendix D).</p>
+</section>
+<section id="does-uib-help-table-1" class="level3">
+<h3 class="anchored" data-anchor-id="does-uib-help-table-1" id="does-uib-help-table-1">Does UIB help? (Table 1)</h3>
+<div id="tbl-uibabl" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-uibabl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5: Searches restricted to one block type vs full UIB.
+</figcaption>
+<div aria-describedby="tbl-uibabl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Search space</th>
+<th>Top-1</th>
+<th>GMACs</th>
+<th>MParams</th>
+<th>Pixel 8 EdgeTPU</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>UIB (full)</td>
+<td>83.3%</td>
+<td>6.2</td>
+<td>33.0</td>
+<td>2.68 ms</td>
+</tr>
+<tr class="even">
+<td>ConvNeXt-like only</td>
+<td>83.2%</td>
+<td>6.9</td>
+<td>35.1</td>
+<td>2.69 ms</td>
+</tr>
+<tr class="odd">
+<td>IB only</td>
+<td>82.3%</td>
+<td>6.1</td>
+<td>32.4</td>
+<td>2.61 ms</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Check this
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The UIB vs ConvNeXt gap is 0.1 points with lower MACs, and the IB-only search is cheaper in MACs and latency (so not iso-cost). The text I have reports one number per search and no variance, so the +1.0 over IB is the more convincing signal than the +0.1 over ConvNeXt. This is my reading, not a claim by the authors.</p>
+</div>
+</div>
+</section>
+<section id="where-nas-actually-puts-each-block-appendix-d" class="level3">
+<h3 class="anchored" data-anchor-id="where-nas-actually-puts-each-block-appendix-d" id="where-nas-actually-puts-each-block-appendix-d">Where NAS actually puts each block (Appendix D)</h3>
+<p>The authors summarize what TuNAS chose in the final Conv models:</p>
+<ul>
+<li><strong>ExtraDW</strong> tends to appear at the <strong>start of each searchable stage</strong>, where resolution drops sharply. The two DWs enlarge the receptive field and soften the resolution loss. It is also common in early stages.</li>
+<li><strong>FFN and ConvNeXt-like</strong> blocks show up in the <strong>final layers</strong>, where earlier layers have already mixed spatially and channel mixing gives more marginal gain.</li>
+</ul>
+</section>
+<section id="a-pytorch-sketch-not-from-the-paper" class="level3">
+<h3 class="anchored" data-anchor-id="a-pytorch-sketch-not-from-the-paper" id="a-pytorch-sketch-not-from-the-paper">A PyTorch sketch (Not from the paper)</h3>
+<p>The paper’s reference implementation is in TensorFlow Model Garden (footnote 1 of the paper); a timm port also exists (footnote 7). The sketch below is <strong>my own illustration</strong> of the block’s logic, not the official code.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> conv_bn(c_in, c_out, k, stride<span class="op">=</span><span class="dv">1</span>, groups<span class="op">=</span><span class="dv">1</span>, act<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    layers <span class="op">=</span> [</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        nn.Conv2d(c_in, c_out, k, stride, padding<span class="op">=</span>k <span class="op">//</span> <span class="dv">2</span>, groups<span class="op">=</span>groups, bias<span class="op">=</span><span class="va">False</span>),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        nn.BatchNorm2d(c_out),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> act:</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        layers.append(nn.ReLU(inplace<span class="op">=</span><span class="va">True</span>))  <span class="co"># paper favours ReLU/BN (hardware support)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> nn.Sequential(<span class="op">*</span>layers)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> UIB(nn.Module):</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Universal Inverted Bottleneck.</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">    start_dw_k: kernel of the optional DW *before* expansion (0 = absent)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">    mid_dw_k:   kernel of the optional DW *between* expand and project (0 = absent)</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">      (0, 3|5) -&gt; IB          (3|5, 0) -&gt; ConvNeXt-like</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">      (k1, k2) -&gt; ExtraDW     (0, 0)   -&gt; FFN</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, c_in, c_out, expand_ratio<span class="op">=</span><span class="dv">4</span>, start_dw_k<span class="op">=</span><span class="dv">0</span>, mid_dw_k<span class="op">=</span><span class="dv">3</span>, stride<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        c_mid <span class="op">=</span> <span class="bu">int</span>(<span class="bu">round</span>(c_in <span class="op">*</span> expand_ratio))</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.use_res <span class="op">=</span> stride <span class="op">==</span> <span class="dv">1</span> <span class="kw">and</span> c_in <span class="op">==</span> c_out  <span class="co"># assumption: standard IB-style residual</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Where the stride goes is NOT specified in the paper text: verify against the</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># official TF code / timm before comparing against published latencies.</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        s_start <span class="op">=</span> stride <span class="cf">if</span> (start_dw_k <span class="kw">and</span> <span class="kw">not</span> mid_dw_k) <span class="cf">else</span> <span class="dv">1</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        s_mid <span class="op">=</span> stride <span class="cf">if</span> mid_dw_k <span class="cf">else</span> <span class="dv">1</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> stride <span class="op">&gt;</span> <span class="dv">1</span> <span class="kw">and</span> <span class="kw">not</span> (start_dw_k <span class="kw">or</span> mid_dw_k):</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"an FFN-type UIB cannot downsample"</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.start_dw <span class="op">=</span> conv_bn(c_in, c_in, start_dw_k, s_start, groups<span class="op">=</span>c_in, act<span class="op">=</span><span class="va">False</span>) <span class="cf">if</span> start_dw_k <span class="cf">else</span> nn.Identity()</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.expand <span class="op">=</span> conv_bn(c_in, c_mid, <span class="dv">1</span>)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.mid_dw <span class="op">=</span> conv_bn(c_mid, c_mid, mid_dw_k, s_mid, groups<span class="op">=</span>c_mid) <span class="cf">if</span> mid_dw_k <span class="cf">else</span> nn.Identity()</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.project <span class="op">=</span> conv_bn(c_mid, c_out, <span class="dv">1</span>, act<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> <span class="va">self</span>.project(<span class="va">self</span>.mid_dw(<span class="va">self</span>.expand(<span class="va">self</span>.start_dw(x))))</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x <span class="op">+</span> y <span class="cf">if</span> <span class="va">self</span>.use_res <span class="cf">else</span> y</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FusedIB(nn.Module):</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""k x k full conv (expand) -&gt; 1x1 project; used in MNv4 stems."""</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, c_in, c_out, expand_ratio<span class="op">=</span><span class="dv">4</span>, k<span class="op">=</span><span class="dv">3</span>, stride<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>        c_mid <span class="op">=</span> <span class="bu">int</span>(<span class="bu">round</span>(c_in <span class="op">*</span> expand_ratio))</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv <span class="op">=</span> conv_bn(c_in, c_mid, k, stride)</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.project <span class="op">=</span> conv_bn(c_mid, c_out, <span class="dv">1</span>, act<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.use_res <span class="op">=</span> stride <span class="op">==</span> <span class="dv">1</span> <span class="kw">and</span> c_in <span class="op">==</span> c_out</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> <span class="va">self</span>.project(<span class="va">self</span>.conv(x))</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x <span class="op">+</span> y <span class="cf">if</span> <span class="va">self</span>.use_res <span class="cf">else</span> y</span></code></pre></div></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Using the architecture tables
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Appendix D lists each model block by block: input resolution and channels, block type, K1/K2 kernels, expanded dimension, output dimension, and stride. A faithful reimplementation is mostly a loop over those rows, calling the block with <code>expand_ratio = expanded_dim / in_channels</code>. Note the expansion ratios vary between blocks (for example 2, 4, and 6 in MNv4-Conv-M), which matters for the NAS discussion in <a href="#sec-nas" class="quarto-xref">Section&nbsp;1.6.2</a>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-mqa" class="level2">
+<h2 class="anchored" data-anchor-id="sec-mqa" id="sec-mqa">Mobile MQA</h2>
+<section id="background-mhsa-vs-mqa" class="level3">
+<h3 class="anchored" data-anchor-id="background-mhsa-vs-mqa" id="background-mhsa-vs-mqa">Background: MHSA vs MQA</h3>
+<p>Multi-head self-attention (MHSA) projects queries, keys, and values separately per head. <strong>Multi-query attention (MQA)</strong> <span class="citation" data-cites="shazeer2019mqa">[@shazeer2019mqa]</span> keeps multiple <em>query</em> heads but <strong>shares a single key head and a single value head</strong> across all of them. The paper cites language-model work showing that sharing one key/value head does not noticeably cost accuracy.</p>
+</section>
+<section id="why-mqa-suits-mobile-vision" class="level3">
+<h3 class="anchored" data-anchor-id="why-mqa-suits-mobile-vision" id="why-mqa-suits-mobile-vision">Why MQA suits mobile vision</h3>
+<p>The argument is again about operational intensity. When the number of tokens is small relative to the feature dimension, loading separate K/V projections per head is mostly memory traffic. Sharing them reduces bandwidth and raises operational intensity. In mobile hybrids this regime is typical, because attention is used only in the low-resolution, high-channel final stages and batch size is usually 1. To the authors’ knowledge this is the first use of MQA for mobile vision.</p>
+</section>
+<section id="asymmetric-spatial-downsampling" class="level3">
+<h3 class="anchored" data-anchor-id="asymmetric-spatial-downsampling" id="asymmetric-spatial-downsampling">Asymmetric spatial downsampling</h3>
+<p>Borrowing the “asymmetric” spirit of MQA, they add <strong>spatial reduction attention</strong> (SRA, from Pyramid Vision Transformer <span class="citation" data-cites="wang2021pvt">[@wang2021pvt]</span>) so keys and values live at lower resolution than queries. Two differences from PVT: the downsampling is a <strong>stride-2 3×3 depthwise conv</strong> instead of average pooling, which is cheap and adds capacity. The justification is that neighbouring tokens in hybrid models are already correlated thanks to early spatial-mixing convs.</p>
+<p>The resulting block (the paper’s Eq. 2):</p>
+<p><span id="eq-mqa"><span class="math display">\[
+\text{MobileMQA}(X)=\text{Concat}(\text{attn}_1,\dots,\text{attn}_n)\,W^O,\qquad
+\text{attn}_j=\text{softmax}\!\left(\frac{(XW^{Q}_j)\,(\text{SR}(X)W^{K})^{\top}}{\sqrt{d_k}}\right)\text{SR}(X)W^{V}
+\tag{2}\]</span></span></p>
+<p>Here <span class="math inline">\(\text{SR}\)</span> is the stride-2 DW conv when spatial reduction is used, or the identity otherwise. Note <span class="math inline">\(W^K\)</span> and <span class="math inline">\(W^V\)</span> carry <strong>no head index</strong> (the sharing), while <span class="math inline">\(W^Q_j\)</span> does.</p>
+</section>
+<section id="the-measured-gains" class="level3">
+<h3 class="anchored" data-anchor-id="the-measured-gains" id="the-measured-gains">The measured gains</h3>
+<div id="tbl-mqa" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-mqa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;6: MQA vs MHSA (paper Table 2).
+</figcaption>
+<div aria-describedby="tbl-mqa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model (MNv4-Conv-L base, 3 attention blocks in last stage)</th>
+<th>Top-1</th>
+<th>MACs (G)</th>
+<th>Params (M)</th>
+<th>Pixel 7 EdgeTPU</th>
+<th>Pixel 8 EdgeTPU</th>
+<th>S23 GPU</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>base</td>
+<td>84.88</td>
+<td>6.0</td>
+<td>30.9</td>
+<td>4.31 ms</td>
+<td>2.35 ms</td>
+<td>13.15 ms</td>
+</tr>
+<tr class="even">
+<td>+ 3 MHSA</td>
+<td>85.27</td>
+<td>6.7</td>
+<td>36.0</td>
+<td>9.69 ms</td>
+<td>2.76 ms</td>
+<td>16.46 ms</td>
+</tr>
+<tr class="odd">
+<td>+ 3 MQA</td>
+<td>85.24</td>
+<td>6.5</td>
+<td>34.7</td>
+<td>5.16 ms</td>
+<td>2.60 ms</td>
+<td>15.10 ms</td>
+</tr>
+<tr class="even">
+<td>relative to MHSA</td>
+<td>−0.03</td>
+<td>−28.6%</td>
+<td>−25.5%</td>
+<td>−84.2%</td>
+<td>−39.0%</td>
+<td>−41.1%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>What “39% faster” actually means
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The relative-improvement row considers only the <strong>latency added by the attention blocks</strong>, not the whole model. I checked the arithmetic from the table: on Pixel 8, MHSA adds 2.76 − 2.35 = 0.41 ms and MQA adds 2.60 − 2.35 = 0.25 ms, which is −39.0%. On Pixel 7 the added latency drops from 5.38 ms to 0.85 ms (−84.2%). Whole-model latency improves much less (for example 9.69 → 5.16 ms on Pixel 7). MACs and params percentages likewise refer to the added increments (0.7 → 0.5 G MACs; 5.1 → 3.8 M params).</p>
+</div>
+</div>
+<div id="tbl-sr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;7: Effect of asymmetric downsampling (paper Table 3). Applied at the penultimate 16×16 stage.
+</figcaption>
+<div aria-describedby="tbl-sr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Downsampling of K/V (Hybrid-M, S23)</th>
+<th>Top-1</th>
+<th>MACs (G)</th>
+<th>CPU (ms)</th>
+<th>GPU (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>No</td>
+<td>80.77</td>
+<td>1.285</td>
+<td>15.8</td>
+<td>7.4</td>
+</tr>
+<tr class="even">
+<td>Yes (stride-2)</td>
+<td>80.71</td>
+<td>1.245</td>
+<td>12.8</td>
+<td>5.9</td>
+</tr>
+<tr class="odd">
+<td>Gain</td>
+<td>−0.06</td>
+<td>+3%</td>
+<td>+23%</td>
+<td>+25%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="the-einsum-optimization-appendix-g" class="level3">
+<h3 class="anchored" data-anchor-id="the-einsum-optimization-appendix-g" id="the-einsum-optimization-appendix-g">The Einsum optimization (Appendix G)</h3>
+<p>Even plain MQA, though faster than MHSA, was still about <strong>12× slower than UIB for the same MACs</strong>. The culprit was not arithmetic but <strong>transposes</strong>: on-device, an Einsum is lowered to transposes, reshapes, and batched matmuls. Transposes cost zero MACs but need a full read and write of the tensor, so they are pure memory traffic.</p>
+<p>Two rules explain when transposes appear:</p>
+<ol type="1">
+<li><strong>Contracted and non-contracted indices are not contiguous</strong> in an input. A matmul needs the contracted indices adjacent so that reshaping to 2-D is free.</li>
+<li><strong>Interleaved non-contracted indices or a reordered output</strong>: the output indices must come out in an order that avoids a post-matmul transpose.</li>
+</ol>
+<p>The fix is only a re-ordering of indices in the Einsum strings and in the weight tensor layout:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Slow: 2 transposes (non-contracted h, k interleaved with n; output reordered)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Q <span class="op">=</span> tf.einsum(<span class="st">"bnd,hdk-&gt;bhnk"</span>, X, P_q)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fast: no transpose</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>Q <span class="op">=</span> tf.einsum(<span class="st">"bnd,dhk-&gt;bnhk"</span>, X, P_q)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Slow: 2 transposes (contracting h,v are not adjacent in the operands)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> tf.einsum(<span class="st">"bhnv,hdv-&gt;bnd"</span>, O, P_o)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Fast: no transpose</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> tf.einsum(<span class="st">"bnhv,hvd-&gt;bnd"</span>, O, P_o)</span></code></pre></div></div>
+<p>(Fig. 11 of the paper writes the optimized output projection as <code>"bnhv,dhv-&gt;bnd"</code>, with the weight stored as <code>dhv</code>. That is the same idea as the <code>hvd</code> form in the Appendix G text: the contracted axes <code>h, v</code> are adjacent in both operands, so no transpose is needed. Treat the weight-axis order as a layout choice, not a fixed rule.)</p>
+<div id="tbl-einsum" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-einsum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;8: Einsum optimization (paper Table 17). Same added-latency convention as above.
+</figcaption>
+<div aria-describedby="tbl-einsum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variant (MNv4-Conv-L + 3 attention blocks)</th>
+<th>Pixel 7 EdgeTPU</th>
+<th>Pixel 8 EdgeTPU</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>base model</td>
+<td>4.31 ms</td>
+<td>2.35 ms</td>
+</tr>
+<tr class="even">
+<td>MQA, vanilla Einsum</td>
+<td>7.00 ms</td>
+<td>2.64 ms</td>
+</tr>
+<tr class="odd">
+<td>Mobile MQA, optimized Einsum</td>
+<td>5.16 ms</td>
+<td>2.60 ms</td>
+</tr>
+<tr class="even">
+<td>Improvement on added latency</td>
+<td>−68.4%</td>
+<td>−13.8%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>The authors also report almost a <strong>3× training speed-up</strong> with <code>tf.keras</code> on Google Tensor v4, so the benefit is not specific to inference.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Practical lesson
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When porting attention to an accelerator, profile the <em>op graph</em>, not the FLOP count. Layout (the order of axes) can dominate. This is the same operational-intensity story as <a href="#sec-roofline" class="quarto-xref">Section&nbsp;1.3</a>, expressed at the tensor-layout level.</p>
+</div>
+</div>
+</section>
+<section id="a-pytorch-sketch-not-from-the-paper-1" class="level3">
+<h3 class="anchored" data-anchor-id="a-pytorch-sketch-not-from-the-paper-1" id="a-pytorch-sketch-not-from-the-paper-1">A PyTorch sketch (Not from the paper)</h3>
+<p>The paper states that at the time of writing there was no PyTorch implementation of Mobile MQA, which is why hybrids were left out of the CoreML comparison. The following is <strong>my own sketch</strong> of the math in <a href="#eq-mqa" class="quarto-xref">Equation&nbsp;2</a>; it does not reproduce the TensorFlow layout optimization, and PyTorch/CoreML lowering will differ.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MobileMQA(nn.Module):</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Multi-query attention on a (B, C, H, W) feature map, with optional stride-2 DW</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">    spatial reduction applied to keys/values only (sketch of Eq. 2)."""</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, dim, num_heads<span class="op">=</span><span class="dv">4</span>, key_dim<span class="op">=</span><span class="dv">64</span>, value_dim<span class="op">=</span><span class="dv">64</span>, kv_downsample<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.h, <span class="va">self</span>.kd, <span class="va">self</span>.vd <span class="op">=</span> num_heads, key_dim, value_dim</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.q <span class="op">=</span> nn.Conv2d(dim, num_heads <span class="op">*</span> key_dim, <span class="dv">1</span>, bias<span class="op">=</span><span class="va">False</span>)   <span class="co"># per-head queries</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.sr <span class="op">=</span> (</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>            nn.Sequential(</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                nn.Conv2d(dim, dim, <span class="dv">3</span>, stride<span class="op">=</span><span class="dv">2</span>, padding<span class="op">=</span><span class="dv">1</span>, groups<span class="op">=</span>dim, bias<span class="op">=</span><span class="va">False</span>),</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                nn.BatchNorm2d(dim),</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> kv_downsample</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span> nn.Identity()</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.k <span class="op">=</span> nn.Conv2d(dim, key_dim, <span class="dv">1</span>, bias<span class="op">=</span><span class="va">False</span>)    <span class="co"># ONE shared key head</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.v <span class="op">=</span> nn.Conv2d(dim, value_dim, <span class="dv">1</span>, bias<span class="op">=</span><span class="va">False</span>)  <span class="co"># ONE shared value head</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.o <span class="op">=</span> nn.Conv2d(num_heads <span class="op">*</span> value_dim, dim, <span class="dv">1</span>, bias<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        B, _, H, W <span class="op">=</span> x.shape</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        N <span class="op">=</span> H <span class="op">*</span> W</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        q <span class="op">=</span> <span class="va">self</span>.q(x).view(B, <span class="va">self</span>.h, <span class="va">self</span>.kd, N).transpose(<span class="dv">2</span>, <span class="dv">3</span>)   <span class="co"># B,h,N,kd</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        src <span class="op">=</span> <span class="va">self</span>.sr(x)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> <span class="va">self</span>.k(src).flatten(<span class="dv">2</span>)                                   <span class="co"># B,kd,M</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>        v <span class="op">=</span> <span class="va">self</span>.v(src).flatten(<span class="dv">2</span>).transpose(<span class="dv">1</span>, <span class="dv">2</span>)                   <span class="co"># B,M,vd</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        attn <span class="op">=</span> (q <span class="op">@</span> k.unsqueeze(<span class="dv">1</span>)) <span class="op">*</span> <span class="va">self</span>.kd <span class="op">**</span> <span class="op">-</span><span class="fl">0.5</span>                <span class="co"># B,h,N,M</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>        attn <span class="op">=</span> attn.softmax(dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        out <span class="op">=</span> attn <span class="op">@</span> v.unsqueeze(<span class="dv">1</span>)                                  <span class="co"># B,h,N,vd</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        out <span class="op">=</span> out.transpose(<span class="dv">1</span>, <span class="dv">2</span>).reshape(B, N, <span class="va">self</span>.h <span class="op">*</span> <span class="va">self</span>.vd)    <span class="co"># B,N,h*vd</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>        out <span class="op">=</span> out.transpose(<span class="dv">1</span>, <span class="dv">2</span>).reshape(B, <span class="va">self</span>.h <span class="op">*</span> <span class="va">self</span>.vd, H, W)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.o(out)</span></code></pre></div></div>
+</section>
+</section>
+<section id="sec-design" class="level2">
+<h2 class="anchored" data-anchor-id="sec-design" id="sec-design">Designing the models</h2>
+<section id="design-philosophy-simplicity" class="level3">
+<h3 class="anchored" data-anchor-id="design-philosophy-simplicity" id="design-philosophy-simplicity">Design philosophy: simplicity</h3>
+<p>Before searching, the authors ran correlation analyses between cost models and hardware, and kept only components whose costs correlate well across devices and that sit near the Pareto frontier. Findings that shaped the search space:</p>
+<ul>
+<li><strong>Multi-path blocks</strong> (group convs, ShuffleNet-style) have low MACs but are inefficient because of memory-access complexity.</li>
+<li><strong>Modules with weak hardware support</strong>: Squeeze-and-Excite, GELU, and LayerNorm are poorly supported on DSPs (LayerNorm lags BatchNorm), and SE is slow on accelerators.</li>
+<li><strong>Conventional components win</strong>: depthwise and pointwise convs, ReLU, BatchNorm, and plain attention.</li>
+</ul>
+<p>From these they derived three principles: use standard widely supported components, use flexible UIB blocks, and use straightforward attention (Mobile MQA).</p>
+</section>
+<section id="sec-nas" class="level3">
+<h3 class="anchored" data-anchor-id="sec-nas" id="sec-nas">Neural architecture search</h3>
+<p>NAS uses <strong>TuNAS</strong> <span class="citation" data-cites="bender2020tunas">[@bender2020tunas]</span> with modifications, and a <strong>separate search per model size</strong> (rather than EfficientNet-style fixed scaling rules <span class="citation" data-cites="tan2019efficientnet">[@tan2019efficientnet]</span>).</p>
+<section id="two-stage-search" class="level4">
+<h4 class="anchored" data-anchor-id="two-stage-search">Two-stage search</h4>
+<p>TuNAS with weight sharing tends to be biased toward smaller filters and expansion factors, partly because the UIB depthwise layers differ in parameter count from other options. The remedy is to separate coarse and fine decisions:</p>
+<div class="cell" data-eval="true" data-layout-align="cente">
+<div class="cell-output-display">
+<div id="fig-nas" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-nas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-nas">flowchart TD
+  A["Stage 1: coarse-grained search&lt;br/&gt;fixed block: IB, expansion 4, 3x3 DW&lt;br/&gt;search 'filter sizes'"] --&gt; B["Stage 2: fine-grained search&lt;br/&gt;per block: presence of 2 DWs (K1, K2)&lt;br/&gt;kernel 3x3 or 5x5 each&lt;br/&gt;expansion held at 4"]
+  B --&gt; C["Final UIB macro-architecture&lt;br/&gt;(MNv4-Conv-S/M/L)"]
+  D["Offline JFT-distillation dataset&lt;br/&gt;(reduces reward noise)"] -.-&gt; A
+  D -.-&gt; B
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Two-stage search (my diagram, summarizing Sec. 6.1; not a figure in the paper).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="tbl-nas2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-nas2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9: One-stage vs two-stage search (paper Table 4).
+</figcaption>
+<div aria-describedby="tbl-nas2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Search</th>
+<th>Top-1 (val)</th>
+<th>Top-1 (train)</th>
+<th>Pixel 6 EdgeTPU</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>One-stage</td>
+<td>81.26</td>
+<td>74.64</td>
+<td>3.85 ms</td>
+</tr>
+<tr class="even">
+<td>Two-stage</td>
+<td>81.48 (+0.22)</td>
+<td>78.24 (+3.60)</td>
+<td>3.67 ms (−4.68%)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Check this
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The paper says the coarse stage determines “filter sizes” while the block is fixed at expansion 4 with a 3×3 kernel. Since the kernel is fixed, “filter sizes” most plausibly means <strong>channel widths</strong>, not kernel sizes. This is my interpretation [Likely], not stated in the text.</p>
+<p>Also, stage 2 is described as holding the expansion factor at 4, yet the final architectures in Appendix D contain other expansion ratios (for example, 80→160 is ×2 and 80→480 is ×6 in MNv4-Conv-M). So the expansion factor must be searched or set elsewhere; the text as extracted does not say where.</p>
+</div>
+</div>
+</section>
+<section id="training-the-supernet-on-distilled-data" class="level4">
+<h4 class="anchored" data-anchor-id="training-the-supernet-on-distilled-data">Training the supernet on distilled data</h4>
+<p>TuNAS’s reward needs an accurate architecture-quality signal, but ImageNet-1k training is sensitive to augmentation, regularization, and hyperparameters, and a <em>changing</em> set of sampled architectures makes a stable recipe hard. The fix is an <strong>offline distillation dataset</strong> (the JFT-based dataset of <a href="#sec-distill" class="quarto-xref">Section&nbsp;1.9</a>) as the search training set. They also train the search for <strong>750 epochs</strong>, citing evidence <span class="citation" data-cites="bello2021revisiting">[@bello2021revisiting]</span> that depth-scaling beats width-scaling under long training, which yields deeper models.</p>
+<div id="tbl-nasdata" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-nasdata-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;10: Searching on ImageNet vs the JFT distillation set (paper Table 5). “Gain” is a reduction in cost: same accuracy at fewer MACs/params/latency.
+</figcaption>
+<div aria-describedby="tbl-nasdata-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>NAS training data</th>
+<th>Top-1 (val/train)</th>
+<th>MACs</th>
+<th>Params</th>
+<th>Pixel 4 GPU</th>
+<th>Pixel 6 CPU</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ImageNet-1k</td>
+<td>82.4 / 72.9</td>
+<td>7.2G</td>
+<td>43.5M</td>
+<td>59.2 ms</td>
+<td>70.4 ms</td>
+</tr>
+<tr class="even">
+<td>JFT distillation</td>
+<td>82.3 / 74.0</td>
+<td>6.2G</td>
+<td>34.4M</td>
+<td>51.0 ms</td>
+<td>67.3 ms</td>
+</tr>
+<tr class="odd">
+<td>Gain</td>
+<td>−0.1 / +1.1</td>
+<td>+13.9%</td>
+<td>+20.9%</td>
+<td>+13.9%</td>
+<td>+4.4%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+<section id="search-space-and-targets-appendix-a" class="level3">
+<h3 class="anchored" data-anchor-id="search-space-and-targets-appendix-a" id="search-space-and-targets-appendix-a">Search space and targets (Appendix A)</h3>
+<ul>
+<li><strong>Fixed initial layers</strong>: a 3×3 stride-2 Conv2D, then a NAS-optimized stride-2 FusedIB stage.</li>
+<li><strong>Searched</strong>: the number of UIB blocks and each block’s instantiation for the remaining <strong>four stages</strong>.</li>
+<li><strong>Fixed head</strong>: same as MobileNetV3.</li>
+<li>Pointwise convs have low operational intensity at high resolution, so MAC-dense ops were favoured in the early layers.</li>
+</ul>
+<div id="tbl-targets" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-targets-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;11: Optimization targets.
+</figcaption>
+<div aria-describedby="tbl-targets-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Search target</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>MNv4-Conv-S</td>
+<td>285 M MACs and 0.2 ms (Pixel 6 EdgeTPU, 224 px)</td>
+</tr>
+<tr class="even">
+<td>MNv4-Conv-M</td>
+<td>0.6 ms (Pixel 6 EdgeTPU, 256 px)</td>
+</tr>
+<tr class="odd">
+<td>MNv4-Conv-L</td>
+<td>2.3 ms (Pixel 6 EdgeTPU) and 2.0 ms (Pixel 7 EdgeTPU), 384 px</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Key claim: because the space is restricted to components with well-correlated cost models, <strong>optimizing EdgeTPU latency alone produced universally efficient models</strong>. This is why a single search target suffices, and it is also the biggest assumption to test if you adapt the recipe to other hardware.</p>
+</section>
+<section id="from-conv-to-hybrid-models" class="level3">
+<h3 class="anchored" data-anchor-id="from-conv-to-hybrid-models" id="from-conv-to-hybrid-models">From Conv to Hybrid models</h3>
+<p>Attention is most effective in the <strong>last stages</strong>, in line with other hybrids. MNv4-Hybrid models <strong>interleave Mobile MQA blocks with UIB blocks</strong> in the late stages. The architecture tables show the pattern: in Hybrid-M, MQA blocks alternate with ExtraDW/ConvNeXt/FFN blocks at the 16×16 stage and again at 8×8.</p>
+</section>
+</section>
+<section id="sec-family" class="level2">
+<h2 class="anchored" data-anchor-id="sec-family" id="sec-family">The MNv4 model family</h2>
+<p>Five models: <strong>Conv-S, Conv-M, Conv-L</strong> (pure convolutional, built from UIB blocks) and <strong>Hybrid-M, Hybrid-L</strong> (Conv blocks interleaved with Mobile MQA). All use a FusedIB stem and the MobileNetV3-style head (1×1 conv to 960, global average pool, 1×1 conv to 1280, 1×1 classifier to 1000).</p>
+<div id="tbl-family" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-family-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;12: Family overview (resolutions from the architecture tables of Appendix D).
+</figcaption>
+<div aria-describedby="tbl-family-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Input res.</th>
+<th>Notes from the paper’s tables</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Conv-S</td>
+<td>224</td>
+<td>Smallest; 3.8 M params; ExtraDW at stage starts, IB blocks in the middle</td>
+</tr>
+<tr class="even">
+<td>Conv-M</td>
+<td>256</td>
+<td>Mostly ExtraDW, with ConvNeXt-like and FFN blocks sprinkled in</td>
+</tr>
+<tr class="odd">
+<td>Hybrid-M</td>
+<td>256</td>
+<td>Conv-M-like backbone with Mobile-MQA blocks interleaved at the 16×16 and 8×8 stages</td>
+</tr>
+<tr class="even">
+<td>Conv-L</td>
+<td>384</td>
+<td>24 → 512 channels, longest ExtraDW/ConvNeXt stacks</td>
+</tr>
+<tr class="odd">
+<td>Hybrid-L</td>
+<td>384</td>
+<td>Conv-L-like backbone with Mobile-MQA interleaved at the 24×24 and 12×12 stages</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Full block list for MNv4-Conv-S (Appendix D, Table 11)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="tbl-convs" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-convs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;13: As printed in the paper, except that identical consecutive rows are merged (marked ×n). Tables 12–15 for the other models use the same format.
+</figcaption>
+<div aria-describedby="tbl-convs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Input</th>
+<th>Block</th>
+<th>DW K1</th>
+<th>DW K2</th>
+<th>Expanded</th>
+<th>Output</th>
+<th>Stride</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>224²×3</td>
+<td>Conv2D</td>
+<td>–</td>
+<td>3×3</td>
+<td>–</td>
+<td>32</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>112²×32</td>
+<td>FusedIB</td>
+<td>–</td>
+<td>3×3</td>
+<td>32</td>
+<td>32</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>56²×32</td>
+<td>FusedIB</td>
+<td>–</td>
+<td>3×3</td>
+<td>96</td>
+<td>64</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>28²×64</td>
+<td>ExtraDW</td>
+<td>5×5</td>
+<td>5×5</td>
+<td>192</td>
+<td>96</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>14²×96</td>
+<td>IB (×4)</td>
+<td>–</td>
+<td>3×3</td>
+<td>192</td>
+<td>96</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>14²×96</td>
+<td>ConvNeXt</td>
+<td>3×3</td>
+<td>–</td>
+<td>384</td>
+<td>96</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>14²×96</td>
+<td>ExtraDW</td>
+<td>3×3</td>
+<td>3×3</td>
+<td>576</td>
+<td>128</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>7²×128</td>
+<td>ExtraDW</td>
+<td>5×5</td>
+<td>5×5</td>
+<td>512</td>
+<td>128</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>7²×128</td>
+<td>IB</td>
+<td>–</td>
+<td>5×5</td>
+<td>512</td>
+<td>128</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>7²×128</td>
+<td>IB</td>
+<td>–</td>
+<td>5×5</td>
+<td>384</td>
+<td>128</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>7²×128</td>
+<td>IB (×2)</td>
+<td>–</td>
+<td>3×3</td>
+<td>512</td>
+<td>128</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>7²×128</td>
+<td>Conv2D</td>
+<td>–</td>
+<td>1×1</td>
+<td>–</td>
+<td>960</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>7²×960</td>
+<td>AvgPool</td>
+<td>–</td>
+<td>7×7</td>
+<td>–</td>
+<td>960</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>1²×960</td>
+<td>Conv2D</td>
+<td>–</td>
+<td>1×1</td>
+<td>–</td>
+<td>1280</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>1²×1280</td>
+<td>Conv2D</td>
+<td>–</td>
+<td>1×1</td>
+<td>–</td>
+<td>1000</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-results" class="level2">
+<h2 class="anchored" data-anchor-id="sec-results" id="sec-results">Results</h2>
+<section id="imagenet-1k-classification" class="level3">
+<h3 class="anchored" data-anchor-id="imagenet-1k-classification" id="imagenet-1k-classification">ImageNet-1k classification</h3>
+<p><strong>Protocol.</strong> MNv4 models are trained on the ImageNet-1k training split only (no extra data) and evaluated on its validation split. MobileNetV1–V3 were <em>retrained with modern recipes</em> (+3.4 to 74.0 for V1, +1.4 to 73.4 for V2, +0.3 to 75.5 for V3) so the comparison isolates architecture. Other baselines (MobileOne, FastViT, EfficientViT, ConvNeXt, NextViT) use their <strong>reported</strong> accuracies with the authors’ own latency measurements.</p>
+<div id="tbl-results" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;14: Selected rows of the paper’s Table 6 (median latency in ms; “–” = not benchmarked, “Failed” = unsupported on the platform). The paper’s table has additional baselines. Column order verified against the PDF.
+</figcaption>
+<div aria-describedby="tbl-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Top-1</th>
+<th>Params (M)</th>
+<th>MACs (G)</th>
+<th>P6 CPU</th>
+<th>P8 EdgeTPU</th>
+<th>iPhone 13 CoreML</th>
+<th>P4 Hexagon</th>
+<th>P7 GPU</th>
+<th>S23 CPU</th>
+<th>S23 GPU</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>MobileNet-V3L-0.5x</td>
+<td>69.2</td>
+<td>2.7</td>
+<td>0.1</td>
+<td>2.4</td>
+<td>0.8</td>
+<td>0.45</td>
+<td>3.5</td>
+<td>9.9</td>
+<td>2.0</td>
+<td>2.1</td>
+</tr>
+<tr class="even">
+<td>MobileNet-V2</td>
+<td>73.4</td>
+<td>3.5</td>
+<td>0.3</td>
+<td>5.0</td>
+<td>0.7</td>
+<td>0.7</td>
+<td>3.9</td>
+<td>13.6</td>
+<td>4.1</td>
+<td>2.5</td>
+</tr>
+<tr class="odd">
+<td><strong>MNv4-Conv-S</strong></td>
+<td><strong>73.8</strong></td>
+<td>3.8</td>
+<td>0.2</td>
+<td>2.4</td>
+<td>0.7</td>
+<td>0.6</td>
+<td>2.4</td>
+<td>8.4</td>
+<td>1.8</td>
+<td>2.0</td>
+</tr>
+<tr class="even">
+<td>MobileNet-V1</td>
+<td>74.0</td>
+<td>4.2</td>
+<td>0.6</td>
+<td>6.1</td>
+<td>0.8</td>
+<td>0.7</td>
+<td>3.2</td>
+<td>13.0</td>
+<td>4.6</td>
+<td>2.1</td>
+</tr>
+<tr class="odd">
+<td>MobileOne-S4</td>
+<td>79.4</td>
+<td>14.8</td>
+<td>1.5</td>
+<td>26.7</td>
+<td>1.7</td>
+<td>1.5</td>
+<td>9.0</td>
+<td>28.6</td>
+<td>19.4</td>
+<td>5.9</td>
+</tr>
+<tr class="even">
+<td>FastViT-S12</td>
+<td>79.8</td>
+<td>8.8</td>
+<td>1.8</td>
+<td>83.0</td>
+<td>1.8</td>
+<td>1.6</td>
+<td>Failed</td>
+<td>75.0</td>
+<td>69.2</td>
+<td>47.0</td>
+</tr>
+<tr class="odd">
+<td>MIT-EfficientViT-B1-r224</td>
+<td>79.4</td>
+<td>9.1</td>
+<td>0.5</td>
+<td>–</td>
+<td>–</td>
+<td>2.4</td>
+<td>–</td>
+<td>–</td>
+<td>18.1</td>
+<td>5.0</td>
+</tr>
+<tr class="even">
+<td><strong>MNv4-Conv-M</strong></td>
+<td><strong>79.9</strong></td>
+<td>9.2</td>
+<td>1.0</td>
+<td>11.4</td>
+<td>1.1</td>
+<td>1.1</td>
+<td>7.3</td>
+<td>18.1</td>
+<td>8.6</td>
+<td>4.1</td>
+</tr>
+<tr class="odd">
+<td><strong>MNv4-Hybrid-M</strong></td>
+<td><strong>80.7</strong></td>
+<td>10.5</td>
+<td>1.2</td>
+<td>14.3</td>
+<td>1.5</td>
+<td>–</td>
+<td>Failed</td>
+<td>17.9</td>
+<td>10.8</td>
+<td>5.9</td>
+</tr>
+<tr class="even">
+<td><strong>MNv4-Conv-L</strong></td>
+<td><strong>82.9</strong></td>
+<td>31</td>
+<td>5.9</td>
+<td>59.9</td>
+<td>2.4</td>
+<td>3.0</td>
+<td>20.8</td>
+<td>37.6</td>
+<td>43.0</td>
+<td>13.2</td>
+</tr>
+<tr class="odd">
+<td>ConvNeXt-S</td>
+<td>83.1</td>
+<td>50</td>
+<td>8.7</td>
+<td>314.9</td>
+<td>3.7</td>
+<td>–</td>
+<td>Failed</td>
+<td>45.2</td>
+<td>243.9</td>
+<td>18.5</td>
+</tr>
+<tr class="even">
+<td><strong>MNv4-Hybrid-L</strong></td>
+<td><strong>83.4</strong></td>
+<td>35.9</td>
+<td>7.2</td>
+<td>87.6</td>
+<td>3.8</td>
+<td>–</td>
+<td>Failed</td>
+<td>61.3</td>
+<td>61.8</td>
+<td>18.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p><strong>What the authors conclude</strong></p>
+<ul>
+<li><strong>CPU</strong>: roughly 2× faster than MobileNetV3, and well ahead of iso-accuracy competitors.</li>
+<li><strong>EdgeTPU</strong>: as accurate as MobileNetV3 at about half the latency. MNv4-Conv-M is more than 50% faster than MobileOne-S4 and FastViT-S12, and 1.5 points above MobileNetV2 at comparable latency.</li>
+<li><strong>S23 GPU and iPhone 13 (Apple Neural Engine)</strong>: mostly on the Pareto front. The nearest competitor on S23 GPU, EfficientViT, has more than 2× the CoreML latency at equal accuracy; FastViT, which is tuned for the Neural Engine, is second on CoreML but more than 5× slower on S23 GPU.</li>
+<li><strong>DSP</strong>: Conv models remain top performers; hybrids are incompatible.</li>
+<li>Some models reach the same accuracy with fewer MACs (EfficientViT is the example), but the paper’s argument is that MACs are the wrong target.</li>
+</ul>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Who is bad where?</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Why it matters</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>The paper’s point about <em>universality</em> is that most baselines are strong on one device class and weak on others:</p>
+<ul>
+<li><strong>MobileNetV3</strong>: fine on CPU, poor on EdgeTPU, DSP, and GPU.</li>
+<li><strong>FastViT</strong>: good on the Apple Neural Engine, poor on CPUs and GPUs.</li>
+<li><strong>EfficientViT</strong>: good on GPUs, poor on the Neural Engine.</li>
+<li><strong>MNv4-Conv</strong>: mostly Pareto-optimal on all of them.</li>
+</ul>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>If you ship one model to many phone SKUs, you cannot tune per device. A model that is merely <em>good</em> everywhere beats one that is <em>excellent</em> on one chip and bad on another.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="coco-object-detection" class="level3">
+<h3 class="anchored" data-anchor-id="coco-object-detection" id="coco-object-detection">COCO object detection</h3>
+<p>Backbones are plugged into <strong>RetinaNet</strong> with a 256-d FPN on P3–P7 and a 256-d head of 4 conv layers, using depthwise-separable convs in decoder and heads (standard for mobile detectors). Training: COCO-17, 600 epochs, 384 px input, random flip/scale and RandAugment <em>without Shear and Rotate</em> (they hurt small-object AP), batch size 2048, Adam, L2 weight decay 3e-5, cosine LR with a 24-epoch warm-up, stochastic depth 0.2 for MNv4 backbones, and a per-model tuned learning rate.</p>
+<div id="tbl-coco" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-coco-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;15: COCO detection (paper Table 7). MACs/params/latency are for the whole detector at 384 px.
+</figcaption>
+<div aria-describedby="tbl-coco-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Backbone</th>
+<th>COCO val AP</th>
+<th>MACs (G)</th>
+<th>Params (M)</th>
+<th>Pixel 6 CPU (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>EfficientFormer L1</td>
+<td>29.5</td>
+<td>6.54</td>
+<td>12.77</td>
+<td>84.3</td>
+</tr>
+<tr class="even">
+<td>MobileNet v1 @ 1.5</td>
+<td>31.0</td>
+<td>6.68</td>
+<td>9.05</td>
+<td>66.4</td>
+</tr>
+<tr class="odd">
+<td><strong>MNv4-Conv-M</strong></td>
+<td>32.6</td>
+<td>5.06</td>
+<td>9.79</td>
+<td>51.3</td>
+</tr>
+<tr class="even">
+<td>MobileNet Multi-AVG @ 1.5</td>
+<td>32.7</td>
+<td>5.42</td>
+<td>9.51</td>
+<td>58.1</td>
+</tr>
+<tr class="odd">
+<td>MobileNet v2 @ 2.0</td>
+<td>32.9</td>
+<td>5.81</td>
+<td>10.15</td>
+<td>66.4</td>
+</tr>
+<tr class="even">
+<td>MobileNet v3 Large @ 2.0</td>
+<td>33.2</td>
+<td>4.99</td>
+<td>17.92</td>
+<td>59.9</td>
+</tr>
+<tr class="odd">
+<td><strong>MNv4-Hybrid-M</strong></td>
+<td>34.0</td>
+<td>5.62</td>
+<td>11.15</td>
+<td>60.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Check this
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Sec. 7.2 text says the Hybrid-M detector gets +1.6 AP over Conv-M, but Table 7 gives 34.0 − 32.6 = 1.4.</p>
+</div>
+</div>
+<p>MNv4-Conv-M matches the AP of MobileNet-MultiAvg and V2 (32.6–32.9) while being 12% and 23% faster on Pixel 6 CPU. The Hybrid-M detector is 1.4 AP above Conv-M by the table (the paper’s prose says +1.6; see the check below) at 18% higher latency. MobileNet-V3-Large @ 2.0 scores 0.6 AP above Conv-M with fewer MACs but more parameters and about 17% more latency, so MNv4’s detection wins are on the latency axis, not on raw AP.</p>
+</section>
+<section id="benchmarking-methodology-appendix-b" class="level3">
+<h3 class="anchored" data-anchor-id="benchmarking-methodology-appendix-b" id="benchmarking-methodology-appendix-b">Benchmarking methodology (Appendix B)</h3>
+<ul>
+<li><strong>Formats</strong>: TensorFlow Lite, <strong>INT8</strong> for mobile CPUs, Hexagon DSP, and EdgeTPUs; <strong>FP16</strong> for mobile GPUs.</li>
+<li><strong>Protocol</strong>: about 1000 runs per measurement, mean taken; repeated 5 times; the <strong>median of the means</strong> is reported.</li>
+<li><strong>CPU</strong>: pinned to the fastest core, XNNPACK backend.</li>
+<li><strong>Apple Neural Engine</strong>: iPhone 13 (iOS 16.6.1), CoreMLTools 7.1, Xcode 15.0.1; PyTorch → CoreML MLProgram in Float16 with float16 MultiArray inputs to minimize input copying.</li>
+</ul>
+</section>
+<section id="training-recipe-appendix-c" class="level3">
+<h3 class="anchored" data-anchor-id="training-recipe-appendix-c" id="training-recipe-appendix-c">Training recipe (Appendix C)</h3>
+<p>Augmentation: Inception Crop, horizontal flip, RandAugment, Mixup, CutMix. Regularization: weight decay/L2, stochastic depth, with strength scaled by model size.</p>
+<div id="tbl-hparams" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-hparams-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;16: Abridged from the paper’s Table 10 (values as printed).
+</figcaption>
+<div aria-describedby="tbl-hparams-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Hyperparameter</th>
+<th>Conv-S</th>
+<th>Conv-M</th>
+<th>Hybrid-M</th>
+<th>Conv-L</th>
+<th>Hybrid-L</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Batch size</td>
+<td>4096</td>
+<td>4096</td>
+<td>16384</td>
+<td>16384</td>
+<td>16384</td>
+</tr>
+<tr class="even">
+<td>Peak learning rate</td>
+<td>0.002</td>
+<td>0.004</td>
+<td>0.016</td>
+<td>0.004</td>
+<td>0.01</td>
+</tr>
+<tr class="odd">
+<td>Cosine decay alpha</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.001</td>
+</tr>
+<tr class="even">
+<td>Training epochs</td>
+<td>9600</td>
+<td>500</td>
+<td>500</td>
+<td>500</td>
+<td>500</td>
+</tr>
+<tr class="odd">
+<td>Warm-up epochs</td>
+<td>5</td>
+<td>5</td>
+<td>20</td>
+<td>20</td>
+<td>20</td>
+</tr>
+<tr class="even">
+<td>AdamW weight decay</td>
+<td>0.01</td>
+<td>0.1</td>
+<td>0.1</td>
+<td>0.2</td>
+<td>0.2</td>
+</tr>
+<tr class="odd">
+<td>AdamW β1 / β2</td>
+<td>0.6 / 0.999</td>
+<td>0.9 / 0.999</td>
+<td>0.9 / 0.999</td>
+<td>0.9 / 0.999</td>
+<td>0.9 / 0.999</td>
+</tr>
+<tr class="even">
+<td>Label smoothing</td>
+<td>0.1</td>
+<td>0.1</td>
+<td>0.1</td>
+<td>0.1</td>
+<td>0.1</td>
+</tr>
+<tr class="odd">
+<td>Dropout</td>
+<td>0.3</td>
+<td>0.2</td>
+<td>0.2</td>
+<td>0.2</td>
+<td>0.2</td>
+</tr>
+<tr class="even">
+<td>Peak stochastic-depth rate</td>
+<td>0</td>
+<td>0.075</td>
+<td>0.075</td>
+<td>0.35</td>
+<td>0.35</td>
+</tr>
+<tr class="odd">
+<td>RandAugment prob. / magnitude</td>
+<td>0.5 / 9</td>
+<td>0.7 / 15</td>
+<td>0.7 / 15</td>
+<td>1.0 / 15</td>
+<td>1.0 / 15</td>
+</tr>
+<tr class="even">
+<td>Mixup/CutMix prob.</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>0.3</td>
+<td>0.3</td>
+</tr>
+<tr class="odd">
+<td>EMA decay</td>
+<td>0.9999</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Check this
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Conv-S is listed with <strong>9600</strong> training (and cosine-decay) epochs versus 500 for the others, and with β1 = 0.6. These look deliberate (very small models benefit from very long schedules) but the main text does not discuss them, so confirm against the released configs before copying them.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-distill" class="level2">
+<h2 class="anchored" data-anchor-id="sec-distill" id="sec-distill">Enhanced distillation</h2>
+<p>The baseline is the “Patient Teacher” recipe <span class="citation" data-cites="beyer2022patient">[@beyer2022patient]</span>: long training with consistent, strongly augmented inputs for teacher and student. MNv4 adds two techniques.</p>
+<section id="dynamic-dataset-mixing" class="level3">
+<h3 class="anchored" data-anchor-id="dynamic-dataset-mixing" id="dynamic-dataset-mixing">Dynamic dataset mixing</h3>
+<p>Instead of one fixed augmentation pipeline, the student trains on a <strong>dynamic mixture of datasets</strong> produced with different augmentations:</p>
+<ul>
+<li><strong>D1</strong>: Inception Crop + RandAugment (l2m9) on replicas of ImageNet-1k.</li>
+<li><strong>D2</strong>: Inception Crop + <em>extreme</em> Mixup on replicas of ImageNet-1k (the Patient Teacher setup).</li>
+<li><strong>D3</strong>: class-balanced in-domain data from <strong>JFT-300M</strong> <span class="citation" data-cites="sun2017jft">[@sun2017jft]</span>: resampled to 130K images per class (130 M total) using a relevance threshold above 0.3 from an ImageNet-1k-trained EfficientNet-B0 (following Noisy Student <span class="citation" data-cites="xie2020noisystudent">[@xie2020noisystudent]</span>); the top 130K for plentiful classes, replication for rare ones; the dataset is replicated 10×, with weaker augmentation (Inception Crop + RandAugment l2m5).</li>
+</ul>
+</section>
+<section id="what-the-ablation-shows" class="level3">
+<h3 class="anchored" data-anchor-id="what-the-ablation-shows" id="what-the-ablation-shows">What the ablation shows</h3>
+<div id="tbl-distill" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-distill-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;17: Distillation ablation with MNv4-Conv-L as student (paper Table 8). Gains are over the previous SOTA row (D2) for 400 epochs, and over 84.1 at 2000 epochs.
+</figcaption>
+<div aria-describedby="tbl-distill-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Datasets</th>
+<th>Mixing ratio</th>
+<th>Top-1 (val/train), 400 ep.</th>
+<th>Top-1, 2000 ep.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>D1</td>
+<td>–</td>
+<td>83.8 / 86.6</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>D2 (previous SOTA <span class="citation" data-cites="beyer2022patient">[@beyer2022patient]</span>)</td>
+<td>–</td>
+<td>84.1 / 85.6</td>
+<td>–</td>
+</tr>
+<tr class="odd">
+<td>D3</td>
+<td>–</td>
+<td>81.8 / 84.1</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>D1 + D2</td>
+<td>1:1</td>
+<td>84.4 / 85.0 (+0.3)</td>
+<td>–</td>
+</tr>
+<tr class="odd">
+<td>D2 + D3</td>
+<td>1:1</td>
+<td>84.7 / 82.7 (+0.6)</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td><strong>D1 + D2 + D3</strong></td>
+<td><strong>1:1:2</strong></td>
+<td><strong>84.9 / 82.6 (+0.8)</strong></td>
+<td><strong>85.9 / 85.5 (+1.8)</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Note the +1.8 compares a 2000-epoch run with the 400-epoch D2 baseline, so part of it is simply longer training. Interpretation: mixing augmentations expands the effective sample space and makes the task harder and more diverse; JFT data alone hurts (81.8), but <em>adding</em> it to ImageNet data helps. Note the <strong>train accuracy gets lower</strong> (82.6) while validation rises, which is consistent with better generalization.</p>
+<div id="tbl-distill2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-distill2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;18: Top-1 accuracy by training approach (paper Table 9).
+</figcaption>
+<div aria-describedby="tbl-distill2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>IN-1k only</th>
+<th>Prior distill SOTA</th>
+<th>Ours</th>
+<th>Gain vs IN-1k / vs prior</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>MNv4-Conv-S</td>
+<td>73.8</td>
+<td>–</td>
+<td>75.5</td>
+<td>+1.7 / –</td>
+</tr>
+<tr class="even">
+<td>MNv4-Conv-M</td>
+<td>79.9</td>
+<td>81.5</td>
+<td>82.7</td>
+<td>+2.8 / +1.2</td>
+</tr>
+<tr class="odd">
+<td>MNv4-Hybrid-M</td>
+<td>80.7</td>
+<td>82.7</td>
+<td>83.7</td>
+<td>+3.0 / +1.0</td>
+</tr>
+<tr class="even">
+<td>MNv4-Conv-L</td>
+<td>82.9</td>
+<td>84.4</td>
+<td>85.9</td>
+<td>+3.0 / +1.5</td>
+</tr>
+<tr class="odd">
+<td>MNv4-Hybrid-L</td>
+<td>83.4</td>
+<td>85.7</td>
+<td>86.6</td>
+<td>+3.2 / +0.9</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>The 2000-epoch Conv-L student reaches 85.9%, only 1.6 below its EfficientNet-L2 teacher with 15× fewer parameters and 48× fewer MACs. The headline <strong>87.0%</strong> for Hybrid-L comes from combining this distillation with <strong>JFT pretraining</strong> (stated in the last sentence of Sec. 8, not in Table 9, which lists 86.6).</p>
+</section>
+<section id="implementation-details-appendix-h" class="level3">
+<h3 class="anchored" data-anchor-id="implementation-details-appendix-h" id="implementation-details-appendix-h">Implementation details (Appendix H)</h3>
+<div class="cell" data-eval="true" data-layout-align="cente">
+<div class="cell-output-display">
+<div id="fig-distill" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-distill-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-distill">flowchart LR
+  A["Candidate image"] --&gt; B["Augment&lt;br/&gt;(crop + RandAug / Mixup)"] --&gt; C["JPEG encode and decode"] --&gt; D["Teacher: EfficientNet-L2&lt;br/&gt;(480 M params, 290 G MACs, 87.5% top-1)"] --&gt; E["Store softmax over 1000 classes&lt;br/&gt;(soft label)"]
+  E --&gt; F["Student training&lt;br/&gt;flip only, dropout in final FC&lt;br/&gt;cross-entropy to soft labels&lt;br/&gt;AdamW + cosine LR + warm-up"]
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-distill-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Offline distillation pipeline (my diagram of Appendix H; not a figure in the paper).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Because augmentations and teacher outputs are precomputed, <strong>training is about 2.5× faster</strong> than regular ImageNet training and much less sensitive to hyperparameters.</li>
+<li>Example cost: MNv4-Conv-L, batch size 16 k, 400 epochs takes <strong>2.3 hours on 128 TPU v5e</strong>.</li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Check this
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The text defines D1 on “500 ImageNet-1k replicas” while Table 8 lists a <strong>1000×</strong> replication ratio next to D1 as printed. Also, the prose credits D1+D2+D3 with “+0.6%”, whereas Table 8 shows +0.6 for D2+D3 and +0.8 for D1+D2+D3. The table is the better-specified source.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-apply" class="level2">
+<h2 class="anchored" data-anchor-id="sec-apply" id="sec-apply">Applying and reimplementing MNv4</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Just use it</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Reimplement from tables</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Deploying</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<p>Pretrained weights are available in timm (the paper’s footnote 7 points to a Hugging Face collection) and in TensorFlow Model Garden (footnote 1). Model names in timm are, to the best of my knowledge, of the form below; confirm against the collection.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> timm  <span class="co"># names are [Likely] correct; check the HF collection linked in the paper</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> timm.create_model(<span class="st">"mobilenetv4_conv_small"</span>, pretrained<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># other variants: mobilenetv4_conv_medium, mobilenetv4_conv_large,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                 mobilenetv4_hybrid_medium, mobilenetv4_hybrid_large</span></span></code></pre></div></div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<ol type="1">
+<li>Build <code>UIB</code> and <code>FusedIB</code> (<a href="#sec-uib" class="quarto-xref">Section&nbsp;1.4</a>) and, for hybrids, <code>MobileMQA</code> (<a href="#sec-mqa" class="quarto-xref">Section&nbsp;1.5</a>).</li>
+<li>Transcribe Appendix D (Tables 11–15) into a list of block specs: <code>(type, k1, k2, expanded, out, stride)</code>.</li>
+<li><code>expand_ratio = expanded / in_channels</code> per block.</li>
+<li>Add the head: 1×1 conv to 960, global avg-pool, 1×1 conv to 1280, 1×1 classifier.</li>
+<li>Check <strong>params and MACs against Table 6</strong>, e.g.&nbsp;Conv-S: 3.8 M / 0.2 G; Conv-M: 9.2 M / 1.0 G.</li>
+<li>Use the training recipe of Table 10, or the distillation recipe of <a href="#sec-distill" class="quarto-xref">Section&nbsp;1.9</a>.</li>
+</ol>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<ul>
+<li>Quantize to INT8 for CPU/DSP/EdgeTPU; FP16 for GPU and Apple Neural Engine (the paper’s setup).</li>
+<li>Avoid SE, GELU, and LayerNorm if DSPs matter. Hybrids will not run on the Hexagon DSP in the paper’s tests.</li>
+<li>Benchmark on the <em>target</em> devices with the paper’s protocol (many runs, median of means, fixed core affinity).</li>
+<li>When porting attention, look at the transposes in the converted graph (<a href="#sec-mqa" class="quarto-xref">Section&nbsp;1.5</a>).</li>
+</ul>
+</div>
+</div>
+</div>
+<section id="which-variant-should-i-pick-my-synthesis-not-from-the-paper" class="level3">
+<h3 class="anchored" data-anchor-id="which-variant-should-i-pick-my-synthesis-not-from-the-paper" id="which-variant-should-i-pick-my-synthesis-not-from-the-paper">Which variant should I pick? (My synthesis, not from the paper)</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situation</th>
+<th>Starting point</th>
+<th>Reason from the paper</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Tight CPU budget</td>
+<td>Conv-S</td>
+<td>73.8% at 2.4 ms on Pixel 6 CPU</td>
+</tr>
+<tr class="even">
+<td>Mixed fleet including DSP</td>
+<td>Conv-M or Conv-L</td>
+<td>Hybrids are DSP-incompatible</td>
+</tr>
+<tr class="odd">
+<td>Accelerator-heavy fleet, accuracy matters</td>
+<td>Hybrid-M/L</td>
+<td>Mobile MQA is cheap on EdgeTPU; Hybrid-L 83.4% at 3.8 ms</td>
+</tr>
+<tr class="even">
+<td>You can distill</td>
+<td>Any, with the recipe</td>
+<td>+1.7 to +3.2 points over IN-1k-only (<a href="#tbl-distill2" class="quarto-xref">Table&nbsp;18</a>)</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="sec-critique" class="level2">
+<h2 class="anchored" data-anchor-id="sec-critique" id="sec-critique">A critical reading</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Where I would push back or verify
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Mixed-recipe baselines.</strong> MobileNetV1–V3 were retrained with the improved recipe, but the other baselines use reported accuracies, so training-recipe differences are partly mixed into the architecture comparison. [Certain, from Sec. 7.1]</li>
+<li><strong>“Mostly” Pareto-optimal.</strong> Hybrids and ConvNeXt are DSP-incompatible; EfficientViTs were not benchmarked on CPUs/EdgeTPU due to export limits; hybrids were excluded on CoreML. The “universal” claim is supported on the grid actually measured. [Certain, from the Fig. 1 caption]</li>
+<li><strong>Single-source search target.</strong> The search optimized EdgeTPU latency; transfer to other devices relies on the correlation argument of Appendix A/F, validated across a handful of MobileNet-family models. Whether it holds for much different op sets is untested here. [Likely]</li>
+<li><strong>No variance reported</strong> in the tables I read, so small gaps (for example UIB vs ConvNeXt at 0.1) are hard to interpret. [Certain for the extracted text; I did not see error bars]</li>
+<li><strong>Headline 87%</strong> depends on JFT pretraining plus distillation from a 480 M-parameter EfficientNet-L2 teacher, so it is not directly comparable to ImageNet-only training numbers. The 83.4% figure is the IN-1k-only result.</li>
+<li><strong>Roofline caveats.</strong> The model ignores software/kernel quality and cache effects; the paper itself says it over-credits access-pattern-heavy tricks like pruning.</li>
+<li><strong>Internal inconsistencies</strong> noted in callouts: D1 replica count, the +0.6 vs +0.8 mixing gain, “filter sizes”, fixed expansion factor 4 vs the final tables, and the 9600-epoch Conv-S schedule.</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="sec-cheat" class="level2">
+<h2 class="anchored" data-anchor-id="sec-cheat" id="sec-cheat">Key numbers cheat sheet</h2>
+<div id="tbl-cheat" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cheat-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;19: Quick reference.
+</figcaption>
+<div aria-describedby="tbl-cheat-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ridge-point sweep range</td>
+<td>0 to 500 MACs/byte</td>
+</tr>
+<tr class="even">
+<td>Fitted RPs</td>
+<td>31.2 (Pixel 6 CPU), 39.7 (S23 CPU), 347.3 (Pixel 4 DSP), 433.8 (Pixel 8 EdgeTPU)</td>
+</tr>
+<tr class="odd">
+<td>UIB parameter sharing in SuperNet</td>
+<td>&gt; 95%</td>
+</tr>
+<tr class="even">
+<td>MQA: attention-block latency improvement</td>
+<td>−39.0% (Pixel 8), −41.1% (S23 GPU), −84.2% (Pixel 7) vs MHSA</td>
+</tr>
+<tr class="odd">
+<td>MQA accuracy cost</td>
+<td>−0.03 top-1</td>
+</tr>
+<tr class="even">
+<td>K/V downsampling</td>
+<td>+23% CPU, +25% GPU speed, −0.06 top-1</td>
+</tr>
+<tr class="odd">
+<td>Einsum optimization</td>
+<td>−68.4% (Pixel 7), −13.8% (Pixel 8) on added latency</td>
+</tr>
+<tr class="even">
+<td>Two-stage vs one-stage NAS</td>
+<td>+0.22 val, −4.68% latency</td>
+</tr>
+<tr class="odd">
+<td>NAS training epochs</td>
+<td>750</td>
+</tr>
+<tr class="even">
+<td>Teacher</td>
+<td>EfficientNet-L2, 480 M params, 290 G MACs, 87.5%</td>
+</tr>
+<tr class="odd">
+<td>Distillation speedup</td>
+<td>~2.5× faster than IN-1k training</td>
+</tr>
+<tr class="even">
+<td>Conv-L distillation cost</td>
+<td>2.3 h on 128 TPU v5e (400 epochs, batch 16 k)</td>
+</tr>
+<tr class="odd">
+<td>Hybrid-L</td>
+<td>83.4% (IN-1k only), 86.6% distilled, 87.0% with JFT pretraining; 3.8 ms Pixel 8 EdgeTPU</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="sec-glossary" class="level2">
+<h2 class="anchored" data-anchor-id="sec-glossary" id="sec-glossary">Glossary</h2>
+<dl>
+<dt><strong>MAC</strong></dt>
+<dd>
+Multiply-accumulate operation; the usual unit of conv/matmul work.
+</dd>
+<dt><strong>Operational intensity (OI)</strong></dt>
+<dd>
+MACs per byte moved (weights + activations).
+</dd>
+<dt><strong>Ridge Point (RP)</strong></dt>
+<dd>
+PeakMACs / PeakMemBW of a device; the OI where a workload stops being memory-bound.
+</dd>
+<dt><strong>DW / PW</strong></dt>
+<dd>
+Depthwise / pointwise (1×1) convolution.
+</dd>
+<dt><strong>IB / FusedIB</strong></dt>
+<dd>
+Inverted bottleneck; its variant with a full <span class="math inline">\(k\times k\)</span> conv replacing the expand-PW + DW.
+</dd>
+<dt><strong>UIB / ExtraDW</strong></dt>
+<dd>
+Universal Inverted Bottleneck with two optional DWs; the variant with both DWs present.
+</dd>
+<dt><strong>MHSA / MQA</strong></dt>
+<dd>
+Multi-head self-attention; multi-query attention (shared K and V heads).
+</dd>
+<dt><strong>SRA</strong></dt>
+<dd>
+Spatial-reduction attention: downsampling K and V before attention.
+</dd>
+<dt><strong>TuNAS</strong></dt>
+<dd>
+Weight-sharing NAS with an RL-style controller and a hardware-cost-aware reward.
+</dd>
+<dt><strong>Pareto optimal</strong></dt>
+<dd>
+No other model is both more accurate and faster.
+</dd>
+</dl>
+
+
+
+</section>
+</section>
+
+]]></content:encoded>
+    </item>
     <item>
       <title><![CDATA[Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation]]></title>
       <link>https://theja-vanka.github.io/blogs/posts/models/marigold-v2/marigold-v2-guide/</link>
